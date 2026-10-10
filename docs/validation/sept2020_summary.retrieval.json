@@ -1,0 +1,484 @@
+{
+  "definition": {
+    "bounds": [
+      -125.0,
+      -116.0,
+      36.0,
+      49.0
+    ],
+    "end": "2020-09-14",
+    "reader": {
+      "data_root": "/Users/dfillmor/Data",
+      "edge_granules": false,
+      "granule_dir": "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/{year}/{month}/{day}",
+      "qc": {
+        "aod_max": 5.0,
+        "aod_min": -0.05,
+        "overrides": {},
+        "preset": "retrieval_team"
+      },
+      "time": {
+        "leap_seconds": "apply"
+      },
+      "uncertainty": {
+        "envelopes": {
+          "modis_dt": {
+            "land": [
+              0.05,
+              0.15
+            ],
+            "ocean": [
+              0.03,
+              0.1
+            ]
+          },
+          "viirs_dt": {
+            "land": [
+              0.05,
+              0.15
+            ],
+            "ocean": [
+              0.05,
+              0.15
+            ]
+          }
+        },
+        "sigma_floor": 0.01
+      }
+    },
+    "recipes": [
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "modis_db",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Deep_Blue_Aerosol_Optical_Depth_550_Land",
+                "select": null
+              },
+              "qa": {
+                "name": "Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag",
+                "select": null
+              },
+              "sigma": {
+                "name": "Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty",
+                "select": null
+              }
+            }
+          }
+        },
+        "collection": "6.1",
+        "file_format": "hdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "MODIS",
+        "platform": "Aqua",
+        "product": "MYD04_L2",
+        "stream": "aqua_db"
+      },
+      {
+        "algorithm": {
+          "alternates": {
+            "cam7_v2": {
+              "ocean": {
+                "aod": {
+                  "name": "Effective_Optical_Depth_Best_Ocean",
+                  "select": {
+                    "MODIS_Band_Ocean:mod04": 1
+                  }
+                },
+                "qa": {
+                  "name": "Land_Ocean_Quality_Flag",
+                  "select": null
+                },
+                "sigma": null
+              }
+            }
+          },
+          "family": "modis_dt",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Corrected_Optical_Depth_Land",
+                "select": {
+                  "Solution_3_Land:mod04": 1
+                }
+              },
+              "qa": {
+                "name": "Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            },
+            "ocean": {
+              "aod": {
+                "name": "Effective_Optical_Depth_Average_Ocean",
+                "select": {
+                  "MODIS_Band_Ocean:mod04": 1
+                }
+              },
+              "qa": {
+                "name": "Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            }
+          }
+        },
+        "collection": "6.1",
+        "file_format": "hdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "MODIS",
+        "platform": "Aqua",
+        "product": "MYD04_L2",
+        "stream": "aqua_dt"
+      },
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "viirs_db",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Aerosol_Optical_Thickness_550_Land",
+                "select": null
+              },
+              "qa": {
+                "name": "Aerosol_Optical_Thickness_QA_Flag_Land",
+                "select": null
+              },
+              "sigma": {
+                "name": "Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land",
+                "select": null
+              }
+            },
+            "ocean": {
+              "aod": {
+                "name": "Aerosol_Optical_Thickness_550_Ocean",
+                "select": null
+              },
+              "qa": {
+                "name": "Aerosol_Optical_Thickness_QA_Flag_Ocean",
+                "select": null
+              },
+              "sigma": {
+                "name": "Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean",
+                "select": null
+              }
+            }
+          }
+        },
+        "collection": "2",
+        "file_format": "netcdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "VIIRS",
+        "platform": "NOAA-20",
+        "product": "AERDB_L2_VIIRS_NOAA20",
+        "stream": "noaa20_db"
+      },
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "viirs_db",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Aerosol_Optical_Thickness_550_Land",
+                "select": null
+              },
+              "qa": {
+                "name": "Aerosol_Optical_Thickness_QA_Flag_Land",
+                "select": null
+              },
+              "sigma": {
+                "name": "Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land",
+                "select": null
+              }
+            },
+            "ocean": {
+              "aod": {
+                "name": "Aerosol_Optical_Thickness_550_Ocean",
+                "select": null
+              },
+              "qa": {
+                "name": "Aerosol_Optical_Thickness_QA_Flag_Ocean",
+                "select": null
+              },
+              "sigma": {
+                "name": "Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean",
+                "select": null
+              }
+            }
+          }
+        },
+        "collection": "2.1",
+        "file_format": "netcdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "VIIRS",
+        "platform": "NOAA-20",
+        "product": "AERDB_L2_VIIRS_NOAA20",
+        "stream": "noaa20_db"
+      },
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "viirs_dt",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "geophysical_data/Corrected_Optical_Depth_Land",
+                "select": {
+                  "Wavelength_Used_Land_2": 1
+                }
+              },
+              "qa": {
+                "name": "geophysical_data/Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            },
+            "ocean": {
+              "aod": {
+                "name": "geophysical_data/Effective_Optical_Depth_Average_Ocean",
+                "select": {
+                  "Wavelength_Used_ALL": 1
+                }
+              },
+              "qa": {
+                "name": "geophysical_data/Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            }
+          }
+        },
+        "collection": "2.1",
+        "file_format": "netcdf4",
+        "geolocation": {
+          "lat": "geolocation_data/latitude",
+          "lon": "geolocation_data/longitude",
+          "time": null,
+          "time_kind": "coverage_attrs"
+        },
+        "instrument": "VIIRS",
+        "platform": "NOAA-20",
+        "product": "AERDT_L2_VIIRS_NOAA20",
+        "stream": "noaa20_dt"
+      },
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "viirs_db",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Aerosol_Optical_Thickness_550_Land",
+                "select": null
+              },
+              "qa": {
+                "name": "Aerosol_Optical_Thickness_QA_Flag_Land",
+                "select": null
+              },
+              "sigma": {
+                "name": "Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land",
+                "select": null
+              }
+            },
+            "ocean": {
+              "aod": {
+                "name": "Aerosol_Optical_Thickness_550_Ocean",
+                "select": null
+              },
+              "qa": {
+                "name": "Aerosol_Optical_Thickness_QA_Flag_Ocean",
+                "select": null
+              },
+              "sigma": {
+                "name": "Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean",
+                "select": null
+              }
+            }
+          }
+        },
+        "collection": "2",
+        "file_format": "netcdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "VIIRS",
+        "platform": "SNPP",
+        "product": "AERDB_L2_VIIRS_SNPP",
+        "stream": "snpp_db"
+      },
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "viirs_dt",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "geophysical_data/Corrected_Optical_Depth_Land",
+                "select": {
+                  "Wavelength_Used_Land_2": 1
+                }
+              },
+              "qa": {
+                "name": "geophysical_data/Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            },
+            "ocean": {
+              "aod": {
+                "name": "geophysical_data/Effective_Optical_Depth_Average_Ocean",
+                "select": {
+                  "Wavelength_Used_ALL": 1
+                }
+              },
+              "qa": {
+                "name": "geophysical_data/Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            }
+          }
+        },
+        "collection": "2.1",
+        "file_format": "netcdf4",
+        "geolocation": {
+          "lat": "geolocation_data/latitude",
+          "lon": "geolocation_data/longitude",
+          "time": null,
+          "time_kind": "coverage_attrs"
+        },
+        "instrument": "VIIRS",
+        "platform": "SNPP",
+        "product": "AERDT_L2_VIIRS_SNPP",
+        "stream": "snpp_dt"
+      },
+      {
+        "algorithm": {
+          "alternates": {},
+          "family": "modis_db",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Deep_Blue_Aerosol_Optical_Depth_550_Land",
+                "select": null
+              },
+              "qa": {
+                "name": "Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag",
+                "select": null
+              },
+              "sigma": {
+                "name": "Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty",
+                "select": null
+              }
+            }
+          }
+        },
+        "collection": "6.1",
+        "file_format": "hdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "MODIS",
+        "platform": "Terra",
+        "product": "MOD04_L2",
+        "stream": "terra_db"
+      },
+      {
+        "algorithm": {
+          "alternates": {
+            "cam7_v2": {
+              "ocean": {
+                "aod": {
+                  "name": "Effective_Optical_Depth_Best_Ocean",
+                  "select": {
+                    "MODIS_Band_Ocean:mod04": 1
+                  }
+                },
+                "qa": {
+                  "name": "Land_Ocean_Quality_Flag",
+                  "select": null
+                },
+                "sigma": null
+              }
+            }
+          },
+          "family": "modis_dt",
+          "surfaces": {
+            "land": {
+              "aod": {
+                "name": "Corrected_Optical_Depth_Land",
+                "select": {
+                  "Solution_3_Land:mod04": 1
+                }
+              },
+              "qa": {
+                "name": "Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            },
+            "ocean": {
+              "aod": {
+                "name": "Effective_Optical_Depth_Average_Ocean",
+                "select": {
+                  "MODIS_Band_Ocean:mod04": 1
+                }
+              },
+              "qa": {
+                "name": "Land_Ocean_Quality_Flag",
+                "select": null
+              },
+              "sigma": null
+            }
+          }
+        },
+        "collection": "6.1",
+        "file_format": "hdf4",
+        "geolocation": {
+          "lat": "Latitude",
+          "lon": "Longitude",
+          "time": "Scan_Start_Time",
+          "time_kind": "tai93"
+        },
+        "instrument": "MODIS",
+        "platform": "Terra",
+        "product": "MOD04_L2",
+        "stream": "terra_dt"
+      }
+    ],
+    "start": "2020-09-08",
+    "version": 1
+  },
+  "fingerprint": "c2c4fef851ce8268fbf3e9e7eaef7a46b80bfb291108b72ae1c76a0af376b2b1",
+  "summary_sha256": "542e188345c8ed72e6fe9a205bfac9dc8c0dd920cdab1e81f1c6dfcad634fcdf"
+}

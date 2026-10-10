@@ -143,11 +143,10 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
   keeps collections apart. Manifests are in `.../<SHORTNAME>.<token>/manifests/`.
 - **Status (2026-10-10):**
   - July 2008 MODIS C6.1 is staged and audited (9,518/9,518).
-  - Sept 2020 MODIS + VIIRS (29,856 granules, ~213 GiB) is downloading in the detached `screen`
-    session `sarb-stage`, logging to `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log`.
-    It is done when the log ends with `=== audit exit 0 ===`. Check progress with `tail` or
-    `screen -ls`. Never kill or restart it while it runs. If it died, re-run
-    `sarb-aod stage -c config/runs/modis_viirs_l2_202009.yaml` (resumable), then `audit`.
+  - Sept 2020 MODIS + VIIRS is staged and audited (29,856/29,856; 213.45 GiB).
+    The original `sarb-stage` session ended after four transient DNS failures;
+    resumable staging recovered them. The successful recovery/audit log is
+    `.cache/stage_september_resume.log`; the older `~/Data/logs/` log remains unchanged.
   - Long jobs run detached:
     `screen -dmS <name> zsh -c 'caffeinate -i <cmd> >> <log> 2>&1'`.
 - **Production (AMI)** paths are unknown: `config/profiles/ami.yaml` reads

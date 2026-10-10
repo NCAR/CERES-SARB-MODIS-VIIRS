@@ -1,0 +1,79 @@
+{
+  "accepted": false,
+  "complete": true,
+  "convexity_tolerance": 1e-06,
+  "end": "2020-09-14",
+  "gate_states": {
+    "chi2_gt_one_in_smoke_box": "passed",
+    "db_p90_exceeds_dt": "passed",
+    "mixed_between_sensor_companions": "passed",
+    "rejected_high_on_at_least_one_day": "failed"
+  },
+  "gates": {
+    "chi2_gt_one_in_smoke_box": true,
+    "db_p90_exceeds_dt": true,
+    "mixed_between_sensor_companions": true,
+    "rejected_high_on_at_least_one_day": false
+  },
+  "native_valid_range_honored": true,
+  "p90_comparisons": [
+    {
+      "db_collection": "6.1",
+      "db_p90": 3.39,
+      "dt_p90": 2.212,
+      "passed": true,
+      "platform": "terra"
+    },
+    {
+      "db_collection": "6.1",
+      "db_p90": 3.478,
+      "dt_p90": 2.099,
+      "passed": true,
+      "platform": "aqua"
+    },
+    {
+      "db_collection": "2",
+      "db_p90": 3.167329430580139,
+      "dt_p90": 1.74,
+      "passed": true,
+      "platform": "snpp"
+    },
+    {
+      "db_collection": "2",
+      "db_p90": 3.337785005569458,
+      "dt_p90": 1.859,
+      "passed": true,
+      "platform": "noaa20"
+    },
+    {
+      "db_collection": "2.1",
+      "db_p90": 3.277747082710265,
+      "dt_p90": 1.859,
+      "passed": true,
+      "platform": "noaa20"
+    }
+  ],
+  "runs": [
+    {
+      "chi2_gt_one_box": 871,
+      "comparable_cells": 202245,
+      "complete": true,
+      "expected_windows": 56,
+      "outside_companions": 0,
+      "rejected_high": 0,
+      "run": "mixed_l2_202009_gls_rho05",
+      "windows": 56
+    },
+    {
+      "chi2_gt_one_box": 870,
+      "comparable_cells": 202154,
+      "complete": true,
+      "expected_windows": 56,
+      "outside_companions": 0,
+      "rejected_high": 0,
+      "run": "mixed_db21_l2_202009_gls_rho05",
+      "windows": 56
+    }
+  ],
+  "start": "2020-09-08"
+}

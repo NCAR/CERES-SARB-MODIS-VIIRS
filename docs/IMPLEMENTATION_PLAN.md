@@ -44,7 +44,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 
 | Phase | Content | State |
 |---|---|---|
-| 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done** (code; Task 0.1). Data: July 2008 MODIS C6.1 staged and audited (9,518/9,518). Sept 2020 staging runs detached in `screen -S sarb-stage`; it is complete when `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log` ends with `=== audit exit 0 ===`. Never kill or restart that session while it runs; a re-run resumes. |
+| 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done.** July 2008 audited 9,518/9,518; September 2020 audited 29,856/29,856 after resumable recovery of four DNS failures. |
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; September staging audited 29,856/29,856 |
 | 3 | AERONET validation suite; choose ρ and other defaults | In progress |
@@ -78,14 +78,14 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | 8ff4cba |
 | 4.4 | Plot protocol | 4.2, 4.3 | Done | 7af6d67 |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
-| 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | Task 1.10 (this commit) |
+| 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | fa0aad0 |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
-| 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
+| 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | Task 2.4 (this commit) |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
 | 4.6 | Full plot runs | 3.7 | Not started | |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
@@ -1314,12 +1314,23 @@ network access to LAADS and AERONET.
   and its numeric/artifact inventories. Verification is complete; the original
   VP1 acceptance is not claimed.
 
+- Task 2.4: all 112 requested smoke-week windows are checked for both mixed
+  versions. DB p90 exceeds DT on every platform, plume disagreement exceeds
+  one, and all 404,399 mixed/sensor comparisons obey convexity. NOAA-20 DB
+  v2.1 retains 6.70% fewer smoke-box pixels than v2. Native valid ranges cap
+  AOD at 5, so the requested strictly-above-5 rejection gate is structurally
+  unmet (850 valid endpoint pixels in the baseline). The verifier distinguishes
+  complete checks from science acceptance, validates cached retrieval definitions
+  and digests, and passes analytic/regression tests, full gates and review.
+  See `docs/validation/sept2020_verification.md` and its exact tables/JSON.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
 | July VP1 acceptance | Task 1.10 measured written p99.9 > 3 for all four runs and coverage above the approximate 1–10% range. Monthly means pass; upper-tail evidence is in `docs/validation/july2008_verification.md`. Scientific disposition of these provisional gates remains open. |
+| September rejection gate | Task 2.4 passes three of four science gates; native valid ranges and QC both cap AOD at 5, making a strictly-above-5 rejection impossible. Endpoint counts remain separate. The original gate needs scientific disposition; it was not silently changed. |
 | Sept 2020 staging | Complete: 29,856/29,856 audited. Four files missed during a DNS failure were recovered by resumable staging; the recovery log is `.cache/stage_september_resume.log`. |
 | MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
 | DT ocean QA source conflict | Default QA ≥ 1 (Levy 2013; the products' combined SDS; DT FAQ) vs the darktarget L2-contents page (QA 2–3). Phase 3 compares QA = 3 |
