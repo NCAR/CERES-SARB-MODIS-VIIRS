@@ -108,11 +108,33 @@ products:
     provider: LAADS
     stream_prefix: snpp
     collections:
-      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+      "2.1": &viirs_dt_v21
+        cmr_version: "2.1"
+        file_token: "021"
+        file_format: netcdf4
+        geolocation:
+          lat: geolocation_data/latitude
+          lon: geolocation_data/longitude
+          time: null
+          time_kind: coverage_attrs
+        algorithms:
+          dt:
+            family: viirs_dt
+            surfaces:
+              land:
+                aod:
+                  name: geophysical_data/Corrected_Optical_Depth_Land
+                  select: {Wavelength_Used_Land_2: 1}
+                qa: {name: geophysical_data/Land_Ocean_Quality_Flag}
+              ocean:
+                aod:
+                  name: geophysical_data/Effective_Optical_Depth_Average_Ocean
+                  select: {Wavelength_Used_ALL: 1}
+                qa: {name: geophysical_data/Land_Ocean_Quality_Flag}
   AERDT_L2_VIIRS_NOAA20:
     platform: NOAA-20
     instrument: VIIRS
     provider: LAADS
     stream_prefix: noaa20
     collections:
-      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+      "2.1": *viirs_dt_v21

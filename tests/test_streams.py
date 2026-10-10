@@ -45,6 +45,8 @@ def test_every_catalog_collection_has_resolvable_or_explicitly_unsupported_reade
         "snpp_db",
         "noaa20_db",
         "noaa20_db",
+        "snpp_dt",
+        "noaa20_dt",
     ]
 
 

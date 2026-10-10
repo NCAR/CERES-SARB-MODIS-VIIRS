@@ -77,13 +77,13 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.2 | Map renderers | 4.1, 1.5, 3.4 | Done | c471097 |
 | 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | 8ff4cba |
 | 4.4 | Plot protocol | 4.2, 4.3 | Done | 7af6d67 |
-| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | Task 4.5a (this commit) |
+| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
 | 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
-| 2.2 | VIIRS Dark Target reader | 1.4 | In progress | |
+| 2.2 | VIIRS Dark Target reader | 1.4 | Done | Task 2.2 (this commit) |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | In progress | |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
@@ -1288,6 +1288,13 @@ network access to LAADS and AERONET.
   command registration; it is fixed and tested through the real CLI. All 152
   July map artifacts were rendered with passing protocols; preview inspection
   and campaign acceptance are tracked under Tasks 1.10/4.6.
+
+- Task 2.2: both VIIRS DT platforms now use named trailing wavelength
+  dimensions, group-aware fields and six-minute UTC coverage row times. Real
+  SNPP/NOAA-20 smoke granules reproduce the combined SDS at the prescribed
+  land/ocean QA and share DB three-hour windows; malformed interval tests fail
+  loudly. Native Best Ocean is absent, so CAM7 preset keeps Average Ocean.
+  Reader, catalog, repository gates and review pass.
 
 ## Open items and risks
 
