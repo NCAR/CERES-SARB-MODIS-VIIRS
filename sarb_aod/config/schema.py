@@ -203,6 +203,13 @@ class PathsConfig(StrictModel):
     manifest: str = DEFAULT_MANIFEST
     output: str = DEFAULT_OUTPUT
     evaluation_dir: str = "{data_root}/evaluation/{run}"
+    cartopy_data_dir: str = "{data_root}/cartopy"
+
+    @field_validator("cartopy_data_dir")
+    @classmethod
+    def _cartopy_fields(cls, value: str) -> str:
+        return _check_template(value, frozenset({"data_root"}), "paths.cartopy_data_dir")
+
 
     @field_validator("evaluation_dir")
     @classmethod

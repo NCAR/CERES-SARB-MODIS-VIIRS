@@ -13,6 +13,9 @@ authors = [{name = "David Fillmore"}]
 dependencies = [
     "numpy>=1.24",
     "pandas>=2.0",
+    "matplotlib>=3.8",
+    "cartopy>=0.22",
+    "seaborn>=0.13",
     "numba>=0.60",
     "xarray>=2023.1",
     "netCDF4>=1.6",
@@ -63,10 +66,16 @@ module = [
     "pandas.*",
     "cartopy.*",
     "shapely.*",
+    "seaborn.*",
 ]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+filterwarnings = [
+    "error::UserWarning",
+    "error::cartopy.io.DownloadWarning",
+    'ignore:The locs attribute was deprecated in Matplotlib 3\.11.*:matplotlib.MatplotlibDeprecationWarning:cartopy\.mpl\.ticker',
+]
 testpaths = ["tests"]
 addopts = "-v --tb=short"
 markers = [

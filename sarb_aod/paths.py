@@ -123,3 +123,9 @@ def aeronet_path(config: RunConfig, day: date) -> Path:
             yyyymmdd=f"{day:%Y%m%d}",
         )
     )
+
+
+def cartopy_data_dir(config: RunConfig) -> Path:
+    """Configured local Natural Earth cache; normal plotting never downloads."""
+    return Path(config.paths.cartopy_data_dir.format(data_root=str(config.paths.data_root)))
+

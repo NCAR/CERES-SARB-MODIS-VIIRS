@@ -73,13 +73,13 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.1 | AERONET fetcher | — | Done | 1388a75 |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
 | 3.3 | Metrics, grouped statistics | — | Done | 28a15bc |
-| 4.1 | Style, labeling, display tables | — | In progress | |
+| 4.1 | Style, labeling, display tables | — | Done | Task 4.1 (this commit) |
 | 4.2 | Map renderers | 4.1, 1.5, 3.4 | In progress | |
 | 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | In progress | |
 | 4.4 | Plot protocol | 4.2, 4.3 | In progress | |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | In progress | |
 | 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
-| 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | Task 3.5 (this commit) |
+| 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
@@ -1253,6 +1253,13 @@ network access to LAADS and AERONET.
   suite and typing/format gates pass. The SP1 archive is absent locally; its
   known source is `/glade/work/fillmore/Data/CERES-SARB-CAM7/AOD_f09_3hr/`, so
   N=8875 baseline reproduction remains explicitly unverified.
+
+- Task 4.1: standalone DAVINCI colors/fonts/GEOSIT levels, centralized
+  labels/titles/display names and local Cartopy cache configuration are in place.
+  UserWarnings and coastline download warnings fail tests. The available Helvetica
+  Neue fallback renders cleanly; all renderer types pass protocol checks and
+  previews were inspected. Full suite: 809 passed; typing/format gates pass.
+  Review found no style/labeling defects.
 
 ## Open items and risks
 
