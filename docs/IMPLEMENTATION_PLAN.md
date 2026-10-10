@@ -65,8 +65,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
 | 1.2 | QC presets | 1.1 | Done | d357b79 |
 | 1.3 | Per-pixel uncertainty | 1.1 | Done | c9f966a |
-| 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
-| 1.7 | Weighting (GLS, count) | 1.6 | Done | Task 1.7 (this commit) |
+| 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Done | Task 1.4 (this commit) |
+| 1.7 | Weighting (GLS, count) | 1.6 | Done | 3862a2e |
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Not started | |
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
 | 3.4 | Regions | — | Done | 9433481 |
@@ -1204,6 +1204,12 @@ network access to LAADS and AERONET.
   Product counts are zero when no GLS estimate exists; raw stream/missing-sigma/
   high-rejection diagnostics remain visible in missing-product cells.
   Repository gates and review pass.
+
+- Task 1.4: selective HDF4/NetCDF readers pass synthetic masking/scaling/group/
+  dimension/time/overlap tests and real-granule checks (105,001 accepted pixels across
+  16 MODIS granules and four streams). Missing DB sigma is retained for count weighting.
+  Review's QA-count finding is fixed: a surface's QA diagnostic requires its own valid
+  AOD field. Fourteen reader tests and repository gates pass.
 
 ## Open items and risks
 
