@@ -76,8 +76,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.1 | Style, labeling, display tables | — | Done | 9a4b2c4 |
 | 4.2 | Map renderers | 4.1, 1.5, 3.4 | Done | c471097 |
 | 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | 8ff4cba |
-| 4.4 | Plot protocol | 4.2, 4.3 | Done | Task 4.4 (this commit) |
-| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | In progress | |
+| 4.4 | Plot protocol | 4.2, 4.3 | Done | 7af6d67 |
+| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | Task 4.5a (this commit) |
 | 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
@@ -1280,6 +1280,14 @@ network access to LAADS and AERONET.
   raising. Eighty-three positive/negative protocol tests cover every rule and
   all renderer families, including real cached coastlines. Full repository gates
   and review pass; new suite integration is tested separately.
+
+- Task 4.5a: the public plot command writes configured PDF/PNG artifacts
+  and passing JSON protocol reports. Period and daily maps use count weighting
+  and a shared fixed GEOSIT scale; comparisons use coincident cells/windows.
+  Nineteen suite/CLI tests and full gates pass. Review caught the missing public
+  command registration; it is fixed and tested through the real CLI. All 152
+  July map artifacts were rendered with passing protocols; preview inspection
+  and campaign acceptance are tracked under Tasks 1.10/4.6.
 
 ## Open items and risks
 

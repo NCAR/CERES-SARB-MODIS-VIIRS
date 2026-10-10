@@ -33,15 +33,13 @@ MANIFEST_FIELDS = (GRANULE_FIELDS - {"year", "month", "day", "doy", "yyyymmdd"})
     "start",
     "end",
 }
-
 OUTPUT_FIELDS = frozenset(
     {"data_root", "run", "stem", "year", "month", "day", "doy", "yyyymmdd", "sssss"}
 )
-
-
 AERONET_FIELDS = frozenset(
     {"data_root", "product", "avg", "year", "month", "day", "doy", "yyyymmdd"}
 )
+PLOT_FIELDS = frozenset({"data_root", "run", "suite", "name", "start", "end"})
 
 
 def template_fields(template: str) -> set[str]:
@@ -186,10 +184,7 @@ DEFAULT_MANIFEST = (
     "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/manifests/"
     "manifest_{start}_{end}.tsv"
 )
-
 DEFAULT_OUTPUT = "{data_root}/CAM7/{stem}/{run}/{year}/{month}/{day}/{stem}.{yyyymmdd}.{sssss}.nc"
-
-
 DEFAULT_AERONET = (
     "{data_root}/AERONET/{product}/{year}/{month}/{day}/" "AERONET_{product}_{avg}_{yyyymmdd}.csv"
 )
@@ -203,19 +198,29 @@ class PathsConfig(StrictModel):
     manifest: str = DEFAULT_MANIFEST
     output: str = DEFAULT_OUTPUT
     evaluation_dir: str = "{data_root}/evaluation/{run}"
-    cartopy_data_dir: str = "{data_root}/cartopy"
+    plot: str = "{data_root}/plots/{run}/{suite}/{name}.{start}-{end}.pdf"
 
-    @field_validator("cartopy_data_dir")
+    @field_validator("plot")
     @classmethod
-    def _cartopy_fields(cls, value: str) -> str:
-        return _check_template(value, frozenset({"data_root"}), "paths.cartopy_data_dir")
-
+    def _plot_fields(cls, value: str) -> str:
+        _check_template(value, PLOT_FIELDS, "paths.plot")
+        if not {"run", "suite", "name", "start", "end"} <= template_fields(value):
+            raise ValueError("paths.plot must include {run}, {suite}, {name}, {start}, and {end}")
+        if not value.endswith(".pdf"):
+            raise ValueError("paths.plot must end in .pdf")
+        return value
 
     @field_validator("evaluation_dir")
     @classmethod
     def _evaluation_fields(cls, value: str) -> str:
         return _check_template(value, frozenset({"data_root", "run"}), "paths.evaluation_dir")
 
+    cartopy_data_dir: str = "{data_root}/cartopy"
+
+    @field_validator("cartopy_data_dir")
+    @classmethod
+    def _cartopy_fields(cls, value: str) -> str:
+        return _check_template(value, frozenset({"data_root"}), "paths.cartopy_data_dir")
 
     summary: str = "{data_root}/CAM7/{stem}/{run}/summary_{start}_{end}.tsv"
 
@@ -478,21 +483,82 @@ class EvaluationConfig(StrictModel):
         return value
 
 
+PlotSuite = Literal[
+    "aod_maps",
+    "aod_differences",
+    "aeronet_site_bias",
+    "aeronet_site_timeseries",
+    "aeronet_regional_timeseries",
+    "aeronet_scatter",
+    "evaluation_summary",
+]
+
+
+class PlotSiteSelection(StrictModel):
+    select: Literal["top_n"] = "top_n"
+    n: int = Field(default=20, ge=1, strict=True)
+
+
+class PlotsConfig(StrictModel):
+    """Publication rendering; global maps unless regional subsets are requested."""
+
+    context: Literal["default", "presentation", "publication"] = "publication"
+    aod_fill: Literal["pcolormesh", "contourf"] = "pcolormesh"
+    coastline_resolution: Literal["110m", "50m"] = "110m"
+    suites: list[PlotSuite] = ["aod_maps", "aod_differences"]
+    regions: Literal["all"] | list[str] | None = None
+    sites: PlotSiteSelection | list[str] = Field(default_factory=PlotSiteSelection)
+    site_sources: Literal["product", "sensor", "stream"] = "product"
+
+    @field_validator("regions")
+    @classmethod
+    def _known_regions(
+        cls, value: Literal["all"] | list[str] | None
+    ) -> Literal["all"] | list[str] | None:
+        if isinstance(value, list):
+            from sarb_aod.evaluation.regions import get_region
+
+            try:
+                value = [get_region(key).key for key in value]
+            except KeyError as exc:
+                raise ValueError(str(exc)) from exc
+            if len(set(value)) != len(value):
+                raise ValueError("plots.regions must not contain duplicate regions")
+        return value
+
+    @field_validator("suites")
+    @classmethod
+    def _unique_suites(cls, value: list[PlotSuite]) -> list[PlotSuite]:
+        if not value or len(set(value)) != len(value):
+            raise ValueError("plots.suites must contain unique suite names")
+        return value
+
+    @field_validator("sites")
+    @classmethod
+    def _unique_sites(cls, value: PlotSiteSelection | list[str]) -> PlotSiteSelection | list[str]:
+        if isinstance(value, list) and (
+            any(not site.strip() for site in value) or len(set(value)) != len(value)
+        ):
+            raise ValueError("plots.sites must contain nonempty unique site names")
+        return value
+
+
 class RunConfig(StrictModel):
     name: str = Field(default="run", pattern=r"^[A-Za-z0-9_.-]+$")
-    output: OutputConfig = Field(default_factory=OutputConfig)
     profile: str | None = None
     catalog: Path | None = None
     paths: PathsConfig
     period: Period
     stage: StageConfig
-    weighting: WeightingConfig = Field(default_factory=WeightingConfig)
-    uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
-    qc: QCConfig = Field(default_factory=QCConfig)
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)
+    uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
+    qc: QCConfig = Field(default_factory=QCConfig)
+    weighting: WeightingConfig = Field(default_factory=WeightingConfig)
+    output: OutputConfig = Field(default_factory=OutputConfig)
     aeronet: AeronetConfig = Field(default_factory=AeronetConfig)
     evaluation: EvaluationConfig = Field(default_factory=EvaluationConfig)
+    plots: PlotsConfig = Field(default_factory=PlotsConfig)
 
     @model_validator(mode="after")
     def _products_in_catalog(self) -> "RunConfig":

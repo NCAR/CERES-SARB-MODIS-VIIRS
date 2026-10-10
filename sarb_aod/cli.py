@@ -199,5 +199,10 @@ def aeronet_audit(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt)
     raise typer.Exit(1 if any(result.problem is not None for result in results) else 0)
 
 
+from sarb_aod.plots.cli import plot_command
+
+app.command("plot")(plot_command)
+
+
 if __name__ == "__main__":
     app()

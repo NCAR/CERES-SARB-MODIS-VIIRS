@@ -49,6 +49,22 @@ def manifest_path(
     return Path(paths.manifest.format(**fields))
 
 
+def aeronet_path(config: RunConfig, day: date) -> Path:
+    """Daily all-site AERONET cache, partitioned by quality level and averaging."""
+    return Path(
+        config.paths.aeronet.format(
+            data_root=str(config.paths.data_root),
+            product=config.aeronet.product,
+            avg="ALLPOINTS" if config.aeronet.avg == "all_points" else "DAILY",
+            year=f"{day:%Y}",
+            month=f"{day:%m}",
+            day=f"{day:%d}",
+            doy=f"{day:%j}",
+            yyyymmdd=f"{day:%Y%m%d}",
+        )
+    )
+
+
 def output_path(config: RunConfig, window_start: datetime) -> Path:
     """Contract path for a UTC three-hour window start."""
     from sarb_aod.windows import window_bounds, window_index
@@ -73,6 +89,32 @@ def output_path(config: RunConfig, window_start: datetime) -> Path:
             sssss=f"{start.hour * 3600:05d}",
         )
     )
+
+
+def plot_path(config: RunConfig, suite: str, name: str, start: date, end: date) -> Path:
+    """PDF deliverable; previews and protocol reports replace this suffix."""
+    import re
+
+    for value in (suite, name):
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", value):
+            raise ValueError("plot suite and name must be filename-safe identifiers")
+    if end < start:
+        raise ValueError("plot end must not precede start")
+    return Path(
+        config.paths.plot.format(
+            data_root=str(config.paths.data_root),
+            run=config.name,
+            suite=suite,
+            name=name,
+            start=f"{start:%Y%m%d}",
+            end=f"{end:%Y%m%d}",
+        )
+    )
+
+
+def cartopy_data_dir(config: RunConfig) -> Path:
+    """Configured local Natural Earth cache; normal plotting never downloads."""
+    return Path(config.paths.cartopy_data_dir.format(data_root=str(config.paths.data_root)))
 
 
 def cam_namelist(config: RunConfig) -> dict[str, str]:
@@ -107,25 +149,3 @@ def cam_namelist(config: RunConfig) -> dict[str, str]:
     if len(template) > 80 or expanded_length >= 256:
         raise ValueError("CAM output template exceeds 80 characters or full path reaches 256")
     return {"aod_obs_path": prefix, "aod_obs_template": template}
-
-
-def aeronet_path(config: RunConfig, day: date) -> Path:
-    """Daily all-site AERONET cache, partitioned by quality level and averaging."""
-    return Path(
-        config.paths.aeronet.format(
-            data_root=str(config.paths.data_root),
-            product=config.aeronet.product,
-            avg="ALLPOINTS" if config.aeronet.avg == "all_points" else "DAILY",
-            year=f"{day:%Y}",
-            month=f"{day:%m}",
-            day=f"{day:%d}",
-            doy=f"{day:%j}",
-            yyyymmdd=f"{day:%Y%m%d}",
-        )
-    )
-
-
-def cartopy_data_dir(config: RunConfig) -> Path:
-    """Configured local Natural Earth cache; normal plotting never downloads."""
-    return Path(config.paths.cartopy_data_dir.format(data_root=str(config.paths.data_root)))
-
