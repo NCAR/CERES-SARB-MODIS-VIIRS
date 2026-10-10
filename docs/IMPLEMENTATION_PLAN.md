@@ -80,8 +80,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
 | 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | fa0aad0 |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
-| 4.5b | AERONET suites | 4.5a, 3.5 | Done | Task 4.5b (this commit) |
-| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
+| 4.5b | AERONET suites | 4.5a, 3.5 | Done | b06bb1f |
+| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Done | Task 3.6 (this commit) |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
@@ -1349,6 +1349,17 @@ network access to LAADS and AERONET.
   The first July baseline set has 138 inspected figures and five passing suite
   protocols. Full gates and review pass. Supporting report calculations and
   loaders are included here; the public evaluation driver is Task 3.6.
+
+- Task 3.6: the public evaluation command writes matchup NetCDF, rounded CSV
+  presentation tables and full-precision JSON tables/gates with input hashes.
+  Reports distinguish scientific failure from input errors and preserve failed
+  gate evidence. Compatible L2 reuse verifies recipes, QC, time, uncertainty,
+  matching settings and spectral-cohort completeness; exact stream subsets
+  recompute representativeness flags. NumPy metadata and legacy numeric/boolean
+  fields are handled explicitly. Review corrections are covered by regression
+  tests; 879 offline tests, typing and format gates pass, and the live AERONET
+  test passes. Real July default and CAM7 pairings are reported; the SP1 archive
+  remains unavailable and no identical-input baseline reproduction is claimed.
 
 ## Open items and risks
 

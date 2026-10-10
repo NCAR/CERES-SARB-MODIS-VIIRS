@@ -124,3 +124,36 @@ atomic replacement, and paired with checksum manifests. Requests use the followi
 midnight as their end bound and are paced at least six seconds apart. Selected sites
 are validated against AERONET's catalog and filtered on reading, so site subsets share
 the cache. L2 collocation needs an extra cached day before and after the study period.
+
+## Evaluation and plots
+
+```bash
+sarb-aod evaluate -c config/runs/modis_l2_200807_gls_rho05.yaml --level l2
+sarb-aod evaluate -c config/runs/modis_l2_200807_gls_rho05.yaml --level grid
+sarb-aod evaluate -c config/runs/modis_l2_200807_gls_rho05.yaml --level grid --pairing cam7
+sarb-aod plot -c config/runs/modis_l2_200807_gls_rho05.yaml \
+  --compare config/runs/modis_l2_200807_count.yaml
+```
+
+Evaluation writes NetCDF matchups and CSV/JSON statistics under `paths.evaluation_dir`.
+The default grid pairing averages AERONET observations within each three-hour window;
+`--pairing cam7` reproduces hourly band conversion and nearest-cell pairing. L2 pairing
+uses a 25 km radius and ±30 minutes. Configurable observation minima and published
+expected-error envelopes live in `evaluation`. Scientific gates use unrounded metrics;
+exit status 1 means a gate failed, and status 2 reports an input or processing error.
+A failed science gate does not delete its evidence.
+
+Maps default to `plots.suites: [aod_maps, aod_differences]`. AERONET suites are
+`aeronet_site_bias`, `aeronet_site_timeseries`, `aeronet_regional_timeseries`,
+`aeronet_scatter`, and `evaluation_summary`. Run both evaluation levels before rendering
+all AERONET suites. `plots.sites` selects explicit site names or `{select: top_n, n: 20}`;
+`plots.regions` selects region keys or `all`. Comparisons can repeat `--compare`.
+
+Each figure has a PDF, PNG preview and protocol report under `paths.plot`. Rendering
+fails when the protocol detects invalid scales, rasterization, labels or layout.
+Use `sarb-aod plot -c <run.yaml> --prefetch-maps` once on a new machine to populate
+`paths.cartopy_data_dir`; ordinary rendering requires the cached coastlines.
+
+Campaign measurements, figure inventories and outstanding scientific acceptance
+checks are recorded in `docs/validation/`. Reproducing the CAM7 diagnostic four-stream
+product is separate from comparison against the external SP1 archive.

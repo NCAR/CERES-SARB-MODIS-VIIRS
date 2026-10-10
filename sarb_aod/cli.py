@@ -15,7 +15,6 @@ from sarb_aod.stage.runner import audit as audit_manifests
 from sarb_aod.stage.runner import stage as stage_granules
 
 app = typer.Typer(no_args_is_help=True, add_completion=False, help=__doc__)
-
 aeronet_app = typer.Typer(no_args_is_help=True, help="Acquire and audit AERONET direct-sun caches.")
 app.add_typer(aeronet_app, name="aeronet")
 
@@ -89,6 +88,46 @@ def audit(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -> None
     raise typer.Exit(1 if bad else 0)
 
 
+@aeronet_app.command("stage")
+def aeronet_stage(
+    config: Path = ConfigOpt,
+    profile: Optional[str] = ProfileOpt,
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Inspect caches and report requests only"
+    ),
+) -> None:
+    """Download complete UTC days, with resume checks and service pacing."""
+    from sarb_aod.aeronet.fetch import AeronetFetchError
+    from sarb_aod.aeronet.fetch import stage as stage_aeronet
+
+    cfg = _load(config, profile)
+    try:
+        summary = stage_aeronet(cfg, dry_run=dry_run)
+    except AeronetFetchError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(
+        f"AERONET {cfg.aeronet.product}: days={summary.days} present={summary.already_present} "
+        f"downloaded={summary.downloaded} empty={summary.empty} rows={summary.rows} "
+        f"failed={len(summary.failed)}"
+    )
+    for problem in summary.failed[:20]:
+        typer.echo(f"  {problem}", err=True)
+    raise typer.Exit(1 if summary.failed else 0)
+
+
+@aeronet_app.command("audit")
+def aeronet_audit(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -> None:
+    """Check every configured day's cache and checksum manifest without network."""
+    from sarb_aod.aeronet.fetch import audit as audit_aeronet
+
+    results = audit_aeronet(_load(config, profile))
+    for result in results:
+        status = f"{result.rows} rows OK" if result.problem is None else result.problem
+        typer.echo(f"AERONET {result.day}: {status}")
+    raise typer.Exit(1 if any(result.problem is not None for result in results) else 0)
+
+
 @app.command("grid")
 def grid_command(
     config: Path = ConfigOpt,
@@ -159,44 +198,39 @@ def summarize_command(config: Path = ConfigOpt, profile: Optional[str] = Profile
     typer.echo(f"{path}: period AOD mean={rows[-1]['area_mean']:.6f}, p99.9={rows[-1]['p999']:.6f}")
 
 
-@aeronet_app.command("stage")
-def aeronet_stage(
+@app.command("evaluate")
+def evaluate(
     config: Path = ConfigOpt,
     profile: Optional[str] = ProfileOpt,
-    dry_run: bool = typer.Option(
-        False, "--dry-run", help="Inspect caches and report requests only"
-    ),
+    level: str = typer.Option("grid", "--level", help="Matchup level: l2 or grid"),
+    pairing: str = typer.Option("default", "--pairing", help="Pairing: default or cam7"),
 ) -> None:
-    """Download complete UTC days, with resume checks and service pacing."""
-    from sarb_aod.aeronet.fetch import AeronetFetchError
-    from sarb_aod.aeronet.fetch import stage as stage_aeronet
+    """Build AERONET matchups, grouped tables, and unrounded scientific gates."""
+    from typing import Literal, cast
 
-    cfg = _load(config, profile)
+    from sarb_aod.errors import SarbAodError
+    from sarb_aod.evaluation.report import evaluate as evaluate_config
+
+    if level not in {"l2", "grid"} or pairing not in {"default", "cam7"}:
+        raise typer.BadParameter("--level must be l2|grid and --pairing must be default|cam7")
     try:
-        summary = stage_aeronet(cfg, dry_run=dry_run)
-    except AeronetFetchError as exc:
+        report = evaluate_config(
+            _load(config, profile),
+            level=cast(Literal["l2", "grid"], level),
+            pairing=cast(Literal["default", "cam7"], pairing),
+        )
+    except (OSError, ValueError, SarbAodError) as exc:
         typer.echo(str(exc), err=True)
-        raise typer.Exit(1) from exc
+        raise typer.Exit(2) from exc
+    summary = report.tables["summary"].iloc[0]
     typer.echo(
-        f"AERONET {cfg.aeronet.product}: days={summary.days} present={summary.already_present} "
-        f"downloaded={summary.downloaded} empty={summary.empty} rows={summary.rows} "
-        f"failed={len(summary.failed)}"
+        f"AERONET {level}/{pairing}: N={int(summary['N'])} "
+        f"MB={summary['MB']:.4f} RMSE={summary['RMSE']:.4f} R={summary['R']:.4f}"
     )
-    for problem in summary.failed[:20]:
-        typer.echo(f"  {problem}", err=True)
-    raise typer.Exit(1 if summary.failed else 0)
-
-
-@aeronet_app.command("audit")
-def aeronet_audit(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -> None:
-    """Check every configured day's cache and checksum manifest without network."""
-    from sarb_aod.aeronet.fetch import audit as audit_aeronet
-
-    results = audit_aeronet(_load(config, profile))
-    for result in results:
-        status = f"{result.rows} rows OK" if result.problem is None else result.problem
-        typer.echo(f"AERONET {result.day}: {status}")
-    raise typer.Exit(1 if any(result.problem is not None for result in results) else 0)
+    for name, gate in report.gates["checks"].items():
+        typer.echo(f"  {name}: {gate['status']}")
+    typer.echo(f"report: {report.files['report']}")
+    raise typer.Exit(0 if report.gates["passed"] else 1)
 
 
 from sarb_aod.batch import grid_months_command

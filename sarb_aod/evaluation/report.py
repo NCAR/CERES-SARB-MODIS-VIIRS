@@ -466,3 +466,176 @@ def load_matchups(config: RunConfig, level: Literal["grid", "l2"]) -> pd.DataFra
                 raise ValueError(f"Invalid boolean values for {name} in {path}")
             frame[name] = tokens.map(valid).astype(bool)
     return frame
+
+
+def evaluate(
+    config: RunConfig,
+    *,
+    level: Literal["l2", "grid"],
+    pairing: Literal["default", "cam7"] = "default",
+    coastal_sites: Mapping[str, bool] | None = None,
+    reuse_l2_from: RunConfig | None = None,
+) -> EvaluationReport:
+    """Build matchups, tables and any configured AERONET plot suites."""
+    output_dir = Path(
+        config.paths.evaluation_dir.format(data_root=str(config.paths.data_root), run=config.name)
+    )
+    options = CollocationOptions(
+        **{name: getattr(config.evaluation, name) for name in _COLLOCATION_FIELDS}
+    )
+    coastal_provenance: dict[str, Any] = {}
+    if level == "grid" and coastal_sites is None:
+        l2_path = (
+            output_dir
+            / f"matchups_l2_default_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+        )
+        if l2_path.is_file():
+            l2 = load_matchups(config, "l2")
+            primary = l2.loc[
+                np.isfinite(l2["x"].to_numpy(dtype=float))
+                & np.isfinite(l2["y"].to_numpy(dtype=float))
+            ]
+            known = primary.loc[primary["coastal_known"].astype(bool)]
+            coastal_sites = known.groupby("site")["coastal_site"].first().astype(bool).to_dict()
+            coastal_provenance = {
+                "coastal_l2_file": str(l2_path),
+                "coastal_l2_sha256": hashlib.sha256(l2_path.read_bytes()).hexdigest(),
+            }
+    if reuse_l2_from is not None and (level != "l2" or pairing != "default"):
+        raise ValueError("L2 reuse requires level=l2 and default pairing")
+    matchups = (
+        reuse_l2_matchups(reuse_l2_from, config)
+        if reuse_l2_from is not None
+        else build_matchups(
+            config,
+            level=level,
+            pairing=pairing,
+            output_dir=output_dir,
+            options=options,
+            coastal_sites=coastal_sites,
+        )
+    )
+    with xr.open_dataset(matchups.path, decode_times=False) as dataset:
+        sources = {
+            key: dataset.attrs[key]
+            for key in ("source_files", "aeronet_cache_files", "reused_l2_file", "reused_l2_sha256")
+            if key in dataset.attrs
+        }
+    sources.update(
+        matchup_file=str(matchups.path),
+        matchup_sha256=hashlib.sha256(matchups.path.read_bytes()).hexdigest(),
+        processing_sha256=processing_sha256(config),
+    )
+    sources.update(coastal_provenance)
+    report = build_report(matchups.frame, config, level=level, pairing=pairing, provenance=sources)
+    report.matchup_path = matchups.path
+    stem = (
+        f"{config.name}_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}"
+    )
+    write_report(report, output_dir, stem=stem, precision=config.evaluation.round_precision)
+    # Lazy import keeps the statistics API usable without initializing plotting.
+    from sarb_aod.paths import plot_path
+    from sarb_aod.plots.aeronet_suites import AERONET_SUITES, SuiteInputs, render_aeronet_suites
+
+    selected = [suite for suite in config.plots.suites if suite in AERONET_SUITES]
+    if selected:
+        try:
+            artifacts = render_aeronet_suites(
+                config,
+                levels=(level,),
+                inputs=SuiteInputs({level: matchups.frame}),
+                pairing=pairing,
+                evaluation_level=level,
+            )
+            report.plots = {
+                "status": "protocol_passed",
+                "pairing": pairing,
+                "evaluation_level": level,
+                "visual_inspection": "pending",
+                "artifacts": [
+                    {"suite": item.suite, "name": item.name, "pdf": item.pdf, "png": item.png}
+                    for item in artifacts
+                ],
+                "protocol_reports": [
+                    plot_path(
+                        config, suite, "protocol", config.period.start, config.period.end
+                    ).with_suffix(".json")
+                    for suite in dict.fromkeys(item.suite for item in artifacts)
+                ],
+            }
+        except Exception as exc:
+            report.plots = {"status": "failed", "error": str(exc)}
+            write_report(report, output_dir, stem=stem, precision=config.evaluation.round_precision)
+            raise
+        write_report(report, output_dir, stem=stem, precision=config.evaluation.round_precision)
+    return report
+
+
+def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
+    """Reuse verified L2 pairings when only gridding weights/output options differ.
+
+    This avoids rereading the same granules for GLS rho and count comparisons.
+    Target streams may be an exact subset of the source recipes. QC, pixel
+    uncertainty, time, period and AERONET/matching settings must agree exactly.
+    A changed CAM7 preset requires fresh pairing. Subsets recompute the site
+    representativeness flags from their retained streams.
+    """
+    adjusted = target.model_copy(update={"weighting": source.weighting, "output": source.output})
+    source_definition = matchup_signature(source)["processing"]
+    target_definition = matchup_signature(adjusted)["processing"]
+    source_recipes = source_definition.pop("recipes")
+    target_recipes = target_definition.pop("recipes")
+    source_definition["grid"].pop("streams")
+    target_definition["grid"].pop("streams")
+    subset = bool(target_recipes) and set(target_recipes) <= set(source_recipes)
+    same_recipes = subset and all(
+        source_recipes[name] == recipe for name, recipe in target_recipes.items()
+    )
+    if (
+        not same_recipes
+        or source_definition != target_definition
+        or any(
+            getattr(source, key) != getattr(target, key)
+            for key in ("period", "aeronet", "evaluation")
+        )
+    ):
+        raise ValueError(
+            "L2 reuse requires identical recipes, QC, time, uncertainty and AERONET matching settings"
+        )
+    values = load_matchups(source, "l2")
+    values = values.loc[values["stream"].isin(target_recipes)].copy()
+    values["run"] = target.name
+    if set(target_recipes) != set(source_recipes):
+        values = flag_representativeness(
+            values, high_elevation_m=target.evaluation.high_elevation_m
+        )
+    source_dir = Path(
+        source.paths.evaluation_dir.format(data_root=str(source.paths.data_root), run=source.name)
+    )
+    target_dir = Path(
+        target.paths.evaluation_dir.format(data_root=str(target.paths.data_root), run=target.name)
+    )
+    filename = f"matchups_l2_default_{target.period.start:%Y%m%d}_{target.period.end:%Y%m%d}.nc"
+    source_path = source_dir / filename
+    if source_path.resolve() == (target_dir / filename).resolve():
+        raise ValueError("L2 reuse requires distinct source and target matchup paths")
+    with xr.open_dataset(source_path, decode_times=False) as dataset:
+        attributes = dict(dataset.attrs)
+    if (
+        not source.aeronet.include_extrapolated
+        and attributes.get("retains_sensitivity_candidates") != 1
+    ):
+        raise ValueError(
+            "L2 reuse requires retained extrapolation sensitivity candidates; rerun source evaluate"
+        )
+    attributes.update(
+        run=target.name,
+        config=target.model_dump(mode="json"),
+        config_sha256=config_sha256(target),
+        processing_sha256=processing_sha256(target),
+        reused_l2_file=str(source_path),
+        reused_l2_sha256=hashlib.sha256(source_path.read_bytes()).hexdigest(),
+        reused_l2_streams=sorted(target_recipes),
+    )
+    path = write_matchups(target_dir / filename, values, attributes=attributes)
+    return MatchupResult(values, path)
