@@ -194,6 +194,9 @@ def test_scorecard_uses_metric_scales_and_friendly_region_names():
     assert bias.cmap.name == "RdBu_r"
     assert rmse.cmap.name == correlation.cmap.name == "viridis"
     assert (correlation.norm.vmin, correlation.norm.vmax) == (0, 1)
+    # Both diverging endpoints are dark; normalized value alone cannot decide
+    # whether black lettering has enough contrast on the positive-red end.
+    assert metadata["data_axes"][0].texts[1].get_color() == "white"
     assert [tick.get_text() for tick in metadata["data_axes"][0].get_yticklabels()] == [
         "Western US",
         "East Asia",
@@ -226,6 +229,19 @@ def test_regional_boxes_keep_source_colors_and_rasterize_fliers(paired):
     axis = metadata["data_axes"][0]
     assert [text.get_text() for text in axis.get_legend().get_texts()] == ["AERONET", "MODIS"]
     assert len(metadata["dense_artists"]) == 4
+
+
+def test_regional_boxes_full_campaign_labels_pass_layout_protocol(paired):
+    from sarb_aod.evaluation.regions import AEROSOL_REGIONS
+    from sarb_aod.plots.protocol import validate_rendered_figures
+
+    x, y = paired
+    figure = regional_boxplots(
+        {region: {"aeronet": x, "modis": y} for region in ["global", *AEROSOL_REGIONS]},
+        start="2008-07-01",
+        end="2008-07-31",
+    )
+    assert validate_rendered_figures({"full_campaign_regions": figure})["passed"]
 
 
 @pytest.mark.parametrize(

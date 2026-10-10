@@ -220,6 +220,9 @@ def scorecard(table: pd.DataFrame, *, start: Any = None, end: Any = None) -> Fig
         )
         axis.grid(False)
         for row, value in enumerate(values):
+            rgb = np.asarray(artist.cmap(norm(value))[:3])
+            linear = np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+            luminance = float(linear @ np.array([0.2126, 0.7152, 0.0722]))
             axis.text(
                 0,
                 row,
@@ -229,7 +232,7 @@ def scorecard(table: pd.DataFrame, *, start: Any = None, end: Any = None) -> Fig
                 ha="center",
                 va="center",
                 fontsize=9,
-                color="white" if np.isfinite(value) and norm(value) < 0.5 else "black",
+                color="white" if np.isfinite(value) and luminance < 0.179 else "black",
             )
         colorbar = figure.colorbar(
             artist, ax=axis, orientation="horizontal", fraction=0.08, pad=0.08
@@ -345,7 +348,13 @@ def regional_boxplots(
         sources = ["aeronet", *[source for source in sources if source != "aeronet"]]
     if not sources:
         raise ValueError("regional boxplots require at least one source")
-    figure, axis = _new_figure(figsize=(max(8, 1.2 * len(regions)), 5.5))
+    labels = [labeling.region_label(region) for region in regions]
+    crowded = len(regions) > 5
+    # Long geographic names need both horizontal spacing and room below the
+    # axes; rotating alone can still leave overlapping rendered text bounds.
+    figure, axis = _new_figure(
+        figsize=(max(8, (1.4 if crowded else 1.2) * len(regions)), 6.5 if crowded else 5.5)
+    )
     width = 0.8 / len(sources)
     dense, handles = [], []
     for index, source in enumerate(sources):
@@ -373,8 +382,8 @@ def regional_boxplots(
         handles.append(Patch(facecolor=color, alpha=0.6, label=labeling.legend_label(source)))
     axis.set_xticks(
         np.arange(len(regions)),
-        [labeling.region_label(region) for region in regions],
-        rotation=35,
+        labels,
+        rotation=60 if crowded else 35,
         ha="right",
     )
     axis.set_ylabel(labeling.axis_label("AOD", "1"))

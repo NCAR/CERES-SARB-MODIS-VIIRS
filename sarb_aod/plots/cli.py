@@ -10,6 +10,7 @@ import typer
 from sarb_aod.config.loader import load_config
 from sarb_aod.errors import SarbAodError
 from sarb_aod.paths import cartopy_data_dir
+from sarb_aod.plots.aeronet_suites import render_aeronet_suites
 from sarb_aod.plots.style import prefetch_coastlines
 from sarb_aod.plots.suites import render_map_suites
 
@@ -32,7 +33,7 @@ def plot_command(
         False, "--prefetch-maps", help="Download cached coastlines, then exit"
     ),
 ) -> None:
-    """Render protocol-checked map suites from the configured CAM7 products."""
+    """Render protocol-checked CAM7 maps and AERONET evaluation figures."""
     try:
         cfg = load_config(config, profile)
         if prefetch_maps:
@@ -40,12 +41,9 @@ def plot_command(
             typer.echo(f"Coastlines cached in {cartopy_data_dir(cfg)}")
             return
         comparisons = [load_config(path, profile) for path in (compare or [])]
-        unsupported = set(cfg.plots.suites) - {"aod_maps", "aod_differences"}
-        if unsupported:
-            raise ValueError(
-                f"AERONET suites are not yet registered: {', '.join(sorted(unsupported))}"
-            )
         artifacts = render_map_suites(cfg, compare_configs=comparisons)
+        if set(cfg.plots.suites) - {"aod_maps", "aod_differences"}:
+            artifacts.extend(render_aeronet_suites(cfg, compare_configs=comparisons))
         for artifact in artifacts:
             typer.echo(str(artifact.pdf))
         if not artifacts:

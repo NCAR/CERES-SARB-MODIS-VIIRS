@@ -164,6 +164,79 @@ def test_extrapolation_sensitivity_is_retained_and_configurable():
     assert excluded.n_aeronet_including_extrapolated == 3
 
 
+@pytest.mark.parametrize("level", ["l2", "grid"])
+def test_extrapolation_only_smoke_candidates_survive_for_full_sensitivity(level, tmp_path):
+    from sarb_aod.evaluation.report import build_report
+
+    reference = aero(
+        ["2020-09-09T00:00Z", "2020-09-09T00:05Z"],
+        [1.0, 1.4],
+        lat=40,
+        lon=-120,
+        flags=["extrapolated"] * 2,
+    )
+    keywords = dict(
+        include_extrapolated=False, retain_sensitivity_candidates=True, recipes=[RECIPE]
+    )
+    if level == "l2":
+        matched = collocate_l2(
+            [batch([1.2] * 3, time="2020-09-09T00:00Z", lat=[40] * 3, lon=[-120] * 3)],
+            reference,
+            **keywords,
+        )
+    else:
+        matched = collocate_grid(field(1.2), reference, start=datetime(2020, 9, 9), **keywords)
+    assert len(matched) == 1 and not matched.primary_eligible.iloc[0]
+    assert np.isnan(matched.x.iloc[0])
+    assert matched.active_sites_in_cell.iloc[0] == 0
+    assert matched.x_including_extrapolated.iloc[0] == pytest.approx(1.2)
+    cfg = RunConfig.model_validate(
+        {
+            "name": "smoke",
+            "stage": {"products": {"MOD04_L2": ["6.1"]}},
+            "paths": {"data_root": str(tmp_path)},
+            "period": {"start": "2020-09-09", "end": "2020-09-09"},
+            "aeronet": {"include_extrapolated": False},
+            "evaluation": {"min_samples": 1},
+        }
+    )
+    result = build_report(matched, cfg, level=level)
+    assert result.tables["summary"].N.iloc[0] == 0
+    assert result.tables["by_site"].empty
+    included = result.tables["sensitivity"].query("spectral_selection == 'include_extrapolated'")
+    assert included.N.eq(1).all()
+    assert included.MB.eq(0).all() and included.RMSE.eq(0).all()
+    excluded = result.tables["sensitivity"].query("spectral_selection == 'exclude_extrapolated'")
+    assert excluded.N.eq(0).all()
+
+
+def test_matchup_writer_preserves_numeric_object_columns_after_empty_windows(tmp_path):
+    values = pd.DataFrame(
+        {
+            "x": pd.Series([0.1, 0.2], dtype=object),
+            "y": pd.Series([0.2, 0.4], dtype=object),
+            "time": pd.Series(pd.date_range("2008-07-01", periods=2, tz="UTC"), dtype=object),
+            "site": ["123", "123"],
+        }
+    )
+    values = pd.concat([pd.DataFrame(columns=values.columns), values], ignore_index=True)
+    path = write_matchups(tmp_path / "numeric.nc", values)
+    with xr.open_dataset(path) as dataset:
+        assert dataset.x.dtype.kind == dataset.y.dtype.kind == "f"
+        assert dataset.time.dtype.kind == "M"
+        assert str(dataset.site.values[0]) == "123"
+        np.testing.assert_allclose(dataset.x, [0.1, 0.2])
+
+
+def test_fractional_overpass_time_does_not_warn_or_lose_matchup_precision():
+    pixels = batch([0.1, 0.2, 0.3])
+    pixels.t[:] += np.array([0, 1, 1]) / 3
+    reference = aero(["2008-07-01T00:00Z", "2008-07-01T00:01Z"], [0.1, 0.3])
+    matched = collocate_l2([pixels], reference, recipes=[RECIPE])
+    assert len(matched) == 1
+    assert matched.time.iloc[0].nanosecond != 0
+
+
 def test_dateline_and_polar_geometry_has_no_grid_radius_cut():
     grid = load_grid()
     ilat, ilon = nearest_cell(grid, [90, -90, 0, 0], [-0.1, 180, -180, 359.7])
@@ -356,6 +429,21 @@ def test_grid_driver_needs_only_period_days_and_rejects_stale_processing(tmp_pat
         dataset["time_bnds"][:] = dataset["time_bnds"][:] + 3
     with pytest.raises(ValueError, match="time differs from the requested window"):
         build_matchups(cfg, level="grid", output_dir=tmp_path / "wrong_window")
+
+
+def test_l2_driver_rejects_day_with_only_an_edge_granule(tmp_path, monkeypatch):
+    cfg = make_config(tmp_path)
+    cfg = cfg.model_copy(update={"grid": cfg.grid.model_copy(update={"edge_granules": True})})
+    reference = aero(["2008-07-01T00:00Z", "2008-07-01T00:01Z"], [0.1, 0.3])
+    monkeypatch.setattr(collocate, "read_cached_day", lambda *_: reference)
+    monkeypatch.setattr(
+        collocate,
+        "discover_granules",
+        lambda *_: ([(tmp_path / "edge.hdf", [RECIPE])], [], 0),
+    )
+    with pytest.raises(FileNotFoundError, match="No primary L2 granules"):
+        build_matchups(cfg, level="l2", output_dir=tmp_path / "evaluation")
+    assert not (tmp_path / "evaluation").exists()
 
 
 @pytest.mark.parametrize(

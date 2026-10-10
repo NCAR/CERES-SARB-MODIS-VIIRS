@@ -24,6 +24,7 @@ from sarb_aod.contract import write_contract_file
 from sarb_aod.paths import output_path, plot_path
 from sarb_aod.pipeline import processing_sha256
 from sarb_aod.plots import cli, suites
+from sarb_aod.plots.labeling import bias_label
 from sarb_aod.plots.protocol import PlotProtocolError
 from sarb_aod.plots.style import geosit_aod_levels, ncar_style
 from sarb_aod.windows import window_bounds
@@ -231,6 +232,8 @@ def test_full_fixed_aod_scales_and_difference_of_period_means(inputs: RunConfig)
     assert meta["colorbars"][0].ax.get_xlabel() == "Synthetic Gls − Comparison"
     keywords = json.loads(suites.pdf_metadata(inputs, figure)["Keywords"])
     assert keywords["comparison"]["run"] == "comparison"
+    meta["pairing"] = "cam7"
+    assert json.loads(suites.pdf_metadata(inputs, figure)["Keywords"])["pairing"] == "cam7"
 
 
 def test_regional_panels_pass_protocol(inputs: RunConfig) -> None:
@@ -338,3 +341,70 @@ def test_plot_is_registered_on_public_cli() -> None:
     result = CliRunner().invoke(app, ["plot", "--help"])
     assert result.exit_code == 0, result.output
     assert "--compare" in result.output and "--prefetch-maps" in result.output
+
+
+def test_public_plot_dispatches_configured_aeronet_suites(
+    config: RunConfig, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from sarb_aod.cli import app
+
+    changed = config.model_copy(update={"plots": PlotsConfig(suites=["aeronet_scatter"])})
+    path = config.paths.data_root / "aeronet.yaml"
+    path.write_text(yaml.safe_dump(changed.model_dump(mode="json")))
+    calls = []
+    monkeypatch.setattr(cli, "render_map_suites", lambda cfg, **kwargs: [])
+    monkeypatch.setattr(cli, "render_aeronet_suites", lambda cfg, **kwargs: calls.append(cfg) or [])
+    result = CliRunner().invoke(app, ["plot", "-c", str(path)])
+    assert result.exit_code == 0, result.output
+    assert calls[0].plots.suites == ["aeronet_scatter"]
+
+
+def test_comparison_labels_describe_sensor_version_and_qc_changes(config: RunConfig) -> None:
+    from sarb_aod.config.schema import QAOverride
+
+    def selection(**updates: object) -> RunConfig:
+        return config.model_copy(update=updates)
+
+    viirs = selection(
+        grid=config.grid.model_copy(update={"streams": {"snpp_db": config.grid.streams["snpp_db"]}})
+    )
+    modis = selection(
+        grid=config.grid.model_copy(
+            update={"streams": {"terra_dt": config.grid.streams["terra_dt"]}}
+        )
+    )
+    assert bias_label(*suites._comparison_sources(viirs, modis), "1") == "VIIRS − MODIS"
+    version = viirs.grid.streams["snpp_db"].model_copy(update={"collection": "2.1"})
+    changed = viirs.model_copy(
+        update={"grid": viirs.grid.model_copy(update={"streams": {"snpp_db": version}})}
+    )
+    assert (
+        bias_label(*suites._comparison_sources(changed, viirs), "1")
+        == "SNPP Deep Blue v2.1 − SNPP Deep Blue v2"
+    )
+    qa = selection(
+        qc=config.qc.model_copy(update={"overrides": {"modis_dt": {"ocean": QAOverride(qa_min=3)}}})
+    )
+    assert bias_label(*suites._comparison_sources(qa, config), "1") == "Ocean QA ≥ 3 − Ocean QA ≥ 1"
+    positive = selection(qc=config.qc.model_copy(update={"aod_min": 0}))
+    assert bias_label(*suites._comparison_sources(positive, config), "1") == "AOD ≥ 0 − AOD ≥ -0.05"
+
+
+@pytest.mark.parametrize("stream,source", [("terra_dt", "MODIS"), ("snpp_db", "VIIRS")])
+@pytest.mark.parametrize(
+    "field,quantity", [("daily_mean_aod", "AOD"), ("uncertainty", "AOD Uncertainty")]
+)
+def test_single_sensor_global_maps_identify_source(
+    inputs: RunConfig, stream: str, source: str, field: str, quantity: str
+) -> None:
+    data = suites.aggregate_maps(inputs)
+    single = inputs.model_copy(
+        update={
+            "grid": inputs.grid.model_copy(
+                update={"streams": {stream: inputs.grid.streams[stream]}}
+            )
+        }
+    )
+    spec = next(spec for spec in suites.map_figure_specs(single) if spec.field == field)
+    figure = suites.render_map_figure(single, data, spec)
+    assert figure.axes[0].get_title() == f"{source} {quantity}"

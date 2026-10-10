@@ -22,7 +22,7 @@ import numpy as np
 from matplotlib.figure import Figure
 from netCDF4 import Dataset
 
-from sarb_aod.config.schema import RunConfig
+from sarb_aod.config.schema import AlgorithmFamily, RunConfig
 from sarb_aod.contract import git_commit, validate_contract_file
 from sarb_aod.evaluation.regions import REGIONS
 from sarb_aod.grid.spec import GridSpec, load_grid
@@ -31,6 +31,7 @@ from sarb_aod.pipeline import config_sha256, require_processing_provenance
 from sarb_aod.plots import labeling, maps
 from sarb_aod.plots.protocol import PROTOCOL, PlotProtocolError, validate_rendered_figures
 from sarb_aod.plots.style import geosit_aod_levels, ncar_style
+from sarb_aod.qc import resolve_rule
 from sarb_aod.windows import TIMES_PER_DAY, window_bounds
 
 
@@ -297,6 +298,8 @@ def pdf_metadata(config: RunConfig, figure: Figure) -> dict[str, str]:
     }
     if metadata.get("comparison_provenance"):
         keywords["comparison"] = metadata["comparison_provenance"]
+    if metadata.get("pairing"):
+        keywords["pairing"] = metadata["pairing"]
     return {
         "Title": " | ".join(titles),
         "Subject": "550 nm aerosol optical depth",
@@ -367,6 +370,10 @@ def write_protocol_report(
         reports.append(failure)
     figures = [name for report in reports for name in report["figures"]]
     failures = [message for report in reports for message in report.get("failures", [])]
+    if not figures:
+        failures.append("suite contains no figures")
+    if len(figures) != len(set(figures)):
+        failures.append("suite figure labels must be unique")
     if expected_figures is not None and figures != list(expected_figures):
         failures.append("rendered figure list differs from expected suite products")
     report = {
@@ -394,6 +401,50 @@ def _comparison_sources(config: RunConfig, other: RunConfig) -> tuple[str, str]:
             labeling.source_display_name("gls", rho=config.weighting.rho),
             labeling.source_display_name("gls", rho=other.weighting.rho),
         )
+    left_sensors, right_sensors = _sensor_streams(config), _sensor_streams(other)
+    if left_sensors.keys() != right_sensors.keys():
+        return (
+            next(iter(left_sensors)) if len(left_sensors) == 1 else "mixed",
+            next(iter(right_sensors)) if len(right_sensors) == 1 else "mixed",
+        )
+    catalog = config.load_catalog()
+    changed = [
+        stream
+        for stream, selected in config.grid.streams.items()
+        if stream in other.grid.streams
+        and selected.product == other.grid.streams[stream].product
+        and selected.collection != other.grid.streams[stream].collection
+    ]
+    if changed:
+        instruments = {
+            catalog.product(config.grid.streams[stream].product).instrument.lower()
+            for stream in changed
+        }
+        left_versions = {config.grid.streams[stream].collection for stream in changed}
+        right_versions = {other.grid.streams[stream].collection for stream in changed}
+        if len(instruments) == len(left_versions) == len(right_versions) == 1:
+            instrument = next(iter(instruments))
+            source = changed[0] if len(changed) == 1 else instrument
+            prefix = "C" if instrument == "modis" else "v"
+            display = labeling.source_display_name(source)
+            return (
+                labeling.source_display_name(f"{display} {prefix}{next(iter(left_versions))}"),
+                labeling.source_display_name(f"{display} {prefix}{next(iter(right_versions))}"),
+            )
+    if config.qc.aod_min != other.qc.aod_min:
+        return f"AOD ≥ {config.qc.aod_min:g}", f"AOD ≥ {other.qc.aod_min:g}"
+    if config.qc.aod_max != other.qc.aod_max:
+        return f"AOD ≤ {config.qc.aod_max:g}", f"AOD ≤ {other.qc.aod_max:g}"
+    if config.qc.overrides != other.qc.overrides:
+        families: list[AlgorithmFamily] = []
+        if any(stream.endswith("_dt") for stream in left_sensors.get("modis", [])):
+            families.append("modis_dt")
+        if any(stream.endswith("_dt") for stream in left_sensors.get("viirs", [])):
+            families.append("viirs_dt")
+        left_qa = {resolve_rule(family, "ocean", config.qc).qa_min for family in families}
+        right_qa = {resolve_rule(family, "ocean", other.qc).qa_min for family in families}
+        if len(left_qa) == len(right_qa) == 1 and left_qa != right_qa:
+            return f"Ocean QA ≥ {next(iter(left_qa))}", f"Ocean QA ≥ {next(iter(right_qa))}"
     return config.name, other.name
 
 
@@ -425,7 +476,12 @@ def render_map_figure(
         )
     if spec.field == "daily_mean_aod":
         return maps.plot_map(
-            aggregate.daily_means[spec.start], aod_levels=geosit_aod_levels([1]), **kwargs
+            aggregate.daily_means[spec.start],
+            source=(
+                next(iter(_sensor_streams(config))) if len(_sensor_streams(config)) == 1 else None
+            ),
+            aod_levels=geosit_aod_levels([1]),
+            **kwargs,
         )
     if spec.field in {"sensor_difference", "run_difference"}:
         if spec.field == "sensor_difference":
@@ -465,7 +521,14 @@ def render_map_figure(
         "negative_aod_fraction": (aggregate.negative_fraction, "fraction", "Negative AOD Fraction"),
     }
     values, kind, quantity = fields[spec.field]
-    return maps.plot_map(values, kind=kind, quantity=quantity, **kwargs)
+    sensors = _sensor_streams(config)
+    return maps.plot_map(
+        values,
+        kind=kind,
+        quantity=quantity,
+        source=next(iter(sensors)) if len(sensors) == 1 else None,
+        **kwargs,
+    )
 
 
 def render_map_suites(

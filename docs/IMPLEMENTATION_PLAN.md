@@ -80,7 +80,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
 | 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | fa0aad0 |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
-| 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
+| 4.5b | AERONET suites | 4.5a, 3.5 | Done | Task 4.5b (this commit) |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
@@ -89,7 +89,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
 | 4.6 | Full plot runs | 3.7 | Not started | |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
-| 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | Task 5.1 (this commit) |
+| 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
 | 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
@@ -1337,6 +1337,18 @@ network access to LAADS and AERONET.
   25.354 seconds. Storage measurements use audited manifests and real outputs.
   Full tests, typing, format checks and review pass. These measurements do not
   claim AMI performance or deployment; site-specific work remains Task 5.2.
+
+- Task 4.5b: five AERONET suites retain independent grid/AERONET series,
+  overpass markers, sampled-site regional means, EE/scatter diagnostics and
+  uncertainty summaries. Verified matchups reject stale processing definitions;
+  default/CAM7 and L2/grid evaluation paths have distinct artifacts and protocols.
+  Review fixes preserve complete spectral-sensitivity candidates, join hourly
+  CAM7 samples by containing window, prevent slug collisions, and fail the final
+  suite protocol correctly. Real monthly runs exposed legacy numeric-object
+  serialization and crowded geographic labels; both have regression coverage.
+  The first July baseline set has 138 inspected figures and five passing suite
+  protocols. Full gates and review pass. Supporting report calculations and
+  loaders are included here; the public evaluation driver is Task 3.6.
 
 ## Open items and risks
 

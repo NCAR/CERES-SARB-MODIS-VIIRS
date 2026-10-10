@@ -178,6 +178,21 @@ def test_regional_map_uses_named_extent_and_subset_title(coastline_cache: Path) 
     assert metadata["subtitles"][0].get_text().endswith(f"Mean: {mean:.3f}")
 
 
+@pytest.mark.parametrize("panels", [False, True])
+def test_shallow_latitude_band_title_spacing_passes_protocol(
+    coastline_cache: Path, panels: bool
+) -> None:
+    from sarb_aod.plots.protocol import validate_rendered_figures
+
+    options = dict(region="southern_ocean", start="2020-09-01", end="2020-09-30")
+    figure = (
+        maps.map_panels([_field(), _field()], ["modis", "viirs"], **options)
+        if panels
+        else maps.plot_map(_field(), **options)
+    )
+    assert validate_rendered_figures({"southern_ocean": figure})["passed"]
+
+
 def test_site_sizes_and_site_metric_map(coastline_cache: Path) -> None:
     sizes = maps.site_marker_sizes([0, 1, 25, 100, np.nan, -1])
     np.testing.assert_allclose(sizes, [0, 28, 60, 100, 0, 0])

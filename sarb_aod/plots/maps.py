@@ -24,6 +24,7 @@ from cartopy.io import Downloader
 from cartopy.util import add_cyclic_point
 from matplotlib.colors import BoundaryNorm, Colormap, Normalize, TwoSlopeNorm
 from matplotlib.figure import Figure
+from matplotlib.transforms import ScaledTranslation
 from numpy.typing import ArrayLike
 
 from sarb_aod.evaluation.regions import Region, get_region, spatial_mask
@@ -362,10 +363,19 @@ def _quantity(kind: FieldKind, quantity: str | None) -> str:
 
 def _title(ax: Any, title: str, subtitle: str) -> tuple[Any, Any]:
     labeling.validate_title(title)
-    heading = ax.set_title(title, y=1.15, pad=0)
+    # Physical spacing stays legible for shallow latitude bands as well as
+    # global and tall regional extents. Axes-fraction offsets collapse when
+    # the map's geographic aspect ratio makes the axes short.
     detail = ax.text(
-        0.5, 1.055, subtitle, transform=ax.transAxes, ha="center", va="bottom", fontsize="small"
+        0.5,
+        1.0,
+        subtitle,
+        transform=ax.transAxes + ScaledTranslation(0, 8 / 72, ax.figure.dpi_scale_trans),
+        ha="center",
+        va="bottom",
+        fontsize="small",
     )
+    heading = ax.set_title(title, y=1.0, pad=detail.get_fontsize() + 18)
     return heading, detail
 
 

@@ -39,6 +39,7 @@ from sarb_aod.paths import aeronet_path, output_path
 from sarb_aod.pipeline import (
     config_sha256,
     discover_granules,
+    processing_sha256,
     require_processing_provenance,
     stream_recipes,
 )
@@ -182,22 +183,33 @@ def _std(values: NDArray[np.float64]) -> float:
 
 
 def _aeronet_stats(
-    rows: pd.DataFrame, *, minimum: int, include_extrapolated: bool, instrument_sigma: float
+    rows: pd.DataFrame,
+    *,
+    minimum: int,
+    include_extrapolated: bool,
+    instrument_sigma: float,
+    retain_sensitivity_candidates: bool = False,
 ) -> dict[str, Any] | None:
     usable = rows.loc[np.isfinite(rows["aod_550nm"]) & rows["aod_550nm"].gt(0)]
     direct = usable.loc[usable["spectral_flag"] != "extrapolated"]
     selected = usable if include_extrapolated else direct
-    if len(selected) < minimum:
+    primary_eligible = len(selected) >= minimum
+    if len(usable) < minimum or (not primary_eligible and not retain_sensitivity_candidates):
         return None
     values = selected["aod_550nm"].to_numpy(dtype=np.float64)
     all_values = usable["aod_550nm"].to_numpy(dtype=np.float64)
     no_extra = direct["aod_550nm"].to_numpy(dtype=np.float64)
     has_direct = no_extra.size >= minimum
     return {
-        "x": float(np.mean(values)),
-        "x_std": _std(values),
+        "primary_eligible": primary_eligible,
+        "x": float(np.mean(values)) if primary_eligible else float("nan"),
+        "x_std": _std(values) if primary_eligible else float("nan"),
         "n_aeronet": len(values),
-        "sigma_x": window_uncertainty(values, instrument_sigma=instrument_sigma),
+        "sigma_x": (
+            window_uncertainty(values, instrument_sigma=instrument_sigma)
+            if primary_eligible
+            else float("nan")
+        ),
         "aeronet_extrapolated_count": len(usable) - len(direct),
         "x_including_extrapolated": float(np.mean(all_values)),
         "n_aeronet_including_extrapolated": len(all_values),
@@ -233,7 +245,11 @@ def _site_metadata(rows: pd.DataFrame, timestamp: pd.Timestamp, grid: GridSpec) 
         "lat_index": int(ilat),
         "lon_index": int(ilon),
         "aeronet_level": str(reference["aeronet_level"]),
-        "regions": ",".join(regions_for_location(lon, lat, time=timestamp.to_pydatetime())),
+        # Region activity uses the UTC date, so sub-microsecond precision is
+        # immaterial here; preserve it in the separate matchup time column.
+        "regions": ",".join(
+            regions_for_location(lon, lat, time=timestamp.floor("us").to_pydatetime())
+        ),
     }
 
 
@@ -264,14 +280,21 @@ def flag_representativeness(
     if output.empty:
         return output
     known = dict(coastal_sites or {})
-    l2 = output.loc[output["level"] == "l2"]
+    primary = output.loc[
+        np.isfinite(output["x"].to_numpy(dtype=float))
+        & np.isfinite(output["y"].to_numpy(dtype=float))
+    ]
+    l2 = primary.loc[primary["level"] == "l2"]
     for site, rows in l2.groupby("site"):
         known[str(site)] = bool(rows["surface"].eq("coastal").mean() > 0.5)
     output["high_elevation"] = output["elevation"].gt(high_elevation_m)
     output["coastal_known"] = output["site"].isin(known)
     output["coastal_site"] = output["site"].map(known).fillna(False).astype(bool)
     keys = ["run", "window_start", "lat_index", "lon_index"]
-    output["active_sites_in_cell"] = output.groupby(keys, dropna=False)["site"].transform("nunique")
+    active = primary.groupby(keys, dropna=False)["site"].nunique()
+    output["active_sites_in_cell"] = (
+        pd.MultiIndex.from_frame(output[keys]).map(active).fillna(0).astype(int)
+    )
     output["multiple_sites"] = output["active_sites_in_cell"] > 1
     return output
 
@@ -286,6 +309,7 @@ def collocate_l2(
     spectral: SpectralMethod = "quadratic_loglog",
     include_extrapolated: bool = True,
     instrument_sigma: float = 0.01,
+    retain_sensitivity_candidates: bool = False,
 ) -> pd.DataFrame:
     """Match site/stream overpasses, merging adjacent granule pieces before pairing.
 
@@ -361,6 +385,7 @@ def collocate_l2(
                 minimum=opts.min_aeronet,
                 include_extrapolated=include_extrapolated,
                 instrument_sigma=instrument_sigma,
+                retain_sensitivity_candidates=retain_sensitivity_candidates,
             )
             if stats is None:
                 continue
@@ -418,6 +443,7 @@ def _cam7_hour_stats(rows: pd.DataFrame, instrument_sigma: float) -> dict[str, A
     individual = individual[np.isfinite(individual)]
     sigma = window_uncertainty(individual, instrument_sigma=instrument_sigma)
     return {
+        "primary_eligible": True,
         "x": mean,
         "x_std": _std(individual),
         "n_aeronet": len(rows),
@@ -447,6 +473,7 @@ def collocate_grid(
     instrument_sigma: float = 0.01,
     recipes: Sequence[StreamRecipe] = (),
     coastal_sites: Mapping[str, bool] | None = None,
+    retain_sensitivity_candidates: bool = False,
 ) -> pd.DataFrame:
     """Pair a three-hour field with containing-cell sites, using half-open times."""
     if pairing not in {"default", "cam7"}:
@@ -492,6 +519,7 @@ def collocate_grid(
                     minimum=opts.min_aeronet_grid,
                     include_extrapolated=include_extrapolated,
                     instrument_sigma=instrument_sigma,
+                    retain_sensitivity_candidates=retain_sensitivity_candidates,
                 )
             )
             if stats is None:
@@ -554,16 +582,26 @@ def write_matchups(
     variables = {}
     for name in frame.columns:
         values = frame[name]
-        if pd.api.types.is_datetime64_any_dtype(values.dtype):
+        inferred = pd.api.types.infer_dtype(values, skipna=True)
+        if pd.api.types.is_datetime64_any_dtype(values.dtype) or inferred in {
+            "datetime",
+            "datetime64",
+            "date",
+        }:
             data = (
                 pd.to_datetime(values, utc=True)
                 .dt.tz_convert(None)
                 .to_numpy(dtype="datetime64[ns]")
             )
-        elif pd.api.types.is_bool_dtype(values.dtype):
+        elif pd.api.types.is_bool_dtype(values.dtype) or inferred == "boolean":
             data = values.to_numpy(dtype=np.uint8)
-        elif pd.api.types.is_numeric_dtype(values.dtype):
-            data = values.to_numpy()
+        elif pd.api.types.is_numeric_dtype(values.dtype) or inferred in {
+            "integer",
+            "floating",
+            "mixed-integer-float",
+            "decimal",
+        }:
+            data = pd.to_numeric(values, errors="raise").to_numpy()
         else:
             data = values.fillna("").astype(str).to_numpy(dtype=str)
         variables[name] = (("matchup",), data)
@@ -577,6 +615,8 @@ def write_matchups(
         }
     )
     for key, value in (attributes or {}).items():
+        if isinstance(value, np.generic):
+            value = value.item()
         dataset.attrs[key] = (
             value if isinstance(value, (str, int, float)) else json.dumps(value, sort_keys=True)
         )
@@ -638,15 +678,16 @@ def build_matchups(
         include_extrapolated=config.aeronet.include_extrapolated,
         instrument_sigma=config.aeronet.instrument_sigma,
         recipes=recipes,
+        retain_sensitivity_candidates=True,
     )
     sources: set[str] = set()
     if level == "l2":
 
         def batches() -> Iterable[tuple[str, PixelBatch]]:
             for day in config.period.days():
-                inputs, _, _ = discover_granules(config, day, recipes)
-                if not inputs:
-                    raise FileNotFoundError(f"No L2 granules for {day}")
+                inputs, _, primary_count = discover_granules(config, day, recipes)
+                if not primary_count:
+                    raise FileNotFoundError(f"No primary L2 granules for {day}")
                 for path, selected in inputs:
                     if str(path) in sources:
                         continue
@@ -703,6 +744,8 @@ def build_matchups(
             "level": level,
             "pairing": pairing,
             "config_sha256": config_sha256(config),
+            "processing_sha256": processing_sha256(config),
+            "retains_sensitivity_candidates": 1,
             "config": config.model_dump(mode="json"),
             "collocation_options": asdict(opts),
             "source_files": sorted(sources),
