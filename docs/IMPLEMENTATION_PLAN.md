@@ -49,7 +49,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; September staging audited 29,856/29,856 |
 | 3 | AERONET validation suite; choose ρ and other defaults | In progress |
 | 4 | Plotting and diagnostics (DAVINCI style) | In progress |
-| 5 | Production profile (AMI), multi-year runs | Blocked: AMI details from the user |
+| 5 | Production profile (AMI), multi-year runs | Portable monthly driver done; AMI deployment blocked on site details |
 
 ### Tasks, dependencies and order
 
@@ -85,11 +85,12 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
-| 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | Task 2.4 (this commit) |
+| 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | a733ece |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
 | 4.6 | Full plot runs | 3.7 | Not started | |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
-| 5.x | AMI production | blocked: AMI details | Blocked | |
+| 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | Task 5.1 (this commit) |
+| 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
 (SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, ~213 GiB). MODIS
@@ -1151,8 +1152,13 @@ network access to LAADS and AERONET.
 
 - Fill in `config/profiles/ami.yaml`, including `paths.cartopy_data_dir` with prefetched
   coastlines.
-- Multi-year driver (month chunks), throughput measurement, storage estimate (L2 inputs versus
-  outputs; outputs ≈ 8 files/day × ~1 MB).
+- Task 5.1 provides `sarb-aod grid-months`, preserving the original processing
+  configuration in every daily worker, with monthly summaries, atomic metrics,
+  resume/failure handling, and collision checks. See `docs/AMI_PRODUCTION.md`.
+  Measured output sizes are 4.04 MiB/file for MODIS and 5.74 MiB/file for mixed
+  streams (11.53/16.36 GiB per 365-day run), replacing the preliminary ~1 MB estimate.
+- Task 5.2 confirms the site-specific profile and scheduler, measures AMI throughput,
+  and executes the requested multi-year production period after those details arrive.
 
 ---
 
@@ -1323,6 +1329,14 @@ network access to LAADS and AERONET.
   complete checks from science acceptance, validates cached retrieval definitions
   and digests, and passes analytic/regression tests, full gates and review.
   See `docs/validation/sept2020_verification.md` and its exact tables/JSON.
+
+- Task 5.1: monthly orchestration passes ten tests covering calendar boundaries,
+  resume, partial failures, configuration identity, path collisions and CLI exit
+  status. Fresh one-day development benchmarks produced eight validated files
+  each: 310 MODIS granules in 5.165 grid seconds and 865 mixed granules in
+  25.354 seconds. Storage measurements use audited manifests and real outputs.
+  Full tests, typing, format checks and review pass. These measurements do not
+  claim AMI performance or deployment; site-specific work remains Task 5.2.
 
 ## Open items and risks
 
