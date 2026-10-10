@@ -47,7 +47,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done** (code; Task 0.1). Data: July 2008 MODIS C6.1 staged and audited (9,518/9,518). Sept 2020 staging runs detached in `screen -S sarb-stage`; it is complete when `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log` ends with `=== audit exit 0 ===`. Never kill or restart that session while it runs; a re-run resumes. |
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Not started; real-data steps wait for the Sept 2020 staging |
-| 3 | AERONET validation suite; choose ρ and other defaults | Not started |
+| 3 | AERONET validation suite; choose ρ and other defaults | In progress |
 | 4 | Plotting and diagnostics (DAVINCI style) | Not started |
 | 5 | Production profile (AMI), multi-year runs | Blocked: AMI details from the user |
 
@@ -61,7 +61,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 |---|---|---|---|---|
 | 0.1 | Tooling hygiene, env (pandas/matplotlib/cartopy/seaborn), AERONET fixtures | — | Done | 43d059e |
 | 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Done | e00f9bd |
-| 1.6 | Numba kernels | 1.5 | Done | Task 1.6 (this commit) |
+| 1.6 | Numba kernels | 1.5 | Done | 1613bbb |
 | 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
 | 1.2 | QC presets | 1.1 | Not started | |
 | 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
@@ -69,7 +69,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.7 | Weighting (GLS, count) | 1.6 | Not started | |
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Not started | |
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
-| 3.4 | Regions | — | Not started | |
+| 3.4 | Regions | — | Done | Task 3.4 (this commit) |
 | 3.1 | AERONET fetcher | — | Not started | |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Not started | |
 | 3.3 | Metrics, grouped statistics | — | Not started | |
@@ -1173,6 +1173,12 @@ network access to LAADS and AERONET.
   floating rtol/atol 1e-12). On macOS arm64, warmed one-million-pixel f09/four-stream
   runs took 0.0545, 0.0489, 0.0490 s: best 20.4 million pixels/s (target 10 million).
   Nine accumulators occupy 127.4 MB for four streams. Offline gates and review pass.
+
+- Task 3.4: twelve DAVINCI aerosol rectangles/aliases and CAM7 display names,
+  plus global, Southern Ocean (<40° S), and dated Labor Day Smoke region.
+  Thirty-four tests cover overlapping membership, inclusive edges, normalized
+  longitude, UTC activity dates, aliases, and explicit extent overrides.
+  Offline gates and review pass; global membership is computed independently.
 
 ## Open items and risks
 
