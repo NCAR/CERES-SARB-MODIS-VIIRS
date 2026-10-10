@@ -156,7 +156,9 @@ def stage(
             missing = sum(
                 1
                 for row in rows
-                if verify_file(row.local_path, row.size_bytes, spec.file_format, cfg.stage.size_rtol)
+                if verify_file(
+                    row.local_path, row.size_bytes, spec.file_format, cfg.stage.size_rtol
+                )
             )
             summary.already_present = len(rows) - missing
             log(f"{label}: dry run, {missing} to download, e.g. {rows[0].local_path}")
@@ -211,7 +213,9 @@ def audit(cfg: RunConfig) -> list[AuditResult]:
         rows = read_manifest(path)
         problems = []
         for row in rows:
-            problem = verify_file(row.local_path, row.size_bytes, spec.file_format, cfg.stage.size_rtol)
+            problem = verify_file(
+                row.local_path, row.size_bytes, spec.file_format, cfg.stage.size_rtol
+            )
             if problem:
                 problems.append(f"{row.granule}: {problem}")
         results.append(AuditResult(path, len(rows), len(rows) - len(problems), problems))

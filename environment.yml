@@ -15,10 +15,17 @@ channels:
 dependencies:
   - python=3.13
 
-  # Numerics: arrays, numba-compiled swath->grid binning, labeled I/O
+  # Numerics: arrays, numba-compiled swath->grid binning, labeled I/O, tables
   - numpy=2.4.*
   - numba=0.65.*
   - xarray=2026.4.*
+  - pandas=3.0.*
+
+  # Plotting (Phase 4; DAVINCI pins). Natural Earth coastlines are prefetched into
+  # the profile's paths.cartopy_data_dir (mac: ~/Data/cartopy) so maps render offline.
+  - matplotlib=3.11.*
+  - cartopy=0.25.*
+  - seaborn=0.13.*   # only for DAVINCI apply_ncar_style's whitegrid theme
 
   # File formats: HDF4 (MODIS C6.1), NetCDF4/HDF5 (MODIS C7, VIIRS, CAM7 outputs)
   - pyhdf
@@ -35,7 +42,7 @@ dependencies:
   - pytest
   - pytest-cov
   - mypy
-  - black
+  - black=26.*
   - isort
 
   - pip

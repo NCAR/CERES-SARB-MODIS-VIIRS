@@ -63,7 +63,9 @@ def _size_bytes(granule: Any, name: str) -> int:
     return 0
 
 
-def to_record(granule: Any, short_name: str, collection: str, spec: CollectionSpec) -> GranuleRecord:
+def to_record(
+    granule: Any, short_name: str, collection: str, spec: CollectionSpec
+) -> GranuleRecord:
     """Normalize an earthaccess ``DataGranule`` into a ``GranuleRecord``."""
     links = list(granule.data_links())
     extensions = _EXTENSIONS[spec.file_format]

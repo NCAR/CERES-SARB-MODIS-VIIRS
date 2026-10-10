@@ -52,12 +52,22 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = ["earthaccess.*", "pyhdf.*", "netCDF4.*", "yaml.*"]
+module = [
+    "earthaccess.*",
+    "pyhdf.*",
+    "netCDF4.*",
+    "yaml.*",
+    "numba.*",
+    "pandas.*",
+    "cartopy.*",
+    "shapely.*",
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short"
 markers = [
-    "network: tests that reach NASA CMR/LAADS (deselect with -m 'not network')",
+    "network: tests that reach NASA CMR/LAADS or AERONET (deselect with -m 'not network')",
+    "real_data: tests that read staged L2 granules; skipped when the profile's data_root has none",
 ]

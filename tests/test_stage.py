@@ -48,8 +48,10 @@ class FakeNetwork:
     def download(self, records, dest, threads):
         for record in records:
             self.downloads.append(record.name)
-            body = self.payload if self.payload is not None else (
-                HDF4_MAGIC + b"\0" * (record.size_bytes - len(HDF4_MAGIC))
+            body = (
+                self.payload
+                if self.payload is not None
+                else (HDF4_MAGIC + b"\0" * (record.size_bytes - len(HDF4_MAGIC)))
             )
             (dest / record.name).write_bytes(body)
 
@@ -172,6 +174,8 @@ def test_to_record_reads_umm_size_with_units():
 
 def test_product_and_collection_filters(cfg):
     net = FakeNetwork()
-    summaries = stage(cfg, dry_run=True, hooks=net.hooks(), products=["MYD04_L2"], log=lambda _: None)
+    summaries = stage(
+        cfg, dry_run=True, hooks=net.hooks(), products=["MYD04_L2"], log=lambda _: None
+    )
     assert [(s.short_name, s.collection) for s in summaries] == [("MYD04_L2", "6.1")]
     assert stage(cfg, dry_run=True, hooks=net.hooks(), collections=["7"], log=lambda _: None) == []

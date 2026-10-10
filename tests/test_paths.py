@@ -17,7 +17,9 @@ def test_default_layout_is_product_year_month_day():
 
 
 def test_alternate_layout_template():
-    paths = PathsConfig(data_root=Path("/archive"), granule_dir="{data_root}/{file_token}/{short_name}/{year}/{doy}")
+    paths = PathsConfig(
+        data_root=Path("/archive"), granule_dir="{data_root}/{file_token}/{short_name}/{year}/{doy}"
+    )
     assert granule_dir(paths, load_catalog(), "MOD04_L2", "6.1", date(2008, 7, 1)) == Path(
         "/archive/061/MOD04_L2/2008/183"
     )
@@ -32,6 +34,6 @@ def test_manifest_path():
 
 def test_viirs_layout():
     paths = PathsConfig(data_root=Path("/data"))
-    assert granule_dir(paths, load_catalog(), "AERDB_L2_VIIRS_NOAA20", "2.1", date(2020, 9, 8)) == Path(
-        "/data/NOAA-20/VIIRS/AERDB_L2_VIIRS_NOAA20.021/2020/09/08"
-    )
+    assert granule_dir(
+        paths, load_catalog(), "AERDB_L2_VIIRS_NOAA20", "2.1", date(2020, 9, 8)
+    ) == Path("/data/NOAA-20/VIIRS/AERDB_L2_VIIRS_NOAA20.021/2020/09/08")

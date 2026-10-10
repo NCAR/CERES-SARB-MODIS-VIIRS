@@ -107,7 +107,9 @@ def test_unknown_key_rejected(tmp_path):
 
 
 def test_unknown_template_placeholder_rejected(tmp_path):
-    run = write(tmp_path / "r.yaml", "paths: {data_root: /a, granule_dir: '{data_root}/{yr}'}\n" + RUN)
+    run = write(
+        tmp_path / "r.yaml", "paths: {data_root: /a, granule_dir: '{data_root}/{yr}'}\n" + RUN
+    )
     with pytest.raises(ConfigurationError, match="yr"):
         load_config(run)
 
