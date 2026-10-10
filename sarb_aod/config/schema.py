@@ -289,6 +289,37 @@ class QCConfig(StrictModel):
         return self
 
 
+def _default_envelopes() -> (
+    dict[Literal["modis_dt", "viirs_dt"], dict[Surface, tuple[float, float]]]
+):
+    return {
+        "modis_dt": {"land": (0.05, 0.15), "ocean": (0.03, 0.10)},
+        "viirs_dt": {"land": (0.05, 0.15), "ocean": (0.05, 0.15)},
+    }
+
+
+class UncertaintyConfig(StrictModel):
+    sigma_floor: float = Field(default=0.01, gt=0, allow_inf_nan=False)
+    envelopes: dict[Literal["modis_dt", "viirs_dt"], dict[Surface, tuple[float, float]]] = Field(
+        default_factory=_default_envelopes
+    )
+
+    @field_validator("envelopes")
+    @classmethod
+    def _coefficients(
+        cls, value: dict[Literal["modis_dt", "viirs_dt"], dict[Surface, tuple[float, float]]]
+    ) -> dict[Literal["modis_dt", "viirs_dt"], dict[Surface, tuple[float, float]]]:
+        import math
+
+        for surfaces in value.values():
+            for coefficients in surfaces.values():
+                if any(not math.isfinite(c) or c < 0 for c in coefficients):
+                    raise ValueError(
+                        "uncertainty envelope coefficients must be finite and nonnegative"
+                    )
+        return value
+
+
 class AeronetConfig(StrictModel):
     """AERONET spectral conversion and reference uncertainty."""
 
@@ -303,6 +334,7 @@ class RunConfig(StrictModel):
     paths: PathsConfig
     period: Period
     stage: StageConfig
+    uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
     qc: QCConfig = Field(default_factory=QCConfig)
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)

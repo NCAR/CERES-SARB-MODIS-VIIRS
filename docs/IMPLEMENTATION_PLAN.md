@@ -63,8 +63,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Done | e00f9bd |
 | 1.6 | Numba kernels | 1.5 | Done | 1613bbb |
 | 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
-| 1.2 | QC presets | 1.1 | Done | Task 1.2 (this commit) |
-| 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
+| 1.2 | QC presets | 1.1 | Done | d357b79 |
+| 1.3 | Per-pixel uncertainty | 1.1 | Done | Task 1.3 (this commit) |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
 | 1.7 | Weighting (GLS, count) | 1.6 | Not started | |
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Not started | |
@@ -1192,6 +1192,11 @@ network access to LAADS and AERONET.
   cam7_v2 retains unrounded scaling and nonnegative AOD. On 16 real July 1 granules,
   default DT QC matches the combined product exactly (76,368 finite pixels).
   Repository gates and review pass.
+
+- Task 1.3: separate MODIS/VIIRS DT envelopes and retrieval-provided DB sigma
+  pass 13 focused cases. Missing/masked sigma stays NaN; valid negative DB envelopes
+  use magnitude and the configurable floor. Supplied DT sigma takes precedence.
+  Repository gates pass; review prompted an explicit masked-sigma regression.
 
 ## Open items and risks
 
