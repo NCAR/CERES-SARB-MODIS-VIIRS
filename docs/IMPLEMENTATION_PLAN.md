@@ -60,8 +60,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | Task | Title | Depends on | State | Commit |
 |---|---|---|---|---|
 | 0.1 | Tooling hygiene, env (pandas/matplotlib/cartopy/seaborn), AERONET fixtures | — | Done | 43d059e |
-| 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Done | Task 1.5 (this commit) |
-| 1.6 | Numba kernels | 1.5 | Not started | |
+| 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Done | e00f9bd |
+| 1.6 | Numba kernels | 1.5 | Done | Task 1.6 (this commit) |
 | 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
 | 1.2 | QC presets | 1.1 | Not started | |
 | 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
@@ -1166,6 +1166,13 @@ network access to LAADS and AERONET.
 - Task 1.5: f09/file-grid validation, canonical bounds, UTC half-open windows and
   leap-correct TAI93 conversion pass 45 focused tests. Inserted leap-second instants
   become NaT/NaN because NumPy cannot represent 23:59:60. All offline gates and review pass.
+
+- Task 1.6: DAVINCI ports retain their argument and axis order. The extended
+  accumulator/count kernel uses half-open time and inclusive spatial edges;
+  100,000 random pixels match an independent NumPy reference (integer exact,
+  floating rtol/atol 1e-12). On macOS arm64, warmed one-million-pixel f09/four-stream
+  runs took 0.0545, 0.0489, 0.0490 s: best 20.4 million pixels/s (target 10 million).
+  Nine accumulators occupy 127.4 MB for four streams. Offline gates and review pass.
 
 ## Open items and risks
 
