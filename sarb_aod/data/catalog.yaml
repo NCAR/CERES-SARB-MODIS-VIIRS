@@ -1,0 +1,55 @@
+# Product catalog: L2 aerosol products and their processing collections.
+#
+# Collection keys equal the CMR VersionId. Fields:
+#   cmr_version  CMR/earthaccess VersionId (MODIS C6.1 is "6.1", not "61")
+#   file_token   version token embedded in granule filenames (".061.", ".007.", ".021.")
+#   file_format  on-disk format, used for integrity checks and reader dispatch
+#
+# Availability notes (CMR/LAADS, verified 2026-10-10):
+# - MODIS C7: CMR "7", token "007", NetCDF4. LAADS publishes only C7 L1B/geolocation
+#   (MOD02*/MOD03) so far; MOD04_L2/MYD04_L2 C7 return zero granules until released.
+# - VIIRS Deep Blue v2.1 (token "021"): NOAA-20 reprocessed back to 2018; SNPP v2.1
+#   covers only 2026-06 onward, so SNPP history needs v2 (token "002").
+# - VIIRS Dark Target: v2.1 only.
+
+products:
+  MOD04_L2:
+    platform: Terra
+    instrument: MODIS
+    provider: LAADS
+    collections:
+      "6.1": {cmr_version: "6.1", file_token: "061", file_format: hdf4}
+      "7": {cmr_version: "7", file_token: "007", file_format: netcdf4}
+  MYD04_L2:
+    platform: Aqua
+    instrument: MODIS
+    provider: LAADS
+    collections:
+      "6.1": {cmr_version: "6.1", file_token: "061", file_format: hdf4}
+      "7": {cmr_version: "7", file_token: "007", file_format: netcdf4}
+  AERDB_L2_VIIRS_SNPP:
+    platform: SNPP
+    instrument: VIIRS
+    provider: LAADS
+    collections:
+      "2": {cmr_version: "2", file_token: "002", file_format: netcdf4}
+      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+  AERDB_L2_VIIRS_NOAA20:
+    platform: NOAA-20
+    instrument: VIIRS
+    provider: LAADS
+    collections:
+      "2": {cmr_version: "2", file_token: "002", file_format: netcdf4}
+      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+  AERDT_L2_VIIRS_SNPP:
+    platform: SNPP
+    instrument: VIIRS
+    provider: LAADS
+    collections:
+      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+  AERDT_L2_VIIRS_NOAA20:
+    platform: NOAA-20
+    instrument: VIIRS
+    provider: LAADS
+    collections:
+      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}

@@ -1,0 +1,26 @@
+# September 2020 MODIS + VIIRS L2 aerosol: the Labor Day 2020 western US fires
+# (Oregon/Washington/California smoke, ~Sept 7-20). Exercises extreme AOD, smoke/cloud
+# confusion in Dark Target, and MODIS/VIIRS mixing (Aqua, SNPP and NOAA-20 all cross
+# near 13:30 local time).
+#
+# Versions: VIIRS Deep Blue v2 on both platforms is the consistent baseline; NOAA-20
+# Deep Blue v2.1 is staged as a version comparison (SNPP v2.1 is not reprocessed for
+# 2020). VIIRS Dark Target exists only as v2.1. MODIS C7 is listed so it stages
+# automatically once LAADS publishes it.
+#   sarb-aod stage -c config/runs/modis_viirs_l2_202009.yaml --dry-run
+profile: mac
+
+period:
+  start: 2020-09-01
+  end: 2020-09-30
+
+stage:
+  products:
+    MOD04_L2: ["6.1", "7"]
+    MYD04_L2: ["6.1", "7"]
+    AERDB_L2_VIIRS_SNPP: ["2"]
+    AERDB_L2_VIIRS_NOAA20: ["2", "2.1"]
+    AERDT_L2_VIIRS_SNPP: ["2.1"]
+    AERDT_L2_VIIRS_NOAA20: ["2.1"]
+  auth_strategy: netrc
+  threads: 8

@@ -1,0 +1,9 @@
+# AMI production system. Paths are not yet known, so the root comes from the
+# environment and loading fails loudly if it is unset:
+#   export SARB_AOD_DATA_ROOT=/path/on/ami
+# Adjust granule_dir to AMI's existing archive layout if it differs (for example
+# LAADS-style "{short_name}/{year}/{doy}" or a collection-first tree).
+paths:
+  data_root: ${SARB_AOD_DATA_ROOT}
+  granule_dir: "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/{year}/{month}/{day}"
+  manifest: "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/manifests/manifest_{start}_{end}.tsv"

@@ -1,0 +1,41 @@
+# Conda environment for sarb_aod: a minimal subset of the DAVINCI env (same pins).
+#
+# Works with Miniconda, Miniforge, or Mambaforge. Everything comes from conda-forge
+# (pyhdf and earthaccess are conda-forge only); `nodefaults` keeps Miniconda from
+# mixing in, or requiring terms-of-service acceptance for, Anaconda's default channel.
+#
+#   conda env create -f environment.yml        # or: mamba env create -f environment.yml
+#   conda activate sarb-aod
+#   python -m pip install --no-deps -e .
+#   pytest
+name: sarb-aod
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.13
+
+  # Numerics: arrays, numba-compiled swath->grid binning, labeled I/O
+  - numpy=2.4.*
+  - numba=0.65.*
+  - xarray=2026.4.*
+
+  # File formats: HDF4 (MODIS C6.1), NetCDF4/HDF5 (MODIS C7, VIIRS, CAM7 outputs)
+  - pyhdf
+  - netCDF4=1.7.*
+
+  # Configuration, CLI, NASA Earthdata acquisition
+  - pydantic=2.*
+  - pyyaml
+  - typer
+  - rich
+  - earthaccess
+
+  # Development and tests
+  - pytest
+  - pytest-cov
+  - mypy
+  - black
+  - isort
+
+  - pip

@@ -1,0 +1,5 @@
+# NCAR derecho. Same product/YYYY/MM/DD layout under the CAM7 project data root.
+paths:
+  data_root: /glade/work/fillmore/Data/CERES-SARB-MODIS-VIIRS
+  granule_dir: "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/{year}/{month}/{day}"
+  manifest: "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/manifests/manifest_{start}_{end}.tsv"

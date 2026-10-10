@@ -1,0 +1,17 @@
+# July 2008 MODIS L2 aerosol, Terra + Aqua, Collections 6.1 and 7.
+# July 2008 predates VIIRS, so this month is MODIS-only.
+#   sarb-aod stage -c config/runs/modis_l2_200807.yaml --dry-run
+#   sarb-aod stage -c config/runs/modis_l2_200807.yaml
+# The machine profile can be overridden with --profile or SARB_AOD_PROFILE.
+profile: mac
+
+period:
+  start: 2008-07-01
+  end: 2008-07-31
+
+stage:
+  products:
+    MOD04_L2: ["6.1", "7"]
+    MYD04_L2: ["6.1", "7"]
+  auth_strategy: netrc
+  threads: 8

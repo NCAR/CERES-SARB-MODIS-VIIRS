@@ -1,0 +1,9 @@
+# Development laptop (macOS). Granules land under
+#   ~/Data/<Platform>/<Instrument>/<SHORTNAME>.<token>/YYYY/MM/DD/
+# e.g. ~/Data/Terra/MODIS/MOD04_L2.061/2008/07/01/
+# "<SHORTNAME>.<token>" follows NASA's DOI naming (10.5067/MODIS/MOD04_L2.061),
+# so Collections 6.1 and 7 never share a directory.
+paths:
+  data_root: ~/Data
+  granule_dir: "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/{year}/{month}/{day}"
+  manifest: "{data_root}/{platform}/{instrument}/{short_name}.{file_token}/manifests/manifest_{start}_{end}.tsv"
