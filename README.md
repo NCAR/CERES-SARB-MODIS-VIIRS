@@ -85,3 +85,29 @@ into `<day>/.partial/`, and moved into place only after the byte count matches C
 file starts with the expected HDF4/HDF5 signature. Re-runs skip verified files and replace
 truncated or corrupt ones. A collection with no granules in CMR is reported as unavailable,
 not as an error.
+
+## Gridding and CAM7 output
+
+Gridding selects one collection per platform/algorithm stream in `grid.streams`.
+Default QC follows the retrieval teams; `weighting.method` chooses correlated-error
+GLS (default, `rho: 0.5`) or count weighting. The `cam7_v2` preset reproduces CAM7's
+diagnostic four-stream product with its legacy time/scaling choices.
+
+```bash
+sarb-aod grid -c config/runs/modis_l2_200807.yaml --workers 2
+sarb-aod summarize -c config/runs/modis_l2_200807.yaml
+sarb-aod validate /path/to/output/directory
+sarb-aod show-config -c config/runs/modis_l2_200807.yaml
+```
+
+Use `--day YYYY-MM-DD` for one day and `--overwrite` to recompute valid output.
+Reruns reuse a day only when all eight files satisfy the contract, have the correct
+window times, and match the processing definition, including catalog variable maps.
+A failed day returns exit status 1 while successful days remain available.
+
+`paths.output` controls the layout; `{run}` defaults to the run-config filename stem.
+By default files live in `{data_root}/CAM7/{stem}/{run}/YYYY/MM/DD/` and carry scalar
+window-center time, f09 bounds, per-stream counts/means, uncertainty and QC diagnostics.
+`show-config` prints CAM's `aod_obs_path` (with the required trailing slash) and
+`aod_obs_template`. Summaries use `paths.summary`; their period mean is area-weighted
+across count-weighted cell means. Summarization rejects stale processing definitions.

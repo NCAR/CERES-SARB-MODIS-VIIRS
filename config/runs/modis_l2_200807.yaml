@@ -15,3 +15,12 @@ stage:
     MYD04_L2: ["6.1", "7"]
   auth_strategy: netrc
   threads: 8
+
+grid:
+  source: f09
+  times_per_day: 8
+  streams:
+    terra_dt: {product: MOD04_L2, collection: "6.1"}
+    terra_db: {product: MOD04_L2, collection: "6.1"}
+    aqua_dt: {product: MYD04_L2, collection: "6.1"}
+    aqua_db: {product: MYD04_L2, collection: "6.1"}

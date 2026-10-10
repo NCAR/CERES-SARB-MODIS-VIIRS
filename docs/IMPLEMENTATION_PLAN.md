@@ -67,8 +67,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.3 | Per-pixel uncertainty | 1.1 | Done | c9f966a |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Done | 5853522 |
 | 1.7 | Weighting (GLS, count) | 1.6 | Done | 3862a2e |
-| 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Done | bb40c69 + path-helper follow-up (this commit) |
-| 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
+| 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Done | bb40c69, fb1af85 |
+| 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Done | Task 1.9 (this commit) |
 | 3.4 | Regions | — | Done | 9433481 |
 | 3.1 | AERONET fetcher | — | Not started | |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
@@ -1218,6 +1218,13 @@ network access to LAADS and AERONET.
   use expanded dates/seconds. A staging omission required an immediate follow-up
   commit for the already-tested path helpers. Repository gates and review pass. The external derecho
   CAM `atm.log` consumption check remains an open deployment verification.
+
+- Task 1.9: end-to-end HDF4 tests produce eight valid files, exercise multi-process
+  days, preserve successful days on failure, repair corrupt or wrong-window files,
+  and reject stale summaries. Resume uses a processing hash including resolved
+  catalog recipes; evaluation/plot settings do not invalidate gridded values.
+  Review findings about catalog changes and downstream provenance are fixed.
+  Fifteen pipeline tests and repository gates pass.
 
 ## Open items and risks
 

@@ -192,6 +192,14 @@ class PathsConfig(StrictModel):
     granule_dir: str = DEFAULT_GRANULE_DIR
     manifest: str = DEFAULT_MANIFEST
     output: str = DEFAULT_OUTPUT
+    summary: str = "{data_root}/CAM7/{stem}/{run}/summary_{start}_{end}.tsv"
+
+    @field_validator("summary")
+    @classmethod
+    def _summary_fields(cls, value: str) -> str:
+        return _check_template(
+            value, frozenset({"data_root", "run", "stem", "start", "end"}), "paths.summary"
+        )
 
     @field_validator("output")
     @classmethod
@@ -259,12 +267,18 @@ class StageConfig(StrictModel):
         return [(name, c) for name, collections in self.products.items() for c in collections]
 
 
+class StreamSelection(StrictModel):
+    product: str
+    collection: str
+
+
 class GridConfig(StrictModel):
     """CAM f09 spatial grid and fixed three-hour windows."""
 
     source: str = "f09"
     times_per_day: Literal[8] = 8
     edge_granules: bool = False
+    streams: dict[str, StreamSelection] = Field(default_factory=dict)
 
     @field_validator("source")
     @classmethod
@@ -380,6 +394,20 @@ class RunConfig(StrictModel):
         catalog = load_catalog(self.catalog)
         for short_name, collection in self.stage.selections():
             catalog.collection(short_name, collection)
+        selected_collections: dict[str, str] = {}
+        for stream_id, selection in self.grid.streams.items():
+            product = catalog.product(selection.product)
+            collection_spec = catalog.collection(selection.product, selection.collection)
+            prefix, _, algorithm = stream_id.rpartition("_")
+            if prefix != product.stream_prefix or algorithm not in collection_spec.algorithms:
+                raise ValueError(
+                    f"invalid or unavailable stream {stream_id!r} for {selection.product} {selection.collection}"
+                )
+            if selection.collection not in self.stage.products.get(selection.product, []):
+                raise ValueError(f"grid stream {stream_id} must appear in stage.products")
+            previous = selected_collections.setdefault(selection.product, selection.collection)
+            if previous != selection.collection:
+                raise ValueError(f"all streams of {selection.product} must use the same collection")
         return self
 
     def load_catalog(self) -> Catalog:

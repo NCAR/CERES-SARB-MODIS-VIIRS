@@ -86,5 +86,75 @@ def audit(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -> None
     raise typer.Exit(1 if bad else 0)
 
 
+@app.command("grid")
+def grid_command(
+    config: Path = ConfigOpt,
+    profile: Optional[str] = ProfileOpt,
+    day: Optional[str] = typer.Option(None, "--day", help="Single UTC day YYYY-MM-DD"),
+    overwrite: bool = typer.Option(False, "--overwrite"),
+    workers: int = typer.Option(1, "--workers", min=1),
+) -> None:
+    """Grid configured streams into eight validated files per UTC day."""
+    from datetime import date
+
+    from sarb_aod.pipeline import grid_period
+
+    cfg = _load(config, profile)
+    try:
+        results = grid_period(
+            cfg, day=date.fromisoformat(day) if day else None, overwrite=overwrite, workers=workers
+        )
+    except ValueError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(2) from exc
+    for result in results:
+        if result.error:
+            typer.echo(f"{result.day}: FAILED: {result.error}", err=True)
+        else:
+            status = (
+                "already valid"
+                if result.skipped
+                else f"written ({result.source_granule_count} granules)"
+            )
+            typer.echo(f"{result.day}: {len(result.files)} files {status}")
+    raise typer.Exit(1 if any(result.error for result in results) else 0)
+
+
+@app.command("validate")
+def validate_command(
+    inputs: list[Path] = typer.Argument(..., help="NetCDF files or directories")
+) -> None:
+    """Check the CAM7 contract for every selected NetCDF file."""
+    from sarb_aod.contract import validate_contract_file
+
+    files = sorted(
+        {file for path in inputs for file in (path.rglob("*.nc") if path.is_dir() else [path])}
+    )
+    if not files:
+        typer.echo("No NetCDF files found", err=True)
+        raise typer.Exit(1)
+    failures = 0
+    for path in files:
+        valid, errors = validate_contract_file(path)
+        if not valid:
+            failures += 1
+            typer.echo(f"{path}: {'; '.join(errors)}", err=True)
+    typer.echo(f"{len(files)-failures}/{len(files)} files valid")
+    raise typer.Exit(1 if failures else 0)
+
+
+@app.command("summarize")
+def summarize_command(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -> None:
+    """Write coverage, AOD distribution, and stream-count summaries as TSV."""
+    from sarb_aod.summarize import summarize
+
+    try:
+        path, rows = summarize(_load(config, profile))
+    except (ValueError, OSError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(f"{path}: period AOD mean={rows[-1]['area_mean']:.6f}, p99.9={rows[-1]['p999']:.6f}")
+
+
 if __name__ == "__main__":
     app()
