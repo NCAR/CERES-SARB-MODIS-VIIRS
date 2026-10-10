@@ -1,0 +1,1114 @@
+{
+  "created_utc": "2026-10-10T21:05:53.201842+00:00",
+  "definition": "Strictly above the configured threshold in written aod_weighted_mean, with aod_count > 0. Percentages use all valid three-hour cell-windows. No additional filtering or clipping applied.",
+  "distribution_note": "written_aod_distribution pools unweighted three-hour cell-window means. monthly_aod_distribution pools count-weighted period cell means, one value per cell with data.",
+  "region_note": "Region rectangles overlap; regional counts are not additive.",
+  "runs": {
+    "modis_l2_200807_cam7_v2": {
+      "cell_windows_above_threshold": 3301,
+      "config": "config/runs/modis_l2_200807_cam7_v2.yaml",
+      "high_aod_distribution": {
+        "max": 4.997000217437744,
+        "min": 3.0001184940338135,
+        "p10": 3.1491429805755615,
+        "p50": 3.486428737640381,
+        "p90": 4.153250217437744,
+        "p99": 4.871800422668457,
+        "p999": 4.969350147247314
+      },
+      "high_count_distribution": {
+        "max": 215.0,
+        "min": 1.0,
+        "p10": 1.0,
+        "p50": 5.0,
+        "p90": 51.0,
+        "p99": 119.0,
+        "p999": 150.40000000000055
+      },
+      "high_count_eq_1": 592,
+      "high_count_ge_10": 1199,
+      "high_count_ge_100": 80,
+      "high_count_le_3": 1303,
+      "high_multiple_estimable_streams": 753,
+      "high_one_estimable_stream": 2548,
+      "monthly_aod_distribution": {
+        "max": 3.5283371780229653,
+        "min": 0.0,
+        "p10": 0.055063556172221466,
+        "p50": 0.1167579200881875,
+        "p90": 0.37773467668847976,
+        "p99": 1.0377011950620827,
+        "p999": 2.3587029126793237
+      },
+      "monthly_cells_above_threshold": 8,
+      "monthly_cells_with_data": 42113,
+      "monthly_high_examples": [
+        {
+          "aod": 3.5283371780229653,
+          "count": 92,
+          "latitude": 47.591623036649224,
+          "longitude": 170.0
+        },
+        {
+          "aod": 3.4120001047849655,
+          "count": 4,
+          "latitude": 71.15183246073298,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.307420509232991,
+          "count": 69,
+          "latitude": 48.53403141361255,
+          "longitude": 162.5
+        },
+        {
+          "aod": 3.298014954393133,
+          "count": 203,
+          "latitude": 44.764397905759154,
+          "longitude": 152.5
+        },
+        {
+          "aod": 3.286832153114654,
+          "count": 131,
+          "latitude": 44.764397905759154,
+          "longitude": 153.75
+        },
+        {
+          "aod": 3.156424381064646,
+          "count": 33,
+          "latitude": 42.87958115183247,
+          "longitude": 168.75
+        },
+        {
+          "aod": 3.0982626212760804,
+          "count": 80,
+          "latitude": 52.30366492146598,
+          "longitude": 165.0
+        },
+        {
+          "aod": 3.0857888222650183,
+          "count": 213,
+          "latitude": 46.64921465968587,
+          "longitude": 158.75
+        }
+      ],
+      "percent_cell_windows_above_threshold": 0.20448162267100944,
+      "period": {
+        "end": "2008-07-31",
+        "start": "2008-07-01"
+      },
+      "processing_sha256": "8799252e054138fd9dadbac14729456759aeef18897a4fd8f2e9713753cbc691",
+      "recurring_high_cells": [
+        {
+          "latitude": 24.031413612565444,
+          "longitude": 70.0,
+          "max_aod": 3.500000238418579,
+          "mean_aod": 3.2428627014160156,
+          "median_count": 23.0,
+          "total_count": 406,
+          "windows_above_threshold": 17
+        },
+        {
+          "latitude": 39.10994764397907,
+          "longitude": 116.25,
+          "max_aod": 3.6468825340270996,
+          "mean_aod": 3.46699595451355,
+          "median_count": 17.0,
+          "total_count": 341,
+          "windows_above_threshold": 11
+        },
+        {
+          "latitude": 76.80628272251309,
+          "longitude": -120.0,
+          "max_aod": 3.500000238418579,
+          "mean_aod": 3.379854679107666,
+          "median_count": 11.0,
+          "total_count": 145,
+          "windows_above_threshold": 11
+        },
+        {
+          "latitude": 40.0523560209424,
+          "longitude": 118.75,
+          "max_aod": 3.6266775131225586,
+          "mean_aod": 3.4166481494903564,
+          "median_count": 22.0,
+          "total_count": 395,
+          "windows_above_threshold": 10
+        },
+        {
+          "latitude": 40.0523560209424,
+          "longitude": 117.5,
+          "max_aod": 3.648458480834961,
+          "mean_aod": 3.2731971740722656,
+          "median_count": 19.5,
+          "total_count": 246,
+          "windows_above_threshold": 10
+        },
+        {
+          "latitude": 75.86387434554973,
+          "longitude": 143.75,
+          "max_aod": 3.500000238418579,
+          "mean_aod": 3.351569414138794,
+          "median_count": 7.5,
+          "total_count": 85,
+          "windows_above_threshold": 10
+        },
+        {
+          "latitude": 76.80628272251309,
+          "longitude": -121.25,
+          "max_aod": 3.500000238418579,
+          "mean_aod": 3.3989758491516113,
+          "median_count": 5.0,
+          "total_count": 62,
+          "windows_above_threshold": 10
+        },
+        {
+          "latitude": 38.16753926701571,
+          "longitude": 115.0,
+          "max_aod": 3.576500177383423,
+          "mean_aod": 3.4126319885253906,
+          "median_count": 43.0,
+          "total_count": 436,
+          "windows_above_threshold": 9
+        },
+        {
+          "latitude": 40.0523560209424,
+          "longitude": 116.25,
+          "max_aod": 3.7756001949310303,
+          "mean_aod": 3.3321237564086914,
+          "median_count": 5.0,
+          "total_count": 221,
+          "windows_above_threshold": 9
+        },
+        {
+          "latitude": 75.86387434554973,
+          "longitude": 138.75,
+          "max_aod": 3.500000238418579,
+          "mean_aod": 3.4587223529815674,
+          "median_count": 4.0,
+          "total_count": 54,
+          "windows_above_threshold": 9
+        }
+      ],
+      "regions": {
+        "canada": 87,
+        "east_asia": 432,
+        "eastern_us": 12,
+        "india": 90,
+        "middle_east": 72,
+        "north_africa": 8,
+        "north_atlantic_ocean": 131,
+        "north_indian_ocean": 57,
+        "south_america": 182,
+        "south_atlantic_ocean": 103,
+        "southern_africa": 90,
+        "southern_ocean": 76,
+        "western_us": 22
+      },
+      "streams": {
+        "aqua_db": {
+          "accepted_count_in_high_cells": 15709,
+          "fraction_raw_accepted_counts_in_high_cells": 0.2890872285609128,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.500000238418579,
+            "min": 0.5160000324249268,
+            "p10": 3.1314151525497436,
+            "p50": 3.463698625564575,
+            "p90": 3.500000238418579,
+            "p99": 3.500000238418579,
+            "p999": 3.500000238418579
+          },
+          "present_high_cell_windows": 994,
+          "stream_mean_above_threshold_cell_windows": 953
+        },
+        "aqua_dt": {
+          "accepted_count_in_high_cells": 8125,
+          "fraction_raw_accepted_counts_in_high_cells": 0.14952153110047847,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 4.997000217437744,
+            "min": 0.7020000219345093,
+            "p10": 3.056827354431152,
+            "p50": 3.7756001949310303,
+            "p90": 4.605000019073486,
+            "p99": 4.914207096099854,
+            "p999": 4.988046090126038
+          },
+          "present_high_cell_windows": 815,
+          "stream_mean_above_threshold_cell_windows": 760
+        },
+        "terra_db": {
+          "accepted_count_in_high_cells": 22005,
+          "fraction_raw_accepted_counts_in_high_cells": 0.4049503128450497,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.500000238418579,
+            "min": 0.6140000224113464,
+            "p10": 3.1434407234191895,
+            "p50": 3.4650001525878906,
+            "p90": 3.500000238418579,
+            "p99": 3.500000238418579,
+            "p999": 3.500000238418579
+          },
+          "present_high_cell_windows": 1645,
+          "stream_mean_above_threshold_cell_windows": 1593
+        },
+        "terra_dt": {
+          "accepted_count_in_high_cells": 8501,
+          "fraction_raw_accepted_counts_in_high_cells": 0.15644092749355906,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 4.9695000648498535,
+            "min": 0.10100000351667404,
+            "p10": 2.973833441734314,
+            "p50": 3.6804707050323486,
+            "p90": 4.619166851043701,
+            "p99": 4.941000461578369,
+            "p999": 4.969097785949707
+          },
+          "present_high_cell_windows": 806,
+          "stream_mean_above_threshold_cell_windows": 722
+        }
+      },
+      "valid_cell_windows": 1614326,
+      "window_coverage_percent": {
+        "max": 15.049913194444445,
+        "min": 8.675130208333332,
+        "windows_above_10_percent": 224
+      },
+      "written_aod_distribution": {
+        "max": 4.997000217437744,
+        "min": 0.0,
+        "p10": 0.03811764717102051,
+        "p50": 0.11661291122436523,
+        "p90": 0.4481658786535263,
+        "p99": 1.263922095298767,
+        "p999": 3.4893592953682395
+      }
+    },
+    "modis_l2_200807_count": {
+      "cell_windows_above_threshold": 1874,
+      "config": "config/runs/modis_l2_200807_count.yaml",
+      "high_aod_distribution": {
+        "max": 5.0,
+        "min": 3.0001184940338135,
+        "p10": 3.1437206745147703,
+        "p50": 3.5,
+        "p90": 4.4860498905181885,
+        "p99": 4.945984926223755,
+        "p999": 5.0
+      },
+      "high_count_distribution": {
+        "max": 151.0,
+        "min": 1.0,
+        "p10": 1.0,
+        "p50": 5.0,
+        "p90": 52.700000000000045,
+        "p99": 106.26999999999998,
+        "p999": 136.65100000000234
+      },
+      "high_count_eq_1": 423,
+      "high_count_ge_10": 734,
+      "high_count_ge_100": 36,
+      "high_count_le_3": 791,
+      "high_multiple_estimable_streams": 470,
+      "high_one_estimable_stream": 1404,
+      "monthly_aod_distribution": {
+        "max": 4.335999965667725,
+        "min": 0.0,
+        "p10": 0.05205754826160772,
+        "p50": 0.10644536227056359,
+        "p90": 0.33535578704793023,
+        "p99": 1.010628893515433,
+        "p999": 2.394795945286237
+      },
+      "monthly_cells_above_threshold": 10,
+      "monthly_cells_with_data": 41986,
+      "monthly_high_examples": [
+        {
+          "aod": 4.335999965667725,
+          "count": 1,
+          "latitude": 73.97905759162305,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.5503477791081304,
+          "count": 92,
+          "latitude": 47.591623036649224,
+          "longitude": 170.0
+        },
+        {
+          "aod": 3.3662498630583286,
+          "count": 4,
+          "latitude": 71.15183246073298,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.3289275290309517,
+          "count": 69,
+          "latitude": 48.53403141361255,
+          "longitude": 162.5
+        },
+        {
+          "aod": 3.2976305801880184,
+          "count": 203,
+          "latitude": 44.764397905759154,
+          "longitude": 152.5
+        },
+        {
+          "aod": 3.294595455167858,
+          "count": 131,
+          "latitude": 44.764397905759154,
+          "longitude": 153.75
+        },
+        {
+          "aod": 3.1520908389127618,
+          "count": 33,
+          "latitude": 42.87958115183247,
+          "longitude": 168.75
+        },
+        {
+          "aod": 3.1203850318848247,
+          "count": 213,
+          "latitude": 46.64921465968587,
+          "longitude": 158.75
+        },
+        {
+          "aod": 3.1163209737450988,
+          "count": 81,
+          "latitude": 52.30366492146598,
+          "longitude": 165.0
+        },
+        {
+          "aod": 3.0009389287895627,
+          "count": 180,
+          "latitude": 45.70680628272251,
+          "longitude": 158.75
+        }
+      ],
+      "percent_cell_windows_above_threshold": 0.12926732192460694,
+      "period": {
+        "end": "2008-07-31",
+        "start": "2008-07-01"
+      },
+      "processing_sha256": "a74605ec6245dbbc771696b1fbc36a9da45d60281e98aeedc26bf3463b339fa9",
+      "recurring_high_cells": [
+        {
+          "latitude": 40.0523560209424,
+          "longitude": 117.5,
+          "max_aod": 4.913000106811523,
+          "mean_aod": 3.7574076652526855,
+          "median_count": 7.0,
+          "total_count": 82,
+          "windows_above_threshold": 8
+        },
+        {
+          "latitude": 24.031413612565444,
+          "longitude": 70.0,
+          "max_aod": 3.5,
+          "mean_aod": 3.332317352294922,
+          "median_count": 3.5,
+          "total_count": 29,
+          "windows_above_threshold": 8
+        },
+        {
+          "latitude": 39.10994764397907,
+          "longitude": 116.25,
+          "max_aod": 4.591000080108643,
+          "mean_aod": 3.6914994716644287,
+          "median_count": 5.0,
+          "total_count": 97,
+          "windows_above_threshold": 7
+        },
+        {
+          "latitude": 38.16753926701571,
+          "longitude": 116.25,
+          "max_aod": 3.5,
+          "mean_aod": 3.34588885307312,
+          "median_count": 3.0,
+          "total_count": 59,
+          "windows_above_threshold": 7
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 135.0,
+          "max_aod": 3.5,
+          "mean_aod": 3.4814560413360596,
+          "median_count": 64.0,
+          "total_count": 402,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 57.01570680628271,
+          "longitude": 135.0,
+          "max_aod": 3.4998536109924316,
+          "mean_aod": 3.458143472671509,
+          "median_count": 53.5,
+          "total_count": 350,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 55.13089005235602,
+          "longitude": 133.75,
+          "max_aod": 3.5,
+          "mean_aod": 3.4788830280303955,
+          "median_count": 50.5,
+          "total_count": 327,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 136.25,
+          "max_aod": 3.4997143745422363,
+          "mean_aod": 3.46677565574646,
+          "median_count": 49.0,
+          "total_count": 318,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 55.13089005235602,
+          "longitude": 135.0,
+          "max_aod": 3.5,
+          "mean_aod": 3.437861204147339,
+          "median_count": 46.5,
+          "total_count": 298,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 133.75,
+          "max_aod": 3.5,
+          "mean_aod": 3.478775978088379,
+          "median_count": 33.5,
+          "total_count": 257,
+          "windows_above_threshold": 6
+        }
+      ],
+      "regions": {
+        "canada": 39,
+        "east_asia": 143,
+        "eastern_us": 0,
+        "india": 22,
+        "middle_east": 66,
+        "north_africa": 8,
+        "north_atlantic_ocean": 28,
+        "north_indian_ocean": 31,
+        "south_america": 38,
+        "south_atlantic_ocean": 70,
+        "southern_africa": 65,
+        "southern_ocean": 77,
+        "western_us": 18
+      },
+      "streams": {
+        "aqua_db": {
+          "accepted_count_in_high_cells": 7225,
+          "fraction_raw_accepted_counts_in_high_cells": 0.22533761656738296,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.5,
+            "min": 0.8230000138282776,
+            "p10": 3.0330652952194215,
+            "p50": 3.4697400331497192,
+            "p90": 3.5,
+            "p99": 3.5,
+            "p999": 3.5
+          },
+          "present_high_cell_windows": 382,
+          "stream_mean_above_threshold_cell_windows": 350
+        },
+        "aqua_dt": {
+          "accepted_count_in_high_cells": 7898,
+          "fraction_raw_accepted_counts_in_high_cells": 0.24632754265040702,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 5.0,
+            "min": 1.2690000534057617,
+            "p10": 3.0969651222229,
+            "p50": 3.7883334159851074,
+            "p90": 4.636875152587891,
+            "p99": 4.974649844169616,
+            "p999": 5.0
+          },
+          "present_high_cell_windows": 810,
+          "stream_mean_above_threshold_cell_windows": 778
+        },
+        "terra_db": {
+          "accepted_count_in_high_cells": 8623,
+          "fraction_raw_accepted_counts_in_high_cells": 0.26893927580076726,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.5,
+            "min": 0.8299999833106995,
+            "p10": 3.0105273485183717,
+            "p50": 3.473327398300171,
+            "p90": 3.5,
+            "p99": 3.5,
+            "p999": 3.5
+          },
+          "present_high_cell_windows": 524,
+          "stream_mean_above_threshold_cell_windows": 474
+        },
+        "terra_dt": {
+          "accepted_count_in_high_cells": 8317,
+          "fraction_raw_accepted_counts_in_high_cells": 0.2593955649814428,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 4.9730000495910645,
+            "min": 0.11500000208616257,
+            "p10": 3.0946500301361084,
+            "p50": 3.7485713958740234,
+            "p90": 4.6666522979736325,
+            "p99": 4.942119979858398,
+            "p999": 4.970695850372315
+          },
+          "present_high_cell_windows": 769,
+          "stream_mean_above_threshold_cell_windows": 723
+        }
+      },
+      "valid_cell_windows": 1449709,
+      "window_coverage_percent": {
+        "max": 13.755063657407407,
+        "min": 8.091001157407407,
+        "windows_above_10_percent": 162
+      },
+      "written_aod_distribution": {
+        "max": 5.0,
+        "min": 0.0,
+        "p10": 0.03400000184774399,
+        "p50": 0.1014285683631897,
+        "p90": 0.3700000047683716,
+        "p99": 1.0817571544647182,
+        "p999": 3.32061388397224
+      }
+    },
+    "modis_l2_200807_gls_rho0": {
+      "cell_windows_above_threshold": 1627,
+      "config": "config/runs/modis_l2_200807_gls_rho0.yaml",
+      "high_aod_distribution": {
+        "max": 5.0,
+        "min": 3.0011539459228516,
+        "p10": 3.1580745220184325,
+        "p50": 3.5,
+        "p90": 4.512493038177491,
+        "p99": 4.953220052719116,
+        "p999": 5.0
+      },
+      "high_count_distribution": {
+        "max": 151.0,
+        "min": 1.0,
+        "p10": 1.0,
+        "p50": 4.0,
+        "p90": 49.0,
+        "p99": 107.0,
+        "p999": 139.86200000000326
+      },
+      "high_count_eq_1": 423,
+      "high_count_ge_10": 567,
+      "high_count_ge_100": 33,
+      "high_count_le_3": 772,
+      "high_multiple_estimable_streams": 362,
+      "high_one_estimable_stream": 1265,
+      "monthly_aod_distribution": {
+        "max": 4.335999965667725,
+        "min": 0.0,
+        "p10": 0.049115735754094406,
+        "p50": 0.10030395022717595,
+        "p90": 0.31139917706507575,
+        "p99": 0.9367899169404128,
+        "p999": 2.043363192910574
+      },
+      "monthly_cells_above_threshold": 6,
+      "monthly_cells_with_data": 41986,
+      "monthly_high_examples": [
+        {
+          "aod": 4.335999965667725,
+          "count": 1,
+          "latitude": 73.97905759162305,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.336741629987955,
+          "count": 4,
+          "latitude": 71.15183246073298,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.327117997667064,
+          "count": 92,
+          "latitude": 47.591623036649224,
+          "longitude": 170.0
+        },
+        {
+          "aod": 3.216910302866506,
+          "count": 131,
+          "latitude": 44.764397905759154,
+          "longitude": 153.75
+        },
+        {
+          "aod": 3.124224717202394,
+          "count": 69,
+          "latitude": 48.53403141361255,
+          "longitude": 162.5
+        },
+        {
+          "aod": 3.0746081715146896,
+          "count": 203,
+          "latitude": 44.764397905759154,
+          "longitude": 152.5
+        }
+      ],
+      "percent_cell_windows_above_threshold": 0.11222941983529108,
+      "period": {
+        "end": "2008-07-31",
+        "start": "2008-07-01"
+      },
+      "processing_sha256": "256a98bb5685ee378fc6b2d56e9f34f98791e3eabc0b271d52eaf08f6e2fa83e",
+      "recurring_high_cells": [
+        {
+          "latitude": 39.10994764397907,
+          "longitude": 116.25,
+          "max_aod": 4.591000080108643,
+          "mean_aod": 3.6911709308624268,
+          "median_count": 5.0,
+          "total_count": 97,
+          "windows_above_threshold": 7
+        },
+        {
+          "latitude": 24.031413612565444,
+          "longitude": 70.0,
+          "max_aod": 3.5,
+          "mean_aod": 3.363011598587036,
+          "median_count": 3.0,
+          "total_count": 24,
+          "windows_above_threshold": 7
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 135.0,
+          "max_aod": 3.5,
+          "mean_aod": 3.4728853702545166,
+          "median_count": 64.0,
+          "total_count": 402,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 57.01570680628271,
+          "longitude": 135.0,
+          "max_aod": 3.4998233318328857,
+          "mean_aod": 3.453627586364746,
+          "median_count": 53.5,
+          "total_count": 350,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 55.13089005235602,
+          "longitude": 133.75,
+          "max_aod": 3.5,
+          "mean_aod": 3.4420089721679688,
+          "median_count": 50.5,
+          "total_count": 327,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 136.25,
+          "max_aod": 3.499605178833008,
+          "mean_aod": 3.4587783813476562,
+          "median_count": 49.0,
+          "total_count": 318,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 133.75,
+          "max_aod": 3.5,
+          "mean_aod": 3.477052927017212,
+          "median_count": 33.5,
+          "total_count": 257,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 132.5,
+          "max_aod": 3.7466938495635986,
+          "mean_aod": 3.4964981079101562,
+          "median_count": 40.0,
+          "total_count": 243,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 57.01570680628271,
+          "longitude": 133.75,
+          "max_aod": 3.5,
+          "mean_aod": 3.4685113430023193,
+          "median_count": 38.0,
+          "total_count": 234,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 48.53403141361255,
+          "longitude": 156.25,
+          "max_aod": 4.04071569442749,
+          "mean_aod": 3.5961925983428955,
+          "median_count": 38.5,
+          "total_count": 212,
+          "windows_above_threshold": 6
+        }
+      ],
+      "regions": {
+        "canada": 35,
+        "east_asia": 107,
+        "eastern_us": 0,
+        "india": 20,
+        "middle_east": 48,
+        "north_africa": 7,
+        "north_atlantic_ocean": 27,
+        "north_indian_ocean": 21,
+        "south_america": 36,
+        "south_atlantic_ocean": 57,
+        "southern_africa": 51,
+        "southern_ocean": 73,
+        "western_us": 15
+      },
+      "streams": {
+        "aqua_db": {
+          "accepted_count_in_high_cells": 6406,
+          "fraction_raw_accepted_counts_in_high_cells": 0.2519963809448881,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.5,
+            "min": 1.214016318321228,
+            "p10": 3.0784057140350343,
+            "p50": 3.4790000915527344,
+            "p90": 3.5,
+            "p99": 3.5,
+            "p999": 3.5
+          },
+          "present_high_cell_windows": 335,
+          "stream_mean_above_threshold_cell_windows": 316
+        },
+        "aqua_dt": {
+          "accepted_count_in_high_cells": 5397,
+          "fraction_raw_accepted_counts_in_high_cells": 0.21230478738051217,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 5.0,
+            "min": 1.7450000047683716,
+            "p10": 3.12779438495636,
+            "p50": 3.814052700996399,
+            "p90": 4.6871325969696045,
+            "p99": 4.9796597242355345,
+            "p999": 5.0
+          },
+          "present_high_cell_windows": 668,
+          "stream_mean_above_threshold_cell_windows": 654
+        },
+        "terra_db": {
+          "accepted_count_in_high_cells": 7478,
+          "fraction_raw_accepted_counts_in_high_cells": 0.2941662405098147,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.5,
+            "min": 0.8299999833106995,
+            "p10": 3.041766119003296,
+            "p50": 3.484476327896118,
+            "p90": 3.5,
+            "p99": 3.5,
+            "p999": 3.5
+          },
+          "present_high_cell_windows": 455,
+          "stream_mean_above_threshold_cell_windows": 419
+        },
+        "terra_dt": {
+          "accepted_count_in_high_cells": 6140,
+          "fraction_raw_accepted_counts_in_high_cells": 0.241532591164785,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 4.9730000495910645,
+            "min": 2.4570000171661377,
+            "p10": 3.111076307296753,
+            "p50": 3.816822052001953,
+            "p90": 4.708056831359864,
+            "p99": 4.949380912780762,
+            "p999": 4.971133888244629
+          },
+          "present_high_cell_windows": 623,
+          "stream_mean_above_threshold_cell_windows": 602
+        }
+      },
+      "valid_cell_windows": 1449709,
+      "window_coverage_percent": {
+        "max": 13.755063657407407,
+        "min": 8.091001157407407,
+        "windows_above_10_percent": 162
+      },
+      "written_aod_distribution": {
+        "max": 5.0,
+        "min": 0.0,
+        "p10": 0.03270184546709061,
+        "p50": 0.09642156958580017,
+        "p90": 0.3496554136276244,
+        "p99": 1.0140137672424305,
+        "p999": 3.1784128932953113
+      }
+    },
+    "modis_l2_200807_gls_rho05": {
+      "cell_windows_above_threshold": 1626,
+      "config": "config/runs/modis_l2_200807_gls_rho05.yaml",
+      "high_aod_distribution": {
+        "max": 5.0,
+        "min": 3.0011539459228516,
+        "p10": 3.166667938232422,
+        "p50": 3.5,
+        "p90": 4.512577533721924,
+        "p99": 4.953250050544739,
+        "p999": 5.0
+      },
+      "high_count_distribution": {
+        "max": 151.0,
+        "min": 1.0,
+        "p10": 1.0,
+        "p50": 4.0,
+        "p90": 49.0,
+        "p99": 108.5,
+        "p999": 139.87500000000296
+      },
+      "high_count_eq_1": 423,
+      "high_count_ge_10": 566,
+      "high_count_ge_100": 34,
+      "high_count_le_3": 772,
+      "high_multiple_estimable_streams": 361,
+      "high_one_estimable_stream": 1265,
+      "monthly_aod_distribution": {
+        "max": 4.335999965667725,
+        "min": 0.0,
+        "p10": 0.04900106017380602,
+        "p50": 0.10015867629358549,
+        "p90": 0.3092500080355766,
+        "p99": 0.9341604254169851,
+        "p999": 2.0559721675796387
+      },
+      "monthly_cells_above_threshold": 6,
+      "monthly_cells_with_data": 41986,
+      "monthly_high_examples": [
+        {
+          "aod": 4.335999965667725,
+          "count": 1,
+          "latitude": 73.97905759162305,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.392748941545901,
+          "count": 92,
+          "latitude": 47.591623036649224,
+          "longitude": 170.0
+        },
+        {
+          "aod": 3.336741629987955,
+          "count": 4,
+          "latitude": 71.15183246073298,
+          "longitude": -101.25
+        },
+        {
+          "aod": 3.270468232058387,
+          "count": 131,
+          "latitude": 44.764397905759154,
+          "longitude": 153.75
+        },
+        {
+          "aod": 3.196204948252526,
+          "count": 69,
+          "latitude": 48.53403141361255,
+          "longitude": 162.5
+        },
+        {
+          "aod": 3.095251261894339,
+          "count": 203,
+          "latitude": 44.764397905759154,
+          "longitude": 152.5
+        }
+      ],
+      "percent_cell_windows_above_threshold": 0.11216044047460559,
+      "period": {
+        "end": "2008-07-31",
+        "start": "2008-07-01"
+      },
+      "processing_sha256": "9845977da679b3129f4accbc37b925c4bde11c415e71dbd235de78688407f112",
+      "recurring_high_cells": [
+        {
+          "latitude": 39.10994764397907,
+          "longitude": 116.25,
+          "max_aod": 4.591000080108643,
+          "mean_aod": 3.6898000240325928,
+          "median_count": 5.0,
+          "total_count": 97,
+          "windows_above_threshold": 7
+        },
+        {
+          "latitude": 24.031413612565444,
+          "longitude": 70.0,
+          "max_aod": 3.5,
+          "mean_aod": 3.363011598587036,
+          "median_count": 3.0,
+          "total_count": 24,
+          "windows_above_threshold": 7
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 135.0,
+          "max_aod": 3.9583418369293213,
+          "mean_aod": 3.582350969314575,
+          "median_count": 64.0,
+          "total_count": 402,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 57.01570680628271,
+          "longitude": 135.0,
+          "max_aod": 3.4998233318328857,
+          "mean_aod": 3.4535131454467773,
+          "median_count": 53.5,
+          "total_count": 350,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 136.25,
+          "max_aod": 3.499605178833008,
+          "mean_aod": 3.4607279300689697,
+          "median_count": 49.0,
+          "total_count": 318,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 133.75,
+          "max_aod": 3.7375996112823486,
+          "mean_aod": 3.5305025577545166,
+          "median_count": 33.5,
+          "total_count": 257,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 56.07329842931938,
+          "longitude": 132.5,
+          "max_aod": 3.7567670345306396,
+          "mean_aod": 3.637401819229126,
+          "median_count": 40.0,
+          "total_count": 243,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 57.01570680628271,
+          "longitude": 133.75,
+          "max_aod": 3.5,
+          "mean_aod": 3.4443893432617188,
+          "median_count": 38.0,
+          "total_count": 234,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 48.53403141361255,
+          "longitude": 156.25,
+          "max_aod": 4.04071569442749,
+          "mean_aod": 3.5979788303375244,
+          "median_count": 38.5,
+          "total_count": 212,
+          "windows_above_threshold": 6
+        },
+        {
+          "latitude": 57.01570680628271,
+          "longitude": 131.25,
+          "max_aod": 3.8086018562316895,
+          "mean_aod": 3.5459821224212646,
+          "median_count": 29.5,
+          "total_count": 208,
+          "windows_above_threshold": 6
+        }
+      ],
+      "regions": {
+        "canada": 37,
+        "east_asia": 110,
+        "eastern_us": 0,
+        "india": 21,
+        "middle_east": 44,
+        "north_africa": 6,
+        "north_atlantic_ocean": 26,
+        "north_indian_ocean": 20,
+        "south_america": 36,
+        "south_atlantic_ocean": 57,
+        "southern_africa": 51,
+        "southern_ocean": 73,
+        "western_us": 15
+      },
+      "streams": {
+        "aqua_db": {
+          "accepted_count_in_high_cells": 6610,
+          "fraction_raw_accepted_counts_in_high_cells": 0.25826365554426817,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.5,
+            "min": 1.815999984741211,
+            "p10": 3.06290066242218,
+            "p50": 3.4777928590774536,
+            "p90": 3.5,
+            "p99": 3.5,
+            "p999": 3.5
+          },
+          "present_high_cell_windows": 340,
+          "stream_mean_above_threshold_cell_windows": 316
+        },
+        "aqua_dt": {
+          "accepted_count_in_high_cells": 5493,
+          "fraction_raw_accepted_counts_in_high_cells": 0.21462061420645465,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 5.0,
+            "min": 2.7250030040740967,
+            "p10": 3.1361000776290893,
+            "p50": 3.8248648643493652,
+            "p90": 4.689200115203858,
+            "p99": 4.9813099241256715,
+            "p999": 5.0
+          },
+          "present_high_cell_windows": 670,
+          "stream_mean_above_threshold_cell_windows": 657
+        },
+        "terra_db": {
+          "accepted_count_in_high_cells": 7596,
+          "fraction_raw_accepted_counts_in_high_cells": 0.2967883097601,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 3.5,
+            "min": 1.9591978788375854,
+            "p10": 3.068441152572632,
+            "p50": 3.486999988555908,
+            "p90": 3.5,
+            "p99": 3.5,
+            "p999": 3.5
+          },
+          "present_high_cell_windows": 451,
+          "stream_mean_above_threshold_cell_windows": 417
+        },
+        "terra_dt": {
+          "accepted_count_in_high_cells": 5895,
+          "fraction_raw_accepted_counts_in_high_cells": 0.23032742048917715,
+          "mean_aod_distribution_in_high_cells": {
+            "max": 4.9730000495910645,
+            "min": 2.4570000171661377,
+            "p10": 3.1113812923431396,
+            "p50": 3.816822052001953,
+            "p90": 4.7083210945129395,
+            "p99": 4.949528121948242,
+            "p999": 4.971139888763428
+          },
+          "present_high_cell_windows": 621,
+          "stream_mean_above_threshold_cell_windows": 602
+        }
+      },
+      "valid_cell_windows": 1449709,
+      "window_coverage_percent": {
+        "max": 13.755063657407407,
+        "min": 8.091001157407407,
+        "windows_above_10_percent": 162
+      },
+      "written_aod_distribution": {
+        "max": 5.0,
+        "min": 0.0,
+        "p10": 0.032707469165325166,
+        "p50": 0.09625501930713654,
+        "p90": 0.3491925001144409,
+        "p99": 1.012998914718627,
+        "p999": 3.176492962837339
+      }
+    }
+  },
+  "stream_counts_note": "Raw accepted retrieval counts, including missing uncertainty, are not GLS weights or unique physical footprints across algorithms.",
+  "threshold": 3.0
+}

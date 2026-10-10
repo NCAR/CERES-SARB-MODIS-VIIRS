@@ -78,13 +78,13 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | 8ff4cba |
 | 4.4 | Plot protocol | 4.2, 4.3 | Done | 7af6d67 |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
-| 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
+| 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | Task 1.10 (this commit) |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
-| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | Task 2.3 (this commit) |
+| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
 | 4.6 | Full plot runs | 3.7 | Not started | |
@@ -1303,11 +1303,23 @@ network access to LAADS and AERONET.
   transient DNS failures and all 29,856 files now audit successfully. Full
   gridding/science comparisons are Task 2.4; repository gates and review pass.
 
+- Task 1.10: all 992 July files pass contract, processing-provenance and
+  expected-window validation. Three real granules, including 23:55, reproduce
+  the vendored CAM7 diagnostic script with exact counts and float32 tolerance.
+  All 152 map pairs pass seven protocols; required previews were inspected.
+  The four monthly global means meet 0.1–0.25, but written cell-window p99.9
+  is 3.176–3.489 and coverage reaches 15.05%. Investigation found both isolated
+  and well-populated high cells; no unsupported filtering was added. Full
+  repository gates and review pass. See `docs/validation/july2008_verification.md`
+  and its numeric/artifact inventories. Verification is complete; the original
+  VP1 acceptance is not claimed.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
+| July VP1 acceptance | Task 1.10 measured written p99.9 > 3 for all four runs and coverage above the approximate 1–10% range. Monthly means pass; upper-tail evidence is in `docs/validation/july2008_verification.md`. Scientific disposition of these provisional gates remains open. |
 | Sept 2020 staging | Complete: 29,856/29,856 audited. Four files missed during a DNS failure were recovered by resumable staging; the recovery log is `.cache/stage_september_resume.log`. |
 | MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
 | DT ocean QA source conflict | Default QA ≥ 1 (Levy 2013; the products' combined SDS; DT FAQ) vs the darktarget L2-contents page (QA 2–3). Phase 3 compares QA = 3 |
