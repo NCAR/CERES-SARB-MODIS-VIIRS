@@ -24,3 +24,30 @@ stage:
     AERDT_L2_VIIRS_NOAA20: ["2.1"]
   auth_strategy: netrc
   threads: 8
+
+grid:
+  streams:
+    terra_dt:
+      product: MOD04_L2
+      collection: '6.1'
+    terra_db:
+      product: MOD04_L2
+      collection: '6.1'
+    aqua_dt:
+      product: MYD04_L2
+      collection: '6.1'
+    aqua_db:
+      product: MYD04_L2
+      collection: '6.1'
+    snpp_dt:
+      product: AERDT_L2_VIIRS_SNPP
+      collection: '2.1'
+    snpp_db:
+      product: AERDB_L2_VIIRS_SNPP
+      collection: '2'
+    noaa20_dt:
+      product: AERDT_L2_VIIRS_NOAA20
+      collection: '2.1'
+    noaa20_db:
+      product: AERDB_L2_VIIRS_NOAA20
+      collection: '2'

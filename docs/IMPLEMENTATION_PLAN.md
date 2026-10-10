@@ -46,7 +46,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 |---|---|---|
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done** (code; Task 0.1). Data: July 2008 MODIS C6.1 staged and audited (9,518/9,518). Sept 2020 staging runs detached in `screen -S sarb-stage`; it is complete when `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log` ends with `=== audit exit 0 ===`. Never kill or restart that session while it runs; a re-run resumes. |
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
-| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; full-period verification waits for the Sept 2020 staging |
+| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; September staging audited 29,856/29,856 |
 | 3 | AERONET validation suite; choose ρ and other defaults | In progress |
 | 4 | Plotting and diagnostics (DAVINCI style) | In progress |
 | 5 | Production profile (AMI), multi-year runs | Blocked: AMI details from the user |
@@ -83,8 +83,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
-| 2.2 | VIIRS Dark Target reader | 1.4 | Done | Task 2.2 (this commit) |
-| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | In progress | |
+| 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
+| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | Task 2.3 (this commit) |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
 | 4.6 | Full plot runs | 3.7 | Not started | |
@@ -1296,12 +1296,19 @@ network access to LAADS and AERONET.
   loudly. Native Best Ocean is absent, so CAM7 preset keeps Average Ocean.
   Reader, catalog, repository gates and review pass.
 
+- Task 2.3: September configs select MODIS-only, VIIRS-only, mixed, and
+  mixed NOAA-20 DB v2.1 streams without code changes. Eight synthetic end-to-end
+  tests verify collection identity, no double counting, sensor fills and mixed
+  mean convexity under GLS/count weighting. September staging recovered four
+  transient DNS failures and all 29,856 files now audit successfully. Full
+  gridding/science comparisons are Task 2.4; repository gates and review pass.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
-| Sept 2020 staging in progress | Detached `screen -S sarb-stage`; done when its log ends with `=== audit exit 0 ===`. Phase 2 real-data steps wait for it |
+| Sept 2020 staging | Complete: 29,856/29,856 audited. Four files missed during a DNS failure were recovered by resumable staging; the recovery log is `.cache/stage_september_resume.log`. |
 | MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
 | DT ocean QA source conflict | Default QA ≥ 1 (Levy 2013; the products' combined SDS; DT FAQ) vs the darktarget L2-contents page (QA 2–3). Phase 3 compares QA = 3 |
 | ρ default | 0.5 placeholder; chosen by AERONET calibration in Task 3.7 |
