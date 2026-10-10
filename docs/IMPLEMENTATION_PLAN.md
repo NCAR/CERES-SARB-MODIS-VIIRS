@@ -60,9 +60,9 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | Task | Title | Depends on | State | Commit |
 |---|---|---|---|---|
 | 0.1 | Tooling hygiene, env (pandas/matplotlib/cartopy/seaborn), AERONET fixtures | — | Done | 43d059e |
-| 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Not started | |
+| 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Done | Task 1.5 (this commit) |
 | 1.6 | Numba kernels | 1.5 | Not started | |
-| 1.1 | Catalog variable maps, stream registry | — | Done | Task 1.1 (this commit) |
+| 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
 | 1.2 | QC presets | 1.1 | Not started | |
 | 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
@@ -1163,10 +1163,15 @@ network access to LAADS and AERONET.
   for 550 nm. Collections without variable maps fail before opening a file.
   Offline tests, mypy, Black, isort, and `codex review --uncommitted` pass.
 
+- Task 1.5: f09/file-grid validation, canonical bounds, UTC half-open windows and
+  leap-correct TAI93 conversion pass 45 focused tests. Inserted leap-second instants
+  become NaT/NaN because NumPy cannot represent 23:59:60. All offline gates and review pass.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
+| Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
 | Sept 2020 staging in progress | Detached `screen -S sarb-stage`; done when its log ends with `=== audit exit 0 ===`. Phase 2 real-data steps wait for it |
 | MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
 | DT ocean QA source conflict | Default QA ≥ 1 (Levy 2013; the products' combined SDS; DT FAQ) vs the darktarget L2-contents page (QA 2–3). Phase 3 compares QA = 3 |

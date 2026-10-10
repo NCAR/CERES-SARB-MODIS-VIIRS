@@ -240,12 +240,33 @@ class StageConfig(StrictModel):
         return [(name, c) for name, collections in self.products.items() for c in collections]
 
 
+class GridConfig(StrictModel):
+    """CAM f09 spatial grid and fixed three-hour windows."""
+
+    source: str = "f09"
+    times_per_day: Literal[8] = 8
+    edge_granules: bool = False
+
+    @field_validator("source")
+    @classmethod
+    def _source(cls, value: str) -> str:
+        if value != "f09" and not (value.startswith("file:") and value[5:].strip()):
+            raise ValueError("grid.source must be 'f09' or 'file:<path>'")
+        return value
+
+
+class TimeConfig(StrictModel):
+    leap_seconds: Literal["apply", "ignore"] = "apply"
+
+
 class RunConfig(StrictModel):
     profile: str | None = None
     catalog: Path | None = None
     paths: PathsConfig
     period: Period
     stage: StageConfig
+    grid: GridConfig = Field(default_factory=GridConfig)
+    time: TimeConfig = Field(default_factory=TimeConfig)
 
     @model_validator(mode="after")
     def _products_in_catalog(self) -> "RunConfig":
