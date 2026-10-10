@@ -259,6 +259,14 @@ class TimeConfig(StrictModel):
     leap_seconds: Literal["apply", "ignore"] = "apply"
 
 
+class AeronetConfig(StrictModel):
+    """AERONET spectral conversion and reference uncertainty."""
+
+    spectral: Literal["quadratic_loglog", "angstrom_500"] = "quadratic_loglog"
+    include_extrapolated: bool = True
+    instrument_sigma: float = Field(default=0.01, gt=0, allow_inf_nan=False)
+
+
 class RunConfig(StrictModel):
     profile: str | None = None
     catalog: Path | None = None
@@ -267,6 +275,7 @@ class RunConfig(StrictModel):
     stage: StageConfig
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)
+    aeronet: AeronetConfig = Field(default_factory=AeronetConfig)
 
     @model_validator(mode="after")
     def _products_in_catalog(self) -> "RunConfig":

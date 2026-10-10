@@ -69,9 +69,9 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.7 | Weighting (GLS, count) | 1.6 | Not started | |
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Not started | |
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
-| 3.4 | Regions | — | Done | Task 3.4 (this commit) |
+| 3.4 | Regions | — | Done | 9433481 |
 | 3.1 | AERONET fetcher | — | Not started | |
-| 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Not started | |
+| 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | Task 3.2 (this commit) |
 | 3.3 | Metrics, grouped statistics | — | Not started | |
 | 4.1 | Style, labeling, display tables | — | Not started | |
 | 4.2 | Map renderers | 4.1, 1.5, 3.4 | Not started | |
@@ -1179,6 +1179,13 @@ network access to LAADS and AERONET.
   Thirty-four tests cover overlapping membership, inclusive edges, normalized
   longitude, UTC activity dates, aliases, and explicit extent overrides.
   Offline gates and review pass; global membership is computed independently.
+
+- Task 3.2: header-name parser and per-observation 550 nm conversion pass all fixture
+  cases (GSFC 34 rows through 23:45 UTC; Avignon; ocean-color sites; NASA Ames smoke;
+  daily layout). Quadratic fits use 340–1020 nm; reviewed extrapolation fallback accepts
+  the two shortest valid wavelengths >=550 nm, including longer near-infrared bands.
+  All 31 focused tests and repository gates pass; review findings affecting later
+  output/reader tasks are tracked and fixed in those tasks.
 
 ## Open items and risks
 
