@@ -74,8 +74,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
 | 3.3 | Metrics, grouped statistics | — | Done | 28a15bc |
 | 4.1 | Style, labeling, display tables | — | Done | 9a4b2c4 |
-| 4.2 | Map renderers | 4.1, 1.5, 3.4 | Done | Task 4.2 (this commit) |
-| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | In progress | |
+| 4.2 | Map renderers | 4.1, 1.5, 3.4 | Done | c471097 |
+| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | Task 4.3 (this commit) |
 | 4.4 | Plot protocol | 4.2, 4.3 | In progress | |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | In progress | |
 | 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
@@ -1267,6 +1267,12 @@ network access to LAADS and AERONET.
   subtitles, warning-free offline coastlines and PDF raster/vector content.
   Synthetic and real-data previews were inspected; protocol and repository gates
   pass. The review found no map-renderer defects.
+
+- Task 4.3: time series retain independent grid windows and raw AERONET
+  observations; scatter panels expose family EE and OLS/RMA; summary renderers
+  cover binned bias, z, rho, scorecards, Taylor and regional boxes. Analytic
+  renderer tests and the protocol pass; previews for all nine figure types and
+  scatter panels were visually inspected. Review and repository gates pass.
 
 ## Open items and risks
 
