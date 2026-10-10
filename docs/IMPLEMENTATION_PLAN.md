@@ -45,7 +45,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | Phase | Content | State |
 |---|---|---|
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done** (code; Task 0.1). Data: July 2008 MODIS C6.1 staged and audited (9,518/9,518). Sept 2020 staging runs detached in `screen -S sarb-stage`; it is complete when `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log` ends with `=== audit exit 0 ===`. Never kill or restart that session while it runs; a re-run resumes. |
-| 1 | MODIS C6.1 → CAM7 files (July 2008) | Not started |
+| 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Not started; real-data steps wait for the Sept 2020 staging |
 | 3 | AERONET validation suite; choose ρ and other defaults | Not started |
 | 4 | Plotting and diagnostics (DAVINCI style) | Not started |
@@ -62,7 +62,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 0.1 | Tooling hygiene, env (pandas/matplotlib/cartopy/seaborn), AERONET fixtures | — | Done | 43d059e |
 | 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Not started | |
 | 1.6 | Numba kernels | 1.5 | Not started | |
-| 1.1 | Catalog variable maps, stream registry | — | Not started | |
+| 1.1 | Catalog variable maps, stream registry | — | Done | Task 1.1 (this commit) |
 | 1.2 | QC presets | 1.1 | Not started | |
 | 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
@@ -1155,6 +1155,13 @@ network access to LAADS and AERONET.
   outputs; outputs ≈ 8 files/day × ~1 MB).
 
 ---
+
+## Implementation evidence
+
+- Task 1.1: MODIS C6.1 recipes and named-dimension selectors pass synthetic and real
+  Terra/Aqua checks. Both products use the `:mod04` wavelength dimensions, index 1
+  for 550 nm. Collections without variable maps fail before opening a file.
+  Offline tests, mypy, Black, isort, and `codex review --uncommitted` pass.
 
 ## Open items and risks
 

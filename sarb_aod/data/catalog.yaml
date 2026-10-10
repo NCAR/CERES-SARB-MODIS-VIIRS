@@ -4,6 +4,8 @@
 #   cmr_version  CMR/earthaccess VersionId (MODIS C6.1 is "6.1", not "61")
 #   file_token   version token embedded in granule filenames (".061.", ".007.", ".021.")
 #   file_format  on-disk format, used for integrity checks and reader dispatch
+#   stream_prefix  platform prefix of each algorithm stream, e.g. terra_dt
+#   geolocation/algorithms  verified reader recipe; absent until product activation
 #
 # Availability notes (CMR/LAADS, verified 2026-10-10):
 # - MODIS C7: CMR "7", token "007", NetCDF4. LAADS publishes only C7 L1B/geolocation
@@ -17,20 +19,56 @@ products:
     platform: Terra
     instrument: MODIS
     provider: LAADS
+    stream_prefix: terra
     collections:
-      "6.1": {cmr_version: "6.1", file_token: "061", file_format: hdf4}
+      "6.1": &modis_c61
+        cmr_version: "6.1"
+        file_token: "061"
+        file_format: hdf4
+        geolocation: {lat: Latitude, lon: Longitude, time: Scan_Start_Time, time_kind: tai93}
+        algorithms:
+          dt:
+            family: modis_dt
+            surfaces:
+              land:
+                aod:
+                  name: Corrected_Optical_Depth_Land
+                  select: {"Solution_3_Land:mod04": 1}
+                qa: {name: Land_Ocean_Quality_Flag}
+              ocean:
+                aod:
+                  name: Effective_Optical_Depth_Average_Ocean
+                  select: {"MODIS_Band_Ocean:mod04": 1}
+                qa: {name: Land_Ocean_Quality_Flag}
+            alternates:
+              cam7_v2:
+                ocean:
+                  aod:
+                    name: Effective_Optical_Depth_Best_Ocean
+                    select: {"MODIS_Band_Ocean:mod04": 1}
+                  qa: {name: Land_Ocean_Quality_Flag}
+          db:
+            family: modis_db
+            surfaces:
+              land:
+                aod: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land}
+                qa: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag}
+                sigma: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty}
       "7": {cmr_version: "7", file_token: "007", file_format: netcdf4}
   MYD04_L2:
     platform: Aqua
     instrument: MODIS
     provider: LAADS
+    stream_prefix: aqua
     collections:
-      "6.1": {cmr_version: "6.1", file_token: "061", file_format: hdf4}
+      # Aqua C6.1 also uses the :mod04 dimension suffix (verified on staged granules).
+      "6.1": *modis_c61
       "7": {cmr_version: "7", file_token: "007", file_format: netcdf4}
   AERDB_L2_VIIRS_SNPP:
     platform: SNPP
     instrument: VIIRS
     provider: LAADS
+    stream_prefix: snpp
     collections:
       "2": {cmr_version: "2", file_token: "002", file_format: netcdf4}
       "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
@@ -38,6 +76,7 @@ products:
     platform: NOAA-20
     instrument: VIIRS
     provider: LAADS
+    stream_prefix: noaa20
     collections:
       "2": {cmr_version: "2", file_token: "002", file_format: netcdf4}
       "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
@@ -45,11 +84,13 @@ products:
     platform: SNPP
     instrument: VIIRS
     provider: LAADS
+    stream_prefix: snpp
     collections:
       "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
   AERDT_L2_VIIRS_NOAA20:
     platform: NOAA-20
     instrument: VIIRS
     provider: LAADS
+    stream_prefix: noaa20
     collections:
       "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}

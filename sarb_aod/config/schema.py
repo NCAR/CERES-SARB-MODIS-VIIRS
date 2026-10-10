@@ -58,16 +58,82 @@ class StrictModel(BaseModel):
 # --- product catalog -------------------------------------------------------
 
 
+Algorithm = Literal["dt", "db"]
+Surface = Literal["land", "ocean"]
+AlgorithmFamily = Literal["modis_dt", "modis_db", "viirs_dt", "viirs_db"]
+
+
+class VarRef(StrictModel):
+    """An SDS or NetCDF group/variable, with optional named-dimension selection."""
+
+    name: str = Field(min_length=1)
+    select: dict[str, int] | None = None
+
+    @field_validator("select")
+    @classmethod
+    def _named_nonnegative_indices(cls, value: dict[str, int] | None) -> dict[str, int] | None:
+        if value is not None and any(not name or index < 0 for name, index in value.items()):
+            raise ValueError("select requires nonempty dimension names and nonnegative indices")
+        return value
+
+
+class SurfaceVars(StrictModel):
+    aod: VarRef
+    qa: VarRef
+    sigma: VarRef | None = None
+
+
+class AlgorithmSpec(StrictModel):
+    family: AlgorithmFamily
+    surfaces: dict[Surface, SurfaceVars] = Field(min_length=1)
+    alternates: dict[str, dict[Surface, SurfaceVars]] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _alternate_surfaces(self) -> "AlgorithmSpec":
+        for preset, surfaces in self.alternates.items():
+            unknown = surfaces.keys() - self.surfaces.keys()
+            if unknown:
+                raise ValueError(f"alternate {preset!r} has undefined surfaces: {sorted(unknown)}")
+        return self
+
+
+class Geolocation(StrictModel):
+    lat: str = Field(min_length=1)
+    lon: str = Field(min_length=1)
+    time: str | None
+    time_kind: Literal["tai93", "coverage_attrs"]
+
+    @model_validator(mode="after")
+    def _time_source(self) -> "Geolocation":
+        if self.time_kind == "tai93" and not self.time:
+            raise ValueError("tai93 geolocation requires a time variable")
+        if self.time_kind == "coverage_attrs" and self.time is not None:
+            raise ValueError("coverage_attrs geolocation must use time: null")
+        return self
+
+
 class CollectionSpec(StrictModel):
     cmr_version: str
     file_token: str
     file_format: Literal["hdf4", "netcdf4"]
+    geolocation: Geolocation | None = None
+    algorithms: dict[Algorithm, AlgorithmSpec] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _reader_metadata(self) -> "CollectionSpec":
+        if self.algorithms and self.geolocation is None:
+            raise ValueError("collections with algorithms require geolocation")
+        for algorithm, spec in self.algorithms.items():
+            if spec.family.rsplit("_", 1)[-1] != algorithm:
+                raise ValueError(f"algorithm {algorithm!r} conflicts with family {spec.family!r}")
+        return self
 
 
 class ProductSpec(StrictModel):
     platform: str
     instrument: str
     provider: str = "LAADS"
+    stream_prefix: str = Field(pattern=r"^[a-z][a-z0-9]*$")
     collections: dict[str, CollectionSpec]
 
 
