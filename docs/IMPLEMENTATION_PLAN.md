@@ -73,8 +73,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.1 | AERONET fetcher | — | Done | 1388a75 |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
 | 3.3 | Metrics, grouped statistics | — | Done | 28a15bc |
-| 4.1 | Style, labeling, display tables | — | Done | Task 4.1 (this commit) |
-| 4.2 | Map renderers | 4.1, 1.5, 3.4 | In progress | |
+| 4.1 | Style, labeling, display tables | — | Done | 9a4b2c4 |
+| 4.2 | Map renderers | 4.1, 1.5, 3.4 | Done | Task 4.2 (this commit) |
 | 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | In progress | |
 | 4.4 | Plot protocol | 4.2, 4.3 | In progress | |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | In progress | |
@@ -1260,6 +1260,13 @@ network access to LAADS and AERONET.
   Neue fallback renders cleanly; all renderer types pass protocol checks and
   previews were inspected. Full suite: 809 passed; typing/format gates pass.
   Review found no style/labeling defects.
+
+- Task 4.2: pcolormesh, cyclic contourf, panels and site maps use the
+  prescribed scales, vector coastlines/labels and rasterized dense fills. Twenty-two
+  map tests cover dateline closure, exact f09 bounds, shared scales, weighted
+  subtitles, warning-free offline coastlines and PDF raster/vector content.
+  Synthetic and real-data previews were inspected; protocol and repository gates
+  pass. The review found no map-renderer defects.
 
 ## Open items and risks
 
