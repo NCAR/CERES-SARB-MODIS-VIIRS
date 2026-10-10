@@ -1,0 +1,56 @@
+profile: mac
+period:
+  start: 2020-09-01
+  end: 2020-09-30
+stage:
+  products:
+    MOD04_L2:
+    - '6.1'
+    - '7'
+    MYD04_L2:
+    - '6.1'
+    - '7'
+    AERDB_L2_VIIRS_SNPP:
+    - '2'
+    AERDB_L2_VIIRS_NOAA20:
+    - '2'
+    - '2.1'
+    AERDT_L2_VIIRS_SNPP:
+    - '2.1'
+    AERDT_L2_VIIRS_NOAA20:
+    - '2.1'
+  auth_strategy: netrc
+  threads: 8
+grid:
+  streams:
+    terra_dt:
+      product: MOD04_L2
+      collection: '6.1'
+    terra_db:
+      product: MOD04_L2
+      collection: '6.1'
+    aqua_dt:
+      product: MYD04_L2
+      collection: '6.1'
+    aqua_db:
+      product: MYD04_L2
+      collection: '6.1'
+    snpp_dt:
+      product: AERDT_L2_VIIRS_SNPP
+      collection: '2.1'
+    snpp_db:
+      product: AERDB_L2_VIIRS_SNPP
+      collection: '2'
+    noaa20_dt:
+      product: AERDT_L2_VIIRS_NOAA20
+      collection: '2.1'
+    noaa20_db:
+      product: AERDB_L2_VIIRS_NOAA20
+      collection: '2'
+weighting:
+  method: gls
+  rho: 0.5
+  birge: true
+  min_pixels: 3
+qc:
+  preset: retrieval_team

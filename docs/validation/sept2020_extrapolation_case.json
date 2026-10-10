@@ -1,0 +1,32 @@
+{
+  "site": "NASA_Ames",
+  "window_start": "2020-09-10T21:00:00+00:00",
+  "window_end": "2020-09-11T00:00:00+00:00",
+  "aeronet_cache": "/Users/dfillmor/Data/AERONET/AOD20/2020/09/10/AERONET_AOD20_ALLPOINTS_20200910.csv",
+  "aeronet_cache_sha256": "ef28e7cec482c5f4b7b7b74f59cfd504cc53e260d556caa6f6d6ce36e31b8e4c",
+  "spectral_method": "quadratic_loglog",
+  "fallback_bands_nm": [
+    870,
+    1020
+  ],
+  "observations": [
+    {
+      "time": "2020-09-10T21:01:06+00:00",
+      "AOD_1640nm": 1.583007,
+      "AOD_1020nm": 4.223785,
+      "AOD_870nm": 5.648606,
+      "aod_550nm": 13.058187250273276,
+      "spectral_flag": "extrapolated"
+    },
+    {
+      "time": "2020-09-10T21:16:06+00:00",
+      "AOD_1640nm": 1.37876,
+      "AOD_1020nm": 3.908705,
+      "AOD_870nm": 5.27534,
+      "aod_550nm": 12.521624021517827,
+      "spectral_flag": "extrapolated"
+    }
+  ],
+  "window_mean_550nm": 12.78990563589555,
+  "interpretation": "No valid bands bracket 550 nm in these observations. The configured log-linear extrapolation uses 870 and 1020 nm; the 550 nm result is not a direct measurement. Native 870 nm AOD already exceeds 5. High reference values therefore require explicit extrapolation sensitivity; neither clipping them nor declaring them invalid is justified by the satellite cap alone."
+}

@@ -1,6 +1,6 @@
 # CERES-SARB-MODIS-VIIRS
 
-Preprocessing of MODIS (and later VIIRS) Level-2 aerosol retrievals into CAM7-ready
+Preprocessing of MODIS and VIIRS Level-2 aerosol retrievals into CAM7-ready
 550 nm AOD constraint files for CERES-SARB. The package is `sarb_aod`; the CLI is
 `sarb-aod`.
 
@@ -90,8 +90,17 @@ not as an error.
 
 Gridding selects one collection per platform/algorithm stream in `grid.streams`.
 Default QC follows the retrieval teams; `weighting.method` chooses correlated-error
-GLS (default, `rho: 0.5`) or count weighting. The `cam7_v2` preset reproduces CAM7's
-diagnostic four-stream product with its legacy time/scaling choices.
+GLS (default, `rho: 0.5`) or count weighting. The `cam7_v2` QC preset changes QA,
+range, MODIS Ocean selection and scaling. The full
+[`modis_l2_200807_cam7_v2.yaml`](config/runs/modis_l2_200807_cam7_v2.yaml) run also
+selects legacy time and count weighting to reproduce CAM7's diagnostic four-stream
+product; the QC preset alone does not change those settings.
+
+The working value `rho: 0.5` remains provisional. The July 2008 and September 2020
+[evaluation campaign](docs/validation/evaluation_campaign.md) found that no tested
+rho calibrated global uncertainty, and every tested grid configuration missed the
+RMSE acceptance gate. Verified output contracts and passing plot protocols do not
+imply scientific acceptance.
 
 ```bash
 sarb-aod grid -c config/runs/modis_l2_200807.yaml --workers 2
@@ -104,6 +113,10 @@ Use `--day YYYY-MM-DD` for one day and `--overwrite` to recompute valid output.
 Reruns reuse a day only when all eight files satisfy the contract, have the correct
 window times, and match the processing definition, including catalog variable maps.
 A failed day returns exit status 1 while successful days remain available.
+
+For monthly orchestration and resumable multi-year runs, use `sarb-aod grid-months`;
+see the [production guide](docs/AMI_PRODUCTION.md) for configuration, recovery and
+measured development throughput. AMI deployment still requires confirmed site details.
 
 `paths.output` controls the layout; `{run}` defaults to the run-config filename stem.
 By default files live in `{data_root}/CAM7/{stem}/{run}/YYYY/MM/DD/` and carry scalar

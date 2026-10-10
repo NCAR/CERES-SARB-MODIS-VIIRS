@@ -45,9 +45,9 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | Phase | Content | State |
 |---|---|---|
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done.** July 2008 audited 9,518/9,518; September 2020 audited 29,856/29,856 after resumable recovery of four DNS failures. |
-| 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
-| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; September staging audited 29,856/29,856 |
-| 3 | AERONET validation suite; choose ρ and other defaults | In progress |
+| 1 | MODIS C6.1 → CAM7 files (July 2008) | Implemented and verified; VP1 scientific acceptance open |
+| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Implemented and verified for available collections; rejection-gate acceptance open; C7 activation blocked |
+| 3 | AERONET validation suite; choose ρ and other defaults | Campaign complete; working defaults retained; global uncertainty calibration and scientific acceptance open |
 | 4 | Plotting and diagnostics (DAVINCI style) | In progress |
 | 5 | Production profile (AMI), multi-year runs | Portable monthly driver done; AMI deployment blocked on site details |
 
@@ -81,13 +81,13 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | fa0aad0 |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | Done | b06bb1f |
-| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Done | Task 3.6 (this commit) |
+| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Done | 12a1ac9 |
 | 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | a733ece |
-| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
-| 4.6 | Full plot runs | 3.7 | Not started | |
+| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Campaign complete; calibration open | Task 3.7 (this commit) |
+| 4.6 | Full plot runs | 3.7 | In progress | |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
 | 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
@@ -1361,6 +1361,23 @@ network access to LAADS and AERONET.
   test passes. Real July default and CAM7 pairings are reported; the SP1 archive
   remains unavailable and no identical-input baseline reproduction is claimed.
 
+- Task 3.7: all 32 primary reports (23 grid, nine L2) and all 23 grid summaries
+  are verified against processing configuration, archive checksums and output
+  arrays. Full-precision global, southern latitude-band and smoke comparisons,
+  spectral extrapolation/instrument uncertainty sensitivities, and control
+  configurations are recorded in `docs/validation/evaluation_campaign.md` and
+  its JSON/TSVs. Negative-AOD evidence corrects the earlier MODIS-only claim:
+  valid VIIRS DT land negatives also occur. Keep retrieval-team QA, Average
+  Ocean, valid negatives, minimum count 1 and DB v2 as working defaults. No
+  tested ρ calibrates global uncertainty, and all 32 global RMSE gates fail;
+  GLS with ρ = 0.5 remains provisional. Count weighting's September accuracy
+  benefit and weaker uncertainty calibration are both reported. The original
+  long-running batch encountered a stale post-export import; independent
+  archive/report verification and fresh plotting establish the saved evidence,
+  rather than treating its nonzero exit as success. Independent scientific
+  review and `codex review --uncommitted` pass; 885 offline tests, the live
+  AERONET test, mypy, Black and isort pass. C7/SP1/AMI limits remain open.
+
 ## Open items and risks
 
 | Item | Plan |
@@ -1370,8 +1387,8 @@ network access to LAADS and AERONET.
 | September rejection gate | Task 2.4 passes three of four science gates; native valid ranges and QC both cap AOD at 5, making a strictly-above-5 rejection impossible. Endpoint counts remain separate. The original gate needs scientific disposition; it was not silently changed. |
 | Sept 2020 staging | Complete: 29,856/29,856 audited. Four files missed during a DNS failure were recovered by resumable staging; the recovery log is `.cache/stage_september_resume.log`. |
 | MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
-| DT ocean QA source conflict | Default QA ≥ 1 (Levy 2013; the products' combined SDS; DT FAQ) vs the darktarget L2-contents page (QA 2–3). Phase 3 compares QA = 3 |
-| ρ default | 0.5 placeholder; chosen by AERONET calibration in Task 3.7 |
+| DT ocean QA source conflict | Keep QA ≥ 1: the two-month QA = 3 sensitivity loses coverage and worsens global grid RMSE. Small southern land/coastal samples do not establish open-ocean skill. Evidence: `docs/validation/evaluation_campaign.md`. |
+| ρ default and scientific acceptance | Keep 0.5 provisional. No tested ρ ∈ [0, 1] calibrates global uncertainty; every grid experiment misses RMSE ≤ 0.10. Count weighting improves September RMSE but has much poorer uncertainty spread. Further uncertainty/representativeness work needs a scientific decision; no gate was relaxed. |
 | DT and DB retrieve the same scene (correlated across streams) | v1 treats streams as independent; Birge inflation partly covers it; a cross-stream ρ is a later option |
 | CAM obs template | Expansion verified in CAM `filenames.F90` (cam6_4_161). Confirm only the `atm.log` check (Task 1.8) in one short derecho run |
 | CAM7 baseline comparison | Needs CAM7's July 2008 SP1 files copied from derecho (path from the user) for the `--pairing cam7` gate |
@@ -1379,5 +1396,5 @@ network access to LAADS and AERONET.
 | AERONET service limits | ≤ 10 requests/min, one request per day for all sites, raw CSV cached |
 | Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
-| AMI environment | Phase 5 |
-| Southern Ocean noise | The DT ocean QA threshold (QA ≥ 1 vs = 3) and DT-land negatives are compared in Phase 3. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
+| AMI environment | Task 5.1 portable driver is complete; Task 5.2 needs AMI paths/archive layout, scheduler/allocation, Python environment, network access and the production date range. |
+| Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |

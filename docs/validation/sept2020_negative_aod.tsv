@@ -1,0 +1,15 @@
+run	day	stream	collection	surface	aod_field	n_accepted	n_negative	n_at_lower_limit	minimum	first_negative_file	negative_fraction
+mixed_l2_202009_gls_rho05	2020-09-08	terra_dt	6.1	land	Corrected_Optical_Depth_Land	145130	15633	6481	-0.05	/Users/dfillmor/Data/Terra/MODIS/MOD04_L2.061/2020/09/08/MOD04_L2.A2020252.0010.061.2020252131436.hdf	0.10771721904499414
+mixed_l2_202009_gls_rho05	2020-09-08	terra_dt	6.1	ocean	Effective_Optical_Depth_Average_Ocean	507052	0	0	0.0		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	terra_db	6.1	land	Deep_Blue_Aerosol_Optical_Depth_550_Land	276494	0	0	0.004		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	aqua_dt	6.1	land	Corrected_Optical_Depth_Land	112919	13675	3715	-0.05	/Users/dfillmor/Data/Aqua/MODIS/MYD04_L2.061/2020/09/08/MYD04_L2.A2020252.0025.061.2020254180233.hdf	0.12110450854152091
+mixed_l2_202009_gls_rho05	2020-09-08	aqua_dt	6.1	ocean	Effective_Optical_Depth_Average_Ocean	492172	0	0	0.0		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	aqua_db	6.1	land	Deep_Blue_Aerosol_Optical_Depth_550_Land	215717	0	0	0.006		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	snpp_dt	2.1	land	geophysical_data/Corrected_Optical_Depth_Land	710967	91531	30405	-0.05	/Users/dfillmor/Data/SNPP/VIIRS/AERDT_L2_VIIRS_SNPP.021/2020/09/08/AERDT_L2_VIIRS_SNPP.A2020252.0012.021.2025212143213.nc	0.1287415590315725
+mixed_l2_202009_gls_rho05	2020-09-08	snpp_dt	2.1	ocean	geophysical_data/Effective_Optical_Depth_Average_Ocean	2351617	0	0	0.0		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	snpp_db	2	land	Aerosol_Optical_Thickness_550_Land	1130586	0	0	0.005473914090543985		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	snpp_db	2	ocean	Aerosol_Optical_Thickness_550_Ocean	1782058	0	0	0.0010000000474974513		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	noaa20_dt	2.1	land	geophysical_data/Corrected_Optical_Depth_Land	699312	69330	21693	-0.05	/Users/dfillmor/Data/NOAA-20/VIIRS/AERDT_L2_VIIRS_NOAA20.021/2020/09/08/AERDT_L2_VIIRS_NOAA20.A2020252.0100.021.2025210032111.nc	0.09914029789278606
+mixed_l2_202009_gls_rho05	2020-09-08	noaa20_dt	2.1	ocean	geophysical_data/Effective_Optical_Depth_Average_Ocean	2191721	0	0	0.0		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	noaa20_db	2	land	Aerosol_Optical_Thickness_550_Land	1183886	0	0	0.006251488346606493		0.0
+mixed_l2_202009_gls_rho05	2020-09-08	noaa20_db	2	ocean	Aerosol_Optical_Thickness_550_Ocean	1673541	0	0	0.0010000000474974513		0.0

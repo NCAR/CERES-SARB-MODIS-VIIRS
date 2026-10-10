@@ -1,0 +1,360 @@
+# Retrieval-team QC sensitivity: only MODIS DT ocean AOD uses Best.
+products:
+  MOD04_L2:
+    platform: Terra
+    instrument: MODIS
+    provider: LAADS
+    stream_prefix: terra
+    collections:
+      '6.1':
+        cmr_version: '6.1'
+        file_token: '061'
+        file_format: hdf4
+        geolocation:
+          lat: Latitude
+          lon: Longitude
+          time: Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          dt:
+            family: modis_dt
+            surfaces:
+              land:
+                aod:
+                  name: Corrected_Optical_Depth_Land
+                  select:
+                    Solution_3_Land:mod04: 1
+                qa:
+                  name: Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+              ocean:
+                aod:
+                  name: Effective_Optical_Depth_Best_Ocean
+                  select: &id001
+                    MODIS_Band_Ocean:mod04: 1
+                qa:
+                  name: Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+            alternates:
+              cam7_v2:
+                ocean:
+                  aod:
+                    name: Effective_Optical_Depth_Best_Ocean
+                    select: *id001
+                  qa:
+                    name: Land_Ocean_Quality_Flag
+                    select: null
+                  sigma: null
+          db:
+            family: modis_db
+            surfaces:
+              land:
+                aod:
+                  name: Deep_Blue_Aerosol_Optical_Depth_550_Land
+                  select: null
+                qa:
+                  name: Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag
+                  select: null
+                sigma:
+                  name: Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty
+                  select: null
+            alternates: {}
+      '7':
+        cmr_version: '7'
+        file_token: '007'
+        file_format: netcdf4
+        geolocation: null
+        algorithms: {}
+  MYD04_L2:
+    platform: Aqua
+    instrument: MODIS
+    provider: LAADS
+    stream_prefix: aqua
+    collections:
+      '6.1':
+        cmr_version: '6.1'
+        file_token: '061'
+        file_format: hdf4
+        geolocation:
+          lat: Latitude
+          lon: Longitude
+          time: Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          dt:
+            family: modis_dt
+            surfaces:
+              land:
+                aod:
+                  name: Corrected_Optical_Depth_Land
+                  select:
+                    Solution_3_Land:mod04: 1
+                qa:
+                  name: Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+              ocean:
+                aod:
+                  name: Effective_Optical_Depth_Best_Ocean
+                  select: &id002
+                    MODIS_Band_Ocean:mod04: 1
+                qa:
+                  name: Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+            alternates:
+              cam7_v2:
+                ocean:
+                  aod:
+                    name: Effective_Optical_Depth_Best_Ocean
+                    select: *id002
+                  qa:
+                    name: Land_Ocean_Quality_Flag
+                    select: null
+                  sigma: null
+          db:
+            family: modis_db
+            surfaces:
+              land:
+                aod:
+                  name: Deep_Blue_Aerosol_Optical_Depth_550_Land
+                  select: null
+                qa:
+                  name: Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag
+                  select: null
+                sigma:
+                  name: Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty
+                  select: null
+            alternates: {}
+      '7':
+        cmr_version: '7'
+        file_token: '007'
+        file_format: netcdf4
+        geolocation: null
+        algorithms: {}
+  AERDB_L2_VIIRS_SNPP:
+    platform: SNPP
+    instrument: VIIRS
+    provider: LAADS
+    stream_prefix: snpp
+    collections:
+      '2':
+        cmr_version: '2'
+        file_token: '002'
+        file_format: netcdf4
+        geolocation:
+          lat: Latitude
+          lon: Longitude
+          time: Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          db:
+            family: viirs_db
+            surfaces:
+              land:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Land
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Land
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land
+                  select: null
+              ocean:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Ocean
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Ocean
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean
+                  select: null
+            alternates: {}
+      '2.1':
+        cmr_version: '2.1'
+        file_token: '021'
+        file_format: netcdf4
+        geolocation:
+          lat: Latitude
+          lon: Longitude
+          time: Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          db:
+            family: viirs_db
+            surfaces:
+              land:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Land
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Land
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land
+                  select: null
+              ocean:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Ocean
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Ocean
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean
+                  select: null
+            alternates: {}
+  AERDB_L2_VIIRS_NOAA20:
+    platform: NOAA-20
+    instrument: VIIRS
+    provider: LAADS
+    stream_prefix: noaa20
+    collections:
+      '2':
+        cmr_version: '2'
+        file_token: '002'
+        file_format: netcdf4
+        geolocation:
+          lat: Latitude
+          lon: Longitude
+          time: Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          db:
+            family: viirs_db
+            surfaces:
+              land:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Land
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Land
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land
+                  select: null
+              ocean:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Ocean
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Ocean
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean
+                  select: null
+            alternates: {}
+      '2.1':
+        cmr_version: '2.1'
+        file_token: '021'
+        file_format: netcdf4
+        geolocation:
+          lat: Latitude
+          lon: Longitude
+          time: Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          db:
+            family: viirs_db
+            surfaces:
+              land:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Land
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Land
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land
+                  select: null
+              ocean:
+                aod:
+                  name: Aerosol_Optical_Thickness_550_Ocean
+                  select: null
+                qa:
+                  name: Aerosol_Optical_Thickness_QA_Flag_Ocean
+                  select: null
+                sigma:
+                  name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean
+                  select: null
+            alternates: {}
+  AERDT_L2_VIIRS_SNPP:
+    platform: SNPP
+    instrument: VIIRS
+    provider: LAADS
+    stream_prefix: snpp
+    collections:
+      '2.1':
+        cmr_version: '2.1'
+        file_token: '021'
+        file_format: netcdf4
+        geolocation:
+          lat: geolocation_data/latitude
+          lon: geolocation_data/longitude
+          time: null
+          time_kind: coverage_attrs
+        algorithms:
+          dt:
+            family: viirs_dt
+            surfaces:
+              land:
+                aod:
+                  name: geophysical_data/Corrected_Optical_Depth_Land
+                  select:
+                    Wavelength_Used_Land_2: 1
+                qa:
+                  name: geophysical_data/Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+              ocean:
+                aod:
+                  name: geophysical_data/Effective_Optical_Depth_Average_Ocean
+                  select:
+                    Wavelength_Used_ALL: 1
+                qa:
+                  name: geophysical_data/Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+            alternates: {}
+  AERDT_L2_VIIRS_NOAA20:
+    platform: NOAA-20
+    instrument: VIIRS
+    provider: LAADS
+    stream_prefix: noaa20
+    collections:
+      '2.1':
+        cmr_version: '2.1'
+        file_token: '021'
+        file_format: netcdf4
+        geolocation:
+          lat: geolocation_data/latitude
+          lon: geolocation_data/longitude
+          time: null
+          time_kind: coverage_attrs
+        algorithms:
+          dt:
+            family: viirs_dt
+            surfaces:
+              land:
+                aod:
+                  name: geophysical_data/Corrected_Optical_Depth_Land
+                  select:
+                    Wavelength_Used_Land_2: 1
+                qa:
+                  name: geophysical_data/Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+              ocean:
+                aod:
+                  name: geophysical_data/Effective_Optical_Depth_Average_Ocean
+                  select:
+                    Wavelength_Used_ALL: 1
+                qa:
+                  name: geophysical_data/Land_Ocean_Quality_Flag
+                  select: null
+                sigma: null
+            alternates: {}

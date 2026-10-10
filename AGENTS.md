@@ -47,8 +47,11 @@ At session start, also check the repo root for cross-model handoff files (`HANDO
     ("superobbing"). Within a stream: x̄ = Σw·x/Σw, s = Σ(1/σ)/Σw, and
     V = ρ·s² + (1 − ρ)/Σw, which is exact for Cov(eᵢ, eⱼ) = ρσᵢσⱼ. Streams combine by inverse
     variance, and the Birge ratio inflates σ when streams disagree. ρ is a config parameter
-    chosen by AERONET calibration (0.5 placeholder).
-  - Option: **simple count weighting with no uncertainty** (CAM7 `prepare_modis_era5_grid.py`).
+    intended for AERONET calibration. The two-month campaign found no tested ρ ∈ [0, 1]
+    that calibrates global uncertainty; 0.5 remains a provisional working value.
+  - Option: **simple count weighting without retrieval-uncertainty weighting** (CAM7
+    `prepare_modis_era5_grid.py`). It reports a sample standard error, with a configurable
+    floor or zero for a single pixel.
 - **QA defaults follow the retrieval teams** (verified on real granules and in Levy et al. 2013):
   - Dark Target land QA = 3, **ocean QA ≥ 1**. This equals the products' own
     `Optical_Depth_Land_And_Ocean` for MODIS C6.1 and VIIRS DT. One darktarget web page says
@@ -56,12 +59,16 @@ At session start, also check the repo root for cross-model handoff files (`HANDO
     Phase 3 compares the two.
   - Ocean AOD from `Effective_Optical_Depth_Average_Ocean`.
   - Deep Blue QA ≥ 2 over land and water (VIIRS DB water QA takes only 1 or 3).
-  - The `cam7_v2` preset reproduces CAM7's diagnostic four-stream product (see the plan, Task
-    1.10): QA ≥ 1 everywhere, MODIS `Effective_Optical_Depth_Best_Ocean`, AOD ∈ [0, 5] for all
-    streams, unrounded scaling, naive TAI93 time, count weighting with zero single-pixel σ. It
-    is *not* the SP1 archive CAM read in 2008.
-- **Negative AOD** (*proposal*, tested in Phase 3): only MODIS DT land is negative (clamped at
-  −0.05). Keep values ≥ −0.05 in averages and clip the final cell mean at 0 for CAM.
+  - The `cam7_v2` QC preset sets QA ≥ 1 everywhere, MODIS
+    `Effective_Optical_Depth_Best_Ocean`, AOD ∈ [0, 5] and unrounded scaling. The full
+    `modis_l2_200807_cam7_v2.yaml` run additionally selects naive TAI93 time, count weighting,
+    zero single-pixel σ and no edge granules to reproduce CAM7's diagnostic four-stream
+    product (Task 1.10). The QC preset alone does not change time or weighting. This is
+    *not* the SP1 archive CAM read in 2008.
+- **Negative AOD** (*working policy*, tested in Phase 3): MODIS and VIIRS DT land can be negative
+  (down to −0.05); the earlier MODIS-only statement was corrected by a complete September 8
+  scan (`docs/validation/sept2020_negative_aod.tsv`). No negative DT ocean or DB AOD was found
+  in that scan. Keep values ≥ −0.05 in averages and clip the final cell mean at 0 for CAM.
 - **Time:** TAI93 → UTC subtracts leap seconds (6 s in 2008, 10 s from 2017). VIIRS DT has no
   per-pixel time; it is derived from the `time_coverage_*` attributes.
 - **AERONET:** fetched directly from Web Service v3 (rules re-implemented from what DAVINCI's
@@ -69,6 +76,11 @@ At session start, also check the repo root for cross-model handoff files (`HANDO
   `day2 = D+1, hour2 = 0`; `hour2 = 23` loses data. The validation suite ports DAVINCI's
   metrics, calculator, output formatter, nearest-cell index logic and `AEROSOL_REGIONS`.
 - **Plots** follow DAVINCI plotting practice (rules below and in plan Phase 4).
+- **Campaign limits** (*measured 2026-10-10*): every tested July/September grid configuration
+  misses the RMSE acceptance gate. Retain retrieval-team QA, Average Ocean, valid DT-land negatives and
+  minimum count 1 as working defaults; no scientifically accepted uncertainty calibration
+  is claimed. See `docs/validation/evaluation_campaign.md`. The Southern Ocean region is
+  a latitude band without an ocean mask, and its AERONET stations are mostly land/coastal.
 
 ## Layout
 
@@ -77,8 +89,8 @@ sarb_aod/config/      pydantic schema (schema.py) and YAML/profile/env loader (l
 sarb_aod/data/        catalog.yaml: products, collections (CMR version, filename token, format)
 sarb_aod/paths.py     path-template rendering
 sarb_aod/stage/       Earthdata search/download hooks, manifests, resumable staging runner
-sarb_aod/cli.py       sarb-aod show-config | stage | audit   (planned: grid, validate, summarize,
-                      aeronet stage/audit, evaluate, plot)
+sarb_aod/cli.py       sarb-aod show-config | stage | audit | grid | validate | summarize |
+                      aeronet stage/audit | evaluate | plot | grid-months
 config/profiles/      machine profiles: mac, derecho, ami (where things live)
 config/runs/          run configs (what to process)
 tests/                offline pytest suite (network calls injected via Hooks)
@@ -153,7 +165,7 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
   `${SARB_AOD_DATA_ROOT}`. Never hard-code machine paths in code; add template fields or
   profile keys instead.
 - **Run configs** choose collections per product for staging
-  (`stage.products: {MOD04_L2: ["6.1", "7"], ...}`). Gridding will name exactly one collection
+  (`stage.products: {MOD04_L2: ["6.1", "7"], ...}`). Gridding names exactly one collection
   per stream (plan Task 1.9).
 - **Collections** (`sarb_aod/data/catalog.yaml`; keys are CMR VersionIds):
   - MODIS C6.1: token `061`, HDF4.
