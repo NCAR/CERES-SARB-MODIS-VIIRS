@@ -320,6 +320,14 @@ class UncertaintyConfig(StrictModel):
         return value
 
 
+class WeightingConfig(StrictModel):
+    method: Literal["gls", "count"] = "gls"
+    rho: float = Field(default=0.5, ge=0, le=1, allow_inf_nan=False)
+    birge: bool = True
+    min_pixels: int = Field(default=1, ge=1, strict=True)
+    single_pixel_sigma: Literal["floor", "zero"] = "floor"
+
+
 class AeronetConfig(StrictModel):
     """AERONET spectral conversion and reference uncertainty."""
 
@@ -334,6 +342,7 @@ class RunConfig(StrictModel):
     paths: PathsConfig
     period: Period
     stage: StageConfig
+    weighting: WeightingConfig = Field(default_factory=WeightingConfig)
     uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
     qc: QCConfig = Field(default_factory=QCConfig)
     grid: GridConfig = Field(default_factory=GridConfig)

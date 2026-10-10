@@ -64,9 +64,9 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.6 | Numba kernels | 1.5 | Done | 1613bbb |
 | 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
 | 1.2 | QC presets | 1.1 | Done | d357b79 |
-| 1.3 | Per-pixel uncertainty | 1.1 | Done | Task 1.3 (this commit) |
+| 1.3 | Per-pixel uncertainty | 1.1 | Done | c9f966a |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
-| 1.7 | Weighting (GLS, count) | 1.6 | Not started | |
+| 1.7 | Weighting (GLS, count) | 1.6 | Done | Task 1.7 (this commit) |
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Not started | |
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
 | 3.4 | Regions | — | Done | 9433481 |
@@ -1197,6 +1197,13 @@ network access to LAADS and AERONET.
   pass 13 focused cases. Missing/masked sigma stays NaN; valid negative DB envelopes
   use magnitude and the configurable floor. Supplied DT sigma takes precedence.
   Repository gates pass; review prompted an explicit masked-sigma regression.
+
+- Task 1.7: count and correlated-error GLS combinations pass 52 focused tests,
+  including heterogeneous-error Monte Carlo (20,000 realizations per case), rho=1
+  saturation, Birge inflation, minimum counts and independent sensor grouping.
+  Product counts are zero when no GLS estimate exists; raw stream/missing-sigma/
+  high-rejection diagnostics remain visible in missing-product cells.
+  Repository gates and review pass.
 
 ## Open items and risks
 
