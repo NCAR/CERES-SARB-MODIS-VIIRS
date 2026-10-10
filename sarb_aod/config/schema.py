@@ -202,6 +202,14 @@ class PathsConfig(StrictModel):
     granule_dir: str = DEFAULT_GRANULE_DIR
     manifest: str = DEFAULT_MANIFEST
     output: str = DEFAULT_OUTPUT
+    evaluation_dir: str = "{data_root}/evaluation/{run}"
+
+    @field_validator("evaluation_dir")
+    @classmethod
+    def _evaluation_fields(cls, value: str) -> str:
+        return _check_template(value, frozenset({"data_root", "run"}), "paths.evaluation_dir")
+
+
     summary: str = "{data_root}/CAM7/{stem}/{run}/summary_{start}_{end}.tsv"
 
     @field_validator("summary")
