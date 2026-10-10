@@ -67,7 +67,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.3 | Per-pixel uncertainty | 1.1 | Done | c9f966a |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Done | 5853522 |
 | 1.7 | Weighting (GLS, count) | 1.6 | Done | 3862a2e |
-| 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Done | Task 1.8 (this commit) |
+| 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Done | bb40c69 + path-helper follow-up (this commit) |
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
 | 3.4 | Regions | — | Done | 9433481 |
 | 3.1 | AERONET fetcher | — | Not started | |
@@ -1215,7 +1215,8 @@ network access to LAADS and AERONET.
   fill, coordinates, CF metadata and required globals; our files pass its unchanged
   validator. Atomic replacement, clipping and corruption cases pass. Eight path tests
   verify run isolation and CAM namelist limits; review corrected the length check to
-  use expanded dates/seconds. Repository gates and review pass. The external derecho
+  use expanded dates/seconds. A staging omission required an immediate follow-up
+  commit for the already-tested path helpers. Repository gates and review pass. The external derecho
   CAM `atm.log` consumption check remains an open deployment verification.
 
 ## Open items and risks
