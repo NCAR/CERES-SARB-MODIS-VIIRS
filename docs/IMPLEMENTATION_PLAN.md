@@ -1,50 +1,99 @@
 # Implementation Plan: MODIS/VIIRS L2 → CAM7 AOD constraint files
 
-*Written 2026-10-10. Decisions referenced here are recorded in `AGENTS.md` ("Design
-decisions").*
+*Written 2026-10-10; revised the same day after a six-lens readiness review that checked every
+claim against real July 2008 / Sept 2020 granules, the DAVINCI and CAM7 sources, CAM's
+`filenames.F90`, and the live AERONET service. Decisions are recorded in `AGENTS.md` ("Design
+decisions"). Where this plan cites a verified fact, it was measured on real data.*
 
 ## Workflow (every task)
 
-All work happens on `main`: no branches or worktrees unless explicitly instructed. A task, or
-a phase, is closed only when it is complete, tested and reviewed. Then commit and push to
-`origin/main`:
+All work happens on `main`: no branches or worktrees unless explicitly instructed. A task (or
+phase) is closed only when it is **complete, tested and reviewed**; then it is committed and
+pushed to `origin/main`.
 
-1. **Complete:** the task's code, config and docs, including any `AGENTS.md` decisions it
-   settles.
-2. **Tested:** the task's new tests plus the full suite pass (`pytest`), `mypy sarb_aod` is
-   clean, and `black --check` and `isort --check` pass. Real-data steps run on the staged
-   July 2008 / Sept 2020 data where the task calls for them.
-3. **Reviewed:** a correctness review of the task's diff, with findings fixed or explicitly
-   deferred in "Open items". For plotting tasks, the protocol report passes and the PNG
-   previews have been visually inspected.
-4. **Recorded:** this plan's Status table and Open items are updated in the same commit.
-5. **Commit and push:** one commit per task (message `Task N.M: <summary>`), pushed to
-   `origin/main` (SSH remote) immediately. A phase-closing commit updates the Status row to
-   **Done**.
+1. **Complete:** the task's code, config, tests and docs, including any `AGENTS.md` decision it
+   settles. Each task adds its own config section to `RunConfig` with defaults, so existing run
+   configs keep loading.
+2. **Tested (gates):**
+   ```bash
+   E=~/miniforge3/envs/sarb-aod/bin
+   $E/python -m pytest -m "not network"     # network tests run separately when network is on
+   $E/mypy sarb_aod
+   $E/black --check . && $E/isort --check-only .
+   ```
+   Real-data steps run on the staged data where the task calls for them.
+3. **Reviewed:** `codex review --uncommitted` (Codex) or `/code-review` (Claude) on the task's
+   diff. Fix the findings or record them in "Open items", and list any that remain in the commit
+   body. Plotting tasks also need a passing protocol report and visually inspected previews.
+4. **Recorded:** update this plan's task table (State, Commit) and Open items in the same commit.
+5. **Commit and push:** stage files explicitly (`git add <paths>`, never `git add -A`), message
+   `Task N.M: <summary>`, push to `origin/main` (SSH remote) right away. Codex: git writes need
+   a sandbox escalation (see `AGENTS.md`, "Running as Codex"); if it is not approved, stop with
+   the work staged and say so.
 
 ## Goal
 
 Turn staged L2 aerosol granules into CAM7-ready f09, 3-hourly, 550 nm AOD files: per-source
-streams, retrieval-team QC, numba gridding, configurable weighting (GLS with error
-correlation by default, plain count weighting as an option), and the CAM7 obs-file contract.
-MODIS-only, VIIRS-only, or mixed is a configuration choice.
+streams, retrieval-team QC, numba gridding, configurable weighting (GLS with an
+error-correlation model by default; plain count weighting as an option), and the CAM7 obs-file
+contract. MODIS-only, VIIRS-only, or mixed is a configuration choice.
 
-Out of scope here (deferred): spatial/temporal denoising, VIIRS→MODIS bias correction.
+Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS bias correction.
 
 ## Status
 
 | Phase | Content | State |
 |---|---|---|
-| 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env | **Done.** July 2008 MODIS C6.1 and Sept 2020 MODIS+VIIRS staging |
-| 1 | MODIS C6.1 → CAM7 files (July 2008) | Planned (this document) |
-| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Planned |
-| 3 | AERONET validation suite (fetcher, collocation, statistics, reports); choose ρ and other defaults | Planned; tasks 3.1–3.4 can start alongside Phase 1 |
-| 4 | Plotting and diagnostics in DAVINCI style: maps, AERONET bias maps, site and regional time series, protocol | Planned; tasks 4.1–4.4 land before task 1.10 |
-| 5 | Production profile (AMI), multi-year runs | Needs AMI details |
+| 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done** (code; Task 0.1). Data: July 2008 MODIS C6.1 staged and audited (9,518/9,518). Sept 2020 staging runs detached in `screen -S sarb-stage`; it is complete when `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log` ends with `=== audit exit 0 ===`. Never kill or restart that session while it runs; a re-run resumes. |
+| 1 | MODIS C6.1 → CAM7 files (July 2008) | Not started |
+| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Not started; real-data steps wait for the Sept 2020 staging |
+| 3 | AERONET validation suite; choose ρ and other defaults | Not started |
+| 4 | Plotting and diagnostics (DAVINCI style) | Not started |
+| 5 | Production profile (AMI), multi-year runs | Blocked: AMI details from the user |
 
-Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS
-DB v2 (SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, 213 GiB).
-MODIS C7 aerosol isn't published yet; the catalog stages it automatically once it is.
+### Tasks, dependencies and order
+
+Work top to bottom (one agent); independent rows may run in parallel. **Recommended first code
+task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.py`,
+`records.py`, `aggregate.py`; fully testable).
+
+| Task | Title | Depends on | State | Commit |
+|---|---|---|---|---|
+| 0.1 | Tooling hygiene, env (pandas/matplotlib/cartopy/seaborn), AERONET fixtures | — | Done | 43d059e |
+| 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Not started | |
+| 1.6 | Numba kernels | 1.5 | Not started | |
+| 1.1 | Catalog variable maps, stream registry | — | Not started | |
+| 1.2 | QC presets | 1.1 | Not started | |
+| 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
+| 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
+| 1.7 | Weighting (GLS, count) | 1.6 | Not started | |
+| 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Not started | |
+| 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
+| 3.4 | Regions | — | Not started | |
+| 3.1 | AERONET fetcher | — | Not started | |
+| 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Not started | |
+| 3.3 | Metrics, grouped statistics | — | Not started | |
+| 4.1 | Style, labeling, display tables | — | Not started | |
+| 4.2 | Map renderers | 4.1, 1.5, 3.4 | Not started | |
+| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Not started | |
+| 4.4 | Plot protocol | 4.2, 4.3 | Not started | |
+| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Not started | |
+| 1.10 | July 2008 verification | 1.9, 4.5a | Not started | |
+| 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Not started | |
+| 4.5b | AERONET suites | 4.5a, 3.5 | Not started | |
+| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Not started | |
+| 2.1 | VIIRS Deep Blue reader | 1.4 | Not started | |
+| 2.2 | VIIRS Dark Target reader | 1.4 | Not started | |
+| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Not started | |
+| 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
+| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Not started | |
+| 4.6 | Full plot runs | 3.7 | Not started | |
+| 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
+| 5.x | AMI production | blocked: AMI details | Blocked | |
+
+Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
+(SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, ~213 GiB). MODIS
+C7 aerosol isn't published; staging reports it "unavailable" until it is.
 
 ---
 
@@ -52,51 +101,51 @@ MODIS C7 aerosol isn't published yet; the catalog stages it automatically once i
 
 ```text
 sarb_aod/
-  config/schema.py      + StreamConfig, QCConfig (presets), GridConfig, WeightingConfig, OutputConfig
-  data/catalog.yaml     + per-product algorithm streams and variable maps (C6.1, C7, VIIRS)
-  streams.py            Stream registry: product × algorithm (DT/DB) → reader recipe
+  config/schema.py      + catalog variable maps; Grid/QC/Uncertainty/Weighting/Time/Output/
+                          AERONET/Plots config models; new path templates
+  data/catalog.yaml     + per-collection geolocation and algorithm variable maps
+  streams.py            stream registry: (product, collection, algorithm) → reader recipe
   readers/
-    base.py             PixelBatch (lat, lon, time, aod, sigma, surface, stream id)
+    base.py             PixelBatch (t, lat, lon, aod, sigma, surface, stream)
     modis_hdf4.py       MOD04/MYD04 C6.1 (pyhdf)
-    netcdf.py           C7 and VIIRS AERDB/AERDT (netCDF4, group-aware variable paths)
-  qc.py                 per-stream, per-surface QA and range masks
-  uncertainty.py        per-pixel sigma: retrieval-provided or expected-error envelope
+    netcdf.py           C7 and VIIRS AERDB/AERDT (netCDF4, group paths, dimension-name selection)
+  qc.py                 QC presets, per stream family and surface
+  uncertainty.py        retrieval σ or expected-error envelope, σ floor
+  timeconv.py           TAI93 → UTC with leap seconds; VIIRS DT coverage-attribute times
+  windows.py            3-hourly half-open windows, CF center time
   grid/
-    spec.py             f09 (exact CAM centers), or grid read from a file; cell edges
-    kernels.py          numba accumulation (ported from DAVINCI grid_binning.py, extended)
+    spec.py             f09 grid (CAM centers, clamped bounds), longitude normalization
+    kernels.py          numba kernels (DAVINCI grid_binning.py port + extended accumulator)
     combine.py          weighting: gls (default) | count
-  windows.py            3-hourly windows, CF center time, TAI93 conversion
   contract.py           CAM7 writer + validator (ported from CAM7 sp1_aod_pipeline/contract.py)
   pipeline.py           per-day driver, day-level parallelism, resumable
-  cli.py                + grid, validate, summarize, aeronet, evaluate
+  cli.py                + grid, validate, summarize, aeronet stage/audit, evaluate, plot
   aeronet/
-    fetch.py            AERONET Web Service v3 client (no monetio), rate-limited, daily cache
-    parse.py            v3 CSV → tidy table (site, time, lat, lon, AOD by λ, Ångström)
-    spectral.py         AOD at 550 nm: quadratic log-log fit or Ångström (CAM7 method)
+    fetch.py            Web Service v3 client (stdlib urllib; injectable hooks), daily cache
+    parse.py            v3 CSV → table (by header name)
+    spectral.py         550 nm: quadratic log-log (default) or Ångström from 500 nm (CAM7)
   evaluation/
-    metrics.py          DAVINCI metric set (ported from davinci_monet/stats/metrics.py) + aerosol metrics
-    calculator.py       grouped statistics (ported from davinci_monet/stats/calculator.py)
-    collocate.py        L2-pixel and gridded-product matchups (PointStrategy logic from DAVINCI)
-    regions.py          DAVINCI AEROSOL_REGIONS catalog (+ Southern Ocean band)
-    report.py           CSV/JSON tables (ported from davinci_monet/stats/output.py)
-  plots/                DAVINCI-style plotting (ported; matplotlib + cartopy)
-    style.py            NCAR theme, palette, GEOSIT AOD levels/cmap, bias/sequential cmaps
-    labeling.py         titles, subtitles, axis/legend/bias labels (DAVINCI rules)
-    labels.py           display-name and acronym tables
-    maps.py             spatial fields, site-marker layers, global-mean subtitles
-    series.py           per-site and regional time series
-    scatter.py          density scatter, stats box
-    summary.py          binned bias, z-score, ρ sweep, scorecard, Taylor, box plots
-    protocol.py         validate_rendered_figures(), protocol reports
+    metrics.py          DAVINCI metric set (port) + aerosol metrics (%EE, OLS/RMA, z)
+    calculator.py       grouped statistics (DAVINCI port), regional aggregations
+    collocate.py        L2-pixel and gridded-product matchups; CAM7 pairing mode
+    regions.py          DAVINCI AEROSOL_REGIONS + additions
+    report.py           CSV/JSON tables (DAVINCI output.py port)
+  plots/                DAVINCI-style plotting (port; matplotlib, cartopy, seaborn)
+    style.py, labeling.py, labels.py, titles.py, _stats.py
+    maps.py, series.py, scatter.py, summary.py
+    protocol.py         validate_rendered_figures(), layout checks, protocol reports
     suites.py           suite expansion; `sarb-aod plot`
+tests/
+  data/aeronet/         AERONET fixtures (committed in Task 0.1)
+  reference/            vendored CAM7 reference code (attribution) for regression tests
 ```
 
-Data flow for one day:
+Data flow for one day D:
 
 ```text
-granules(day ± edge granules) → reader → PixelBatch per stream
-  → QC mask → sigma → numba accumulate into acc[window, stream, lat, lon]
-  → combine(acc, weighting) → mean, sigma, count, per-stream diagnostics
+granules of day D (+ last granule of D−1 if grid.edge_granules) → reader → PixelBatch per stream
+  → QC → σ → UTC time → numba accumulate into acc[window, stream, lat, lon]
+  → combine (gls | count) → mean, σ, counts, diagnostics → clip negative means at 0
   → 8 contract files (atomic write) → validate
 ```
 
@@ -104,322 +153,662 @@ granules(day ± edge granules) → reader → PixelBatch per stream
 
 ## Phase 1: MODIS C6.1 → CAM7 files (July 2008)
 
-### Task 1.1: Streams and the catalog variable map
+### Task 1.1: Catalog variable maps and stream registry
 
-A **stream** is one platform × algorithm source: `terra_dt`, `terra_db`, `aqua_dt`, `aqua_db`
-(later `snpp_db`, `noaa20_dt`, …). Each pixel also carries a surface type (land/ocean) for QC
-and the expected-error envelope.
+A **stream** is one platform × algorithm source; its id is `<stream_prefix>_<algorithm>`:
+`terra_dt`, `terra_db`, `aqua_dt`, `aqua_db` (Phase 2 adds `snpp_db`, `noaa20_db`, `snpp_dt`,
+`noaa20_dt`). Each pixel also carries its surface (land/ocean) for QC and σ.
 
-Extend `catalog.yaml` so each product collection lists its streams and variables. MODIS C6.1:
+**Schema** (`config/schema.py`; all `StrictModel`):
 
-| Stream | AOD 550 | QA | Sigma | Surface |
-|---|---|---|---|---|
-| DT land | `Corrected_Optical_Depth_Land[1]` | `Land_Ocean_Quality_Flag` | EE envelope | `Land_sea_Flag` |
-| DT ocean | `Effective_Optical_Depth_Average_Ocean[1]` | `Land_Ocean_Quality_Flag` | EE envelope | `Land_sea_Flag` |
-| DB land | `Deep_Blue_Aerosol_Optical_Depth_550_Land` | `Deep_Blue_..._550_Land_QA_Flag` | `Deep_Blue_..._550_Land_Estimated_Uncertainty` | land |
+```python
+class VarRef(StrictModel):
+    name: str                                  # SDS name, or "group/var" for NetCDF
+    select: dict[str, int] | None = None       # {dimension name: index}; never positional
 
-Geolocation and time: `Latitude`, `Longitude`, `Scan_Start_Time` (TAI93 seconds). Scaling
-comes from each SDS's `scale_factor`/`add_offset`/`_FillValue`/`valid_range`.
+class SurfaceVars(StrictModel):
+    aod: VarRef
+    qa: VarRef
+    sigma: VarRef | None = None                # None → expected-error envelope (Task 1.3)
 
-DT land and ocean together form one stream per platform (`terra_dt`), as in CAM7, so the
-per-stream counts in the output stay the four the CAM7 files report.
+class AlgorithmSpec(StrictModel):
+    family: Literal["modis_dt", "modis_db", "viirs_dt", "viirs_db"]   # keys QC and σ tables
+    surfaces: dict[Literal["land", "ocean"], SurfaceVars]
+    alternates: dict[str, dict[Literal["land", "ocean"], SurfaceVars]] = {}  # QC preset → swap
 
-The `cam7_v2` preset swaps DT ocean to `Effective_Optical_Depth_Best_Ocean`.
+class Geolocation(StrictModel):
+    lat: str
+    lon: str
+    time: str | None                           # None → coverage attributes (VIIRS DT)
+    time_kind: Literal["tai93", "coverage_attrs"]
 
-**Tests:** catalog validation; a stream registry lookup for every catalog entry; the
-`cam7_v2` override.
+# CollectionSpec gains:  geolocation: Geolocation | None = None
+#                        algorithms: dict[Literal["dt", "db"], AlgorithmSpec] = {}
+# ProductSpec gains:     stream_prefix: str    # terra | aqua | snpp | noaa20
+```
 
-### Task 1.2: QC configuration with presets
+**Catalog entry for MOD04_L2 and MYD04_L2 "6.1"** (pyhdf dimension names verified):
+
+```yaml
+geolocation: {lat: Latitude, lon: Longitude, time: Scan_Start_Time, time_kind: tai93}
+algorithms:
+  dt:
+    family: modis_dt
+    surfaces:
+      land:  {aod: {name: Corrected_Optical_Depth_Land, select: {"Solution_3_Land:mod04": 1}},
+              qa: {name: Land_Ocean_Quality_Flag}}
+      ocean: {aod: {name: Effective_Optical_Depth_Average_Ocean, select: {"MODIS_Band_Ocean:mod04": 1}},
+              qa: {name: Land_Ocean_Quality_Flag}}
+    alternates:
+      cam7_v2:
+        ocean: {aod: {name: Effective_Optical_Depth_Best_Ocean, select: {"MODIS_Band_Ocean:mod04": 1}},
+                qa: {name: Land_Ocean_Quality_Flag}}
+  db:
+    family: modis_db
+    surfaces:
+      land: {aod: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land},
+             qa: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag},
+             sigma: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty}}
+```
+
+Verified facts the map relies on:
+- Index 1 is 0.55 µm on both wavelength axes ("0.47, 0.55, 0.66" land; "0.47, 0.55, 0.66,
+  0.86, 1.24, 1.63, 2.13" ocean). The wavelength axis is first in MODIS and **last** in VIIRS DT,
+  hence selection by dimension name.
+- **Surface = whichever DT field is valid.** DT land and ocean never coexist in a pixel
+  (0 overlaps). `Land_sea_Flag` is **not** used: its `valid_range` [0, 1] is wrong (value 2 =
+  coastal occurs), so range-masking it would drop coastal retrievals.
+- `Land_Ocean_Quality_Flag` is one 0–3 flag for whichever DT retrieval exists. The DB QA flag is
+  a plain 0–3 integer (`_FillValue` 0); DB AOD is finite exactly where DB QA ≥ 1.
+- MODIS C6.1 Deep Blue has no water retrieval.
+
+Phase 1 fills only MOD04/MYD04 6.1 (VIIRS: Tasks 2.1/2.2; C7: Task 2.5). The registry raises
+`no reader defined for <product> <collection>` for a collection without `algorithms`.
+
+**Tests:** catalog validation; registry resolution for every collection with `algorithms` and
+the clear error otherwise; stream ids from `stream_prefix`; dimension-name selection.
+
+### Task 1.2: QC presets
 
 ```yaml
 qc:
-  preset: retrieval_team          # or cam7_v2
-  aod_min: -0.05                  # keep small negatives (see below)
-  aod_max: 5.0
-  overrides: {dt_ocean: {qa_min: 1}}   # optional per stream/surface
+  preset: retrieval_team     # retrieval_team | cam7_v2
+  aod_min: -0.05             # inclusive, on rounded physical values
+  aod_max: 5.0               # inclusive
+  overrides: {}              # e.g. {modis_dt: {ocean: {qa_min: 3}}} for the Phase 3 comparison
 ```
 
-| Preset | DT land | DT ocean | DB (land, water) |
-|---|---|---|---|
-| `retrieval_team` (default) | QA = 3 | QA ≥ 2 | QA ≥ 2 |
-| `cam7_v2` | QA ≥ 1 | QA ≥ 1 | QA ≥ 1, and AOD ≥ 0 |
+| Preset | DT land | DT ocean | DB land | DB water (VIIRS only) | AOD range |
+|---|---|---|---|---|---|
+| `retrieval_team` (default) | QA = 3 | **QA ≥ 1** | QA ≥ 2 | QA ≥ 2 (water QA takes only 1 or 3, so = 3) | [−0.05, 5] |
+| `cam7_v2` | QA ≥ 1 | QA ≥ 1, `..._Best_Ocean` (MODIS only) | QA ≥ 1 | QA ≥ 1 | [0, 5], all streams |
 
-**Negative AOD.** The retrievals allow small negative AOD (DT ocean `valid_range` −0.1–5.0)
-so that averages over clean scenes aren't biased high. CAM7 dropped AOD < 0, which biases
-clean oceans upward, the Southern Ocean included. Default: keep values ≥ `aod_min` in the
-average, and clip only the final cell mean at 0 for CAM. This is a config option, and Phase 3
-checks it against AERONET.
+- **DT ocean QA ≥ 1** follows Levy et al. (2013, AMT 6:2989): "QAC = 3 over land, and QAC ≥ 1
+  over ocean", and C6 deliberately gives clean, no-retrieval scenes (AOD = 0) QAC = 1. It equals
+  the products' own combined SDS `Optical_Depth_Land_And_Ocean` ("ocean (Average) (Quality
+  flag = 1, 2, 3) and land (corrected) (Quality flag = 3)"), verified identical on 4.25 M MODIS
+  pixels and stated in the VIIRS DT file. The darktarget "Level 2 product contents" web page
+  says ocean QA 2–3, but QA = 2 is practically unused over ocean (31 of 3.2 M pixels), so that
+  rule means QA = 3 and drops ~60% of ocean pixels (87% south of 40° S), the cleanest ones,
+  biasing clean oceans high. Phase 3 compares QA ≥ 1 with QA = 3 via the override.
+- **A QA fill value fails QC.** Example: 3,623 DT-ocean pixels on Terra 2008-07-01 have AOD 0
+  and QA −9999.
+- **Negative AOD.** In MODIS C6.1 only DT land is negative. It is clamped at −0.05 (raw −50):
+  15.5% of QA = 3 land pixels are negative and 4% sit exactly at −0.05. DT ocean is floored at
+  0, and DB's valid range starts at 0. Default: keep values ≥ `aod_min` (−0.05, inclusive) in
+  the average and clip only the final cell mean at 0 for CAM (Task 1.8). CAM7 dropped AOD < 0,
+  removing ~10% of DT land pixels and nothing over ocean. Over ocean the clean-scene bias comes
+  from the QA threshold, not from negatives.
+- **Rounding.** The HDF4 `scale_factor` is the float64 0.0010000000474974513, so raw −50 → −0.0500000024
+  and raw 5000 → 5.0000002, which falsely fail inclusive bounds. `valid_range` is checked on raw
+  integers; physical values are rounded (`round(raw*scale + offset, 6)`) before the AOD-range
+  test. `cam7_v2` skips rounding (as CAM7 did, which dropped AOD = 5.0 pixels).
+- **AOD > 5** matters for the Sept 2020 smoke. `aod_count_rejected_high` counts QA-passing
+  pixels strictly above `aod_max` after rounding (0 for C6.1, whose valid range ends at 5.0).
 
-**The AOD > 5 cap** matters for the Sept 2020 smoke. `aod_max` defaults to the products'
-valid-range maximum (5.0); cells with dropped high retrievals are counted in a diagnostic
-(`aod_count_rejected_high`).
-
-**Tests:** threshold tables for each preset and surface; overrides; negative-AOD handling.
+**Tests:** threshold tables per preset, family and surface; overrides; QA fill rejected; raw
+−50 and 5000 kept under `retrieval_team`; `cam7_v2` drops negatives on all streams and swaps
+the MODIS DT ocean variable; the `cam7_v2` swap is skipped for VIIRS DT (no Best SDS).
 
 ### Task 1.3: Per-pixel uncertainty
 
-- **Retrieval-provided:** DB `Estimated_Uncertainty` (MODIS C6.1, and VIIRS DB v2+
-  `Aerosol_Optical_Thickness_550_Expected_Uncertainty_{Land,Ocean}`).
-- **Expected-error envelope** for DT, which has no per-pixel AOD uncertainty:
-  σ = a + b·|τ|, with coefficients per surface in config. Defaults (to be confirmed against
-  the DT C6 references while implementing): land a = 0.05, b = 0.15; ocean taken from the
-  asymmetric C6 envelope +(0.04 + 10%), −(0.02 + 10%) as its mean half-width,
-  a = 0.03, b = 0.10. CAM7 used ocean (0.03, 0.05), the C5 values.
-- `sigma_floor` (default 0.01) guards against tiny or zero σ.
-- C7: if the products add per-pixel DT uncertainty, the variable map points to it and the
-  envelope becomes the fallback.
+```yaml
+uncertainty:
+  sigma_floor: 0.01
+  envelopes:                    # σ = a + b·|τ|, treated as 1σ, per family and surface
+    modis_dt: {land: [0.05, 0.15], ocean: [0.03, 0.10]}
+    viirs_dt: {land: [0.05, 0.15], ocean: [0.05, 0.15]}
+```
 
-**Tests:** envelope arithmetic; DB scaling and fill handling; floor.
+- **Retrieval-provided σ:** MODIS DB `Estimated_Uncertainty` (its long_name says "one-sigma
+  confidence envelope") and VIIRS DB `Expected_Uncertainty` (1σ per the Deep Blue team).
+  σ = max(|σ_raw|, `sigma_floor`), since VIIRS DB ocean values can be slightly negative.
+- **Envelope σ** for Dark Target (no per-pixel AOD uncertainty). MODIS C6 (Levy et al. 2013):
+  land ±(0.05 + 15%); ocean +(0.04 + 10%)/−(0.02 + 10%), used as its mean half-width
+  (0.03, 0.10). VIIRS DT: ±(0.05 + 15%) over land and ocean (Sawyer et al. 2025, Front.
+  Environ. Sci., doi:10.3389/fenvs.2025.1602145). The EE envelope contains ≥ 67% of AERONET
+  matchups, so it approximates 1σ. CAM7 SP1 (the files CAM read in 2008) used the C5 ocean
+  envelope (0.03, 0.05).
+- **Missing σ** where AOD is valid (28 MODIS DB pixels on Terra 2008-07-01): the pixel counts in
+  count mode, is excluded from GLS sums, and is tallied in `n_sigma_missing`.
+- C7: if the product adds per-pixel DT uncertainty, the variable map points to it.
+- The evaluation's `%EE` uses a separate envelope table (Task 3.3), not these σ coefficients.
+
+**Tests:** envelope arithmetic; DB scaling and fill; |σ| and floor (EU = −0.0005 → 0.01);
+missing-σ handling.
 
 ### Task 1.4: Readers
 
-- `readers/modis_hdf4.py`: pyhdf; reads only the SDS the selected streams need; applies
-  scale, offset, fill, and valid range; returns one `PixelBatch` per stream.
-- `readers/netcdf.py`: netCDF4, variable paths with optional group prefix
-  (`geophysical_data/...`), for C7 and VIIRS; scaling via netCDF4 auto mask/scale.
-- Edge granules: when processing day D, also read the last granule of D−1 and the first of
-  D+1. Pixels are assigned to windows by their own `Scan_Start_Time`, never by file date.
-- Lon/lat filters: finite and in range; longitudes normalized to the grid's edge convention.
+- **`readers/modis_hdf4.py` (pyhdf):** read only the SDS the selected streams need; select
+  spectral bands by dimension name. Mask by `_FillValue` **and** `valid_range` on raw integers
+  for AOD, σ, latitude, longitude and time; `Scan_Start_Time` uses −9999 even though its
+  `_FillValue` is −999, and `valid_range` catches it. Never range-mask flag SDS (QA is masked by
+  fill only). Scale per Task 1.2 rounding. Drop pixels with non-finite lat, lon or time.
+- **`readers/netcdf.py` (netCDF4):** "group/var" paths, dimension-name selection, auto
+  mask/scale; QA read with `.filled(0)` so v2/v2.1 fill conventions agree.
+- **Granules:** day D's directory (via `paths.granule_dir`). With `grid.edge_granules: true`, also
+  the last granule of D−1 when its directory exists; a missing D−1 directory is not an error,
+  and D+1 is never read. Default `false`: with leap-second-correct times, no MODIS C6.1 or VIIRS
+  pixel falls outside its file's UTC day (verified; the "crossings" seen before came from naive
+  TAI93 conversion). Pixels outside [D 00:00, D+1 00:00) UTC are dropped.
+- Returns one `PixelBatch` per stream: UTC time, lat, lon, aod, σ (NaN when absent), surface.
 
-**Tests:** tiny synthetic HDF4 and NetCDF4 granules written in the tests (pyhdf can write
-SDS); one real-granule smoke test marked `real_data` (skipped when `~/Data` is absent).
+**Tests:** synthetic HDF4 granules written with pyhdf (int16 with scale and fill) and NetCDF4
+with groups; clamp values kept; QA fill and time −9999 dropped; dimension-name selection; one
+`real_data` smoke test that reads a real granule and skips when none is found under the
+`data_root` of the profile named by `$SARB_AOD_PROFILE` (default `mac`). No hard-coded paths.
 
-### Task 1.5: Grid and windows
+### Task 1.5: Grid, windows, time
 
-- `grid/spec.py`: f09 exactly as CAM reads it (`lat = linspace(-90, 90, 192)`,
-  `lon = arange(288)·1.25`), cell edges and bounds (port CAM7 `f09_grid.py`). `grid.source:
-  f09 | file:<path>` to read lat/lon from a NetCDF (CAM7's ERA5-grid script did this).
-- `windows.py`: `times_per_day` (default 8), window bounds, CF center time
-  (`hours since 2000-01-01`), TAI93 → datetime64 (port CAM7 `records.py`).
+- **`grid/spec.py`:** f09 exactly as CAM reads it (port CAM7 `f09_grid.py`):
+  `lat = linspace(-90, 90, 192)`, `lon = arange(288)·1.25`; latitude edges at midpoints,
+  clamped to ±90; longitude edges `arange(289)·1.25 − 0.625`. `grid.source: f09 | file:<path>`;
+  a file grid is accepted only if its centers equal f09 to 1e-6 (CAM aborts on anything else),
+  and bounds are always written from f09.
+- **Longitude normalization:** `lon = ((lon − lon_edges[0]) % 360) + lon_edges[0]`, i.e.
+  `((lon + 0.625) % 360) − 0.625` (CAM7 `grid.py`). Never `lon % 360`, which drops pixels in
+  (−0.625, 0).
+- **`windows.py`:** `times_per_day` 8; half-open windows [start, start + 3 h); CF center time
+  with `units = "hours since 2000-01-01 00:00:00 UTC"` and `calendar = "gregorian"`, exactly as
+  CAM7 `contract.py`.
+- **`timeconv.py`:** TAI93 → UTC by subtracting the leap seconds inserted since 1993-01-01
+  (1993-07-01, 1994-07-01, 1996-01-01, 1997-07-01, 1999-01-01, 2006-01-01, 2009-01-01,
+  2012-07-01, 2015-07-01, 2017-01-01: 6 s in 2008, 10 s from 2017). `time.leap_seconds:
+  apply | ignore` (default `apply`; the `cam7_v2` run uses `ignore`, as CAM7 did). Naive
+  conversion moves 0.056% of pixels to the wrong window.
 
-**Tests:** f09 centers and bounds against the values in CAM7 `f09_grid.py`; window
-assignment at boundaries (00:00, 23:59:59, day edges).
+**Tests:** f09 centers and bounds against CAM7 values; a pixel at exactly D+1 00:00:00 lands
+only in D+1 window 0; the 23:55 granule's last scan (TAI93 489110405.94) → 2008-07-01
+23:59:59.94, window 7, with `apply`, and outside day D with `ignore`; leap-second table edges.
 
 ### Task 1.6: Numba kernels (ported from DAVINCI)
 
-Port `bin_swath_to_grid` and `bin_swath_to_grid_uncertainty` from DAVINCI
-`davinci_monet/pairing/grid_binning.py` (with attribution), plus one extended kernel that
-accumulates, per `[window, stream, lat, lon]`:
+- Port `bin_swath_to_grid`, `bin_swath_to_grid_uncertainty`, `normalize_grid`,
+  `normalize_uncertainty_grid` and `edges_from_centers` from DAVINCI
+  `davinci_monet/pairing/grid_binning.py` (identical on `main` and `origin/develop`) with
+  attribution, verbatim except `isnan` → `isfinite` in `bin_swath_to_grid` (recorded in the
+  header). They keep DAVINCI's `(time, lon, lat)` order and argument order.
+- **Extended kernel** (`nopython`, `cache=True`):
+  `accumulate(time_edges, lat_edges, lon_edges, t, lat, lon, x, sigma, stream, acc...)`. All
+  accumulators have shape `(nwin, nstream, nlat, nlon)`; `stream` is a scalar for the batch.
+  - int64: `N`, `N_neg` (x < 0), `N_sigma_missing`.
+  - float64: `Σx`, `Σx²`, `Σw`, `Σw·x`, `Σ(1/σ)`, with w = 1/σ²; pixels with NaN σ skip the w-sums.
+  - Time bins are half-open (t ≥ last edge is rejected; no time clamp). Spatial edges keep
+    DAVINCI's inclusive last edge and clamp.
+- `N_rejected_high` comes from a second call of the count kernel on QA-passing pixels above
+  `aod_max`.
+- Memory: 9 arrays × 8 windows × 4 streams × 55,296 cells × 8 B ≈ 127 MB per day (MODIS);
+  about 255 MB with 8 streams.
 
-| Accumulator | Used by |
-|---|---|
-| N | both modes |
-| Σx, Σx² | count mode (mean, standard error) |
-| Σw, Σw·x, Σw·x² (w = 1/σ²) | GLS mode, within-stream scatter |
-| Σσ² | GLS mode, mean pixel variance σ̄² for the correlated term |
-
-Memory for July 2008 MODIS: 8 windows × 4 streams × 192 × 288 × 8 arrays × 8 bytes ≈ 113 MB
-per day in flight. For mixed MODIS + VIIRS (8 streams), about 230 MB per day.
-
-**Tests:** equivalence with DAVINCI's original kernels on random swaths (compared when
-`davinci_monet` is importable, otherwise against stored reference arrays); edge pixels; a
-benchmark (≥ 10⁷ pixels/s target, recorded rather than enforced).
+**Tests:** against a pure-NumPy reference (`searchsorted(side="right") − 1`, clip, `np.add.at`,
+as in CAM7 `prepare_modis_era5_grid.py`) on 1e5 random pixels with ~5% NaN/inf and edge
+coordinates; integers exact, floats rtol 1e-12; no `davinci_monet` dependency. Edge cases:
+lon −0.625 → col 0, −0.6 → 0, −1e-4 → 0, 359.4 → 0, 359.375 → 287, ±180 → 144; lat −90 → row
+0, 90 → 191; lat −999 dropped; t = 10800 → window 1. Benchmark recorded (target ≥ 10⁷ pixels/s).
 
 ### Task 1.7: Weighting (`grid/combine.py`)
 
 ```yaml
 weighting:
-  method: gls            # gls (default) | count
-  rho: 0.5               # within-stream error correlation; 0 = pure inverse variance
-  birge: true            # inflate sigma when streams disagree beyond their errors
-  min_pixels: 1          # per cell and window, across streams
+  method: gls                # gls | count
+  rho: 0.5                   # within-stream pairwise error correlation (Phase 3 chooses)
+  birge: true
+  min_pixels: 1              # per cell and window, all streams
+  single_pixel_sigma: floor  # count mode, N = 1: floor (sigma_floor) | zero (CAM7)
 ```
 
-**`gls` (default): generalized least squares with a simple error-correlation model.**
-For stream *s* in a cell:
+**`gls` (default): generalized least squares with an error-correlation model.** For stream
+*s* in a cell, with pixel errors Cov(eᵢ, eⱼ) = ρ·σᵢ·σⱼ:
+- x̄ₛ = Σw·x / Σw, with w = 1/σ²
+- sₛ = Σ(1/σ) / Σw (the inverse-variance-weighted mean pixel σ)
+- **Vₛ = ρ·sₛ² + (1 − ρ)/Σwₛ.** This is the exact variance of x̄ₛ:
+  Var(Σwᵢeᵢ/W) = (1 − ρ)/W + ρ·(Σ1/σᵢ)²/W². With equal σ it reduces to σ²(ρ + (1 − ρ)/N);
+  N = 1 gives σ². (An earlier draft used the mean of σ², which overstates uncertainty by up to
+  28% when σ varies; corrected after Monte Carlo checks.)
+- S = number of streams with Nₛ ≥ 1 and Σwₛ > 0; Wₛ = 1/Vₛ; mean = ΣWₛx̄ₛ/ΣWₛ; σ = (ΣWₛ)^−½.
+- Birge: if S ≥ 2, χ² = ΣWₛ(x̄ₛ − mean)², ν = S − 1, and σ ← σ·√(χ²/ν) when χ²/ν > 1.
+  `aod_chi2_per_dof` = χ²/ν, or −999 when S < 2.
+- nₑff,ₛ = sₛ²/Vₛ; `aod_n_effective` = Σₛ nₑff,ₛ (count mode writes N).
+- `aod_mean_<stream>` = x̄ₛ.
 
-- Stream mean: x̄ₛ = Σwx / Σw, where w = 1/σ²
-- Stream variance: Vₛ = ρ·σ̄ₛ² + (1 − ρ)/Σwₛ, where σ̄ₛ² = Σσ²/N. With equal σ this reduces
-  to σ²(ρ + (1 − ρ)/N).
-- Combined: Wₛ = 1/Vₛ, mean = ΣWₛx̄ₛ / ΣWₛ, σ = (ΣWₛ)^−½
-- Birge ratio: with S ≥ 2 streams, χ² = ΣWₛ(x̄ₛ − mean)². If χ²/(S − 1) > 1,
-  σ ← σ·√(χ²/(S − 1)).
+**`count`:** simple count weighting with no uncertainty, matching CAM7 `prepare_modis_era5_grid.py`:
+- mean = Σx/N over all valid pixels of all streams;
+- `aod_uncertainty` = standard error from Σx and Σx² (ddof 1, variance clipped at 0);
+- N = 1 → `sigma_floor` (`floor`) or 0 (`zero`);
+- `aod_mean_<stream>` = per-stream arithmetic mean.
 
-Limits: ρ = 0 gives pure pixel inverse-variance weighting; ρ = 1 weights each stream by
-1/σ̄ₛ² regardless of count.
+Both methods: cells with N_total < `min_pixels` get −999 for mean, σ and diagnostics, and
+`aod_count` = 0.
 
-**`count`:** simple count weighting with no uncertainty: mean = Σx / N over all valid pixels
-of all streams. `aod_uncertainty` is the standard error of the mean (sample standard
-deviation /√N), as in CAM7's `prepare_modis_era5_grid.py`. Single-pixel cells get
-`sigma_floor` rather than CAM7's 0, or exactly 0 under the `cam7_v2` preset.
+**Tests (pure NumPy):**
+- `count` equals the arithmetic mean.
+- `gls` with equal σ and ρ = 0 gives the same mean as `count` (to 1e-12). Its σ is
+  σ/√N_total (× the Birge factor), not the count-mode standard error.
+- Monte Carlo with heterogeneous σ and Cov = ρσᵢσⱼ: std(x̄/√V) within 0.97–1.03 for
+  ρ ∈ {0, 0.5, 0.9} and N ∈ {1, 10, 100}.
+- ρ → 1 saturation; Birge fires only when streams disagree; `min_pixels` masking; empty cells
+  give fill.
 
-Outputs per cell: mean, sigma, total count, per-stream counts and means, effective sample
-size, χ²/ν.
+### Task 1.8: CAM7 contract writer, validator, output paths
 
-**Tests (pure numpy, no I/O):**
-- `count` equals the arithmetic mean; `gls` with equal σ and ρ = 0 equals `count`.
-- ρ → 1 saturation: a 100-pixel stream doesn't swamp a 10-pixel stream with equal σ̄.
-- Birge inflation fires only when streams disagree.
-- `min_pixels` masking; all-empty cells come out as fill.
+Port CAM7 `sp1_aod_pipeline/contract.py` and `f09_grid.py`. Required variables and attributes
+stay identical, so `aod_nudging_obs.F90` reads the files unchanged. CAM reads only `lat`/`lon`
+(192/288, centers checked to 1e-3), `aod_weighted_mean` (any value > −900 is "valid") and the
+scalar `time` (hours); everything else is for us.
 
-### Task 1.8: CAM7 contract writer and validator
+- **Clip before writing:** `aod_weighted_mean` (and `_modis`/`_viirs`) = max(mean, 0) when
+  `output.clip_negative_mean` (default true). Per-stream means and σ are written unclipped.
+  The `aod_count_clipped_negative` diagnostic counts clipped cells; NaN/inf → −999.
+- **Extra variables** (CAM ignores them):
+  - `aod_count_<stream>`, `aod_mean_<stream>`;
+  - `aod_weighted_mean_modis` / `_viirs` (fill when absent);
+  - `aod_chi2_per_dof`, `aod_n_effective`;
+  - `aod_count_negative`, `aod_count_rejected_high`, `aod_count_clipped_negative`.
+- **Required globals:**
 
-Port CAM7 `sp1_aod_pipeline/contract.py`. The required variables and attributes stay
-identical, so `aod_nudging_obs.F90` reads the files unchanged. Additions (CAM ignores extras):
+  | Attribute | Value |
+  |---|---|
+  | `Conventions` | `CF-1.10` |
+  | `title` | `MODIS/VIIRS L2 AOD (550 nm) on the CAM f09 grid, 3-hourly` |
+  | `institution` | `NCAR` |
+  | `source` | the products and collections, plus streams |
+  | `history` | `created by sarb_aod <version>` |
+  | `references` | `CERES-SARB-MODIS-VIIRS docs/IMPLEMENTATION_PLAN.md; CAM7 obs contract (CERES-SARB-CAM7 sp1_aod_pipeline/contract.py)` |
+  | `qc_thresholds` | the rendered QC table |
+  | `merge_method` | `gls (pixel inverse variance, within-stream correlation rho, Birge inflation)` or `count (arithmetic mean of all valid pixels)` |
+  | `merge_version` | `sarb_aod-<version>` |
+  | `bias_correction_method`, `bias_correction_version` | `none` |
+  | `grid` | `f09 FV 0.9x1.25 (192x288)` |
+  | `aod_wavelength_nm` | int32 550 |
+  | `date_created` | UTC ISO 8601 with `Z` |
+  | `git_commit` | the HEAD SHA |
 
-- `aod_count_<stream>`, `aod_mean_<stream>` for the configured streams
-- `aod_weighted_mean_modis` / `_viirs` (sensor subsets; fill if absent)
-- `aod_chi2_per_dof`, `aod_count_rejected_high`
-- Globals: `weighting_method`, `weighting_rho`, `qc_preset`, the QC table, streams, product
-  collections, `config_sha256`, `git_commit`, `source_granule_count`
+- **Extra globals:** `weighting_method`, `weighting_rho`, `qc_preset`, `streams`,
+  `product_collections`, `leap_seconds`, `config_sha256`, `source_granule_count`,
+  `edge_granules_missing`.
+- **Bounds:** `lat_bnds`/`lon_bnds` always come from f09 (lat clamped to ±90).
+- **Paths:** `RunConfig.name` (default: the run-config file stem) is available as `{run}`.
+  `paths.output` (allowed fields `data_root, run, stem, year, month, day, doy, yyyymmdd, sssss`;
+  it must contain `{sssss}` and a date) defaults to
+  `{data_root}/CAM7/{stem}/{run}/{year}/{month}/{day}/{stem}.{yyyymmdd}.{sssss}.nc`, so separate
+  configurations never overwrite each other. `output.stem` defaults to
+  `MODIS_VIIRS_AOD_3hr_f09` (pattern `^[A-Za-z0-9_.-]+$`).
+- **CAM namelist (verified in CAM `filenames.F90`, tag cam6_4_161):**
+  - `aod_obs_path = '<data_root>/CAM7/<stem>/<run>/'`. The trailing slash is required, because
+    CAM concatenates path and template with no separator.
+  - `aod_obs_template = '%y/%m/%d/<stem>.%y%m%d.%s.nc'`. `/` is copied literally, `%y` is 4
+    digits and `%s` 5 digits.
+  - Limits: template ≤ 80 characters (`character(len=cs)`); full path < 256.
+  - `sarb-aod show-config` prints both values, derived from `paths.output`.
+  - **A missing file makes CAM run free silently** ("AODNUDGE: obs file absent, running free").
+    Confirmation on derecho: `atm.log` shows "reading" for every window and no "absent" lines.
+- Writes are atomic (temp file, then rename).
+
+**Tests:**
+- Vendored CAM7 `contract.py`/`f09_grid.py` (`tests/reference/cam7_sp1/`, with attribution)
+  write a reference file from synthetic input. Compare its structure with ours:
+  - dims;
+  - `lat, lon, lat_bnds, lon_bnds, time, time_bnds, aod_weighted_mean, aod_uncertainty, aod_count`:
+    dtype, dims and order, `_FillValue`, units, standard_name, bounds, calendar;
+  - all 15 `REQUIRED_GLOBAL_ATTRS` present, `Conventions == CF-1.10`.
+- Our files pass the vendored `validate_contract_file` unchanged.
+- A cell averaging −0.02 is written as 0.0 in `aod_weighted_mean`, and −0.02 in its stream mean.
+- Round trip.
+- The validator rejects a wrong grid, a missing `time` and a wrong fill.
+- `paths.output` placeholder validation.
+
+### Task 1.9: Pipeline, run-config sections, CLI
+
+**Config** (all new `RunConfig` sections have defaults; `grid` is required only by
+`sarb-aod grid`):
 
 ```yaml
-paths:
-  output: "{data_root}/CAM7/{stem}/{year}/{month}/{day}/{stem}.{yyyymmdd}.{sssss}.nc"
-output:
-  stem: MODIS_VIIRS_AOD_3hr_f09
+grid:
+  source: f09
+  times_per_day: 8
+  edge_granules: false
+  streams:                      # id → product and ONE collection
+    terra_dt: {product: MOD04_L2, collection: "6.1"}
+    terra_db: {product: MOD04_L2, collection: "6.1"}
+    aqua_dt:  {product: MYD04_L2, collection: "6.1"}
+    aqua_db:  {product: MYD04_L2, collection: "6.1"}
+time: {leap_seconds: apply}
+output: {stem: MODIS_VIIRS_AOD_3hr_f09, clip_negative_mean: true}
 ```
 
-CAM namelist to match: `aod_obs_template = '%y/%m/%d/MODIS_VIIRS_AOD_3hr_f09.%y%m%d.%s.nc'`
-(confirm on derecho in a short CAM run). Writes are atomic (temp file, then rename).
+**Validators:**
+- Each stream id equals `<stream_prefix>_<algorithm>` of its product.
+- (product, collection) exists in the catalog with that algorithm and appears in `stage.products`.
+- All streams of one product use the same collection. Comparing collections (C6.1 vs C7,
+  DB v2 vs v2.1) takes separate run configs; mixing them would double-count scenes.
 
-**Tests:** round trip; the validator rejects a wrong grid, a missing `time`, a wrong fill;
-the CAM-required variables are byte-identical in layout to a CAM7 SP1 file (structure
-compared via `ncdump -h` text in a fixture).
+**Commands:**
+- `sarb-aod grid -c run.yaml [--day D] [--overwrite] [--workers N]`: per-day processing, days in
+  parallel (`ProcessPoolExecutor`). It skips days whose 8 files exist and validate. Exit codes:
+  - 0 only if every requested day has 8 valid files;
+  - otherwise 1, listing the failed days and their exceptions.
 
-### Task 1.9: Pipeline and CLI
+  A day with no primary granules fails. Missing edge granules are warnings, recorded in
+  `edge_granules_missing`.
+- `sarb-aod validate <files|dir>`.
+- `sarb-aod summarize -c run.yaml` writes a TSV:
+  - per-window coverage: the fraction of the 55,296 cells with `aod_count` > 0;
+  - the period mean: the cos(lat)-weighted mean of per-cell period means;
+  - percentiles;
+  - per-stream contributions.
+- `sarb-aod show-config` also prints the CAM namelist values.
 
-- `sarb-aod grid -c run.yaml [--day YYYY-MM-DD] [--overwrite] [--workers N]`: per-day
-  processing, days in parallel (`ProcessPoolExecutor`; numba kernels compiled once per
-  worker, `cache=True`); skips days whose 8 files exist and validate.
-- `sarb-aod validate <files|dir>`, `sarb-aod summarize -c run.yaml`: coverage %, mean,
-  percentiles, per-stream contributions per day (TSV).
-- Run config gains `grid`, `qc`, `weighting`, `output` sections. Staging and gridding share
-  the same period and products, and gridding finds granules through the same
-  `paths.granule_dir` template.
-
-**Tests:** an end-to-end run on synthetic granules for one day → 8 valid files;
-idempotent re-run; a failure on one day doesn't stop the others.
+**Tests:** an end-to-end run on synthetic granules gives 8 valid files; an idempotent re-run;
+one failing day gives exit 1 with the other days written; schema cases (an unknown
+placeholder, existing run configs still load, two collections of one product rejected).
 
 ### Task 1.10: July 2008 verification
 
-1. Run `sarb-aod grid` on July 2008 with four configurations: `gls` with ρ ∈ {0, 0.5}, `count`
-   with `retrieval_team` QC, and `count` with `cam7_v2` QC (the CAM7 reproduction).
-2. Regression: on 3 real granules, the `cam7_v2` + `count` result matches a direct
-   re-implementation of CAM7's `prepare_modis_era5_grid.py` accumulation on the f09 grid
-   to float32 tolerance.
-3. Sanity numbers per configuration (CAM7 VP1 expectations): 3-hour coverage of a few
-   percent, monthly mean about 0.1–0.25, values within [−0.05, ~3].
-4. Maps of the monthly mean, the per-configuration differences, counts, and coverage, from
-   the Phase 4 `aod_maps` and `aod_differences` suites. Tasks 4.1–4.4 land before this step.
+1. **Four run configs** (each its own `{run}`):
+   - `config/runs/modis_l2_200807_gls_rho0.yaml`;
+   - `..._gls_rho05.yaml`;
+   - `..._count.yaml` (`retrieval_team` QC);
+   - `..._cam7_v2.yaml` (the CAM7 reproduction).
+2. **CAM7 reproduction (`cam7_v2` run), exactly:**
+   - DT ocean = `Effective_Optical_Depth_Best_Ocean[0.55]`; DT AOD = land where finite, else ocean;
+   - DT QA ≥ 1; DB QA ≥ 1; 0 ≤ AOD ≤ 5 for all streams;
+   - fill and `valid_range` on raw counts; unrounded float64 scaling;
+   - `weighting.method: count` with `single_pixel_sigma: zero`;
+   - `edge_granules: false`; `leap_seconds: ignore`; window [00:00, 24:00) half-open;
+   - longitude `((lon + 0.625) % 360) − 0.625`.
+
+   **Oracle:** CAM7 `scripts/prepare_modis_era5_grid.py` itself, vendored under
+   `tests/reference/cam7/` with attribution. Load it with `importlib.util` (register it in
+   `sys.modules` before `exec_module`; its DAVINCI import falls back to `np.add.at`) and run it on
+   an f09 `Grid` through `Accumulator`/`accumulate_pixels`/`finalize`. On 3 real granules, one of
+   them a 23:55 granule:
+   - `aod_count` and the four `aod_count_<stream>` match exactly;
+   - `aod_weighted_mean` and `aod_uncertainty` pass
+     `assert_allclose(rtol=1e-6, atol=1e-7)` (float32).
+
+   This reproduces CAM7's **diagnostic** four-stream product (merge_version
+   `modis-era5-grid-v2-four-stream-count-weighted`), *not* the SP1 archive CAM read in 2008
+   (`AOD_f09_3hr_2008_v2`: DT/DB Combined SDS, EE σ, inverse variance, σ floor 0.001). Don't
+   compare against `AOD_f09_3hr*` files.
+3. **Sanity numbers** (CAM7 VP1), via `sarb-aod summarize`:
+   - per-window coverage about 1–10%;
+   - the July mean (cos-lat weighted, cells with ≥ 1 valid window) 0.1–0.25;
+   - written `aod_weighted_mean` in [0, 5] with 99.9th percentile ≤ 3.
+4. **Maps** from the Task 4.5a suites for the four runs.
 
 ---
 
 ## Phase 2: VIIRS, mixing, and C7 (Sept 2020)
 
-- **Task 2.1, VIIRS Deep Blue reader:** `Aerosol_Optical_Thickness_550_{Land,Ocean}`, QA
-  `Aerosol_Optical_Thickness_QA_Flag_{Land,Ocean}`, σ from
-  `..._550_Expected_Uncertainty_{Land,Ocean}`; v2 and v2.1. Inspect the downloaded files to
-  pin variable paths and groups.
-- **Task 2.2, VIIRS Dark Target reader:** `geolocation_data/` and `geophysical_data/` groups;
-  `Corrected_Optical_Depth_Land`, `Effective_Optical_Depth_Average_Ocean`,
-  `Land_Ocean_Quality_Flag`; EE envelope for σ (VIIRS DT coefficients in config).
-- **Task 2.3, stream selection:** `streams: [terra_dt, terra_db, aqua_dt, aqua_db]`,
-  `[snpp_db, noaa20_db]`, or all. Mixed runs fill `aod_weighted_mean_modis` and `_viirs`.
-- **Task 2.4, Sept 2020 verification:**
-  - Smoke-plume behavior: the AOD cap, DT smoke-as-cloud gaps against DB coverage, and the
-    Birge ratio where DT and DB disagree.
-  - MODIS-only, VIIRS-only, and mixed fields compared.
-  - NOAA-20 Deep Blue v2 against v2.1.
-- **Task 2.5, C7 reader activation:** when LAADS publishes MOD04/MYD04 C7, fill in the
-  NetCDF4 variable map, stage July 2008 and Sept 2020 C7, and compare with C6.1. If C7
-  carries DT per-pixel uncertainty, switch DT σ to it.
+Facts below were verified on real 2020-09-08 granules (SNPP DB v2, NOAA-20 DB v2 and v2.1,
+SNPP and NOAA-20 DT v2.1). All VIIRS files are NetCDF4/HDF5 (signature `\x89HDF`), 6-minute
+granules starting on 6-minute boundaries, so no granule straddles a 3-hour window. DB and DT for
+the same platform and time share the same 8×8-aggregated swath grid.
+
+### Task 2.1: VIIRS Deep Blue reader (AERDB v2 and v2.1; one variable map serves both)
+
+| Item | Variable (root group; DB files have no groups) | Notes |
+|---|---|---|
+| dims | `Idx_Atrack` (402–406, varies) × `Idx_Xtrack` (400) | |
+| lat, lon | `Latitude`, `Longitude` | float32 |
+| time | `Scan_Start_Time` | TAI93 seconds, float64, constant along each row (2 rows per scan); converted with leap seconds (Task 1.5) |
+| land AOD / QA / σ | `Aerosol_Optical_Thickness_550_Land` / `Aerosol_Optical_Thickness_QA_Flag_Land` / `Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land` | float32, no scaling, `_FillValue` −999, AOD `valid_range` [0, 5] (no negative AOD) |
+| ocean AOD / QA / σ | same names with `_Ocean` | |
+| surface | whichever AOD field is valid | DB has no land/sea flag |
+
+- **σ:** Expected Uncertainty is the Deep Blue team's 1σ; `valid_range` [−0.5, 5]; σ =
+  max(|EU|, `sigma_floor`).
+- **QA:** 1 = poor, 2 = moderate (land only), 3 = good; water QA takes only 1 or 3. `_FillValue`
+  is 0 in v2 and −999 in v2.1: read with auto-mask and `.filled(0)`.
+- **Land/ocean overlap:** hundreds of coastal pixels per granule carry both a valid land and a
+  valid ocean AOD (ocean QA always 1 there). Apply QC per surface first. If a pixel passes on
+  both, keep only the land retrieval (CAM7 `ingest_viirs.py` precedent), so each pixel
+  contributes at most one value per stream.
+- `*_Best_Estimate` = base fields restricted to QA ≥ 2 (verified). The reader uses base fields
+  plus explicit QC, so presets stay configurable.
+
+**Tests:** v2-style (fill 0) and v2.1-style (fill −999) synthetic QA through one mask; a pixel
+valid on both surfaces with QA 1/1 under `cam7_v2` yields one land pixel; on a real granule
+N_out = N_land_pass + N_ocean_pass − N_both_pass; EU = −0.0005 → σ = `sigma_floor`.
+
+### Task 2.2: VIIRS Dark Target reader (AERDT v2.1)
+
+| Item | Variable | Notes |
+|---|---|---|
+| dims | `number_of_lines_8x8` (≈406) × `number_of_pixels_8x8` (400) | never load the `*_1x1` (3248 × 3200) arrays |
+| lat, lon | `geolocation_data/latitude`, `geolocation_data/longitude` | lowercase; float32, `_FillValue` −999 |
+| time | **none in the file** | from the global attributes (below) |
+| land AOD | `geophysical_data/Corrected_Optical_Depth_Land`, select `{Wavelength_Used_Land_2: 1}` (0.55 µm) | int16, scale 0.001, `valid_range` [−100, 5000] packed → [−0.1, 5.0] |
+| ocean AOD | `geophysical_data/Effective_Optical_Depth_Average_Ocean`, select `{Wavelength_Used_ALL: 1}` | VIIRS has **no** `..._Best_Ocean` |
+| QA | `geophysical_data/Land_Ocean_Quality_Flag` | int16, 0 bad … 3 very good, `_FillValue` −9999; one flag for whichever surface was retrieved |
+| surface | whichever AOD field is valid | never overlap; `geophysical_data/Land_Sea_Flag` (0 ocean, 1 land, 2 coastal) diagnostic only |
+
+- QA presets as MODIS DT (land QA = 3, ocean QA ≥ 1): the VIIRS combined SDS
+  `Optical_Depth_Land_And_Ocean` is documented as "ocean (Average) (Quality flag = 1, 2, 3)
+  and land (corrected) (Quality flag = 3)". Check:
+  `Corrected_Optical_Depth_Land[..., 1] == Optical_Depth_Land_And_Ocean` at land QA = 3 pixels
+  (exact on the SNPP 2020-09-08 20:24 granule).
+- **Time:** t_row = t0 + (row + 0.5)/n_rows × (t1 − t0), with t0 and t1 the global attributes
+  `time_coverage_start` and `time_coverage_end` (ISO UTC, so no leap-second correction). Assert
+  that t0 falls on a 6-minute boundary and that t1 − t0 = 360 s, and fail loudly otherwise.
+- **σ** from the `viirs_dt` envelope (Task 1.3). `cam7_v2` has no VIIRS DT precedent and keeps
+  `Average_Ocean`.
+
+**Tests:** dimension-name selection on a real granule (the identity above); every DT pixel
+lands in the same window as the DB pixel on the same row of the same granule; the coverage
+assertion fires on a malformed interval.
+
+### Task 2.3: Streams name their collection; mixing
+
+```yaml
+grid:
+  streams:
+    snpp_db:   {product: AERDB_L2_VIIRS_SNPP,   collection: "2"}
+    noaa20_db: {product: AERDB_L2_VIIRS_NOAA20, collection: "2"}
+    snpp_dt:   {product: AERDT_L2_VIIRS_SNPP,   collection: "2.1"}
+    noaa20_dt: {product: AERDT_L2_VIIRS_NOAA20, collection: "2.1"}
+```
+
+MODIS-only, VIIRS-only or mixed is just the stream list. Mixed runs fill
+`aod_weighted_mean_modis` and `aod_weighted_mean_viirs`. Comparing NOAA-20 DB v2 with v2.1
+takes a second run config that sets `noaa20_db` to collection "2.1".
+
+### Task 2.4: Sept 2020 verification (measurable)
+
+For 2020-09-08 to 2020-09-14 over the smoke box (−125, −116, 36, 49), report per stream the
+QC-passed pixel count, p50/p90/max AOD, and the count at or above `aod_max`. Write
+`docs/validation/sept2020_summary.tsv`. Accept when:
+
+1. DB p90 > DT p90 in the box: the smoke-as-cloud gap is visible. One SNPP granule gave DB p90
+   1.82 vs DT 0.33.
+2. `aod_count_rejected_high` > 0 on at least one day.
+3. χ²/ν > 1 in some plume cells of mixed DT + DB runs.
+4. Each mixed run's gridded mean lies between the MODIS-only and VIIRS-only means wherever both
+   exist.
+
+Also compare NOAA-20 DB v2 with v2.1 (Task 2.3).
+
+### Task 2.5: C7 activation (blocked until LAADS publishes MOD04/MYD04 C7)
+
+When it is published (CMR version `7`, token `007`, NetCDF4):
+- fill in the C7 variable map, by dimension name;
+- stage July 2008 and Sept 2020 C7 and compare with C6.1;
+- if C7 carries Dark Target per-pixel uncertainty, use it for DT σ.
+
+---
 
 ## Phase 3: AERONET validation suite
 
-A complete ground-truth evaluation, drawn from DAVINCI's AERONET, pairing and statistics
-code and from CAM7's SP1 validation, ported into `sarb_aod` (standalone, **no monetio**).
-It answers three questions:
-
+A complete ground-truth evaluation, drawn from DAVINCI's AERONET, pairing and statistics code
+and CAM7's SP1 validation, ported into `sarb_aod` (standalone, **no monetio**). It answers
+three questions:
 1. Are the L2 streams and QC settings sound?
 2. Is the gridded CAM7 product accurate?
 3. Is the reported `aod_uncertainty` honest?
 
-Tasks 3.1–3.4 don't depend on Phase 1 and can start alongside it.
+Tasks 3.1–3.4 have no Phase 1 dependency.
 
 | Source | What we take |
 |---|---|
-| DAVINCI `datasets/surface/aeronet.py` | product semantics (AOD10/15/20, site filter, all-points vs daily), dataset layout |
-| monetio `obs/aeronet.py` (what DAVINCI delegates to) | Web Service v3 URL rules and CSV parsing, **re-implemented**, not imported |
-| DAVINCI `stats/metrics.py` | full metric set: `N, MX, MY, STDX, STDY, MdnX, MdnY, MB, MdnB, NMB, NMdnB, FB, MNB, ME, MdnE, RMSE, NME, FE, MNE, R, R2, IOA, d1, E1, AC, RM, RMdn` |
-| DAVINCI `stats/calculator.py`, `stats/output.py` | grouped statistics with `min_samples`, CSV/JSON tables |
-| DAVINCI `pairing/strategies/point.py` | point ↔ grid matching within a radius of influence and time tolerance |
-| DAVINCI `geography/domains.py` (`develop`) | 12-region `AEROSOL_REGIONS` catalog |
-| CAM7 `sp1_aod_pipeline/validation/` | Ångström 550 nm conversion, seasonal stats, VP2 acceptance gates and the July 2008 baseline |
+| DAVINCI `datasets/surface/aeronet.py` | product semantics (AOD10/15/20, site filter, all points vs daily) |
+| monetio `obs/aeronet.py` (what DAVINCI delegates to) | Web Service v3 URL and parsing rules, **re-implemented** |
+| DAVINCI `stats/metrics.py` | all 27 metrics: `N, MX, MY, STDX, STDY, MdnX, MdnY, MB, MdnB, NMB, NMdnB, FB, MNB, ME, MdnE, RMSE, NME, FE, MNE, R, R2, IOA, d1, E1, AC, RM, RMdn` |
+| DAVINCI `stats/calculator.py`, `stats/output.py` | grouped statistics (`min_samples` 3), CSV/JSON tables |
+| DAVINCI `pairing/strategies/base.py` `_find_nearest_1d` | nearest-cell index logic only (no radius cut, no time interpolation) |
+| DAVINCI `geography/domains.py` (`origin/develop`) | 12-region `AEROSOL_REGIONS` (Bhattacharjee et al. 2018, GMD 11:2333, Table 1) |
+| CAM7 `sp1_aod_pipeline/validation/`, `scripts/summarize_2008_regional_aeronet_band_comparison.py` | Ångström 550 nm, VP2 gates, the July 2008 baseline, the regional aggregation method |
 
 ### Task 3.1: AERONET fetcher (`aeronet/fetch.py`)
 
-- **Endpoint:** `https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3` with
-  `year, month, day, hour, year2, month2, day2, hour2`, `AOD10|AOD15|AOD20=1`, `AVG=10`
-  (all points) or `AVG=20` (daily), optional `site=` or `lat1/lat2/lon1/lon2`, and
-  `if_no_html=1`.
-- **One request per UTC day, all sites.** Pace requests at no more than 10 per minute (the
-  service's limit, which monetio honors with a 6 s sleep). Retry with backoff.
-- **Recognize the service's non-data replies:**
-  - a 1-line "no data" body;
-  - an HTML error page;
-  - a request whose `hour2` end drops the last hour (the plan verifies the boundary
-    behavior with a live test).
-- **Cache layout:** the raw CSV is the source of truth, written atomically with a manifest
-  (bytes, row count, sites), at
-  `{data_root}/AERONET/{product}/{year}/{month}/{day}/AERONET_{product}_ALLPOINTS_{yyyymmdd}.csv`.
-  The path template and product (`AOD20` default; `AOD15` for recent periods without
-  Level 2.0) come from config.
-- `sarb-aod aeronet stage -c run.yaml [--dry-run]` is idempotent and resumable, using the
-  same profile and paths machinery as granule staging.
+- **Request one UTC day D** (verified 2026-10-10):
+  `print_web_data_v3?year=D.y&month=D.m&day=D.d&hour=0&year2=(D+1).y&month2=(D+1).m&day2=(D+1).d&hour2=0&AOD20=1&AVG=10&if_no_html=1`.
+  - The end bound is the next day at 00 UTC, exclusive.
+  - **Do not use `hour2=23` with `day2=D`.** It loses all 23 UTC data and, for
+    eastern-hemisphere sites, everything after about 21 UTC (570 of 13,258 rows on 2020-09-08).
+  - After parsing, keep only rows dated D (defensive filter).
+- **Config:**
+  ```yaml
+  aeronet:
+    product: AOD20         # AOD10 | AOD15 | AOD20
+    avg: all_points        # all_points (AVG=10; the evaluation uses this) | daily (AVG=20; optional cache)
+    min_interval_s: 6.0    # service limit: 10 requests/min (monetio sleeps 6 s)
+    retries: 3
+    sites: null            # optional list, validated against aeronet_locations_v3.txt (unknown → error)
+  paths:
+    aeronet: "{data_root}/AERONET/{product}/{year}/{month}/{day}/AERONET_{product}_{avg}_{yyyymmdd}.csv"
+  ```
+  Allowed fields: `data_root, product, avg` (`ALLPOINTS` or `DAILY`), `year, month, day, doy, yyyymmdd`.
+- **Implementation:** HTTP via stdlib `urllib.request`. Network and clock are injected through
+  `AeronetHooks(fetch, sleep, now)`, mirroring `stage.runner.Hooks`. The CLI is a Typer
+  sub-app: `sarb-aod aeronet stage|audit -c run.yaml [--dry-run]`, idempotent and resumable.
+- **Validity check before the atomic rename.** The service sends chunked responses with no
+  Content-Length, so check structurally:
+  - line 1 is `AERONET Data Download (Version 3 Direct Sun)`;
+  - line 3 names the requested level (`Version 3: AOD Level 2.0` or `… 1.5`);
+  - the body ends with a newline;
+  - every data line has the header's field count.
 
-**Tests:** URL construction against monetio's rules; a fake HTTP server serving a recorded
-v3 CSV (fixture from the 2008-07-01 GSFC probe); handling of empty, HTML, and truncated
-responses; the rate limiter. One `network`-marked live test.
+  A 1-line body means no data: record an empty day in the manifest so it isn't re-fetched. A
+  body starting with `<html>` is an error. The manifest records bytes, rows, sites and sha256.
+- Each cache file holds one level. An AOD15 fallback is a separate product, and matchups carry
+  `aeronet_level`. Both test periods have AOD20: 130 sites on 2008-07-01 (6.2 MB/day) and 258
+  on 2020-09-08 (14.5 MB/day, about 435 MB for the month).
 
-### Task 3.2: Parser and spectral conversion (`aeronet/parse.py`, `aeronet/spectral.py`)
+**Tests:**
+- URL builder: end = next day `hour2=0`, including month and year rollover (2008-07-31 →
+  2008-08-01; 2020-12-31 → 2021-01-01).
+- A stdlib `http.server` in a thread serves the committed fixtures in `tests/data/aeronet/`
+  (see its README).
+- Empty, HTML and truncated responses, derived from the fixtures.
+- Pacing via the injected `sleep`/`now`.
+- One `network` test: 2008-07-01 GSFC includes rows after 23:00 UTC and no 2008-07-02 rows.
 
-- **Parse the v3 CSV:** skip the 5 information lines; −999 → NaN; combine
-  `Date(dd:mm:yyyy)` + `Time(hh:mm:ss)` into UTC time; carry `AERONET_Site`,
-  `Site_Latitude(Degrees)`, `Site_Longitude(Degrees)`, `Site_Elevation(m)`,
-  `Data_Quality_Level`, `Solar_Zenith_Angle(Degrees)`, `AOD_{440,500,675,870}nm`,
-  `440-675_Angstrom_Exponent`, `440-870_Angstrom_Exponent`.
-- **AOD at 550 nm, configurable:**
-  - `quadratic_loglog` (default): fit ln τ against ln λ with a second-order polynomial
-    over the available 440/500/675/870 nm, the usual practice in MODIS validation;
-  - `angstrom_500`: τ₅₀₀·(550/500)^(−α₄₄₀₋₆₇₅), the CAM7 method, kept for regression.
-- **AERONET uncertainty** for uncertainty calibration: σ ≈ 0.01–0.02 (instrument; config),
-  plus within-window temporal variability.
+### Task 3.2: Parser and 550 nm conversion (`aeronet/parse.py`, `aeronet/spectral.py`)
 
-**Tests:** parse the recorded fixture (column set, times, fill); both interpolations on
-synthetic spectra with known exponents; the two methods agree for pure power laws.
+- **Parse by header name, never by position.** Drop the duplicated `*_Empty` columns and
+  `AERONET_Site_Name`. Read −999 (written as both `-999.000000` and `-999.`) as NaN, and
+  combine `Date(dd:mm:yyyy)` + `Time(hh:mm:ss)` into UTC.
+- Carry `AERONET_Site`, `Site_Latitude(Degrees)`, `Site_Longitude(Degrees)`,
+  `Site_Elevation(m)`, `Data_Quality_Level`, every `AOD_<λ>nm`, `440-675_Angstrom_Exponent`,
+  `440-870_Angstrom_Exponent`, and `Solar_Zenith_Angle(Degrees)` when present.
+- **The daily (AVG=20) layout differs:** 82 columns, no solar zenith, no exact wavelengths,
+  added `N[...]` counts, and Time fixed at 12:00:00. The service also returns the day before and
+  the day after, so filter Date == D.
+- **550 nm, configurable (`aeronet.spectral`):**
+  - `quadratic_loglog` (default; Eck et al. 1999, as used by Levy et al. 2010). Per
+    observation, fit ln τ = a0 + a1·ln λ + a2·(ln λ)² by least squares over every valid
+    `AOD_<λ>nm` with 340 ≤ λ ≤ 1020 nm and τ > 0, requiring ≥ 3 wavelengths with at least one
+    below and one above 550 nm.
+  - Otherwise, if ≥ 2 valid wavelengths ≥ 550 nm exist (smoke rows where Level 2.0 drops 440 and
+    500 nm at very high AOD, e.g. NASA_Ames on 2020-09-08), extrapolate log-linearly from the two
+    shortest and flag the value `extrapolated`. Otherwise NaN, flagged `missing`.
+  - Convert each observation first, then average over the matchup window.
+    `aeronet.include_extrapolated` (default true) and reports also show the results with those
+    points excluded.
+  - `angstrom_500` (CAM7): τ₅₀₀·(550/500)^(−α₄₄₀₋₆₇₅). It needs AOD_500nm > 0 and a valid
+    AE, and drops about 16% of rows on 2008-07-01 (sites without 500 nm).
+- **AERONET σ:** σ_aer = √(σ_inst² + s²), with σ_inst = 0.01 (config; Level 2.0 uncertainty
+  0.01–0.02, Eck et al. 1999 via Levy et al. 2010) and s the sample std of the 550 nm values in
+  the matchup window (0 if N = 1). Report the std(z) sensitivity to σ_inst = 0.02.
+
+**Tests** (on the committed fixtures):
+- the GSFC full-day parse (34 rows, 10:38–23:45 UTC);
+- Avignon (no 500 nm): quadratic works, `angstrom_500` gives NaN;
+- the AERONET-OC sites (Helsinki_Lighthouse, Galata_Platform: 443/490/667/865 nm) interpolate;
+- the NASA_Ames smoke rows are flagged `extrapolated`;
+- the two methods agree on pure power laws;
+- a synthetic daily-layout file.
 
 ### Task 3.3: Metrics and grouped statistics (`evaluation/metrics.py`, `calculator.py`)
 
-- Port DAVINCI's metric classes and registry (`get_metric`, `STANDARD_METRICS`,
-  `ALL_METRICS`, the percentage-metric set) with their numerical definitions unchanged.
-- **Add aerosol-validation metrics:**
-  - `%EE`: fraction within the expected-error envelope for the stream and surface (from the
-    Task 1.3 coefficients);
-  - regression slope and intercept, both OLS and reduced-major-axis;
-  - bias binned by AERONET AOD;
-  - uncertainty calibration: z = (sat − aeronet) / √(σ_sat² + σ_aer²), reporting
-    std(z) and the fractions with |z| < 1 and |z| < 2, ideally ≈ 1, 68% and 95%.
-- **Grouped statistics:** port DAVINCI's calculator (grouping, `min_samples`, rounding).
-  Groups:
-  - configuration (QC preset, weighting method, ρ), sensor and stream, product collection
-    (C6.1 vs C7, DB v2 vs v2.1);
-  - surface (land, ocean, coastal), region, season, day, site;
-  - AOD bin; and a **Southern Ocean band** (< 40° S).
+- **Convention** (as DAVINCI and CAM7): x = AERONET (reference), y = satellite or gridded
+  product. MB = mean(y − x); bias labels read `<product> − AERONET`.
+- **Port the definitions unchanged**, replacing `davinci_monet.core.registry` with a local dict
+  registry. Note that:
+  - RM and RMdn = mean/median(AERONET/product);
+  - NMB, NME, MNB and MNE normalize by AERONET;
+  - R2 = Pearson r².
 
-**Tests:** each metric against DAVINCI's definitions on fixed vectors (and against
-`davinci_monet` itself when importable); EE envelope; RMA on exact lines; z-score
-calibration on synthetic data with known σ.
+  Gates are evaluated on unrounded values; tables round to 4 decimals.
+- **Aerosol metrics:**
+  - `%EE`: the percentage of matchups with lower ≤ (y − x) ≤ upper, plus the fractions above
+    and below. The envelope uses the AERONET τ and a separate table, `evaluation.ee`:
+
+    | Algorithm | Envelope | Source |
+    |---|---|---|
+    | DT land | ±(0.05 + 0.15τ) | Levy et al. 2013 (MODIS and VIIRS DT) |
+    | DT ocean | +(0.04 + 0.10τ) / −(0.02 + 0.10τ) | Levy et al. 2013 (MODIS and VIIRS DT) |
+    | DB land | ±(0.05 + 0.20τ) | Sayer et al. 2019 |
+    | VIIRS DB water | ±(0.03 + 0.10τ) | Sayer et al. 2018 |
+
+  - OLS and reduced-major-axis regression;
+  - bias binned by AERONET AOD;
+  - uncertainty calibration: z = (y − x)/√(σ_sat² + σ_aer²), reporting std(z) and the
+    fractions with |z| < 1 and < 2 (ideally ≈ 1, 68% and 95%).
+- **Grouped statistics** (calculator port: `min_samples` 3, rounding 4). Groups:
+  configuration (QC preset, weighting, ρ), sensor and stream, product collection, surface,
+  region, season, day, site, AOD bin, and the Southern Ocean band.
+- **Two regional aggregations:**
+  1. Pooled matchups, each weighted equally (the default for tables).
+  2. CAM7's regional time-series method (CAM7 `summarize_2008_regional_aeronet_band_comparison.py`
+     and its README): per site, average the matched pairs within each UTC day; per region-day,
+     average the active sites with equal weight; then compute metrics over region-days.
+     Report N = region-days plus site-days, matched pairs and mean active sites per day. Phase 4
+     regional time series use this method.
+
+**Tests:** hand-computed expected values from the DAVINCI formulas, committed in the test (no
+`davinci_monet` import, since it isn't installed anywhere); asymmetric EE; RMA on exact lines;
+z calibration on synthetic data with known σ.
 
 ### Task 3.4: Regions (`evaluation/regions.py`)
 
-Port DAVINCI's aerosol-regime catalog `AEROSOL_REGIONS` (`geography/domains.py` on
-`develop`; extents are lon_min, lon_max, lat_min, lat_max) with its aliases, its reference
-(doi:10.5194/gmd-11-2333-2018), and CAM7's display names (`scripts/prepare_2008_regional_aod.py`):
+DAVINCI's `AEROSOL_REGIONS` (`origin/develop:davinci_monet/geography/domains.py`; extents
+lon_min, lon_max, lat_min, lat_max; aliases kept), which match Table 1 of Bhattacharjee et al.
+(2018, doi:10.5194/gmd-11-2333-2018), with CAM7's display names:
 
 | Key | Display name | Regime |
 |---|---|---|
-| `north_atlantic_ocean` | North Atlantic Ocean | dust outflow / marine |
+| `north_atlantic_ocean` | North Atlantic Ocean | dust outflow, marine |
 | `south_atlantic_ocean` | South Atlantic Ocean | biomass-burning outflow |
 | `north_indian_ocean` | North Indian Ocean | dust and pollution outflow |
 | `north_africa` | North Africa (Sahara) | dust source |
@@ -432,243 +821,338 @@ Port DAVINCI's aerosol-regime catalog `AEROSOL_REGIONS` (`geography/domains.py` 
 | `east_asia` | East Asia | pollution and dust |
 | `india` | India | pollution and dust |
 
-Additions here:
-- `global`;
-- `southern_ocean` (< 40° S; clean marine, where the noise problem is);
-- `labor_day_2020_smoke` (western US coast and adjacent Pacific, extent fixed in Task 4.6
-  from the observed plume).
-
-Regions can be extended in config.
+- **Additions:**
+  - `global`;
+  - `southern_ocean` (< 40° S; clean marine, where the noise problem is);
+  - `labor_day_2020_smoke`: default extent (−125, −116, 36, 49), active 2020-09-08 to 09-14.
+    Its display name is **"Labor Day Smoke"**, with no year, because the plot protocol rejects
+    years in titles. Task 2.4 may refine it in config.
+- **Membership:** a site belongs to every region whose rectangle contains it (inclusive bounds,
+  longitude normalized to [−180, 180)), as in DAVINCI and CAM7.
+  - Regions overlap (9 sites sat in two regions on 2020-09-08), and 103 of 258 sites were in none.
+  - `global` is computed separately, never as a sum of regions.
+  - No land mask is applied to the "ocean" rectangles; the surface grouping covers that.
 
 ### Task 3.5: Collocation (`evaluation/collocate.py`)
 
-Two levels, each producing a tidy matchup table (one row per site × time unit), written to
-NetCDF for reuse (no new Parquet dependency):
+Matchup tables are written as NetCDF under `paths.evaluation_dir` (default
+`{data_root}/evaluation/{run}`).
 
-- **L2 stream level** (checks the readers and QC): satellite pixels within a radius of the
-  site (default 25 km for MODIS 10 km and VIIRS 6 km products; config), averaged over the
-  QC-passed pixels with a minimum count. They are matched to the AERONET mean within ±30 min
-  of the pixels' scan time, with at least 2 AERONET points. One row per site × overpass ×
-  stream. This is the retrieval teams' standard validation design, so `%EE` is comparable
-  to published values.
-- **Gridded product level** (checks the CAM7 files and weighting): for each 3-hour window,
-  the f09 cell containing the site (DAVINCI `PointStrategy` nearest-cell logic, cyclic
-  longitude), matched to the AERONET mean over the same window. One row per site × window ×
-  configuration. Carries `aod_count`, `aod_uncertainty` and per-stream counts for
-  conditional statistics.
-- **Representativeness:** flag cells with several sites, coastal sites, and high-elevation
-  sites (`Site_Elevation(m)` above a threshold) so they can be stratified or excluded.
+- **L2 stream level** (Levy et al. 2013 / Petrenko et al. 2012 MAPSS; verified):
+  - Select satellite pixels whose centers are within `radius_km` (25) great-circle km of the
+    site, requiring ≥ `min_pixels` (3) QC-passed pixels.
+  - Require ≥ `min_aeronet` (2) AERONET observations within ±30 min of t_sat, the mean scan time
+    of the selected pixels.
+  - sat = mean of the pixel AODs (also median, std, N); aer = mean of the per-observation 550 nm
+    values (also std, N).
+  - Load AERONET for D−1, D and D+1 so windows crossing midnight are complete.
+  - z at L2: σ_sat = mean of the selected pixels' σ (not divided by √N, because pixel errors are
+    correlated); σ_aer per Task 3.2.
+  - Surface class from the selected pixels: land, ocean, or coastal if mixed. One row per site ×
+    overpass × stream.
+- **Grid level:**
+  - The cell containing the site: latitude index = nearest of the 192 centers; longitude index =
+    argmin |((lon_site − lon_c + 180) mod 360) − 180| (DAVINCI `_find_nearest_1d`,
+    longitude=True).
+  - **No radius cut.** DAVINCI `PointStrategy`'s default 12 km radius would drop almost every
+    site on ~100 km cells, so port only the index logic.
+  - AERONET = mean of its 550 nm values in [window_start, + 3 h), requiring ≥ 2 observations
+    (`min_aeronet_grid`).
+  - Store the AERONET std and N, plus the cell's `aod_count`, `aod_uncertainty` and per-stream
+    counts; σ_sat = `aod_uncertainty`. One row per site × window × run.
+- **`--pairing cam7` regression mode:**
+  - AERONET hourly site means (UTC hour bins) of AOD_500nm and the 440–675 AE, converted with
+    `angstrom_500`;
+  - each site-hour paired with the nearest f09 cell of the 3-hour window containing it, with no
+    minimum counts.
+  - **Gate:** if the user copies CAM7's July 2008 SP1 files from derecho (path to be supplied),
+    this mode reproduces N = 8875 and MB/RMSE/R to ±0.001. Otherwise record the difference in
+    Open items.
+- **Representativeness flags:** `Site_Elevation(m)` > 1000 (`high_elevation_m`); more than one
+  active site in the same cell and window; and coastal sites, whose majority L2 class over the
+  period is mixed.
 
 **Tests:** synthetic swaths and grids with planted values at known sites; radius and time
-windows at their boundaries; dateline and polar cells; no double counting across windows.
+windows at their boundaries; dateline and polar cells; AERONET D±1 loading; no double counting
+across windows.
 
 ### Task 3.6: Reports (`evaluation/report.py`, `sarb-aod evaluate`)
 
-- `sarb-aod evaluate -c run.yaml --level {l2,grid} [--configs ...]` builds the matchups,
-  computes grouped statistics, and writes CSV and JSON tables (DAVINCI formatter) under
-  `{data_root}/evaluation/{run}/`, with the provenance of every input.
-- **Acceptance gates** (CAM7 VP2), reported pass/fail per configuration: |MB| ≤ 0.03,
-  RMSE ≤ 0.10, R ≥ 0.8. The **baseline to beat** is CAM7's July 2008 MODIS-only result:
-  N = 8875, MB = 0.0195, RMSE = 0.1464, R = 0.8555.
-- **Plots:** come from the Phase 4 suites `aeronet_site_bias`, `aeronet_site_timeseries`,
-  `aeronet_regional_timeseries`, `aeronet_scatter` and `evaluation_summary`, rendered from
-  the same matchup tables.
+- `sarb-aod evaluate -c run.yaml --level {l2,grid} [--pairing default|cam7]` builds the matchups,
+  computes grouped statistics, and writes CSV and JSON tables (DAVINCI formatter) with the
+  provenance of every input.
+- **Acceptance gates** (CAM7 VP2), pass/fail per run: |MB| ≤ 0.03, RMSE ≤ 0.10, R ≥ 0.8.
+  - The **baseline to beat** is CAM7's July 2008 MODIS-only SP1 result: N = 8875, MB = 0.0195,
+    RMSE = 0.1464, R = 0.8555. Compare it with `--pairing cam7`.
+  - The default pairing reports its own N.
+- **Plots** come from the Task 4.5b suites.
 
 ### Task 3.7: Evaluation campaign and default selection
 
 1. Stage AERONET AOD20 for July 2008 and September 2020.
-2. **L2 level:** compare each stream under the `retrieval_team` and `cam7_v2` QC presets;
-   DT ocean Average vs Best; NOAA-20 DB v2 vs v2.1; C6.1 vs C7 once C7 is available.
-3. **Grid level:** sweep weighting (`count`; `gls` with ρ ∈ {0, 0.25, 0.5, 0.75, 1}),
-   negative-AOD handling, `min_pixels` ∈ {1, 3, 5}, and MODIS-only vs VIIRS-only vs mixed
-   (Sept 2020).
-4. **Choose ρ** where std(z) ≈ 1 without losing RMSE, then set the other defaults from the
-   tables. Separate reports for the Southern Ocean band and the Sept 2020 smoke box.
-5. Record the evidence and chosen defaults in `docs/validation/` and update `AGENTS.md`.
+2. **L2 level:** each stream under `retrieval_team` and `cam7_v2`; DT ocean QA ≥ 1 vs = 3;
+   Average vs Best ocean; NOAA-20 DB v2 vs v2.1; C6.1 vs C7 once available.
+3. **Grid level:** weighting (`count`; `gls` with ρ ∈ {0, 0.25, 0.5, 0.75, 1}); DT-land
+   negatives (`aod_min` −0.05 vs 0); `min_pixels` ∈ {1, 3, 5}; MODIS-only vs VIIRS-only vs
+   mixed (Sept 2020).
+4. **Choose ρ** where std(z) ≈ 1 without losing RMSE; set the other defaults from the tables.
+   Separate reports for the Southern Ocean band and the smoke box.
+5. Record the evidence and chosen defaults in `docs/validation/`; update `AGENTS.md`.
+
+---
 
 ## Phase 4: Plotting and diagnostics (DAVINCI style)
 
-Publication-quality plots that follow DAVINCI's plotting practice exactly, ported into
-`sarb_aod/plots/` (standalone: no `davinci_monet` or monetio import). Matplotlib and
-Cartopy join `environment.yml` at the DAVINCI pins (`matplotlib=3.11.*`, `cartopy=0.25.*`).
-
-Sources:
+Publication-quality plots following DAVINCI's plotting practice, ported into
+`sarb_aod/plots/`. This is standalone: no `davinci_monet` or monetio import. matplotlib 3.11,
+cartopy 0.25 and seaborn 0.13 are in the env (Task 0.1). Natural Earth 110m and 50m coastlines
+are prefetched to `~/Data/cartopy`.
 
 | DAVINCI (`origin/develop`) | What we take |
 |---|---|
-| `plots/style.py` | NCAR theme (`apply_ncar_style`, Poppins font with Helvetica/Arial fallback, `default`/`presentation`/`publication` font contexts, 300 dpi), NCAR colors and palette, `geosit_aod_levels()`, `get_geosit_aod_cmap()` (`turbo`), `get_bias_cmap()` (`RdBu_r`), sequential `viridis` |
-| `plots/labeling.py`, `labels.py`, `titles.py` | all title, axis, legend, colorbar and subtitle composition |
-| `plots/renderers/spatial/{base,field,bias}.py` | `draw_spatial_field`, area-weighted global mean in the subtitle, nice robust limits, symmetric limits, site-marker bias maps |
-| `plots/renderers/timeseries.py` | paired series, per-site lines with legend, 45° date ticks |
-| `plots/renderers/scatter.py`, `_stats.py` | density scatter (rasterized), 1:1 and regression lines, in-axes stats box |
-| `plots/renderers/{scorecard,taylor,boxplot}.py` | regional summary figures |
-| `plots/suites.py` (`gridded_aod_diagnostics`) | suite expansion pattern and AOD field titles |
-| DAVINCI "Plot Protocol Enforcement" | `validate_rendered_figures()` protocol reports and the visual inspection gate |
+| `plots/style.py` | `apply_ncar_style` (font contexts, 300 dpi, `bbox=tight`, seaborn whitegrid), NCAR colors and palette, `geosit_aod_levels()`, `get_geosit_aod_cmap()` (`turbo`), `get_bias_cmap()` (`RdBu_r`), `get_sequential_cmap()` (`viridis`) |
+| `plots/labeling.py`, `plots/labels.py`, `plots/titles.py` | all text composition; `calculate_symmetric_limits` (`labels.py:400`); `title_for_labeled_subset` |
+| `plots/_stats.py` | `annotation_metrics` (stats box), bound to `sarb_aod.evaluation.metrics` |
+| `plots/renderers/spatial/{base,field,bias}.py`, `plots/suites.py` (`_AOD_MAP_CONTEXT`, `gridded_aod_diagnostics`) | `draw_spatial_field`, global-mean subtitle, `_nice_robust_limits`, map context, suite field options |
+| `plots/renderers/aod_correction_science.py` | multi-panel AOD maps (shared levels, `_AOD_COLORBAR_TICKS`, `_map_panels`), the reference `validate_rendered_figures` with `_layout_failures`, `_record_dense_artists`, `_reserve_publication_layout` |
+| `plots/base.py:154` (hook), `pipeline/stages/plot.py:379` (called before saving; failure raises), `inspection/core.py` | protocol hook contract and report handling |
+| `plots/renderers/{timeseries,scatter,scorecard,taylor,boxplot}.py` | line, scatter and summary figures |
+| DAVINCI `CLAUDE.md` § Plot Label & Title Conventions and § Plot Protocol Enforcement; `docs/superpowers/specs/2026-06-15-plot-labeling-system-design.md` | rules |
 
-### Rules (enforced in code and tests)
+### Rules (enforced by the protocol and tests)
 
-**AOD color scale.** Absolute AOD maps always use `geosit_aod_levels()`:
-- 0.05 bins up to a plotted cap of 1.0, plus low-end levels 0.005, 0.01, 0.02, 0.03 and 0.04;
-- `turbo`, with `BoundaryNorm(levels, cmap.N, extend="max")`;
-- one colorbar with those discrete levels.
-
-Never use ad-hoc min/max scaling for AOD.
+**AOD color scale.**
+- `geosit_aod_levels(values)` depends on the data: 0.05 bins up to ceil(min(max, 1.0)/0.05)·0.05
+  (never above the 1.0 cap), plus 0.005–0.04 below 0.05.
+- Compute the levels **once per figure**, from the concatenated finite values of all its AOD
+  panels. Suites that compare products or days use the fixed full set `geosit_aod_levels([1.0])`,
+  so every map shares one scale.
+- Use `turbo` with `BoundaryNorm(levels, cmap.N, extend="max")`. Colorbar ticks are DAVINCI's
+  `_AOD_COLORBAR_TICKS` (0, 0.02, 0.05, 0.10, 0.20, 0.50, 0.80, 0.95), truncated at the top level.
+- Never use ad-hoc min/max scaling for AOD.
+- Negative AOD falls in the lowest bin and is accepted on absolute maps. Negatives are shown
+  instead by difference maps and by the **Negative AOD Fraction** map (from
+  `aod_count_negative`).
 
 **Other fields.**
-- Signed differences and biases use the diverging `RdBu_r` with robust symmetric limits
-  (`calculate_symmetric_limits`, 98th percentile) and `TwoSlopeNorm` centered on 0, so
-  isolated outliers don't wash the map out.
-- Counts, uncertainty and coverage use `viridis` with nice robust limits.
+- Differences and biases: `RdBu_r`, robust symmetric limits (`calculate_symmetric_limits`, 98th
+  percentile), `TwoSlopeNorm` at 0.
+- Coverage and other fractions: `gray_r` on fixed [0, 1] (DAVINCI `gridded_aod_diagnostics`).
+- Counts, uncertainty, χ²/ν and per-site RMSE: `viridis` with nice robust limits (2–98%), lower
+  bound 0.
+- Per-site R: `viridis` on [0, 1].
 
-**Rasterization (PDF).** Dense filled layers are rasterized: `pcolormesh`, `contourf`,
-`fill_between`, and large scatters (`rasterized=True` or `set_rasterized(True)`). Axes,
-text, colorbars and contour *lines* stay vector; rasterizing a contour line set raises a
-UserWarning, which the test suite treats as an error.
-- Gridded AOD fill is configurable: `pcolormesh` on the exact f09 cells (DAVINCI
-  `SpatialPlotter` default) or `contourf` on the GEOSIT levels. Both use the same
-  `BoundaryNorm` and are rasterized.
-- DAVINCI's comments say `ContourSet` can't be rasterized on matplotlib < 3.9. The pin is
-  3.11, where `ContourSet` is a `Collection`; a test confirms rasterized `contourf` emits no
-  warning and embeds as an image in the PDF.
+**Rasterization (PDF).**
+- Rasterize the dense filled layers: pcolormesh, contourf, fill_between and large scatters.
+  Keep text, axes, colorbars and contour *lines* vector.
+- On matplotlib 3.11, `set_rasterized(True)` on a line `ContourSet` is accepted silently, so the
+  protocol checks that every line `ContourSet` (`filled is False`) is **not** rasterized and
+  every dense artist **is**.
+- **Gridded AOD fill:**
+  - default `pcolormesh` with `shading="flat"` on the f09 cell edges from `lat_bnds`/`lon_bnds`
+    (clipped to ±90; longitudes shifted to −180..180 and sorted with the data columns);
+  - optional `contourf`, which on GeoAxes first converts longitudes to −180..180, sorts them,
+    and closes the seam with `cartopy.util.add_cyclic_point`. Without this, shapely emits
+    "invalid value encountered in create_collection" and a blank dateline strip appears.
 
-**Titles.**
+**Titles** (DAVINCI decision D6).
 - Terse: the quantity, plus an operation word only when it changes meaning (`AOD Bias`,
-  `AOD Difference`, `AOD Time Series`).
-- Single-source titles put the source first (`sourced_title`): `MODIS AOD`, `AERONET AOD`.
-- Audience-facing title case, preserving acronyms: AOD, MODIS, VIIRS, AERONET, CAM, SNPP,
-  NOAA-20, DT, DB.
-- **Never in titles:** dates, statistics, `Mean ± Std`, `vs <source>`, raw variable names
-  (`aod_weighted_mean`), internal labels (phase or task numbers, `gls`, `rho`, `cam7_v2`),
-  or `x`/`y`.
+  `AOD Difference`). Scatter, time-series and histogram titles carry **no** plot-type word.
+- Single-source titles put the source first (`MODIS AOD`, `AERONET AOD`).
+- Per-site and per-region figures use `title_for_labeled_subset`: `AOD - Mauna Loa`,
+  `AOD - Western US`. Site underscores become spaces.
+- Title case, preserving acronyms (AOD, MODIS, VIIRS, AERONET, CAM, SNPP, NOAA-20).
+- **Never in titles:** dates or years, statistics, `Mean ± Std`, `vs <source>`, raw variable
+  names, internal labels (task numbers, `gls`, `rho`, `cam7_v2`), or `x`/`y`.
 
 **Subtitles.**
-- The date subtitle (`subtitle_text`: `YYYY-MM-DD – YYYY-MM-DD`).
-- On maps, ` | Mean: <value>`, the cos-latitude area-weighted mean of finite cells.
-- Configuration provenance (weighting, QC preset, collection) goes in the subtitle only when
-  the audience needs it, and always in the filename and the PDF metadata.
+- `subtitle_text` dates (`YYYY-MM-DD – YYYY-MM-DD`).
+- Maps add ` | Mean: <value>`, the cos-latitude mean of finite cells (over the region's cells
+  for regional panels).
+- Site counts as ` | Sites: 12`.
+- Configuration appears only when the audience needs it; it is always in the filename.
 
 **Labels.**
-- Only through `labeling.py`: `axis_label(quantity + format_units(units))`, with
-  dimensionless AOD showing no unit.
-- `bias_label` produces `<Y source> − <X source>` with U+2212.
-- Legend entries use `legend_label`.
-- Sources are always display names (MODIS, VIIRS, AERONET, Terra Dark Target, …), never raw
-  keys and never ALL-CAPS. Units are never baked into config label strings.
+- Only through `labeling.py`.
+- Single-source map colorbars show `format_units(units)` only, so absolute AOD maps have no
+  colorbar label.
+- Scatter axes carry the source (`axis_label(q, units, source)`); time series carry sources in
+  the legend.
+- Append `(mean ± σ)` to a legend entry only when its band is drawn.
+- `bias_label` produces `<Y> − <X>` (U+2212).
+- Regression legends read `OLS: slope 1.02, intercept 0.01` / `RMA: …`, never `y = …x`.
+- A whole-key display table, checked before token-wise `source_display_name`, covers every
+  configuration and product key a figure can show. Examples:
+  - `count` → Count-Weighted; `gls` → GLS; with ρ → GLS (ρ = 0.5);
+  - `retrieval_team` → Retrieval-Team QC; `cam7_v2` → CAM7 QC;
+  - `c61` → C6.1; `c7` → C7; Deep Blue v2 and v2.1;
+  - `modis`/`viirs`/`mixed` → MODIS / VIIRS / MODIS + VIIRS;
+  - all eight streams, e.g. `noaa20_db` → NOAA-20 Deep Blue.
+
+  Tests assert that no figure text contains a raw config key.
 
 **Maps.**
+- DAVINCI `_AOD_MAP_CONTEXT` exactly: coastlines, solid gridlines labeled left and bottom, no
+  countries or states, land and ocean fill `none`.
 - Global PlateCarree by default; regional extents only when a suite asks for a region.
-- Coastlines and solid lat/lon gridlines; no political borders.
-- Tight layout.
+- Single maps: `tight_layout(pad=0.5)`, saved with `bbox_inches=fig.bbox_inches` (DAVINCI
+  `BaseSpatialPlotter.save`). Panels: constrained layout with one shared horizontal colorbar
+  (`_map_panels`).
+- `plots.coastline_resolution`: 110m for global maps, 50m for regional ones.
 
-**Time series.** Date ticks rotated 45°; reference (AERONET) in NCAR gray `X_COLOR`,
-satellite in NCAR blue `Y_COLOR`, extra sources from `NCAR_PALETTE`; positive bias red,
-negative blue.
+**Time series.** Date ticks rotated 45°. AERONET in NCAR gray (`X_COLOR`), satellite in NCAR
+blue (`Y_COLOR`), extras from `NCAR_PALETTE`. Positive bias red, negative blue.
 
 **Output.**
-- PDF is the deliverable, with a PNG preview per figure for inspection.
-- Dates, configuration and region live in filenames and directories, e.g.
-  `{data_root}/plots/{run}/{suite}/{name}.{yyyymmdd}-{yyyymmdd}.pdf` (template in `paths`).
+- PDF deliverables with PNG previews.
+- `paths.plot` = `{data_root}/plots/{run}/{suite}/{name}.{start}-{end}.pdf` (fields
+  `data_root, run, suite, name, start, end`; start = end for daily maps); the preview is the
+  same path with `.png`.
+- PDF provenance uses only the standard Info keys (custom keys raise UserWarning): `Title`,
+  `Subject` (suite/name, period), `Keywords` (`weighting=…; rho=…; qc=…; collections=…;
+  config_sha256=…; git_commit=…`), `Creator` (`sarb_aod <version>`).
 - Remove stale PNGs when replacing products.
 
-### Task 4.1: Style and labeling core (`plots/style.py`, `plots/labeling.py`, `plots/labels.py`)
+### Task 4.1: Style, labeling, display tables
 
-- Port the DAVINCI modules with their functions and tables unchanged in behavior.
-- Extend the acronym and source tables for this project: MODIS, VIIRS, Terra, Aqua, SNPP,
-  NOAA-20, AERONET, CAM, Dark Target, Deep Blue, and stream display names
-  (`terra_dt` → "Terra Dark Target").
+- **Port `style.py`, `labeling.py`, `labels.py` and `titles.py`, standalone:**
+  - inline `paired_canonical_name` (DAVINCI `core/base.py:38-56`);
+  - drop `surface_index` and `get_domain_extent`, taking extents from `evaluation/regions.py`;
+  - extend the acronym tables (VIIRS, Terra, Aqua, SNPP, NOAA-20, AERONET, CAM, Dark Target,
+    Deep Blue);
+  - add the whole-key display table (Rules).
+- **Config:** `paths.cartopy_data_dir` (profile key; mac `{data_root}/cartopy`, already
+  prefetched) is applied as `cartopy.config["data_dir"]` before any map is drawn.
+  `sarb-aod plot --prefetch-maps` downloads the 110m and 50m `physical/coastline` files; it is
+  the only network step.
+- **`pyproject.toml` `[tool.pytest.ini_options]`:** `filterwarnings = ["error::UserWarning",
+  "error::cartopy.io.DownloadWarning", "ignore:The locs attribute was deprecated in Matplotlib
+  3\\.11.*:matplotlib.MatplotlibDeprecationWarning:cartopy\\.mpl\\.ticker"]` (DAVINCI's filters
+  plus DownloadWarning). Set `MPLCONFIGDIR=$PWD/.cache/matplotlib` in sandboxes.
+- Poppins isn't installed; the fallback is Helvetica Neue (no warnings).
 
-**Tests:** port DAVINCI `test_labeling.py` cases; title rules (a rejected-pattern list:
-dates, `vs`, raw keys, `x`/`y`, internal labels); `geosit_aod_levels` values; unit
-formatting.
+**Tests:** port DAVINCI `test_labeling.py` cases; title rejected patterns (dates/years, `vs`,
+raw keys, `x`/`y`, internal labels); `geosit_aod_levels` (26 levels when max ≥ 1); units;
+the display table.
 
 ### Task 4.2: Map renderers (`plots/maps.py`)
 
-- `draw_spatial_field` (pcolormesh or contourf on cells, scatter for points), coordinate
-  handling (0–360 → −180–180 for display), area-weighted mean subtitle, robust, symmetric
-  and nice limits, colorbar with discrete GEOSIT ticks.
-- Site-marker layer for AERONET maps; markers scaled by N within a fixed range.
-- Optional regional extent from the region catalog (Task 3.4).
+- `draw_spatial_field` with pcolormesh (flat, on bounds) or contourf (cyclic) for grids, and
+  rasterized scatter for points.
+- Global-mean and regional-mean subtitles; robust, symmetric and nice limits; GEOSIT colorbar
+  ticks.
+- Multi-panel layout with shared levels.
+- Site-marker layer for AERONET maps, with markers scaled by N within a fixed range.
+- Regional extents from Task 3.4.
 
-**Tests:** artist checks (BoundaryNorm with GEOSIT levels and `turbo` for AOD,
-`TwoSlopeNorm` with `RdBu_r` for differences, rasterized mesh, vector text, coastlines
-present, no borders feature); PDF inspection (the filled layer embedded as an image).
+**Tests:**
+- Artists: BoundaryNorm with shared GEOSIT boundaries and `turbo`; `TwoSlopeNorm`/`RdBu_r` for
+  differences; `gray_r` [0, 1] for fractions; rasterized mesh; vector text; coastlines present;
+  no borders feature.
+- The PDF contains at least one image XObject that is not an SMask; the vector version contains
+  none.
+- contourf on a synthetic f09 field raises no warning under `-W error` and leaves no blank
+  column at ±180°.
+- No `DownloadWarning` offline.
 
-### Task 4.3: Line, scatter and summary renderers (`plots/series.py`, `plots/scatter.py`, `plots/summary.py`)
+### Task 4.3: Series, scatter and summary renderers (`plots/series.py`, `scatter.py`, `summary.py`)
 
-- Time series: per-site and regional; full AERONET record (light) plus matched points
-  (bold); satellite as markers, since overpasses are sparse.
-- Density scatter: 1:1, EE envelope lines for the stream or surface, OLS and RMA
-  regression, stats box (N, MB, RMSE, R, %EE).
-- Binned bias against AOD; z-score histogram with a unit-normal reference; ρ-sweep curves;
-  region × metric scorecard; Taylor diagram; box plots by region.
+- **Time series:**
+  - per site: AERONET all points (light) and window means (bold); the gridded value at the
+    site's cell for **every** window, matched or not; L2 overpass means as markers;
+  - regional: Task 3.3 method (2).
+- **Density scatter** (rasterized): 1:1 line, EE envelope lines, OLS and RMA regression, and a
+  stats box (N, MB, RMSE, R, %EE).
+- **Summary figures:** binned bias against AOD, z histogram with a unit-normal reference, ρ-sweep
+  curves, region × metric scorecard, Taylor diagram, regional box plots.
 
-**Tests:** artist and label checks for each figure type; date-tick rotation; stats-box
-values against `evaluation.metrics`.
+**Tests:** artist and label checks per figure type; 45° date ticks; stats-box values equal
+`evaluation.metrics`.
 
-### Task 4.4: Plot protocol and inspection (`plots/protocol.py`)
+### Task 4.4: Plot protocol (`plots/protocol.py`)
 
-- Port DAVINCI's `validate_rendered_figures()` pattern. Before saving, draw the canvas and
-  reject clipped or overlapping titles, subtitles, panel headings, axis labels, legends and
-  colorbar ticks.
-- Check the rules above: norms and colormaps per field kind, rasterized dense layers, title
-  and label patterns.
-- Write a JSON protocol report per suite. A suite fails if any figure fails.
-- Inspection gate: every production suite's PNG previews are viewed (multimodal inspection)
-  before the suite is accepted. A passing protocol report is necessary but not sufficient.
+- Port DAVINCI's `validate_rendered_figures` pattern. Called before saving, it raises on
+  failure and writes a JSON report per suite (`{protocol, passed, figures, checks}`).
+- **Layout:** draw the canvas and reject clipped or overlapping titles, subtitles, panel
+  headings, axis labels, legends, colorbar ticks, each axes' `ax.texts` (map subtitles) and
+  cartopy gridliner labels.
+- **Rules:**
+  - norms and colormaps per field kind;
+  - shared AOD `BoundaryNorm` boundaries within a figure;
+  - dense layers rasterized and line `ContourSet`s not;
+  - title, label and display-name patterns.
+- **Inspection gate:** view every period figure, the daily maps for three named days per period
+  (July 2008: 07-01, 07-15, 07-31; Sept 2020: 09-01, 09-09, 09-30), and every figure the
+  protocol flags. A passing report is necessary but not sufficient.
 
-**Tests:** a negative case per rule proving that a violation fails the suite.
+**Tests:** a negative case per rule (including a rasterized contour line set and mismatched AOD
+levels) proving that the suite fails.
 
-### Task 4.5: Plot suites and CLI (`plots/suites.py`, `sarb-aod plot`)
-
-Config-driven suites, in the style of DAVINCI `plot_suites` presets:
+### Task 4.5a: Map suites and `sarb-aod plot` (inputs: CAM7 files only)
 
 ```yaml
 plots:
-  context: publication           # default | presentation | publication
-  aod_fill: pcolormesh           # or contourf
-  suites: [aod_maps, aod_differences, aeronet_site_bias, aeronet_site_timeseries,
-           aeronet_regional_timeseries, aeronet_scatter, evaluation_summary]
-  sites: {select: top_n, n: 20}  # or an explicit list of AERONET site names
-  regions: all                   # or a list of region keys
+  context: publication       # default | presentation | publication
+  aod_fill: pcolormesh       # or contourf
+  coastline_resolution: 110m
+  suites: [aod_maps, aod_differences]
+  regions: all               # or a list of region keys
 ```
-
-`sarb-aod plot -c run.yaml [--suite ...]` renders from the CAM7 files and the Phase 3
-matchup tables, never re-reading L2.
 
 | Suite | Figures |
 |---|---|
-| **`aod_maps`** (spatial patterns) | **Mean AOD** for the period (count-weighted over windows, as CAM7's monthly analysis) and per day: product, per sensor (MODIS, VIIRS, mixed), per stream (Terra/Aqua × DT/DB, SNPP/NOAA-20 × DB/DT). **Uncertainty**, **observation count**, **coverage fraction** (fraction of 3-hour windows with data), **stream disagreement** (χ²/ν). Global by default; per-region panels when `regions` is set. |
-| **`aod_differences`** | Configuration and product differences: `gls` − `count`, `retrieval_team` − `cam7_v2` QC, ρ variants, C7 − C6.1, NOAA-20 DB v2.1 − v2, VIIRS − MODIS. Diverging, symmetric robust limits, `bias_label` colorbars. |
-| **`aeronet_site_bias`** (spatial bias against AERONET) | Site markers colored by mean bias (satellite − AERONET), plus RMSE and R maps per site; for each level (L2, grid) and configuration; global and per region. |
-| **`aeronet_site_timeseries`** (per site, satellite subsampled to the site) | One figure per selected site: AERONET 550 nm (all points light, window means bold) against satellite values subsampled to the site, i.e. L2 pixels within the radius at overpass and the f09 cell value for each 3-hour window. One line per sensor or stream when requested. |
-| **`aeronet_regional_timeseries`** (regional groups of sites) | For each region, daily regional AERONET mean using CAM7's method: average matched hours within each site, then give each active site equal weight. Plotted against the satellite subsampled to the same site-times (MODIS, VIIRS, mixed). A third line shows the full regional area-weighted satellite mean, so the sampling effect is visible. Panel subtitles carry active-site counts. |
-| **`aeronet_scatter`** | Density scatter of satellite against AERONET per configuration, per region (small multiples) and per stream at L2 level. |
-| **`evaluation_summary`** | Binned bias against AOD, z-score histograms, ρ-sweep curves, region × metric scorecard, Taylor diagram, regional box plots. |
+| **`aod_maps`** (spatial patterns) | **Period maps** (one figure each per run): Mean AOD (count-weighted over windows, CAM7's monthly definition) for the product, each sensor (MODIS, VIIRS, MODIS + VIIRS) and each stream as small multiples sharing one GEOSIT scale; Uncertainty (count-weighted mean of window `aod_uncertainty`); Observation Count (sum of `aod_count`); Observation Fraction (fraction of windows with data); Stream Disagreement (count-weighted mean of `aod_chi2_per_dof`); Negative AOD Fraction. **Daily maps:** product Mean AOD only (count-weighted over the 8 windows; cells without observations left blank), one figure per day. Global by default; per-region panels when `regions` is set. |
+| **`aod_differences`** | Run and product differences: `gls` − `count`, `retrieval_team` − `cam7_v2`, ρ variants, C7 − C6.1, NOAA-20 DB v2.1 − v2, VIIRS − MODIS. Diverging, symmetric robust limits, `bias_label` colorbars with display names. |
 
-**Tests:** each suite expands to its logical product list; an end-to-end render on
-synthetic CAM7 files and matchups passes the protocol; filenames carry dates and
-configuration.
+**Tests:** suite expansion to its logical product list; an end-to-end render on synthetic CAM7
+files passes the protocol; filenames carry period and run.
 
-### Task 4.6: Production plot runs
+### Task 4.5b: AERONET suites (inputs: CAM7 files, Task 3.5 matchups, parsed AERONET cache)
 
-1. July 2008: all suites for the four Phase 1 configurations, plus the CAM7 reproduction.
-   Compare the July maps visually with CAM7's accepted July 2008 plots.
-2. Sept 2020: all suites, plus the smoke-box regional maps and time series (fixing the box
-   extent from the observed plume). Show MODIS-only, VIIRS-only and mixed side by side.
-3. Southern Ocean focus: maps and regional time series for `southern_ocean`, comparing QC
-   presets and negative-AOD handling. This is the evidence base for the deferred denoising
-   work.
-4. Inspect every preview, record the accepted plot set in `docs/validation/`, and fix any
-   protocol or visual failures before acceptance.
+```yaml
+plots:
+  suites: [aeronet_site_bias, aeronet_site_timeseries, aeronet_regional_timeseries,
+           aeronet_scatter, evaluation_summary]
+  sites: {select: top_n, n: 20}   # top_n = most grid-level matchups in the period, ties by name; or a list
+```
+
+| Suite | Figures |
+|---|---|
+| **`aeronet_site_bias`** | Site markers colored by mean bias (`<product> − AERONET`), plus per-site RMSE and R maps; per level (L2, grid) and run; global and per region. |
+| **`aeronet_site_timeseries`** | One figure per selected site (`AOD - <Site>`): AERONET 550 nm from the parsed cache (all points light, window means bold); the gridded value at the site's f09 cell (Task 3.5 index logic) for every window; L2 overpass means as markers; one line per sensor or stream when requested. |
+| **`aeronet_regional_timeseries`** | Per region (`AOD - <Region>`): the daily regional AERONET mean (Task 3.3 method 2: CAM7's site-then-equal-weight, with matched 3-hour windows in place of hours) against the satellite subsampled to the same site-times (MODIS, VIIRS, mixed), plus the full regional area-weighted satellite mean (CAM7 `prepare_2008_regional_aod.py::area_weighted_mean`), so the sampling effect is visible. Subtitles carry active-site counts. |
+| **`aeronet_scatter`** | Density scatter per run, per region (small multiples), and per stream at L2. |
+| **`evaluation_summary`** | Binned bias, z histograms, ρ-sweep curves, region × metric scorecard, Taylor diagram, regional box plots. |
+
+**Tests:** as in 4.5a, on synthetic matchups and fixtures.
+
+### Task 4.6: Full plot runs (July 2008, Sept 2020)
+
+1. **July 2008:** all suites for the four Task 1.10 runs; one of them is the CAM7 reproduction
+   (`count` + `cam7_v2`).
+   - Its acceptance is numeric: monthly Mean AOD by CAM7's analysis definition meets VP1
+     (mean 0.1–0.25, values in [0, ~3]).
+   - If the user copies CAM7's July 2008 f09 files to the Mac, the difference map against them
+     is zero to float32 tolerance.
+   - Visual comparison with derecho PDFs is optional (user).
+2. **Sept 2020:** all suites, plus smoke-box maps and time series using the Task 2.4 extent,
+   with MODIS-only, VIIRS-only and mixed side by side.
+3. **Southern Ocean focus:** maps and regional time series for `southern_ocean`, comparing DT
+   ocean QA ≥ 1 vs = 3 and the negative-AOD settings. This is the evidence base for the
+   deferred denoising work.
+4. Pass the inspection gate. Record the accepted plot set in `docs/validation/`.
+
+---
 
 ## Phase 5: Production (AMI)
 
-Needs: AMI paths and archive layout, scheduler, Python and conda availability, network
-access to LAADS.
+Needs from the user: AMI paths and archive layout, scheduler, Python/conda availability, and
+network access to LAADS and AERONET.
 
-- Fill `config/profiles/ami.yaml`.
-- Multi-year driver (month chunks), throughput measurement, and storage estimate (L2 inputs
-  versus outputs; outputs ≈ 8 files/day × ~1 MB).
+- Fill in `config/profiles/ami.yaml`, including `paths.cartopy_data_dir` with prefetched
+  coastlines.
+- Multi-year driver (month chunks), throughput measurement, storage estimate (L2 inputs versus
+  outputs; outputs ≈ 8 files/day × ~1 MB).
 
 ---
 
@@ -676,14 +1160,16 @@ access to LAADS.
 
 | Item | Plan |
 |---|---|
-| MODIS C7 aerosol not released | Catalog and staging ready; reader is a variable map (Task 2.5) |
-| DT expected-error coefficients | Confirm C6 land and ocean values against the DT references in Task 1.3 |
-| ρ default | 0.5 placeholder; chosen by AERONET in Phase 3 |
+| Sept 2020 staging in progress | Detached `screen -S sarb-stage`; done when its log ends with `=== audit exit 0 ===`. Phase 2 real-data steps wait for it |
+| MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
+| DT ocean QA source conflict | Default QA ≥ 1 (Levy 2013; the products' combined SDS; DT FAQ) vs the darktarget L2-contents page (QA 2–3). Phase 3 compares QA = 3 |
+| ρ default | 0.5 placeholder; chosen by AERONET calibration in Task 3.7 |
 | DT and DB retrieve the same scene (correlated across streams) | v1 treats streams as independent; Birge inflation partly covers it; a cross-stream ρ is a later option |
-| CAM `%y/%m/%d/` template subdirectories | Confirm in a short derecho CAM run |
+| CAM obs template | Expansion verified in CAM `filenames.F90` (cam6_4_161). Confirm only the `atm.log` check (Task 1.8) in one short derecho run |
+| CAM7 baseline comparison | Needs CAM7's July 2008 SP1 files copied from derecho (path from the user) for the `--pairing cam7` gate |
+| AERONET Level 2.0 lags real time | AOD15 as a separate product; matchups carry the level |
+| AERONET service limits | ≤ 10 requests/min, one request per day for all sites, raw CSV cached |
+| Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
+| Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
 | AMI environment | Phase 5 |
-| Cartopy Natural Earth data | Cartopy downloads coastlines on first use; pre-fetch into a configured `cartopy.config['data_dir']` (a profile key) so batch and offline runs work |
-| Poppins font | Used if installed, else the Helvetica/Arial fallback (DAVINCI behavior); install it for publication figures |
-| AERONET Level 2.0 lags real time | `AOD15` fallback per run config; report which level each matchup used |
-| AERONET service limits | ≤ 10 requests/min, one request per day for all sites, raw CSV cached so re-runs never re-fetch |
-| Southern Ocean noise | Partly addressed by retrieval-team DT ocean QA ≥ 2 and keeping negatives; denoising itself stays deferred. Useful later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle`, `Wind_Speed_Ncep_Ocean` |
+| Southern Ocean noise | The DT ocean QA threshold (QA ≥ 1 vs = 3) and DT-land negatives are compared in Phase 3. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |

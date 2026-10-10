@@ -2,59 +2,73 @@
 
 ## Project overview
 
-Preprocess MODIS (and later VIIRS) Level-2 aerosol retrievals into **CAM7-ready 550 nm AOD
-constraint files** for CERES-SARB (CESM3/CAM7 AOD nudging). Package `sarb_aod`, CLI
-`sarb-aod`. Scope is deliberately narrow: only what MODIS/VIIRS → CAM7 preprocessing needs,
-while keeping DAVINCI's pydantic-schema, config-driven design so that file paths and
-filenames differ between machines (macOS dev laptop, NCAR derecho, AMI production) only in
-configuration, never in code.
+Preprocess MODIS and VIIRS Level-2 aerosol retrievals into **CAM7-ready 550 nm AOD constraint
+files** for CERES-SARB (CESM3/CAM7 AOD nudging). Package `sarb_aod`, CLI `sarb-aod`. The scope
+is narrow: only what MODIS/VIIRS → CAM7 preprocessing needs. It keeps DAVINCI's
+pydantic-schema, config-driven design, so file paths and filenames differ between machines
+(macOS dev laptop, NCAR derecho, AMI production) only in configuration, never in code.
 
-Pipeline (target):
+Pipeline:
 
 1. **Stage** L2 granules from NASA Earthdata into `<product>/YYYY/MM/DD` (done: `sarb-aod stage`).
 2. **Read** per-source streams: Terra/Aqua × Dark Target/Deep Blue (MODIS); SNPP/NOAA-20 ×
-   DT/DB (VIIRS). MODIS and VIIRS are normally not mixed, but mixing must stay possible.
-3. **Grid** to the CAM f09 grid (192×288, pole-centered) in 3-hour windows, with
-   count-weighted (and, where per-pixel uncertainty exists, uncertainty-aware) averaging
-   across sources.
+   DT/DB (VIIRS). MODIS and VIIRS are normally not mixed, but mixing must work.
+3. **Grid** to the CAM f09 grid (192×288, pole-centered) in 3-hour windows, using GLS
+   (uncertainty + error correlation) or count weighting across sources.
 4. **Write** CAM7 contract files (below).
+5. **Validate** against AERONET and **plot** in DAVINCI style.
 
 Deferred by user direction (2026-10-10): spatial/temporal denoising ("despeckle") and the
 AERONET-anchored VIIRS→MODIS bias correction.
 
 Test periods:
-
-- **July 2008**: MODIS Terra + Aqua, Collections 6.1 and 7 (MODIS-only; predates VIIRS).
-- **September 2020**: MODIS C6.1/C7 + VIIRS (Labor Day 2020 western US fires: extreme AOD,
+- **July 2008:** MODIS Terra + Aqua, Collections 6.1 and 7 (MODIS-only; predates VIIRS).
+- **September 2020:** MODIS + VIIRS (Labor Day 2020 western US fires: extreme AOD,
   smoke/cloud confusion, MODIS/VIIRS mixing). VIIRS Deep Blue v2 (SNPP + NOAA-20) is the
-  baseline, NOAA-20 Deep Blue v2.1 a version comparison; VIIRS Dark Target v2.1.
+  baseline, NOAA-20 Deep Blue v2.1 a version comparison, VIIRS Dark Target v2.1.
 
-## Design decisions (user-confirmed 2026-10-10)
+## Implementation plan and status
 
-- **Numba binning** ported from DAVINCI `pairing/grid_binning.py` (not imported), extended to
-  accumulate per-stream N, Σw, Σw·x, Σw·x², Σσ².
-- **Weighting is configurable.** Default: generalized least squares with a simple
-  error-correlation model ("superobbing"): pixel inverse-variance within a stream, stream-mean
-  variance σ̄²(ρ + (1−ρ)/N) so weight saturates at 1/(ρσ̄²), streams combined by inverse
-  variance, uncertainty inflated by the Birge ratio when streams disagree. ρ is a config
-  parameter (ρ = 0 → pure inverse-variance). Also provide **simple count weighting with no
-  uncertainty** (CAM7 `prepare_modis_era5_grid.py` behavior).
-- **No monetio dependency.** AERONET is fetched straight from the AERONET Web Service v3
-  (URL and CSV rules re-implemented from what DAVINCI's `AERONETReader` delegates to
-  monetio). The validation suite ports DAVINCI's metrics, grouped-statistics calculator,
-  output formatter, `PointStrategy` matching and `AEROSOL_REGIONS` (plan Phase 3).
-- **QA defaults follow the retrieval teams' recommendations** (verified 2026-10-10), with a
-  `cam7_v2` preset (QA≥1 everywhere, `Effective_Optical_Depth_Best_Ocean`) for regression
-  against CAM7 products:
-  - Dark Target (MODIS and VIIRS): land QA = 3, ocean QA ∈ {2, 3}; ocean AOD from
-    `Effective_Optical_Depth_Average_Ocean` (darktarget.gsfc.nasa.gov L2 product contents).
-  - Deep Blue (VIIRS user guide v2 §1.2; same convention for MODIS DB): QA ∈ {2, 3} over land
-    and water; `*_Best_Estimate` SDS are the same data pre-filtered to QA ≥ 2.
+`docs/IMPLEMENTATION_PLAN.md` is the tracked plan: workflow, task table with dependencies,
+per-task specs and tests, and open items. Read its **Workflow** section before starting a task.
+Update its task table (State, Commit) and open items in the same commit that completes a task.
+At session start, also check the repo root for cross-model handoff files (`HANDOFF_*.md`,
+`REVIEW_*.md`; see below).
 
-## Implementation plan
+## Design decisions (user-confirmed 2026-10-10 unless marked)
 
-`docs/IMPLEMENTATION_PLAN.md` is the tracked plan (phases, tasks, tests, open items). Update
-its Status table and open-items list in the same commit that completes or changes a task.
+- **Standalone: port, don't import.** Copy what is needed from DAVINCI and CAM7 with
+  attribution. Never import `davinci_monet` (it is not installed in any env) or **monetio**.
+- **Numba binning** is ported from DAVINCI `pairing/grid_binning.py`. The extended kernel
+  accumulates per window, stream and cell: N, N_neg, N_sigma_missing, Σx, Σx², Σw, Σw·x and
+  Σ(1/σ), with w = 1/σ². Time bins are half-open.
+- **Weighting is configurable.**
+  - The default is generalized least squares with an error-correlation model
+    ("superobbing"). Within a stream: x̄ = Σw·x/Σw, s = Σ(1/σ)/Σw, and
+    V = ρ·s² + (1 − ρ)/Σw, which is exact for Cov(eᵢ, eⱼ) = ρσᵢσⱼ. Streams combine by inverse
+    variance, and the Birge ratio inflates σ when streams disagree. ρ is a config parameter
+    chosen by AERONET calibration (0.5 placeholder).
+  - Option: **simple count weighting with no uncertainty** (CAM7 `prepare_modis_era5_grid.py`).
+- **QA defaults follow the retrieval teams** (verified on real granules and in Levy et al. 2013):
+  - Dark Target land QA = 3, **ocean QA ≥ 1**. This equals the products' own
+    `Optical_Depth_Land_And_Ocean` for MODIS C6.1 and VIIRS DT. One darktarget web page says
+    ocean QA 2–3, but that drops ~60% of ocean pixels (87% south of 40° S), the cleanest ones.
+    Phase 3 compares the two.
+  - Ocean AOD from `Effective_Optical_Depth_Average_Ocean`.
+  - Deep Blue QA ≥ 2 over land and water (VIIRS DB water QA takes only 1 or 3).
+  - The `cam7_v2` preset reproduces CAM7's diagnostic four-stream product (see the plan, Task
+    1.10): QA ≥ 1 everywhere, MODIS `Effective_Optical_Depth_Best_Ocean`, AOD ∈ [0, 5] for all
+    streams, unrounded scaling, naive TAI93 time, count weighting with zero single-pixel σ. It
+    is *not* the SP1 archive CAM read in 2008.
+- **Negative AOD** (*proposal*, tested in Phase 3): only MODIS DT land is negative (clamped at
+  −0.05). Keep values ≥ −0.05 in averages and clip the final cell mean at 0 for CAM.
+- **Time:** TAI93 → UTC subtracts leap seconds (6 s in 2008, 10 s from 2017). VIIRS DT has no
+  per-pixel time; it is derived from the `time_coverage_*` attributes.
+- **AERONET:** fetched directly from Web Service v3 (rules re-implemented from what DAVINCI's
+  `AERONETReader` delegates to monetio). A UTC day D is requested with
+  `day2 = D+1, hour2 = 0`; `hour2 = 23` loses data. The validation suite ports DAVINCI's
+  metrics, calculator, output formatter, nearest-cell index logic and `AEROSOL_REGIONS`.
+- **Plots** follow DAVINCI plotting practice (rules below and in plan Phase 4).
 
 ## Layout
 
@@ -63,117 +77,178 @@ sarb_aod/config/      pydantic schema (schema.py) and YAML/profile/env loader (l
 sarb_aod/data/        catalog.yaml: products, collections (CMR version, filename token, format)
 sarb_aod/paths.py     path-template rendering
 sarb_aod/stage/       Earthdata search/download hooks, manifests, resumable staging runner
-sarb_aod/cli.py       sarb-aod show-config | stage | audit
+sarb_aod/cli.py       sarb-aod show-config | stage | audit   (planned: grid, validate, summarize,
+                      aeronet stage/audit, evaluate, plot)
 config/profiles/      machine profiles: mac, derecho, ami (where things live)
 config/runs/          run configs (what to process)
 tests/                offline pytest suite (network calls injected via Hooks)
+tests/data/aeronet/   AERONET Web Service v3 fixtures (see its README)
 ```
 
 ## Environment and commands
 
-`environment.yml` is a minimal subset of the DAVINCI env (same pins), conda-forge only with
-`nodefaults`, so it works under Miniconda as well as Miniforge.
+`environment.yml` is a minimal subset of the DAVINCI env (same pins; conda-forge only with
+`nodefaults`, so Miniconda works). It includes pandas, matplotlib, cartopy and seaborn for
+Phases 3 and 4, and black is pinned (`26.*`). The `sarb-aod` env on the Mac is up to date and
+the package is installed editable.
+
+Agents (Codex) must not rely on `conda activate`; call the env's binaries directly:
 
 ```bash
-conda env create -f environment.yml      # env name: sarb-aod (mamba also works)
-conda activate sarb-aod
-python -m pip install --no-deps -e .
-pytest                                    # offline; network tests are marked `network`
-mypy sarb_aod
-sarb-aod show-config -c config/runs/modis_l2_200807.yaml
-sarb-aod stage -c config/runs/modis_l2_200807.yaml [--dry-run]
-sarb-aod audit -c config/runs/modis_l2_200807.yaml
+E=~/miniforge3/envs/sarb-aod/bin
+$E/python -m pytest -m "not network"      # the task gate; network tests only with network on
+$E/mypy sarb_aod
+$E/black --check . && $E/isort --check-only .
+$E/sarb-aod show-config -c config/runs/modis_l2_200807.yaml
+$E/sarb-aod stage -c config/runs/modis_l2_200807.yaml [--dry-run]
+$E/sarb-aod audit -c config/runs/modis_l2_200807.yaml
 ```
+
+Set `MPLCONFIGDIR=$PWD/.cache/matplotlib` (gitignored) so matplotlib doesn't write to
+`~/.matplotlib`. Natural Earth coastlines (110m, 50m) are prefetched to `~/Data/cartopy`, the
+mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
+`conda env create -f environment.yml && conda activate sarb-aod && python -m pip install --no-deps -e .`
+
+## Running as Codex (verified 2026-10-10, codex-cli 0.161.0)
+
+- **Launch** from the repo root:
+  `codex --sandbox workspace-write --add-dir ~/Data -c sandbox_workspace_write.network_access=true`.
+  Network is needed only for staging, AERONET fetches and `network` tests.
+- The sandbox reads anywhere. Writing outside the repo needs `--add-dir`, and network needs
+  `network_access=true`.
+- **`.git/` is always read-only in the sandbox**, so `git add`, `git commit` and `git push` must
+  be run as approved escalations at each task's commit step. If an escalation is not approved,
+  stop with the work staged and say so.
+- Never write into the granule trees `~/Data/<Platform>/…` except through `sarb-aod stage`, and
+  never into `~/Data/logs/`. Outputs go only to the run config's `paths.*` templates.
+- **Review step:** `codex review --uncommitted`.
 
 ## Earthdata credentials (earthaccess)
 
-- Staging authenticates through `earthaccess.login(strategy=...)`; the strategy is
+- Staging authenticates with `earthaccess.login(strategy=...)`; the strategy is
   `stage.auth_strategy` in the run config (default `netrc`).
-- `netrc`: `~/.netrc` with a `machine urs.earthdata.nasa.gov` entry (login/password), mode
-  `600`. Present and verified on the macOS dev laptop 2026-10-10.
-- `environment`: `EARTHDATA_USERNAME` / `EARTHDATA_PASSWORD` (or `EARTHDATA_TOKEN`) — useful
-  on batch/production systems.
-- Never print, log, copy, or commit credential contents. Check for presence by file
-  existence or key names only.
-- CMR **search** needs no login (dry runs work without credentials); **downloads** do.
-  LAADS data links resolve to `data.laadsdaac.earthdatacloud.nasa.gov`.
+- `netrc`: `~/.netrc` with a `machine urs.earthdata.nasa.gov` entry, mode `600`. It is present
+  and verified on the macOS dev laptop (2026-10-10).
+- `environment`: `EARTHDATA_USERNAME`/`EARTHDATA_PASSWORD` (or `EARTHDATA_TOKEN`), for batch or
+  production systems.
+- **Never print, log, copy or commit credential contents**; check only file existence or key names.
+- CMR **search** needs no login (dry runs work without credentials); **downloads** do. LAADS
+  data links resolve to `data.laadsdaac.earthdatacloud.nasa.gov`.
 
-## Data layout and configuration rules
+## Data layout and status
 
-- Dev data root: `~/Data`. Granules: `~/Data/<Platform>/<Instrument>/<SHORTNAME>.<token>/YYYY/MM/DD/`,
-  e.g. `~/Data/Terra/MODIS/MOD04_L2.061/2008/07/01/` (`<SHORTNAME>.<token>` = NASA DOI naming,
-  keeps C6.1 and C7 apart). Manifests: `.../<SHORTNAME>.<token>/manifests/`.
-- Production (AMI) paths differ and are not yet known: `config/profiles/ami.yaml` reads
+- **Dev data root `~/Data`.** Granules go in
+  `~/Data/<Platform>/<Instrument>/<SHORTNAME>.<token>/YYYY/MM/DD/`, e.g.
+  `~/Data/Terra/MODIS/MOD04_L2.061/2008/07/01/`; `<SHORTNAME>.<token>` is NASA DOI naming and
+  keeps collections apart. Manifests are in `.../<SHORTNAME>.<token>/manifests/`.
+- **Status (2026-10-10):**
+  - July 2008 MODIS C6.1 is staged and audited (9,518/9,518).
+  - Sept 2020 MODIS + VIIRS (29,856 granules, ~213 GiB) is downloading in the detached `screen`
+    session `sarb-stage`, logging to `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log`.
+    It is done when the log ends with `=== audit exit 0 ===`. Check progress with `tail` or
+    `screen -ls`. Never kill or restart it while it runs. If it died, re-run
+    `sarb-aod stage -c config/runs/modis_viirs_l2_202009.yaml` (resumable), then `audit`.
+  - Long jobs run detached:
+    `screen -dmS <name> zsh -c 'caffeinate -i <cmd> >> <log> 2>&1'`.
+- **Production (AMI)** paths are unknown: `config/profiles/ami.yaml` reads
   `${SARB_AOD_DATA_ROOT}`. Never hard-code machine paths in code; add template fields or
   profile keys instead.
-- Run configs select collections per product: `stage.products: {MOD04_L2: ["6.1", "7"], ...}`.
-- Collections (`sarb_aod/data/catalog.yaml`; keys = CMR VersionId): MODIS C6.1 = token `061`,
-  HDF4. MODIS C7 = token `007`, **NetCDF4**; as of 2026-10-10 LAADS publishes C7 only for
-  L1B/geolocation (MOD02*/MOD03), so MOD04_L2/MYD04_L2 C7 return zero granules and are
-  reported "unavailable" until released. VIIRS AERDB v2 = `002`, v2.1 = `021` (SNPP v2.1 only
-  from 2026-06); AERDT v2.1 = `021`; all NetCDF4. Readers must handle HDF4 and NetCDF4.
-- Per-pixel uncertainty: C6.1 has `Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty`;
-  Dark Target has none (only `Fitting_Error_Land`, `Least_Squares_Error_Ocean` fit residuals),
-  so DT falls back to its expected-error envelope unless C7 adds one.
+- **Run configs** choose collections per product for staging
+  (`stage.products: {MOD04_L2: ["6.1", "7"], ...}`). Gridding will name exactly one collection
+  per stream (plan Task 1.9).
+- **Collections** (`sarb_aod/data/catalog.yaml`; keys are CMR VersionIds):
+  - MODIS C6.1: token `061`, HDF4.
+  - MODIS C7: token `007`, NetCDF4. LAADS publishes C7 only for L1B and geolocation so far, so
+    MOD04/MYD04 C7 are reported "unavailable".
+  - VIIRS AERDB: v2 `002`, v2.1 `021` (SNPP v2.1 only from 2026-06). VIIRS AERDT: v2.1 `021`.
+    All VIIRS files are NetCDF4.
+- **Variable facts** (verified; details in plan Tasks 1.1, 2.1, 2.2):
+  - MODIS 0.55 µm is index 1 on the leading wavelength dimension; VIIRS DT has the wavelength
+    dimension last, so always select by dimension name.
+  - The DT surface comes from whichever AOD field is valid; never use MODIS `Land_sea_Flag`,
+    whose `valid_range` is wrong.
+  - MODIS DB C6.1 has a per-pixel 1σ `Estimated_Uncertainty`; VIIRS DB has
+    `Expected_Uncertainty`. Dark Target has none and uses expected-error envelopes.
 
 ## CAM7 contract (consumer: `../CERES-SARB-CAM7/src/cam/aod_nudging_obs.F90`)
 
-- One NetCDF4 file per 3-hour window; default name `MODIS_VIIRS_AOD_3hr_f09.%y%m%d.%s.nc`,
-  `%s` = window-start seconds of day (0, 10800, …, 75600).
-- CAM requires: dims/coords `lat(192)`, `lon(288)` exactly equal to f09 centers
-  (`lat = linspace(-90, 90, 192)`, `lon = arange(288) * 1.25`), `aod_weighted_mean(lat, lon)`
-  with `_FillValue = -999` meaning "no obs, leave model untouched", and a scalar CF `time`
-  at the window **center**. Extra variables are ignored by CAM.
-- Keep the companion fields from the CAM7 SP1 contract: `aod_count`, `aod_uncertainty`,
-  `aod_weighted_mean_modis`/`_viirs`, `lat_bnds`, `lon_bnds`, `time_bnds`, provenance globals.
-- CAM builds the path as `aod_obs_path // interpret_filename_spec(aod_obs_template)`, so
-  output YYYY/MM/DD subdirectories need only a template like
-  `%y/%m/%d/MODIS_VIIRS_AOD_3hr_f09.%y%m%d.%s.nc` (to be confirmed in a CAM run).
+- One NetCDF4 file per 3-hour window, named `<stem>.%y%m%d.%s.nc` (stem
+  `MODIS_VIIRS_AOD_3hr_f09`), where `%s` is the window-start second of day (0, 10800, …, 75600).
+- CAM reads `lat(192)`/`lon(288)` (f09 centers, checked to 1e-3), `aod_weighted_mean(lat, lon)`
+  (values > −900 are "valid"; fill −999 means "leave the model untouched") and a scalar CF
+  `time` at the window **center**, in hours. Extra variables are ignored.
+- Keep the CAM7 SP1 companions: `aod_count`, `aod_uncertainty`, `aod_weighted_mean_modis`/`_viirs`,
+  `lat_bnds`, `lon_bnds`, `time_bnds`, and the 15 provenance globals.
+- CAM builds the path as `aod_obs_path // interpret_filename_spec(aod_obs_template)` with no
+  separator, so `aod_obs_path` must end in `/`.
+  - `%y/%m/%d/` subdirectories in the template are verified in CAM `filenames.F90` (cam6_4_161):
+    `/` is literal, `%y` 4 digits, `%s` 5 digits; template ≤ 80 characters.
+  - **A missing file is not an error; CAM runs free.** Confirm a run through its `atm.log`.
 
 ## Brownfield reference repositories (read-only)
 
-Borrow from these; do not modify them from this repo's tasks.
+Borrow from these; never modify, check out or commit in them from this repo's tasks.
 
-- **`../CERES-SARB-CAM7`** (branch `develop`; GitHub `NCAR/CERES-SARB-CAM7`)
-  - `scripts/prepare_modis_era5_grid.py`: the **four-stream count-weighted** MODIS averaging
-    (Terra/Aqua × DT/DB, per-stream counts, standard error of the mean). Primary algorithm reference.
-  - `sp1_aod_pipeline/`: contract writer/validator (`contract.py`), f09 grid (`f09_grid.py`),
-    3-hour windows (`aggregate.py`), inverse-variance merge (`merge.py`), AERONET-anchored
-    VIIRS bias correction (`bias.py`, deferred here), AERONET validation (`validation/`).
-  - `src/cam/aod_nudging_obs.F90`, `aod_nudging_intr.F90`: what CAM actually reads.
-  - `docs/science-verification.md`: plot-based verification gates (VP1–VP4 for obs products).
-  - No despeckle/smoothing code exists there (only a visual "no speckle" gate).
-- **`../DAVINCI`** (local `main` is ~50 commits behind `origin/develop`; GitHub `NCAR/DAVINCI`)
-  - `davinci_monet/config/parser.py`: YAML unique-key loading, `${VAR}`/`~` expansion (ported).
-  - `davinci_monet/config/schema.py`: pydantic schema style.
-  - `davinci_monet/io/download/earthdata.py`: hook-injected staging pattern (ported).
-  - `davinci_monet/pairing/grid_binning.py`: numba swath→grid binning kernels (to port).
-  - `origin/develop:davinci_monet/analysis/projection_core.py::masked_boxcar_smooth`:
-    mask-aware 3×3 smoother (candidate for the deferred denoising step).
-  - `MODIS_VIIRS_L2.md`: LAADS product/collection notes.
-- The legacy CAM6 prototype (Toni Viudez-Mora, `/glade/work/tvmora` on derecho) had an
-  unarchived data-prep pipeline (daily averaging, a `VIIRS_corrected` intermediate); it is
-  seed material only.
+- **`../DAVINCI`** (GitHub `NCAR/DAVINCI`). The working tree is `main`, **~50 commits behind
+  `origin/develop`**. Read sources only with `git -C ../DAVINCI show origin/develop:<path>`;
+  `AEROSOL_REGIONS` (`geography/domains.py`) and `analysis/projection_core.py` exist only on
+  develop.
+  - `config/parser.py` and `config/schema.py`: YAML/env patterns and schema style (ported).
+  - `io/download/earthdata.py`: the hook-injected staging pattern (ported).
+  - `pairing/grid_binning.py`: the numba kernels to port.
+  - `stats/{metrics,calculator,output}.py`; `pairing/strategies/{point,base}.py`.
+  - `plots/*`: style, labeling, titles, `_stats.py`, spatial renderers, suites, and
+    `renderers/aod_correction_science.py` (the protocol reference).
+  - `CLAUDE.md` § Plot Label & Title Conventions and § Plot Protocol Enforcement.
+  - `analysis/projection_core.py::masked_boxcar_smooth`: a candidate for the deferred denoising.
+- **`../CERES-SARB-CAM7`** (branch `develop`; GitHub `NCAR/CERES-SARB-CAM7`).
+  - `scripts/prepare_modis_era5_grid.py`: the four-stream count-weighted averaging; the oracle
+    for the `cam7_v2` regression.
+  - `sp1_aod_pipeline/`: `contract.py` and `f09_grid.py` (to port), `aggregate.py`,
+    `records.py`, `validation/` (AERONET 550 nm, VP2 gates), `bias.py` (deferred).
+  - `src/cam/aod_nudging_obs.F90`: what CAM reads.
+  - `docs/science-verification.md` (VP gates).
+  - `scripts/summarize_2008_regional_aeronet_band_comparison.py` and
+    `prepare_2008_regional_aod.py`: the regional method and display names.
+  - No despeckle or smoothing code exists there.
+- The legacy CAM6 prototype (`/glade/work/tvmora` on derecho) had an unarchived data-prep
+  pipeline. It is seed material only.
 
-## Plotting rules (DAVINCI practice; details in plan Phase 4)
+## Plotting rules (DAVINCI practice; full rules in plan Phase 4)
 
-- All text goes through `sarb_aod/plots/labeling.py` (ported from DAVINCI). Titles are terse:
-  the quantity plus an operation word only when it changes meaning; single-source titles put
-  the source first (`MODIS AOD`). Never put dates, statistics, `vs <source>`, raw variable
-  names, internal labels (phase/task, `gls`, `rho`, `cam7_v2`) or `x`/`y` in titles. Dates go in
-  the subtitle (`YYYY-MM-DD – YYYY-MM-DD`), maps add ` | Mean: <area-weighted mean>`.
-- Absolute AOD maps: `geosit_aod_levels()` (0.05 bins to a 1.0 cap plus 0.005/0.01/0.02/0.03/0.04),
-  `turbo`, `BoundaryNorm`, `extend="max"`. Differences/biases: `RdBu_r`, robust symmetric
-  limits, `TwoSlopeNorm` at 0, colorbar `bias_label` (`<Y> − <X>`, U+2212).
-- Rasterize dense filled layers (pcolormesh, contourf, fill_between, large scatters); keep
-  text, axes, colorbars and contour lines vector.
-- Global PlateCarree maps by default; coastlines and solid gridlines; no political borders.
-- PDF deliverables with PNG previews; dates/configuration in filenames, not titles. A suite is
-  accepted only after its protocol report passes and its previews are visually inspected.
+- **Text:** all of it goes through `sarb_aod/plots/labeling.py`.
+  - Titles are terse: the quantity, plus an operation word only when it changes meaning
+    (`AOD Bias`, `AOD Difference`). Scatter, time-series and histogram titles get no
+    plot-type word. Single-source titles put the source first (`MODIS AOD`).
+  - Site and region figures are titled `AOD - <Name>`.
+  - Never put dates, years, statistics, `vs <source>`, raw keys, internal labels or `x`/`y` in
+    titles. Dates go in the subtitle; maps add ` | Mean: <value>`.
+- **Absolute AOD maps:**
+  - `geosit_aod_levels()` (data-dependent, capped at 1.0), computed once per figure from all its
+    AOD panels; comparison suites share the full fixed set;
+  - `turbo`, `BoundaryNorm`, `extend="max"`, DAVINCI's sparse AOD colorbar ticks;
+  - no colorbar label (dimensionless).
+- **Other fields:** differences use `RdBu_r` with robust symmetric limits and `TwoSlopeNorm`;
+  fractions use `gray_r` on [0, 1]; counts and σ use `viridis` with nice robust limits.
+- **Rasterization:** rasterize dense filled layers; keep text, axes, colorbars and contour
+  lines vector. The protocol checks this, since matplotlib 3.11 no longer warns.
+- **Maps:** DAVINCI `_AOD_MAP_CONTEXT`: global PlateCarree, coastlines, solid gridlines, no
+  political borders, no land/ocean fill.
+- **Output:** PDF deliverables with PNG previews; dates and configuration in filenames. A suite
+  is accepted only after its protocol report passes and its previews are visually inspected.
+
+## Cross-model handoff
+
+- At session start, check the repo root for `HANDOFF_*.md` / `REVIEW_*.md`.
+- Write handoffs as `HANDOFF_<TOPIC>.md` with sections Context, Changes Made, Decisions &
+  Rationale, Open Questions, Suggested Next Steps. They are gitignored; never commit them, and
+  delete them once absorbed.
+- Stage files explicitly (`git add <paths>`), never `git add -A`.
 
 ## Git workflow
 
 - Develop strictly on `main`. Do not create branches or worktrees unless explicitly instructed.
 - When a plan task or phase is complete, tested and reviewed, commit it on `main` and push to
-  `origin/main` right away (one commit per task, `Task N.M: <summary>`), updating the plan's
-  Status table in the same commit. See "Workflow" in `docs/IMPLEMENTATION_PLAN.md`.
+  `origin/main` right away. Use one commit per task (`Task N.M: <summary>`) and update the
+  plan's task table in the same commit. See "Workflow" in `docs/IMPLEMENTATION_PLAN.md`.
+- The remote is SSH (`ssh://git@github.com/NCAR/CERES-SARB-MODIS-VIIRS`); keep it that way.

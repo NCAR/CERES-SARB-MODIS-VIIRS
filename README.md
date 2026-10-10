@@ -10,16 +10,19 @@ averaging and the CAM7 obs-file contract come from `../CERES-SARB-CAM7`
 pattern, environment expansion and Earthdata staging come from `../DAVINCI`. This repo is
 standalone: it ports what it needs rather than importing `davinci_monet`.
 
+Plan and status: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Agent notes: [`AGENTS.md`](AGENTS.md).
+
 ## Environment
 
-`environment.yml` is a minimal subset of the DAVINCI conda env (same pins), conda-forge only
-with `nodefaults`, so it works under Miniconda as well as Miniforge:
+`environment.yml` is a minimal subset of the DAVINCI conda env (same pins; includes pandas,
+matplotlib, cartopy and seaborn for validation and plotting), conda-forge only with `nodefaults`,
+so it works under Miniconda as well as Miniforge:
 
 ```bash
 conda env create -f environment.yml      # or mamba
 conda activate sarb-aod
 python -m pip install --no-deps -e .
-pytest
+pytest -m "not network"
 ```
 
 Earthdata Login credentials are read from `~/.netrc` (`chmod 600`):
