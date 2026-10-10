@@ -34,6 +34,10 @@ MANIFEST_FIELDS = (GRANULE_FIELDS - {"year", "month", "day", "doy", "yyyymmdd"})
     "end",
 }
 
+OUTPUT_FIELDS = frozenset(
+    {"data_root", "run", "stem", "year", "month", "day", "doy", "yyyymmdd", "sssss"}
+)
+
 
 def template_fields(template: str) -> set[str]:
     """Return the placeholder names used in a ``str.format`` template."""
@@ -178,6 +182,8 @@ DEFAULT_MANIFEST = (
     "manifest_{start}_{end}.tsv"
 )
 
+DEFAULT_OUTPUT = "{data_root}/CAM7/{stem}/{run}/{year}/{month}/{day}/{stem}.{yyyymmdd}.{sssss}.nc"
+
 
 class PathsConfig(StrictModel):
     """Machine-specific locations. Templates are Python ``str.format`` strings."""
@@ -185,6 +191,19 @@ class PathsConfig(StrictModel):
     data_root: Path
     granule_dir: str = DEFAULT_GRANULE_DIR
     manifest: str = DEFAULT_MANIFEST
+    output: str = DEFAULT_OUTPUT
+
+    @field_validator("output")
+    @classmethod
+    def _output_fields(cls, value: str) -> str:
+        _check_template(value, OUTPUT_FIELDS, "paths.output")
+        fields = template_fields(value)
+        dated = (
+            "yyyymmdd" in fields or {"year", "month", "day"} <= fields or {"year", "doy"} <= fields
+        )
+        if "sssss" not in fields or not dated:
+            raise ValueError("paths.output must include {sssss} and a complete date")
+        return value
 
     @field_validator("granule_dir")
     @classmethod
@@ -328,6 +347,11 @@ class WeightingConfig(StrictModel):
     single_pixel_sigma: Literal["floor", "zero"] = "floor"
 
 
+class OutputConfig(StrictModel):
+    stem: str = Field(default="MODIS_VIIRS_AOD_3hr_f09", pattern=r"^[A-Za-z0-9_.-]+$")
+    clip_negative_mean: bool = True
+
+
 class AeronetConfig(StrictModel):
     """AERONET spectral conversion and reference uncertainty."""
 
@@ -337,6 +361,8 @@ class AeronetConfig(StrictModel):
 
 
 class RunConfig(StrictModel):
+    name: str = Field(default="run", pattern=r"^[A-Za-z0-9_.-]+$")
+    output: OutputConfig = Field(default_factory=OutputConfig)
     profile: str | None = None
     catalog: Path | None = None
     paths: PathsConfig

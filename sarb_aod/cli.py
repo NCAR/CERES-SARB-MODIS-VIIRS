@@ -33,6 +33,13 @@ def show_config(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -
     """Print the fully resolved configuration (profile merged, env expanded)."""
     cfg = _load(config, profile)
     typer.echo(yaml.safe_dump(cfg.model_dump(mode="json"), sort_keys=False))
+    from sarb_aod.paths import cam_namelist
+
+    try:
+        for name, value in cam_namelist(cfg).items():
+            typer.echo(f"# {name} = '{value}'")
+    except ValueError as exc:
+        typer.echo(f"# CAM namelist unavailable: {exc}")
 
 
 @app.command()

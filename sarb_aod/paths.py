@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import date
+import string
+from datetime import date, datetime
 from pathlib import Path
 
-from sarb_aod.config.schema import Catalog, PathsConfig
+from sarb_aod.config.schema import Catalog, PathsConfig, RunConfig
 
 
 def _product_fields(

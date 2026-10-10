@@ -174,6 +174,7 @@ def load_config(config_path: str | Path, profile: str | None = None) -> RunConfi
     """Load and validate a run configuration."""
     path = Path(config_path).expanduser()
     raw = resolve_raw(path, profile)
+    raw.setdefault("name", path.stem)
     try:
         return RunConfig.model_validate(raw)
     except Exception as exc:  # pydantic.ValidationError, re-raised with context
