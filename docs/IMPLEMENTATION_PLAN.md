@@ -48,7 +48,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; full-period verification waits for the Sept 2020 staging |
 | 3 | AERONET validation suite; choose ρ and other defaults | In progress |
-| 4 | Plotting and diagnostics (DAVINCI style) | Not started |
+| 4 | Plotting and diagnostics (DAVINCI style) | In progress |
 | 5 | Production profile (AMI), multi-year runs | Blocked: AMI details from the user |
 
 ### Tasks, dependencies and order
@@ -72,21 +72,21 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.4 | Regions | — | Done | 9433481 |
 | 3.1 | AERONET fetcher | — | Done | 1388a75 |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
-| 3.3 | Metrics, grouped statistics | — | Not started | |
-| 4.1 | Style, labeling, display tables | — | Not started | |
-| 4.2 | Map renderers | 4.1, 1.5, 3.4 | Not started | |
-| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Not started | |
-| 4.4 | Plot protocol | 4.2, 4.3 | Not started | |
-| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Not started | |
-| 1.10 | July 2008 verification | 1.9, 4.5a | Not started | |
-| 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Not started | |
-| 4.5b | AERONET suites | 4.5a, 3.5 | Not started | |
-| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Not started | |
-| 2.1 | VIIRS Deep Blue reader | 1.4 | Done | Task 2.1 (this commit) |
-| 2.2 | VIIRS Dark Target reader | 1.4 | Not started | |
-| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Not started | |
+| 3.3 | Metrics, grouped statistics | — | Done | Task 3.3 (this commit) |
+| 4.1 | Style, labeling, display tables | — | In progress | |
+| 4.2 | Map renderers | 4.1, 1.5, 3.4 | In progress | |
+| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | In progress | |
+| 4.4 | Plot protocol | 4.2, 4.3 | In progress | |
+| 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | In progress | |
+| 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
+| 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | In progress | |
+| 4.5b | AERONET suites | 4.5a, 3.5 | In progress | |
+| 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | In progress | |
+| 2.1 | VIIRS Deep Blue reader | 1.4 | Done | d84ce20 |
+| 2.2 | VIIRS Dark Target reader | 1.4 | In progress | |
+| 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | In progress | |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
-| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Not started | |
+| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | In progress | |
 | 4.6 | Full plot runs | 3.7 | Not started | |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
 | 5.x | AMI production | blocked: AMI details | Blocked | |
@@ -1237,6 +1237,13 @@ network access to LAADS and AERONET.
   retrieval-team pixels; cam7_v2 yields 60,293 land + 14,125 ocean - 300 overlaps
   = 74,118. NOAA-20 v2/v2.1 both yield 34,110 default pixels in the checked granule.
   Full-month science verification remains Task 2.4. Repository gates and review pass.
+
+- Task 3.3: all 27 ported DAVINCI metric formulas were checked against the
+  reference source. Analytic, NaN, degenerate, grouped, asymmetric expected-error,
+  regression and uncertainty-calibration cases pass. Regional statistics use
+  equal-site daily means; exported rounding preserves UTC dates and never alters
+  scientific gate inputs. Full offline suite: 784 passed; mypy/format gates pass.
+  Review findings affecting shared dependencies are fixed.
 
 ## Open items and risks
 

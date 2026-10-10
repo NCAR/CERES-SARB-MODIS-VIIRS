@@ -413,6 +413,56 @@ class AeronetConfig(StrictModel):
         return value
 
 
+class ExpectedErrorEnvelopeConfig(StrictModel):
+    """Positive lower/upper EE magnitudes, independent of retrieval sigma."""
+
+    lower_intercept: float = Field(ge=0, allow_inf_nan=False)
+    lower_slope: float = Field(ge=0, allow_inf_nan=False)
+    upper_intercept: float = Field(ge=0, allow_inf_nan=False)
+    upper_slope: float = Field(ge=0, allow_inf_nan=False)
+
+
+def _evaluation_envelopes() -> dict[str, ExpectedErrorEnvelopeConfig]:
+    return {
+        name: ExpectedErrorEnvelopeConfig(
+            lower_intercept=lower[0],
+            lower_slope=lower[1],
+            upper_intercept=upper[0],
+            upper_slope=upper[1],
+        )
+        for name, lower, upper in (
+            ("dt_land", (0.05, 0.15), (0.05, 0.15)),
+            ("dt_ocean", (0.02, 0.10), (0.04, 0.10)),
+            ("db_land", (0.05, 0.20), (0.05, 0.20)),
+            ("viirs_db_water", (0.03, 0.10), (0.03, 0.10)),
+        )
+    }
+
+
+class EvaluationConfig(StrictModel):
+    """Matchup selection, grouped statistics, and published expected errors."""
+
+    min_samples: int = Field(default=3, ge=1, strict=True)
+    round_precision: int = Field(default=4, ge=0, le=15, strict=True)
+    ee: dict[str, ExpectedErrorEnvelopeConfig] = Field(default_factory=_evaluation_envelopes)
+    radius_km: float = Field(default=25, gt=0, allow_inf_nan=False)
+    time_minutes: float = Field(default=30, ge=0, allow_inf_nan=False)
+    min_pixels: int = Field(default=3, ge=1, strict=True)
+    min_aeronet: int = Field(default=2, ge=1, strict=True)
+    min_aeronet_grid: int = Field(default=2, ge=1, strict=True)
+    high_elevation_m: float = Field(default=1000, allow_inf_nan=False)
+
+    @field_validator("ee")
+    @classmethod
+    def _ee_classes(
+        cls, value: dict[str, ExpectedErrorEnvelopeConfig]
+    ) -> dict[str, ExpectedErrorEnvelopeConfig]:
+        required = {"dt_land", "dt_ocean", "db_land", "viirs_db_water"}
+        if set(value) != required:
+            raise ValueError(f"evaluation.ee must define exactly {sorted(required)}")
+        return value
+
+
 class RunConfig(StrictModel):
     name: str = Field(default="run", pattern=r"^[A-Za-z0-9_.-]+$")
     output: OutputConfig = Field(default_factory=OutputConfig)
@@ -427,6 +477,7 @@ class RunConfig(StrictModel):
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)
     aeronet: AeronetConfig = Field(default_factory=AeronetConfig)
+    evaluation: EvaluationConfig = Field(default_factory=EvaluationConfig)
 
     @model_validator(mode="after")
     def _products_in_catalog(self) -> "RunConfig":
