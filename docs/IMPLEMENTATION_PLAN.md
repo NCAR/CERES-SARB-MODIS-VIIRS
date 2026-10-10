@@ -63,7 +63,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.5 | Grid, windows, TAI93 → UTC (leap seconds) | — | Done | e00f9bd |
 | 1.6 | Numba kernels | 1.5 | Done | 1613bbb |
 | 1.1 | Catalog variable maps, stream registry | — | Done | ebddfbb |
-| 1.2 | QC presets | 1.1 | Not started | |
+| 1.2 | QC presets | 1.1 | Done | Task 1.2 (this commit) |
 | 1.3 | Per-pixel uncertainty | 1.1 | Not started | |
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Not started | |
 | 1.7 | Weighting (GLS, count) | 1.6 | Not started | |
@@ -71,7 +71,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Not started | |
 | 3.4 | Regions | — | Done | 9433481 |
 | 3.1 | AERONET fetcher | — | Not started | |
-| 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | Task 3.2 (this commit) |
+| 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
 | 3.3 | Metrics, grouped statistics | — | Not started | |
 | 4.1 | Style, labeling, display tables | — | Not started | |
 | 4.2 | Map renderers | 4.1, 1.5, 3.4 | Not started | |
@@ -1186,6 +1186,12 @@ network access to LAADS and AERONET.
   the two shortest valid wavelengths >=550 nm, including longer near-infrared bands.
   All 31 focused tests and repository gates pass; review findings affecting later
   output/reader tasks are tracked and fixed in those tasks.
+
+- Task 1.2: retrieval-team/cam7_v2 presets, QA overrides and raw masking/scaling
+  pass 41 focused cases. Inclusive packed endpoints survive retrieval-team rounding;
+  cam7_v2 retains unrounded scaling and nonnegative AOD. On 16 real July 1 granules,
+  default DT QC matches the combined product exactly (76,368 finite pixels).
+  Repository gates and review pass.
 
 ## Open items and risks
 

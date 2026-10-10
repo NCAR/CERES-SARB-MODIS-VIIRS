@@ -259,6 +259,36 @@ class TimeConfig(StrictModel):
     leap_seconds: Literal["apply", "ignore"] = "apply"
 
 
+class QAOverride(StrictModel):
+    qa_min: int = Field(ge=1, le=3, strict=True)
+
+
+class QCConfig(StrictModel):
+    """QA preset, inclusive physical AOD range, and per-surface QA overrides."""
+
+    preset: Literal["retrieval_team", "cam7_v2"] = "retrieval_team"
+    aod_min: float = Field(default=-0.05, allow_inf_nan=False)
+    aod_max: float = Field(default=5.0, allow_inf_nan=False)
+    overrides: dict[AlgorithmFamily, dict[Surface, QAOverride]] = Field(default_factory=dict)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _preset_range(cls, value: object) -> object:
+        if isinstance(value, dict) and value.get("preset") == "cam7_v2":
+            return {"aod_min": 0.0, **value}
+        return value
+
+    @model_validator(mode="after")
+    def _valid_rules(self) -> "QCConfig":
+        if self.aod_min > self.aod_max:
+            raise ValueError("qc.aod_min must not exceed qc.aod_max")
+        if self.preset == "cam7_v2" and self.aod_min < 0:
+            raise ValueError("cam7_v2 requires nonnegative qc.aod_min")
+        if "ocean" in self.overrides.get("modis_db", {}):
+            raise ValueError("modis_db has no ocean retrieval to override")
+        return self
+
+
 class AeronetConfig(StrictModel):
     """AERONET spectral conversion and reference uncertainty."""
 
@@ -273,6 +303,7 @@ class RunConfig(StrictModel):
     paths: PathsConfig
     period: Period
     stage: StageConfig
+    qc: QCConfig = Field(default_factory=QCConfig)
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)
     aeronet: AeronetConfig = Field(default_factory=AeronetConfig)
