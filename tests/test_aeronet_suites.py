@@ -129,6 +129,32 @@ def test_time_limited_regions_exclude_other_days(inputs):
     assert len(suites.subset_region(pairs, "labor_day_2020_smoke")) == len(pairs)
 
 
+def test_september_regional_date_ticks_do_not_collide_at_month_boundary(config, inputs):
+    config = config.model_copy(
+        update={
+            "period": type(config.period).model_validate(
+                {"start": "2020-09-01", "end": "2020-09-30"}
+            )
+        }
+    )
+    pairs = inputs.matchups["grid"].copy()
+    pairs["time"] = pd.date_range("2020-09-01", periods=len(pairs), freq="4D", tz="UTC")
+    full = pd.DataFrame(
+        {
+            "day": pd.date_range("2020-09-01", periods=30),
+            "region": "global",
+            "source": "product",
+            "aod": 0.2,
+        }
+    )
+    revised = suites.SuiteInputs(
+        {"grid": pairs}, inputs.aeronet, suites.GridSeries(inputs.grid.sites, full)
+    )
+    with suites.ncar_style(config.plots.context):
+        figure = suites.regional_figure(config, "global", revised)
+        assert validate_rendered_figures({"september": figure})["passed"]
+
+
 def test_matchup_provenance_accepts_plot_options_but_rejects_science(config, inputs):
     path = (
         Path(config.paths.data_root)

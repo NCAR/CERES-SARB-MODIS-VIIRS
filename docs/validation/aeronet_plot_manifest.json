@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-10T22:08:06.478483+00:00",
+  "path_convention": "Replace {data_root} with the data root used for these campaign artifacts. Configuration and processing hashes are those recorded during this run; relocating data does not change file bytes.",
+  "acceptance_scope": "Publication protocol plus visual inspection, separate from scientific gate acceptance.",
+  "status": "accepted",
+  "figure_count": 1138,
+  "individual_protocol_count": 1138,
+  "suite_protocol_count": 44,
+  "visually_inspected_figure_count": 1138,
+  "inventories": [
+    {
+      "path": "aeronet_plot_inventories/modis_l2_200807_gls_rho05.json",
+      "sha256": "48ca0f97a4991c30ea2b5733abd00cc41eb6b14a5ec90619ad5c5fa5ed5ea51e",
+      "run": "modis_l2_200807_gls_rho05",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2008-07-01",
+        "end": "2008-07-31"
+      },
+      "figures": 138,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 138
+    },
+    {
+      "path": "aeronet_plot_inventories/modis_l2_200807_gls_rho0.json",
+      "sha256": "cdcc0c9bc4178dcf1512441ca99c252dc94828cc8d269c33058ce059c680feb2",
+      "run": "modis_l2_200807_gls_rho0",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2008-07-01",
+        "end": "2008-07-31"
+      },
+      "figures": 138,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 138
+    },
+    {
+      "path": "aeronet_plot_inventories/modis_l2_200807_count.json",
+      "sha256": "c3296a9814dc495022e5bdd7156a0f2377a0a44a2702a41f96343388926fe78b",
+      "run": "modis_l2_200807_count",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2008-07-01",
+        "end": "2008-07-31"
+      },
+      "figures": 136,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 136
+    },
+    {
+      "path": "aeronet_plot_inventories/modis_l2_200807_cam7_v2.json",
+      "sha256": "bd886f880c97a5f0e472dde5d4a1221b605e630d8607651f41f2eeff9316e517",
+      "run": "modis_l2_200807_cam7_v2",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2008-07-01",
+        "end": "2008-07-31"
+      },
+      "figures": 136,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 136
+    },
+    {
+      "path": "aeronet_plot_inventories/modis_l2_202009_gls_rho05.json",
+      "sha256": "9ba332ef7568ca4885beeb0881ba6ba9790864cf6dfec4a8b0955f524ad9a25c",
+      "run": "modis_l2_202009_gls_rho05",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2020-09-01",
+        "end": "2020-09-30"
+      },
+      "figures": 143,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 143
+    },
+    {
+      "path": "aeronet_plot_inventories/viirs_l2_202009_gls_rho05.json",
+      "sha256": "fa3e87462e3d9e1f551aea025009a92338f23e678323f64bd7d1e2ba80cdf095",
+      "run": "viirs_l2_202009_gls_rho05",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2020-09-01",
+        "end": "2020-09-30"
+      },
+      "figures": 143,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 143
+    },
+    {
+      "path": "aeronet_plot_inventories/mixed_l2_202009_gls_rho05.json",
+      "sha256": "544d8ee76d60157146cd0d6c11da2f62d884633a7a4773e67bc224bb3be1570b",
+      "run": "mixed_l2_202009_gls_rho05",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2020-09-01",
+        "end": "2020-09-30"
+      },
+      "figures": 149,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 149
+    },
+    {
+      "path": "aeronet_plot_inventories/mixed_db21_l2_202009_gls_rho05.json",
+      "sha256": "e5af6e5a47df52675509d61752f92f7b6a81d56f1aaff45747003858b9e424cf",
+      "run": "mixed_db21_l2_202009_gls_rho05",
+      "levels": [
+        "grid",
+        "l2"
+      ],
+      "period": {
+        "start": "2020-09-01",
+        "end": "2020-09-30"
+      },
+      "figures": 147,
+      "suite_protocols": 5,
+      "visually_inspected_figures": 147
+    },
+    {
+      "path": "aeronet_plot_inventories/modis_l2_200807_ocean_qa3_southern_ocean.json",
+      "sha256": "e4278b140ea4987fae5d0c42910b03a5210e7b28139f4c01dd6f6f1f8333835b",
+      "run": "modis_l2_200807_ocean_qa3",
+      "levels": [
+        "grid"
+      ],
+      "period": {
+        "start": "2008-07-01",
+        "end": "2008-07-31"
+      },
+      "figures": 2,
+      "suite_protocols": 1,
+      "visually_inspected_figures": 2
+    },
+    {
+      "path": "aeronet_plot_inventories/modis_l2_200807_gls_rho05_nonnegative_southern_ocean.json",
+      "sha256": "b42a36812d1d3eca246d3d8971590f2314da5f6c62209fa11981ef94a4c00874",
+      "run": "modis_l2_200807_gls_rho05_nonnegative",
+      "levels": [
+        "grid"
+      ],
+      "period": {
+        "start": "2008-07-01",
+        "end": "2008-07-31"
+      },
+      "figures": 2,
+      "suite_protocols": 1,
+      "visually_inspected_figures": 2
+    },
+    {
+      "path": "aeronet_plot_inventories/mixed_l2_202009_ocean_qa3_southern_ocean.json",
+      "sha256": "2e64f1be6d245e0fd6a4577bab5b1a6755ce33ed7e0956c1db4557b3739fbbf6",
+      "run": "mixed_l2_202009_ocean_qa3",
+      "levels": [
+        "grid"
+      ],
+      "period": {
+        "start": "2020-09-01",
+        "end": "2020-09-30"
+      },
+      "figures": 2,
+      "suite_protocols": 1,
+      "visually_inspected_figures": 2
+    },
+    {
+      "path": "aeronet_plot_inventories/mixed_l2_202009_gls_rho05_nonnegative_southern_ocean.json",
+      "sha256": "53c8177084d481a2c288735772462e69522b2a1998695aa9fbb6dd4bbace46ce",
+      "run": "mixed_l2_202009_gls_rho05_nonnegative",
+      "levels": [
+        "grid"
+      ],
+      "period": {
+        "start": "2020-09-01",
+        "end": "2020-09-30"
+      },
+      "figures": 2,
+      "suite_protocols": 1,
+      "visually_inspected_figures": 2
+    }
+  ]
+}

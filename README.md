@@ -170,3 +170,6 @@ Use `sarb-aod plot -c <run.yaml> --prefetch-maps` once on a new machine to popul
 Campaign measurements, figure inventories and outstanding scientific acceptance
 checks are recorded in `docs/validation/`. Reproducing the CAM7 diagnostic four-stream
 product is separate from comparison against the external SP1 archive.
+The [map evidence](docs/validation/map_plot_verification.md) and
+[AERONET plot evidence](docs/validation/aeronet_plot_verification.md) identify the
+accepted PDF/PNG sets, inspection results and artifact hashes.

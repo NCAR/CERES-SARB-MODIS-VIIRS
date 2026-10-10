@@ -48,7 +48,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | Implemented and verified; VP1 scientific acceptance open |
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Implemented and verified for available collections; rejection-gate acceptance open; C7 activation blocked |
 | 3 | AERONET validation suite; choose ρ and other defaults | Campaign complete; working defaults retained; global uncertainty calibration and scientific acceptance open |
-| 4 | Plotting and diagnostics (DAVINCI style) | In progress |
+| 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
 | 5 | Production profile (AMI), multi-year runs | Portable monthly driver done; AMI deployment blocked on site details |
 
 ### Tasks, dependencies and order
@@ -86,8 +86,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 2.2 | VIIRS Dark Target reader | 1.4 | Done | f4756c8 |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | a733ece |
-| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Campaign complete; calibration open | Task 3.7 (this commit) |
-| 4.6 | Full plot runs | 3.7 | In progress | |
+| 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Campaign complete; calibration open | 9b496b2 |
+| 4.6 | Full plot runs | 3.7 | Plots accepted; science/SP1 acceptance open | Task 4.6 (this commit) |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
 | 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
@@ -1377,6 +1377,22 @@ network access to LAADS and AERONET.
   rather than treating its nonzero exit as success. Independent scientific
   review and `codex review --uncommitted` pass; 885 offline tests, the live
   AERONET test, mypy, Black and isort pass. C7/SP1/AMI limits remain open.
+
+- Task 4.6: accepted 1,552 PDF/PNG pairs: 414 maps and 1,138 AERONET figures.
+  Every individual protocol and all 75 combined suite protocols pass; every
+  preview was visually inspected, including all daily maps. July's four
+  configurations, September's four sensor/version configurations, the smoke
+  box, full five-point ρ sweeps and Southern Ocean QA/negative sensitivities
+  are included. The final September regional-series tick-spacing defect has
+  a regression test, and affected plots were regenerated. Inventories record
+  current artifact, protocol and input hashes; the AERONET manifest uses
+  portable `{data_root}` paths. Evidence is in
+  `docs/validation/map_plot_verification.md` and
+  `docs/validation/aeronet_plot_verification.md`. The full 885-test gate,
+  typing/format checks and final clean review apply; the final review also
+  passes 100 focused tests and independently audits inventory hashes/counts.
+  Publication acceptance does not close the failed numerical science gates
+  or establish comparison with the unavailable external SP1 archive.
 
 ## Open items and risks
 

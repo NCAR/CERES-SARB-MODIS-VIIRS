@@ -1,0 +1,2897 @@
+{
+  "schema_version": 1,
+  "run": "modis_l2_202009_gls_rho05",
+  "config": "config/runs/modis_l2_202009_gls_rho05.yaml",
+  "period": {
+    "start": "2020-09-01",
+    "end": "2020-09-30"
+  },
+  "pairing": "default",
+  "levels": [
+    "grid",
+    "l2"
+  ],
+  "config_sha256": "48225a0b5bdc3d5bf6133129d07cc026fca6de973d9262d3cf2f6780a29347d3",
+  "processing_sha256": "9845977da679b3129f4accbc37b925c4bde11c415e71dbd235de78688407f112",
+  "plot_selection": {
+    "suites": [
+      "aeronet_regional_timeseries",
+      "aeronet_scatter",
+      "aeronet_site_bias",
+      "aeronet_site_timeseries",
+      "evaluation_summary"
+    ],
+    "regions": "all",
+    "sites": {
+      "n": 20,
+      "source": "matchup_count"
+    },
+    "global_context": true
+  },
+  "acceptance_scope": "Figure protocol and visual inspection only; scientific gates are reported separately.",
+  "status": "accepted",
+  "figure_count": 143,
+  "suite_count": 5,
+  "suite_figure_counts": {
+    "aeronet_regional_timeseries": 15,
+    "aeronet_scatter": 8,
+    "aeronet_site_bias": 90,
+    "aeronet_site_timeseries": 20,
+    "evaluation_summary": 10
+  },
+  "visual_inspection_count": 143,
+  "inspection_method": "Every preview inspected on contact sheets, with full-size review of complex layouts and newly repaired summary figures. Titles, dates, axes, legends, dense data, source colors, empty regions, and clipping checked.",
+  "inspection_conventions": [
+    "Scatter compares satellite and AERONET: quantity-only AOD title and source names on axes follow DAVINCI CLAUDE.md lines 813-823.",
+    "Southern Ocean is the region south of 40 degrees S, including land and islands; it is not an ocean-only surface mask."
+  ],
+  "matchup_inputs": [
+    {
+      "path": "{data_root}/evaluation/modis_l2_202009_gls_rho05/matchups_l2_default_20200901_20200930.nc",
+      "sha256": "4b906b1d42836b5245b7fc4e055d1aff40f5dfcbee1ff36f43bbac2c6affa977"
+    },
+    {
+      "path": "{data_root}/evaluation/modis_l2_202009_gls_rho05/matchups_grid_default_20200901_20200930.nc",
+      "sha256": "2b533963a99792205ed79a1f88b6924e73ee14031e8a68f277a983122b88b05a"
+    }
+  ],
+  "comparison_matchup_inputs": [],
+  "figures": [
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_global",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_global.20200901-20200930.pdf",
+        "sha256": "cb8952353cb97530e2ed14ce601c906dd7a1267edd677dedb20c6bd71e753d12"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_global.20200901-20200930.png",
+        "sha256": "36129e2ebc729777c82310435552a0f0e4f986520c008ee31d7098f63c292cd7"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_global.20200901-20200930.protocol.json",
+        "sha256": "b877b7c1720d512d573ff4362a8c23d03775a51e604b2c3500c0a764ef78460d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_north_atlantic_ocean",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_atlantic_ocean.20200901-20200930.pdf",
+        "sha256": "83c1477098c3b1e9df2cc012b022efac3022ae5a08f32c89940e31573017d66f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_atlantic_ocean.20200901-20200930.png",
+        "sha256": "290a8d2b0280283c5348281579332effa524e42d214a4468d3b6893170223640"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_atlantic_ocean.20200901-20200930.protocol.json",
+        "sha256": "30f1a0e5d02ba2e9ac9bef7a6ca28358c558c5e930f2a5e24ce7524a03c219ed"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_south_atlantic_ocean",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_atlantic_ocean.20200901-20200930.pdf",
+        "sha256": "845b9554182217039d60b61a3f73e5c5af9f3bf7e168ebd435bcb0945e5df693"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_atlantic_ocean.20200901-20200930.png",
+        "sha256": "6a66de151e372685bc721b07f4eb96a8465fed3b0fee103b616932e1954a60e8"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_atlantic_ocean.20200901-20200930.protocol.json",
+        "sha256": "1e3c6e56c557e4659c170abca559da93c4cee724482db86cbe42d2a72a7dbd05"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_north_indian_ocean",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_indian_ocean.20200901-20200930.pdf",
+        "sha256": "211f5fc7bf2f2a49e5417c6b5705b149f31fc86cd308149104f2787ab57aaf40"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_indian_ocean.20200901-20200930.png",
+        "sha256": "10726bd1ac4d0d88c2a852f59fb67f963767e0710e9e7064b25c7ca20b8d50da"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_indian_ocean.20200901-20200930.protocol.json",
+        "sha256": "529c572d7df746d8abd67f334a6cf1775145dae57e39c040cd8bebfe068be45d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_north_africa",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_africa.20200901-20200930.pdf",
+        "sha256": "8c91864c0b13be589bba89b018f8bac7d106e861fe4b99871635170e8e0f46e3"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_africa.20200901-20200930.png",
+        "sha256": "8b169290a31ed59590605fe72f9524f3812db6df5f3a1ab3d386f016de7260d3"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_africa.20200901-20200930.protocol.json",
+        "sha256": "02efe05c018674877cfb0974c9e01deda19593cc5c78b54521a1ab112c26107a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_southern_africa",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_africa.20200901-20200930.pdf",
+        "sha256": "ef5a250f13efc9ac3861a27da01b7b1d5f559274a387678237121b82f6adc3d1"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_africa.20200901-20200930.png",
+        "sha256": "2f2f48bbb7aeae6a2446e0b6be017e32cd7fe672d520877cd79d2d4303daa725"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_africa.20200901-20200930.protocol.json",
+        "sha256": "a81e6513a315864b10acb13b1a5e25d3dc5e522db82e34d4757a5c72b2f4472c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_eastern_us",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_eastern_us.20200901-20200930.pdf",
+        "sha256": "04289dfdc4921d95fdc9c08921a512d45805ced721c458671a301e2e164e8478"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_eastern_us.20200901-20200930.png",
+        "sha256": "ec489dcf14c120fe8c2fcaee0371940e4a95e8a6aa4d6f852be9759142ed5c9d"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_eastern_us.20200901-20200930.protocol.json",
+        "sha256": "648e948047b919d43fd71a301af4c8b95645cc2c7b9d287d638fa0d59c32dee1"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_western_us",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_western_us.20200901-20200930.pdf",
+        "sha256": "ea438f79060b495ee3e79ec316fff1689d05bccfa972bb7dcf2b152daada3447"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_western_us.20200901-20200930.png",
+        "sha256": "4eca72f3366f2feac0cc027c59986d8d3ed3e2765290516c0704cf6329689c8e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_western_us.20200901-20200930.protocol.json",
+        "sha256": "4a6ef6c5db26e5e81da434d1f043bc205d552a1cd34e34d55ca187291167880c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_canada",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_canada.20200901-20200930.pdf",
+        "sha256": "9a0c2eecd8c8c374927cceba48f3d70edfcf1885c3af6a1038567aa3d421b18c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_canada.20200901-20200930.png",
+        "sha256": "c5b7d995b8a2468e61177b423b3e0d924a41233b3ea4b66102601c84a28c08d5"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_canada.20200901-20200930.protocol.json",
+        "sha256": "3fc7b2969d58c3e23ab0d45d55210e7be8e6c620c673f861af6855dad8b548c2"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_south_america",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_america.20200901-20200930.pdf",
+        "sha256": "8faf26948ca9d1ec1b34ec7409cb7a779c6d8f51141ee71620a751d3fd2323ca"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_america.20200901-20200930.png",
+        "sha256": "b892024ac8d56fe0df9bfc5c8494285e083d2cdca6286d4841df59c81509b66d"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_america.20200901-20200930.protocol.json",
+        "sha256": "0cd36a0622722e280ab0cf17bf351616827c08737910ef7cbb83755dad36abe8"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_middle_east",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_middle_east.20200901-20200930.pdf",
+        "sha256": "da29dddb8f7b3fd47f79b6c2a6f56524936deaa09ebc746ecb8f808da0874315"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_middle_east.20200901-20200930.png",
+        "sha256": "f17ee6b74f0cd85a4e31ffca56235db26a204929407be48f29a4b0adb8477f5c"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_middle_east.20200901-20200930.protocol.json",
+        "sha256": "b09007c33b98710eabd8b03c380e6ffe69c88888b87eae4db3aa9ef25cb9e25c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_east_asia",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_east_asia.20200901-20200930.pdf",
+        "sha256": "c05642506327f9cfa8f89b48ba22ba62982b9c96e27b2f3da71d876ea614e7e4"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_east_asia.20200901-20200930.png",
+        "sha256": "e53dfd10be7fbff9efe3f964917886a0a8078dd94fa227e5704846924bd30cf3"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_east_asia.20200901-20200930.protocol.json",
+        "sha256": "f58f9240ac0333ffd29fe665d2b80cea097510d3b737ae8c52eedadbd1b13ab0"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_india",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_india.20200901-20200930.pdf",
+        "sha256": "9d5c368929e0d77276ad415b59ff4a485eac6715f95eb01ef42c2f4b30de1390"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_india.20200901-20200930.png",
+        "sha256": "96e7d8b3f2778c03c8bd983a0d20fe4e1a36723e0d55bc5f2b680d76c707b17b"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_india.20200901-20200930.protocol.json",
+        "sha256": "3a5057b6e901ad067f01e0d2a114c500aaa04b7356945dd36096e6ea605c0476"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_southern_ocean",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.pdf",
+        "sha256": "32ce75138223379067c5f72cb20fd57f95a38f50b5e613f59057665b0f19f62e"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.png",
+        "sha256": "22e225e700d996d59836e28a0519419bdbc63712c071fe7ed0caefef6d7be0bd"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.protocol.json",
+        "sha256": "a198ebaac1b417eb12105abaf80cd3e6cfcfdf21c3df29eb02a99a58784e671a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_labor_day_2020_smoke",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_labor_day_2020_smoke.20200901-20200930.pdf",
+        "sha256": "8b3efdfbe60a978cfeb99637c416de3f0aed4d8d0b06a2f7cc2b407beade1ccd"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_labor_day_2020_smoke.20200901-20200930.png",
+        "sha256": "fb3e68fc056a3883993a6898937166a9369c51e0516681b28bb374dcbf5cd941"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/region_labor_day_2020_smoke.20200901-20200930.protocol.json",
+        "sha256": "e94d3e7af5567e587918670986ce9cbe3337ba7eddca6b57f0159af93b87a671"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "grid_global",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/grid_global.20200901-20200930.pdf",
+        "sha256": "c9c6b3979f37a705824321e48b5cb39b5d6bd91aa9fdd9e287f4679389472f8c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/grid_global.20200901-20200930.png",
+        "sha256": "fbb7f428299468c82a8a50a28f7681646dfe4ba1ee88e088afa0d84d29aa5f8b"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/grid_global.20200901-20200930.protocol.json",
+        "sha256": "971409a442ae3bfa8c019cc7222517ae4ffa42a01afca63719c830bee1c16a16"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "grid_regions",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/grid_regions.20200901-20200930.pdf",
+        "sha256": "c2399f0002fadbbd0e3111c41693b66aaa6e5059a1cddced2bba6ce4c0ed177a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/grid_regions.20200901-20200930.png",
+        "sha256": "5e3c76749ce010ce8c311dfb5ed4c3c527cacc73dce1b88da1bc8d066b4c3956"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/grid_regions.20200901-20200930.protocol.json",
+        "sha256": "8e7526e6f735dba3070352d9fef44308cf61870dc1d30e9d8b21fecbbc9ee416"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "l2_global",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_global.20200901-20200930.pdf",
+        "sha256": "2f70c122054ab6b0ca4acffed8ff2b6bf18468b901d7eeb7077407926fca061a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_global.20200901-20200930.png",
+        "sha256": "bd41015307f74b4372f4c12573cf5735475e8f0e61f5cb8038cddcbec6b33b24"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_global.20200901-20200930.protocol.json",
+        "sha256": "1799840b14a17d2ea646edf4ef53b2402523b5e7ed919dfe2c98feeda9617d70"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "l2_regions",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_regions.20200901-20200930.pdf",
+        "sha256": "4c1d3a30bb527a19d12f3d844c3f481d817c8e7adbbb3f64ce9c507b7970d9fa"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_regions.20200901-20200930.png",
+        "sha256": "81ce90db2daf03491bb5a74cb31da3a8515a65add5edcc842cc0a50d048135b4"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_regions.20200901-20200930.protocol.json",
+        "sha256": "1a7bddcb22d35e2395179cd87e1fbfbbf3c20bd930d78b8fb2fb2ae9a7148707"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "l2_stream_aqua_db",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_aqua_db.20200901-20200930.pdf",
+        "sha256": "a73e2a0310d9ba07e4199a03cff576f3643b0d44a493f353c743aa2ead4312a2"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_aqua_db.20200901-20200930.png",
+        "sha256": "0e062de2d7903ff3b8c1b90bf18e9d53e16e446b1032766fb7dd752ee9906736"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_aqua_db.20200901-20200930.protocol.json",
+        "sha256": "faf1b9a9950d2020331d9b0943b0a20ecb38617806d0acd8e14a969cf8fed5eb"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "l2_stream_aqua_dt",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_aqua_dt.20200901-20200930.pdf",
+        "sha256": "e5738439073e015598abff2fa0ee5ba301b130178b7541c8a841f57ac9d06e43"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_aqua_dt.20200901-20200930.png",
+        "sha256": "541df772bcda3d79523893867af722235967a55ed70d6e9824e868e5cc62884e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_aqua_dt.20200901-20200930.protocol.json",
+        "sha256": "8bd39ebf92d4617baeeb0b36fe2224d0b22c1f6a4b53320e211a034e817df01f"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "l2_stream_terra_db",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_terra_db.20200901-20200930.pdf",
+        "sha256": "70ffa5a99039b875128476a0479617f02a4194d8a46f2a0128b262c0baa0d6c5"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_terra_db.20200901-20200930.png",
+        "sha256": "b79e1736364026e7affd8d3f4a0294ee7c66734f0c338b8991ef107d535cac9f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_terra_db.20200901-20200930.protocol.json",
+        "sha256": "2f3069fc44d126c7479ea79dfe95eb661e60f9007fdaf98f9d2f89ab9c122bdb"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_scatter",
+      "name": "l2_stream_terra_dt",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_terra_dt.20200901-20200930.pdf",
+        "sha256": "86dfae959cc2f194fbb959cf3bd03f2ad9859a522986bc79424f53378519bb52"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_terra_dt.20200901-20200930.png",
+        "sha256": "c8c98711fff31ad28d8767713f8007aad755eb646877c7d02490cb93416edced"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/l2_stream_terra_dt.20200901-20200930.protocol.json",
+        "sha256": "294d4067cfbd100b1233b701c200682fdeaf6b49d386b86b37f4ad65c34962d4"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_global_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_mb.20200901-20200930.pdf",
+        "sha256": "3428b0fc285b710135990fba096a1c34b782f913531ec714a575e57aa798144a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_mb.20200901-20200930.png",
+        "sha256": "f2947465fb3b1c76b3cbff935bb18fe86eb6ddc59e7b87d93d47223086939bae"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_mb.20200901-20200930.protocol.json",
+        "sha256": "e7dfb5eda3f58d1932a02e2d25695fa65ddd0475c10efdf396b37a4879c495f0"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_global_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_rmse.20200901-20200930.pdf",
+        "sha256": "b8606a66ba3f3869dac340fcdda037af02ea36c0f58d144f9df9a4e89b24548e"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_rmse.20200901-20200930.png",
+        "sha256": "68b49fe5ed709b8ee4c2baf2675cb7565d851073af36831f70b7c2feaade5923"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_rmse.20200901-20200930.protocol.json",
+        "sha256": "2767760fb7b1d50ad568d9b5729d9d7e0e2df19266eabc4da0ee42de4dfece2b"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_global_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_r.20200901-20200930.pdf",
+        "sha256": "0c1acd25aff12521f4b284230926f6c8752aaece4c71be727dfbff076e985927"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_r.20200901-20200930.png",
+        "sha256": "9fe47c65ea6fe304b3f6c0e53dac6fa4112b79898926bae233ce0ee63b82fef2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_global_r.20200901-20200930.protocol.json",
+        "sha256": "88deed5d3b7d495dad8223f06146ab1747d0d6631df39c8cce2d7f86bdfaecc5"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_atlantic_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_mb.20200901-20200930.pdf",
+        "sha256": "d77ef494be3d90038d05c95716dbc701e83770332dc6deaa49b6fd5ae0b3943d"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_mb.20200901-20200930.png",
+        "sha256": "6e4da87459741011d47e2d20b7c063cd0defdfa8f0cfc837e18854c310557436"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "5a7bdefef06727616f588d5820e0abee356c08ec7a8973e89615562683a9e549"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_atlantic_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "bbbc680be4641d4963a13c2ccc6eabe5b96da8118a6fa86d442e3571179cab61"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_rmse.20200901-20200930.png",
+        "sha256": "bf79a1ce26e8b38dde30b577437eca8e1ea2570013a2cd8a434b98308b433cab"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "1ab65e600ff9748c76c4ffe13788b6bc6f3f2c3a1c169da38af87099080b7416"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_atlantic_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_r.20200901-20200930.pdf",
+        "sha256": "2a3659907130107ce9e7696284d448c2f8c63ae35b074b14c86c5454e162578b"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_r.20200901-20200930.png",
+        "sha256": "4dffdebde38cf5b36e205185def55e889b293e03e626fb1fe166ff03d5118cfc"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_atlantic_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "219867dea39d4a907c352ceeb6b7320e161500868079a8655c5c2101f5b0efd9"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_south_atlantic_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_mb.20200901-20200930.pdf",
+        "sha256": "2f25ad7bc2de89e663462f1fe76cd658287aaca29c87671de230ba7677bb64f7"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_mb.20200901-20200930.png",
+        "sha256": "049ebac20dc11b4cff609b05176b44e6db1439af7c39c3d566a60f885bb00881"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "68942fa5da44b07a69d241c9afbe9e54a7832a37281df478530911f8841fe7ac"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_south_atlantic_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "cce4677f4e31bcd4763883eb0337f6512ea41aaa289d2a02c67201be76171b35"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_rmse.20200901-20200930.png",
+        "sha256": "e1e2f4e0913307e63082ef08d3689ba1bcc95dfcf6a92438716fc02fcf8bb2ba"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "67f61bf44f98821fd9ac00973b2ec6addb1ed80274e85ea0c385734eb14aa578"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_south_atlantic_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_r.20200901-20200930.pdf",
+        "sha256": "856de059a9d9d78b475874e8239e903db6b51671e017b9c0ec05d43326ee52bf"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_r.20200901-20200930.png",
+        "sha256": "641ac2652e66c0cf84258dd5f815b7fb8bc93ec78ebaaf65a90f056804b5db25"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_atlantic_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "3f9be746e8455de85a0d7e3215d78c805ac7d8de86b51f11612490c6b996e79d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_indian_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_mb.20200901-20200930.pdf",
+        "sha256": "0bb80beb85eabb403b97445a40230e2b199266dbde491951d7820a9c721e62e9"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_mb.20200901-20200930.png",
+        "sha256": "1d5359c93b465ef5169182524243917f0d9b2349c28e6865de53f497978eb473"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "0e2f4c3a326c6de1950d76d6cd0f4458c16a1262814968ac5787086d6f85eb1d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_indian_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "aa90b8cdd3e5ac411d4807ee33699899acf40a0df402ae2bd2e4f101cca2a42a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_rmse.20200901-20200930.png",
+        "sha256": "7a4d44b741ceaf2e80545b5f96d1758a58248aefceaabafb308942c9ded1d0e9"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "8f3a74aeed67289dd0288ee33880d635d6f221bc0cf8618bb2324e8db33197de"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_indian_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_r.20200901-20200930.pdf",
+        "sha256": "fd46fc862d4c3abd1b4cd09aa97595e839875c17f20356ee40ec974631c899af"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_r.20200901-20200930.png",
+        "sha256": "1686ea66f713b04d92c0a0a457481618e1650e17b29db9c4e22fc1a98af6371f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_indian_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "d5c7b4755ba9b5292e6f8991ea0812819e614dad2015f1cc6294ea48177f0687"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_africa_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_mb.20200901-20200930.pdf",
+        "sha256": "e562c7351ebd1303bcbf71d824b7f0cb7b87c5b11aaea583dbf8f735d107a03c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_mb.20200901-20200930.png",
+        "sha256": "e7ded952687e924de7fa1f9e768a77a62a22b154039f6ddda21eef0bfafa33f4"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_mb.20200901-20200930.protocol.json",
+        "sha256": "247a433d524cee264b477faf4be4782ad6f09608a323baa69f69dc6fd4833fc6"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_africa_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_rmse.20200901-20200930.pdf",
+        "sha256": "254ecbe8f9c962fdc398b3676e1c646d68d8c60ce3f7330f0930603e6dbffcd1"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_rmse.20200901-20200930.png",
+        "sha256": "3629a67421a513c4d070d283bf96518384a3b111373e117ef4ba185c6d60fe3f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_rmse.20200901-20200930.protocol.json",
+        "sha256": "3bd83cbd70dd3b9e27ebe85f93a1dc569afc5cb87436349b12105913947fb8f4"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_north_africa_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_r.20200901-20200930.pdf",
+        "sha256": "f81d5b85b85c3c8f04cd681a6ef243f338145a0477e7c180d112ac3056a20665"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_r.20200901-20200930.png",
+        "sha256": "36689a8b2bbd1e59142259ad8f64a17ce1b172f9fab3a9d9386b8f866c72f309"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_north_africa_r.20200901-20200930.protocol.json",
+        "sha256": "969de62bc57337f835f63ac952bc7c9e4c3632b1c989088477e348ce82d79024"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_southern_africa_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_mb.20200901-20200930.pdf",
+        "sha256": "8ac73ecc8c1f893a991c4d054e981936db45366a6309118439bb760bf18c6942"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_mb.20200901-20200930.png",
+        "sha256": "8a857154c79b861ec57157ad6f1e342ba136b82235d278afb0e21a837e6b6b81"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_mb.20200901-20200930.protocol.json",
+        "sha256": "4250fec9bf365debafdeb908c814746409130ecd4ee8fc89cd7e11dc1f54821c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_southern_africa_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_rmse.20200901-20200930.pdf",
+        "sha256": "f5a0fd484778bb7a81de7bff4ab29a4ff09385811c20ce9d6b31781fec5988f6"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_rmse.20200901-20200930.png",
+        "sha256": "02e6f958f3e86f026bf772bcb6d5b7e00e2f213e0a715708458113750980c549"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_rmse.20200901-20200930.protocol.json",
+        "sha256": "098ba607f5b70b278ef894381e37c13d96d90b1876dbf5ac854e5b8cbca0941e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_southern_africa_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_r.20200901-20200930.pdf",
+        "sha256": "f86fe6adaeb72496316e6f89d0d7db4745d98570c8131cc39a9feb0c408dfd98"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_r.20200901-20200930.png",
+        "sha256": "c87bd6cf72c52befc76c0be5e5356c2ccbe104be05901d7931c466b03e0c7e70"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_africa_r.20200901-20200930.protocol.json",
+        "sha256": "bc78db7bb2667030e0e60e91225a24b080797211a70acda8521a63bb43df45ef"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_eastern_us_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_mb.20200901-20200930.pdf",
+        "sha256": "777d1eda6d24e716bce00204532dc8b4e1599a9669f0d13df54a2d614b2c1542"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_mb.20200901-20200930.png",
+        "sha256": "d4b9b8adfaa8061c2965d357c4fee0b5677eef27585330420ad9d4f8222eff46"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_mb.20200901-20200930.protocol.json",
+        "sha256": "76728f82b425b09e04f2520128419858180f1360e22cb7af6ea2dc044b290076"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_eastern_us_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_rmse.20200901-20200930.pdf",
+        "sha256": "cd067f55d4d508fef1865adebe3dc79bcd9e557cc344f6007026eaaa86607256"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_rmse.20200901-20200930.png",
+        "sha256": "b25b52124405d191ea31c32a4fe5f70178f1973de0ff8dfa04ed7c414d40a8a2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_rmse.20200901-20200930.protocol.json",
+        "sha256": "bf1b6f47fe1f8b91d66fce0ab6acbe2f1c7a2abbee898b28895d53d37659716c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_eastern_us_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_r.20200901-20200930.pdf",
+        "sha256": "4e13ea8e3d2e0dceebc79afce49d7f8736c45b6df48a7aa3a3797ca5962a64dd"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_r.20200901-20200930.png",
+        "sha256": "926117455f9cf88201ed18e989e7e50d529611faf9e3f94e4ae6be5fbca2287f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_eastern_us_r.20200901-20200930.protocol.json",
+        "sha256": "319304390ebf265b0f6bbf803863860b3b24507a4fa1b647b21798f5730b1860"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_western_us_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_mb.20200901-20200930.pdf",
+        "sha256": "3caeca5635bfe828d63b15cf67adf185bc5d0b1de8e88a7b3e305954642cdd12"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_mb.20200901-20200930.png",
+        "sha256": "c8c126239143be9f993182c1dba49c1a8df38d63c7e8f591b66a2675f4b3d7eb"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_mb.20200901-20200930.protocol.json",
+        "sha256": "3da7efc536c1c218e9e8b597cfd62b924056d84dece31d5d8703d70fb87685ef"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_western_us_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_rmse.20200901-20200930.pdf",
+        "sha256": "3207559ed4d04eb14d89d1365c0bf4f1faf8cd0adaba2c7130b29c6ff037dec7"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_rmse.20200901-20200930.png",
+        "sha256": "f650203adb80cfb1665e16e30a0a9155e11f39187ce3dc613a4c0c4766fdf496"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_rmse.20200901-20200930.protocol.json",
+        "sha256": "1281547536701a5d3b78f07959ef7b0b5d23808a4fced2b28a17400a57881b5f"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_western_us_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_r.20200901-20200930.pdf",
+        "sha256": "244f8296314e82a121b5f32dc01c25755e2572581f81f4bd3d210f941933cb82"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_r.20200901-20200930.png",
+        "sha256": "b9455caa4d3536d87342777e37daabde36bc7fcc5eb5ac78dca2d9e7ac796ef4"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_western_us_r.20200901-20200930.protocol.json",
+        "sha256": "28c014ccca6830684546bba4aa212cc882ec3bd9a992a2510bd28947cb22b4e8"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_canada_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_mb.20200901-20200930.pdf",
+        "sha256": "2a5a01825f98bca451c6d027c85853543e72071c175465116f55689353de43eb"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_mb.20200901-20200930.png",
+        "sha256": "dc5ab68de79e61244e68175048fc6b254486bbb26550be177105c6f1c9376098"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_mb.20200901-20200930.protocol.json",
+        "sha256": "09193c4582666ea4774a4137087c37505b18e761b66def89b4acfe68b255caa0"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_canada_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_rmse.20200901-20200930.pdf",
+        "sha256": "efea4fa55db61728074dfff09a6865b17ff04043407445f6348d577dcabf1f00"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_rmse.20200901-20200930.png",
+        "sha256": "46abfe9d676a09ccd4a2a52c6200c475ca4f3c643a42905a3d8f993d4cffc8f7"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_rmse.20200901-20200930.protocol.json",
+        "sha256": "bc52b271a433c406d9f697cd72b5a75c78e91d84c9895e5bf5965722f96af7ff"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_canada_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_r.20200901-20200930.pdf",
+        "sha256": "a06d19ff355db21ffe43f2125ac58086f2100729bedb82c4b06babafba59dd48"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_r.20200901-20200930.png",
+        "sha256": "07d670c4e888a99d063a04380e978ac20a807da177da2d3b6a4ee4117f51db41"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_canada_r.20200901-20200930.protocol.json",
+        "sha256": "bf49e6843df4ceb2783f40532b930f87eaaff39ba234576f60f7a9fb5eb09fb3"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_south_america_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_mb.20200901-20200930.pdf",
+        "sha256": "cc6703ef5761da143166458616ab62e1b5696d7343c1f3db2f5fb181cd6c0f7b"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_mb.20200901-20200930.png",
+        "sha256": "f28ec6faba23fae8f27aefae2b486c857243f58a6882514afda6a07882a2e61b"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_mb.20200901-20200930.protocol.json",
+        "sha256": "ed5aca36f7d50e2f6b2cc9abb6257aa28c3104c258ec858c08cad6b4c277f9d1"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_south_america_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_rmse.20200901-20200930.pdf",
+        "sha256": "478cb54bfdf9e744c99adc496d88ba2a9f7e2a86fb55cbd5d6407df7174ab573"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_rmse.20200901-20200930.png",
+        "sha256": "393a141b5e539f7aa6cc8014d96ea1c55a6645615d90c109b0667be556566a48"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_rmse.20200901-20200930.protocol.json",
+        "sha256": "bf4bd1ff80f8c62d38660b42186d898e86fb25b7e7550b5555eca3fda29c6958"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_south_america_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_r.20200901-20200930.pdf",
+        "sha256": "54f515da0cccc79d8b01a572ebc92442c3de6a287f87e7f592508951cdcf86e3"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_r.20200901-20200930.png",
+        "sha256": "daebab2d9e2d64ae877634b384f273ddc41734d85d1a203e56d2b753e14d3ab2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_south_america_r.20200901-20200930.protocol.json",
+        "sha256": "3767d8ba4309b5764c8de5f113676d53b0c1c13c43f01aeb71a854f12154100a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_middle_east_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_mb.20200901-20200930.pdf",
+        "sha256": "8ca63e9a40b59ddaa671f21ddc565f83d889f311a1067db0bb8a5b6a8f595bc3"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_mb.20200901-20200930.png",
+        "sha256": "6cac071d18798fa1ba61b73773fcb1776759b0087a721995fa9c87e0f6d007de"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_mb.20200901-20200930.protocol.json",
+        "sha256": "000e126621b2c4060a28e1226a428f939811565d59084506828b8c21b0e3a251"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_middle_east_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_rmse.20200901-20200930.pdf",
+        "sha256": "4626340339e9727523abbe03759cbc2b89e002b797b9661f671d155c144a14a9"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_rmse.20200901-20200930.png",
+        "sha256": "d0353cedaa385d43ded5a47d0099fb2892310c6b0d89d18887d3cf4366f7cf1c"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_rmse.20200901-20200930.protocol.json",
+        "sha256": "67b8864b4d21799c18cacf284190a70976d9126391b1beb071045d8639bdab2a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_middle_east_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_r.20200901-20200930.pdf",
+        "sha256": "eb57b8d7be4a5d9e23646fcf37c5290bd6d5105b36029feeef673e4d31f94ebe"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_r.20200901-20200930.png",
+        "sha256": "a2df04c633bed966631aef27841b7205de09cba6b4f5aa0c90de8548a4850813"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_middle_east_r.20200901-20200930.protocol.json",
+        "sha256": "12dacd4ca97a0830de788975a3ea84424859369268d9405b7d33f23c6a1438ae"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_east_asia_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_mb.20200901-20200930.pdf",
+        "sha256": "f3a02ca7f49fc1f15f5d9933fa5d6fd37b0e820790ca592abbc54c7b08d0cd2d"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_mb.20200901-20200930.png",
+        "sha256": "5756cff079b314b6805d14e5c3f1eedd716efe9d78173ef2fa70bd3990ee91a2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_mb.20200901-20200930.protocol.json",
+        "sha256": "91f47672659d0092f9bd3cc88f84c4771c2f0bbf43c9b40c6a0a4db2bfde9b18"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_east_asia_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_rmse.20200901-20200930.pdf",
+        "sha256": "bed7ea18658598781a4e45d945070ebccf7e7169f60c6ed129c30772abbc8e29"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_rmse.20200901-20200930.png",
+        "sha256": "fde2553eff4e72ae38e55a7d499fb40344b8121bcbb2ef6a52c0ffdda1582a74"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_rmse.20200901-20200930.protocol.json",
+        "sha256": "41e9bd1edd0600c275cc0bfb45aed15a58be0a4ab13314522c0ca98391260155"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_east_asia_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_r.20200901-20200930.pdf",
+        "sha256": "f0747bf4b3d34b0cfd728417d6ceb0f0ab00447f8e8d9621ac521f0a8af4171f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_r.20200901-20200930.png",
+        "sha256": "ba04a832b66f8cc353761f6dad4e4c6feb4a4365405456616cd3ba129d255915"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_east_asia_r.20200901-20200930.protocol.json",
+        "sha256": "0af65a03eab64d70c126815cb04e3c47d7661327d0a367550c57ab360837812e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_india_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_mb.20200901-20200930.pdf",
+        "sha256": "38bcb436537824db7ecd4b9c98100f947ceed55d6c573074e342c5229bf2990e"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_mb.20200901-20200930.png",
+        "sha256": "fe95ef7ca55cfb721dec9a051088a40fabdfd9a9cddb837480011f4c2a2cffb9"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_mb.20200901-20200930.protocol.json",
+        "sha256": "c48a284c2cdc25d90f8c16949833becd15f28f3a393fb2e7e679a29a94ab3833"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_india_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_rmse.20200901-20200930.pdf",
+        "sha256": "c92490b79bef4c781e618f4f28e9a8bbbb82b6c8555ca393c56ebaccaa2152b5"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_rmse.20200901-20200930.png",
+        "sha256": "3af0b2f50b9e3fe3a97c4455b87001f98bb6d111224c5f72f65d83c0879ddee9"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_rmse.20200901-20200930.protocol.json",
+        "sha256": "df3430d18d60f60f7926ff0140a27d0447a02d6f3ad7f50356f48081f8929c23"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_india_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_r.20200901-20200930.pdf",
+        "sha256": "a5c3990369e56ea57da45b7ec38bccf5025766081fdd81ef5b9231f6d6b9ab05"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_r.20200901-20200930.png",
+        "sha256": "a691dbc6291ac331cab31c020c17f7f450a201dd97853e46b68c561e078a02d3"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_india_r.20200901-20200930.protocol.json",
+        "sha256": "88975cfe884683e57659fdb17a29a6b174ada678e7c65dfb5841e9f7046a6d4e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_southern_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_mb.20200901-20200930.pdf",
+        "sha256": "bd6e70ac2f5295f0a1d4b3747bfa7aaefe0d4ac596fbe52077c12972a78b3a3a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_mb.20200901-20200930.png",
+        "sha256": "60114785d4154e47ded62c34be8c295df9ca1777e678f8493adac8abe7f1f288"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "02134931196d4e1a12b7611f01116f7614e94187a05742b929f1bbc02456bcd5"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_southern_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "50fd62c09806ca34e257f8c0b7043ed0fa929cdc0f09d919409d607971fbfc41"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_rmse.20200901-20200930.png",
+        "sha256": "791d68315d2864993bce660a1fbc6ff41551077901952bd5ee2205534bae6104"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "1cfb2aac3976062c990b60eb09f946484b5547dd94b5e76fd640050577641876"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_southern_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_r.20200901-20200930.pdf",
+        "sha256": "d24d34a6157da5ae8a9125ad31405390878a765f3b4040c9fe7b2f93c02bf5bb"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_r.20200901-20200930.png",
+        "sha256": "7bc985cef221fb0eadd3493da0d20d24daab6e212228896c5150b8d401c6caa5"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_southern_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "299297e885e42f883a0a5cb1a3de5a82001679a9633c5d797cdf56877348a175"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_labor_day_2020_smoke_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_mb.20200901-20200930.pdf",
+        "sha256": "e17fe79c93347c5e449c7cef2bb26fabedc88ab2c6174d3506be06215d55152f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_mb.20200901-20200930.png",
+        "sha256": "a394c2df89af40a34787738ca905df5c04617f2ae85a20792acc24475d106349"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_mb.20200901-20200930.protocol.json",
+        "sha256": "a7bdab08ee068e1884e64a6dc12f5c51d3a22c07ed43757ba12896bd20d57f1d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_labor_day_2020_smoke_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_rmse.20200901-20200930.pdf",
+        "sha256": "00c95f193f9c987a56b7f90b40e465708e9b975a87d06753d5ad55de4ebba47e"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_rmse.20200901-20200930.png",
+        "sha256": "592bdb5bff1411711c231cbf0789381e2ac64c333694935f4434683a4d2332ae"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_rmse.20200901-20200930.protocol.json",
+        "sha256": "5d7f84ddc021b19f939ab6c9c6e5e00687e0ffa25c2c67f2f893cc62988fe92a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "grid_labor_day_2020_smoke_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_r.20200901-20200930.pdf",
+        "sha256": "932141ef70d4e300bac820ed5805046c5b34d4fd9ea84bd1fca9f9fd26a9414d"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_r.20200901-20200930.png",
+        "sha256": "715a22683617879708f3685edbd85417885c191b66e417d07fb587f209ee50a2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/grid_labor_day_2020_smoke_r.20200901-20200930.protocol.json",
+        "sha256": "11780e9966d260602be88995c715183a21eb693dfe309fb9810f6513bef3127f"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_global_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_mb.20200901-20200930.pdf",
+        "sha256": "ef00ce7f593f5989e73052718907e6d20bfcd3b5271559bd0c6ed7e32960ec5e"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_mb.20200901-20200930.png",
+        "sha256": "e8ed2b11d859d84e966921a5e9916f8a3e1213a120b28989001b51e5d981da14"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_mb.20200901-20200930.protocol.json",
+        "sha256": "73f3bea52f75990d49f6decf721484668c176f383dde25dc1b70c14b98f4b750"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_global_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_rmse.20200901-20200930.pdf",
+        "sha256": "1cd290062d2d0b3b3ad19be3e2d88ddc8aac775250bb66d8e29f98a4973f49e7"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_rmse.20200901-20200930.png",
+        "sha256": "5154a2344ce42c344d29212a3528a695237d79aca60ecd82ddb019f338457217"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_rmse.20200901-20200930.protocol.json",
+        "sha256": "701566b050c680dd62e8c843ce897437cb1194a9ddc54387e8e3a3c791711615"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_global_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_r.20200901-20200930.pdf",
+        "sha256": "edf996b820fb5a2e9e767287773f6786841820872347cb6d696124d927205377"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_r.20200901-20200930.png",
+        "sha256": "e7edd52d4581f8733a7d21e75f55d5287b3274369f3de4081b15a3c998553742"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_global_r.20200901-20200930.protocol.json",
+        "sha256": "95e3af190eac8453279868bb32eaf221f6ddbd63a446fd697d76a0fcb42d04aa"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_atlantic_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_mb.20200901-20200930.pdf",
+        "sha256": "39a919fe70753093d3e206a43e3c1a3e08be5c3c593e09f4557e27dfa257348f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_mb.20200901-20200930.png",
+        "sha256": "42046570a3310b732c599e83ccbed9c395fa36f76815901cabb0aaded4e7ac1a"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "517870e99e5e2b175362e3cbc0567cfa78f8e60408fffbface0c15cefac000be"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_atlantic_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "b32d851a3f2b9fb82d7af2fcb0091db2fe6a842af494b222c0144ee104f8a279"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_rmse.20200901-20200930.png",
+        "sha256": "de5a0894c11aad5405c261e15a7fadd2466dd307e4a3a2190d00f2701dcff868"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "8e45d7284a4013a0b2b5b335f1c0327e001174db7cf5fb45c60884c964554481"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_atlantic_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_r.20200901-20200930.pdf",
+        "sha256": "464c67def85ab45a67b8971531ec8b13c2497e73e259a94b30aadc5fcc392381"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_r.20200901-20200930.png",
+        "sha256": "39191b031fb6fbc20b6d41ed6df3912f0a9b05ca7315f0c323d60050d659606c"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_atlantic_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "86d7fa5df0d9e8b3f2fd5e5fbf71904f0f4f5ba6ebd3ea15fa44e7e48448eddb"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_south_atlantic_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_mb.20200901-20200930.pdf",
+        "sha256": "e75e441553cbc7eb64f2a85553ff447d20623f32dc8348c89d64f0488ff5d86d"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_mb.20200901-20200930.png",
+        "sha256": "4686628c528248bbd372b7aee1cceed1788911b2d0ded366418d18c58afaec3e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "e70f1b27140fe0a4d4e576a652233af6827899e84286bbebe20e0643a1341f93"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_south_atlantic_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "1fd1fcb9b6582f611d2d3cf8ae10a2943817973ea3bd18456d80471fb3c92893"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_rmse.20200901-20200930.png",
+        "sha256": "743de7f8fef9e3907dafd80ecdfc24b8c5decf96e964707f8b8b07df624a5efb"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "26747b03ad0eba6f06a02c10e54cf9f14f3b343b162eaf5c6ca93725c2f7b290"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_south_atlantic_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_r.20200901-20200930.pdf",
+        "sha256": "9294e92d0af16811278e63b334af13b899f6277cbfc91e0772273407c7720920"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_r.20200901-20200930.png",
+        "sha256": "f13e789971551f35a2aabfd87dab8186692d027dc91d616fb058d9d1736eff97"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_atlantic_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "63b04035eb2cdaf01ca46e6472eb94a4c0a8bd15f799420c680bf349c12962bc"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_indian_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_mb.20200901-20200930.pdf",
+        "sha256": "1e3aa111980832da8087124a790bb1508069ce7c3f51a6c95167a4d0f9cceb26"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_mb.20200901-20200930.png",
+        "sha256": "0f075ba8226e32c80e7800a0ffec1060f253d5d53aedcdc8d9adae633332ae70"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "7a0d043af3a0bea348bd622a76932576fbd02b067ee043bbc44abd3874d8f0d7"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_indian_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "a01f5c78b845fa006ae92ad880b288db8743a1b324e354d56b782cfb224201c5"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_rmse.20200901-20200930.png",
+        "sha256": "e7ad2076b49bde3623b70933c36a6ee4b0e53824ebbe38fe4f398ef828e0e333"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "5a2b98dd06ee739b7829ef3702e41d09f4f6a7c6f3ddafee1cb3ef797c282950"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_indian_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_r.20200901-20200930.pdf",
+        "sha256": "2634ae7a8ad6ad9832d95c4d2a56d3bb36feb33b8cd262ccc33f70fc2568b48c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_r.20200901-20200930.png",
+        "sha256": "f68c98ec85d896e0973bf478a896ea86375943b6da97607e787cdb2ae0309a8f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_indian_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "fcbf49a4de9bf666245c0a3cc4473df04436c11597d01198a85d4671cbd28050"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_africa_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_mb.20200901-20200930.pdf",
+        "sha256": "148b2cbf70cf324f2db9a3cad00df78bdcb86e3e786a7dccd3af774d7583d7ca"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_mb.20200901-20200930.png",
+        "sha256": "4794cf0a8106a755b0468d54905601ddac53696dc11ed84b4ce4288fbf633459"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_mb.20200901-20200930.protocol.json",
+        "sha256": "068b5cbdd737fa3c8428e2f38d175d5f8306e0eafc176d12d67c4b7dea8ac033"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_africa_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_rmse.20200901-20200930.pdf",
+        "sha256": "aeb210410b840255e49c1c1619d880f35eb3f0a19138ecfafd9cde809b5b9e82"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_rmse.20200901-20200930.png",
+        "sha256": "5d2f477d46ee0f21ceef0e6cf058bd31ef34e437b5ed8fa62e6aaf76c3bb5afd"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_rmse.20200901-20200930.protocol.json",
+        "sha256": "2fde4a190892f8fb3829437cb8f66b8d148dc8479f00b8e37f74cb5d7ace9425"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_north_africa_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_r.20200901-20200930.pdf",
+        "sha256": "084dfd1dbc93b38822d9651dbb69b25fa2a10c07ed89e3ae2e727432e2ca4239"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_r.20200901-20200930.png",
+        "sha256": "d7153801e1d0508ec106c6bffe4e5c0af99c0d4fa9ee5004e44db09299ebc8ce"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_north_africa_r.20200901-20200930.protocol.json",
+        "sha256": "2de010379ec8bf833e1a29c40fdea0214a6b969e078238f6557539c858084784"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_southern_africa_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_mb.20200901-20200930.pdf",
+        "sha256": "6dddfd849027d9051e84e30fbcb13b334e3f68c04bdd06e104bbabb357ebe56b"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_mb.20200901-20200930.png",
+        "sha256": "cfa63755e186ff778a208b638b15fd5baccf16183b93c9abce4d71b2b79ba5be"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_mb.20200901-20200930.protocol.json",
+        "sha256": "c34257dc0fa873a483cdb3e0235871592d42052848ed2f939e2242506e4037de"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_southern_africa_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_rmse.20200901-20200930.pdf",
+        "sha256": "bbd2f7ff2cfc11542868128a7318a383e9ef93188bc1138b26f4b116ac09a36b"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_rmse.20200901-20200930.png",
+        "sha256": "645ed24b3f0410ad146d461d57684fb9635ac9b723ef600e1441497370676303"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_rmse.20200901-20200930.protocol.json",
+        "sha256": "5f5789316e0b96543af41deba84b8bb4d7acd849d5a77d4cfbda69acf0d8a0d1"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_southern_africa_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_r.20200901-20200930.pdf",
+        "sha256": "2355661285477295e9cd09447df7bcf4f700536bc99acad823cc55a5893793ab"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_r.20200901-20200930.png",
+        "sha256": "e2bd9dc9c82e9f1ca8e92a6a55031d8f81d5ae50b6ce3287164b942f790ce28e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_africa_r.20200901-20200930.protocol.json",
+        "sha256": "f3150a84c0905dda54e125e78e9799b0e5fc214bdce322f82fdd6491b12d1cef"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_eastern_us_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_mb.20200901-20200930.pdf",
+        "sha256": "e0c355fadc2adda56ca4f354f8758f1ed5fdcb1606fdbd6ea3761de0eba1ae77"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_mb.20200901-20200930.png",
+        "sha256": "c7a6cb31cbecc503c37b789cccaf4dd43f36f647e601fc93ae4515e71cd3f84d"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_mb.20200901-20200930.protocol.json",
+        "sha256": "13fe44718b82f5861fc2aa52d0da8d60f449f425fedfe157163ff2e846739053"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_eastern_us_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_rmse.20200901-20200930.pdf",
+        "sha256": "6c08077d05803cc3f41612287627b833a3df615d46de80430c5007be5f3cee54"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_rmse.20200901-20200930.png",
+        "sha256": "b266cc1a70321c514536e7a2da6a2e31497c7677b71e1313d2ce3690680eb1f4"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_rmse.20200901-20200930.protocol.json",
+        "sha256": "d93745881e489cfb7eb855939541f7ae809952a2b2277645bb3bc5044e165960"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_eastern_us_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_r.20200901-20200930.pdf",
+        "sha256": "39a1f097747724ccc412fa23ae0ee2b2ea274cb2b7da96decf405ee7a75da284"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_r.20200901-20200930.png",
+        "sha256": "61cfa27a4286115d941ba9842dd1491a2d1d98c3b9616fa149ccb5528e7d00cb"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_eastern_us_r.20200901-20200930.protocol.json",
+        "sha256": "d0ef892b682754b078b2c5aaecce086b131d0facfb3eb45b0166d08a84c25335"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_western_us_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_mb.20200901-20200930.pdf",
+        "sha256": "c783dc681ad7c69a0d856f98df7185fa523941180b494461316554dd6c81b4ac"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_mb.20200901-20200930.png",
+        "sha256": "3629fb9e6ed0114136d062ea5bb2362716369cd1125ee614a86d080b57ec648a"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_mb.20200901-20200930.protocol.json",
+        "sha256": "26e4eadc33cfd1c3d48dc9585c2fd714a1b0ca60cfe77a4685362501f2e4b2e9"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_western_us_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_rmse.20200901-20200930.pdf",
+        "sha256": "22648c8513e897facd86470a8040894e2905920316ce09ee32f6d91ddd52660c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_rmse.20200901-20200930.png",
+        "sha256": "a91ca0d482785511fad00419b984ffabcf78040b095091f38424162a83e7a4bb"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_rmse.20200901-20200930.protocol.json",
+        "sha256": "e20e477101250607de2f1d7f98a2c63bb2fb7c5d1803c59021a12e3b4d90aa21"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_western_us_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_r.20200901-20200930.pdf",
+        "sha256": "7d957fbe78c73c9f63a0628a58fb7d3a206da0284c3d8aa05706f24246a17805"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_r.20200901-20200930.png",
+        "sha256": "e7b0ae8a799aa2f9575e5533cafafff336d7840f753a45ca8bdc1a204796c63f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_western_us_r.20200901-20200930.protocol.json",
+        "sha256": "b17ac5a6d5584c60471313207bd40d05f1c07a037d64f33e221bd7726862b1bf"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_canada_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_mb.20200901-20200930.pdf",
+        "sha256": "5c109d1d3739c09b34a8e3ed5f10eb394792937b54756454462492d979441520"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_mb.20200901-20200930.png",
+        "sha256": "0bdb3ab04970d0bdf6f6f8f86ae3536c490a9014dd05696ac9184d31d82c33da"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_mb.20200901-20200930.protocol.json",
+        "sha256": "7e92d7eddec516eafe99a2dcd1c7920b4e734fce064afa7541e7e1cbd0e4a423"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_canada_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_rmse.20200901-20200930.pdf",
+        "sha256": "c9a2668c788349cbaa650bf09491cf8e9cc341ac43734f4d9082d754e5a6978c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_rmse.20200901-20200930.png",
+        "sha256": "ad2ea68c92d304ef7d22e10c093cd609cda19d6d11a777bb96905e6aa0b3482c"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_rmse.20200901-20200930.protocol.json",
+        "sha256": "2993ea2689f6a1c5bc9c39255ba18b4cc1c6a87ec15be9d88a281a1da14aba3d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_canada_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_r.20200901-20200930.pdf",
+        "sha256": "0dc5ad32c1a841be05ab2fff47e3fd909f7b62b4151ef7fc5f0f0f316e936457"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_r.20200901-20200930.png",
+        "sha256": "c9d7a66991cdf12632fe3c739908bd644f8c71144963cb72b5e0b12407cbc8f2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_canada_r.20200901-20200930.protocol.json",
+        "sha256": "9a0f62d4f6146ecb334b817042f50da8a4d29fcbd59af4e16089c44dd422e772"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_south_america_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_mb.20200901-20200930.pdf",
+        "sha256": "ba60cc24047cf1406dc6fb6598a58caf740961298526932c13f56c23bce4ef18"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_mb.20200901-20200930.png",
+        "sha256": "29ddc7177d578b328569359b2e538b6d8217865378e7b6644b4bec47b69ed22e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_mb.20200901-20200930.protocol.json",
+        "sha256": "00e30e4cb2347508aef26f05c78b8012664d7e026575a12275596ff335c77a5e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_south_america_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_rmse.20200901-20200930.pdf",
+        "sha256": "87819be7650bfb5032409f5acf9b0a8dee8e5ecb2092949ccbed9625c28944e1"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_rmse.20200901-20200930.png",
+        "sha256": "726a8f68c978258ee3bf35fa0f93ac3931f553144c775533f67e58f03469ab2d"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_rmse.20200901-20200930.protocol.json",
+        "sha256": "2ed4278b0894fba9f74802e2604aad08b3071bd3213f8abdcc43192c978a696e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_south_america_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_r.20200901-20200930.pdf",
+        "sha256": "9a177fd854d42398544a3e2865d11eb5c169ae42b5c4814844e65b93fedb9deb"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_r.20200901-20200930.png",
+        "sha256": "9124bcb109c22f23a3520d00cb001b66994bd99e997ec058ad718cb1b523203e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_south_america_r.20200901-20200930.protocol.json",
+        "sha256": "1bf5202e51b0956d45af6569cb4f887c5d7ef11da27e8a31ecc0765986ce0eb3"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_middle_east_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_mb.20200901-20200930.pdf",
+        "sha256": "1ee50490c18f00a18fee0cfdfd273cf1c9d3001b8878790bc82432795d8fb65c"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_mb.20200901-20200930.png",
+        "sha256": "45229ef7726671962f4e2b90cc94d3b3e90bcf98dbf1fd325fa48251f07ce952"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_mb.20200901-20200930.protocol.json",
+        "sha256": "9b06057c9da36096768d08cf14c0d005dd0b986b35a884421a6c44562c6ea51e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_middle_east_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_rmse.20200901-20200930.pdf",
+        "sha256": "84f342cbac1410180b8afe6bfff4b35ee5afa2243036d7c2af3cb9ee5edb5475"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_rmse.20200901-20200930.png",
+        "sha256": "016639d4539eddab9fe6caccc00d1531791da27bce3909ce3804de84e7fa68d8"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_rmse.20200901-20200930.protocol.json",
+        "sha256": "00ff5227bb4d2a681019ec5a0192e30a0d3b8d609c7d6058c78bd46dcf12ba4c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_middle_east_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_r.20200901-20200930.pdf",
+        "sha256": "7fdc1884ea80751cbd2c2d412495d1e00a7c5e035ae1478a357ac37a697d6bc7"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_r.20200901-20200930.png",
+        "sha256": "79489e544ad9464adc2e38db0e14d892a61bc75381b217ec48015ff81dbb1709"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_middle_east_r.20200901-20200930.protocol.json",
+        "sha256": "4eb5def4d9ab9a813fd18139bbe369e257138a4a2275622e5cd08393fd0576af"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_east_asia_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_mb.20200901-20200930.pdf",
+        "sha256": "2aff20d32126fbccf8ba5fe2de9e7081c9f401b443eebbf6a196075546c24b70"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_mb.20200901-20200930.png",
+        "sha256": "36a6272e4d8a7e49fa572c7f647eb5bf946f3695fa326a5fcd10a2ccc52512dc"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_mb.20200901-20200930.protocol.json",
+        "sha256": "c1c57ef103e4202eb5448a2fcd06536cb0699ab21ff0e05b585bbb37c30e4384"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_east_asia_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_rmse.20200901-20200930.pdf",
+        "sha256": "ade4bc13d1fb780c183cee5439fbd2e669066fd1abf7ab55ca613adb4c80cc4a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_rmse.20200901-20200930.png",
+        "sha256": "16b17c55e9d265bbab386747f7646d853bdcd7081c68294ad685b873c95244d2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_rmse.20200901-20200930.protocol.json",
+        "sha256": "8c930bea4b403e40e74b6749389bdc14da8963ad60e61c8bae8b6edd443abb26"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_east_asia_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_r.20200901-20200930.pdf",
+        "sha256": "5cb8c8f9ef058d8ce21047cc6a9ae7b98902f29a2823f3f956fbf59152537597"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_r.20200901-20200930.png",
+        "sha256": "fad9386568091e951195a83b6ddba4ed9690933978371f48110a33acab33ffe2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_east_asia_r.20200901-20200930.protocol.json",
+        "sha256": "209bb5d5e57b1e2a6131ea956efca5040623ad77c66f37e6474f79d168b14c66"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_india_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_mb.20200901-20200930.pdf",
+        "sha256": "38f13b37a69fb2ab5581aa4c12982ed6dd206e8efc8652b508c80322e6e5edc6"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_mb.20200901-20200930.png",
+        "sha256": "0ae03d9f89f376f8822229b30f515765d6a751ad60902c52a0f6a8bae2dfd326"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_mb.20200901-20200930.protocol.json",
+        "sha256": "aa458b2bf562f469dc0aa6fb6ee5be14078e8dcb85c811c583eb660c9110a33e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_india_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_rmse.20200901-20200930.pdf",
+        "sha256": "4ec24eaa348a6d653fac7dd1f0bb922a7c5e1e64f4550ba14f027fe1337c9666"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_rmse.20200901-20200930.png",
+        "sha256": "456851d91572b75792da0d8bf74f738bede4cd6741e90b38115014d96e78f4d3"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_rmse.20200901-20200930.protocol.json",
+        "sha256": "0e842c729778773d446d2dd5f54b17ef416d4cc8e0609e0d2edbc3a43622c04e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_india_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_r.20200901-20200930.pdf",
+        "sha256": "99b93cd2c7ff26a79917ee3d6650a7f7b78e619195c171141a5a9511cb372b31"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_r.20200901-20200930.png",
+        "sha256": "b980f0d592ecbbba6e483d52e495c85f3ea7eae77b87fe06fe0a74ab8714c1cb"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_india_r.20200901-20200930.protocol.json",
+        "sha256": "a4402b9d159659c0271be336b630bd4c2225318a809c7ed94df4bc7a2adc9914"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_southern_ocean_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_mb.20200901-20200930.pdf",
+        "sha256": "487721a02eed833d01469b15b8eae536d81c2e68fc737ce379f1f694232722dd"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_mb.20200901-20200930.png",
+        "sha256": "15851e315aa0ba2f5239d07fb172202f07e77027be283eea78a3653f1bbc8c1b"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_mb.20200901-20200930.protocol.json",
+        "sha256": "092883136903421543d62c0a315460cfcc365b7ec4b4a1cac901acfd168e2a10"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_southern_ocean_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_rmse.20200901-20200930.pdf",
+        "sha256": "de97100a3f7a252c11c79b7cf6b18a505be5a5c7a654b3645ca9602a9ad8eec0"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_rmse.20200901-20200930.png",
+        "sha256": "73d575f2841b1562a41742f12d7df2d549ac70cd7ea34005936210b8926ad853"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_rmse.20200901-20200930.protocol.json",
+        "sha256": "eadaf2e97e7fb6e769177357da6e8562321b571242136e1393f1a6d0f908fe7d"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_southern_ocean_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_r.20200901-20200930.pdf",
+        "sha256": "ce837178d808f18d442857357a4cc815c1b18115920b6184c6ebf14709d1108f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_r.20200901-20200930.png",
+        "sha256": "54d51b20ea9a5c251a39c0f7199b81a63473f348f55faca2e9fc3da284efdc8a"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_southern_ocean_r.20200901-20200930.protocol.json",
+        "sha256": "f45b18867ca31099852adead1eda3a5e667ed0a1fbd489deed0a9151424b5467"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_labor_day_2020_smoke_mb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_mb.20200901-20200930.pdf",
+        "sha256": "f4ade101df068dcdd3ff3403f28324b1e1bbaa5b810f439badf8c3d90d9e86a0"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_mb.20200901-20200930.png",
+        "sha256": "c27a5ef800bcfc43fc5a1408674134910c5b8676d52498727a34b498c5df36cc"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_mb.20200901-20200930.protocol.json",
+        "sha256": "92f6fc72de8a0b5b07e0c1413a97fa8b1fc11bb343668c7691b14b39fa3fc3e3"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_labor_day_2020_smoke_rmse",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_rmse.20200901-20200930.pdf",
+        "sha256": "d591b31160cb4b5e36fe54367eb9dd2963565313ee86e476a73cc91216bbf2d0"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_rmse.20200901-20200930.png",
+        "sha256": "2e1250ea6d5b5a31df741e1d76de71a6826356ab0fd217930ba46685b4d2860c"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_rmse.20200901-20200930.protocol.json",
+        "sha256": "025e4f2587b95677d50eb4000cab4f4d39fa21930fb319eaf697232386466186"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_bias",
+      "name": "l2_labor_day_2020_smoke_r",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_r.20200901-20200930.pdf",
+        "sha256": "075aaae9c97ceed17723b0b4d2b56a7fdb06be07f103ad175244ba00efdfc622"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_r.20200901-20200930.png",
+        "sha256": "9b14ca7dad4e42fafc6c77cd3d68613926214a0eb6b6d067e0f500508f07a079"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/l2_labor_day_2020_smoke_r.20200901-20200930.protocol.json",
+        "sha256": "5d1432a26c52316a1466555841ccd39e2ce405d29adb3d233a1789268d933bfa"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Kuwait_University",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Kuwait_University.20200901-20200930.pdf",
+        "sha256": "79333f00e936650ea7bc1d806cef1570bdcaa340d8dab2caf0ac2cb04479b563"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Kuwait_University.20200901-20200930.png",
+        "sha256": "17738d7f7dbc5e887dc505ed5e6d8f7f93e44a76e5d58213221ee6e16020a89f"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Kuwait_University.20200901-20200930.protocol.json",
+        "sha256": "1ee5e4746c5a21b6f85bc8788e1c869dbad1c66740b3e6a9df8643791f42b2d6"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Mezaira",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Mezaira.20200901-20200930.pdf",
+        "sha256": "4641c277e460c479555c8738df5b0eee1239b7da553c28e26df782ac69a18605"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Mezaira.20200901-20200930.png",
+        "sha256": "d94dc8e0be0a361033d6e26b13dad1c9b264b234852bd7d5056a8cc5015b49f7"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Mezaira.20200901-20200930.protocol.json",
+        "sha256": "763f328eb05a07a6867ee7c230a0e07fe7c79f474128d71ff49d289581559409"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_KAUST_Campus",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_KAUST_Campus.20200901-20200930.pdf",
+        "sha256": "d3651830164e667d52d6f950a4ed7ee89b17f296f8bba9a6eb23c629594a3f09"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_KAUST_Campus.20200901-20200930.png",
+        "sha256": "802595a705dc91e52d3c92f3d07c2e6669854666d827be7b8ef87ffd311e3b4a"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_KAUST_Campus.20200901-20200930.protocol.json",
+        "sha256": "a239dc4704887dd02f0d857dddba933d20496c8c6da5efca9ad9266fa0f00f09"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_SEDE_BOKER",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_SEDE_BOKER.20200901-20200930.pdf",
+        "sha256": "ef9f0faff4f046ddf1aa8bfd35d49900aba7c2a48e5938f0628e3fedb8827b80"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_SEDE_BOKER.20200901-20200930.png",
+        "sha256": "cc3ad47a7c09d16fa328170d3502ef2ceece836e36e117483b8569030c2919cf"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_SEDE_BOKER.20200901-20200930.protocol.json",
+        "sha256": "33798f719909d42784ceacffe76e80f615cf527fcdc6f228edc8e55ce8be7124"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Gobabeb",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Gobabeb.20200901-20200930.pdf",
+        "sha256": "f482e79512573d9fefcfa67c65bbb8362ad3a1d6829a384e2a946c72783ae74e"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Gobabeb.20200901-20200930.png",
+        "sha256": "564f63d3e9d42d17f7667a3b80dbd1c2197313d7b379de1bdcc99e8b72598283"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Gobabeb.20200901-20200930.protocol.json",
+        "sha256": "3a87296b99d2274c509d286978ae09b5f3d32b3fa4712f69222cc6dc2f26d008"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_HESS",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_HESS.20200901-20200930.pdf",
+        "sha256": "171d9e90adfecd2181bcc8c6d05fa7b4a0a39988def2a21472d0ed15e7f66ffe"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_HESS.20200901-20200930.png",
+        "sha256": "87084ac119835e87aceadc77df4db13208ad663e112396dc030340290f032268"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_HESS.20200901-20200930.protocol.json",
+        "sha256": "dc0b6ec5406fdb60befba6706334a9a1b2682db9162a0f32be50cd6bb8a6d27c"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Weizmann_Institute",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Weizmann_Institute.20200901-20200930.pdf",
+        "sha256": "c9474e74fced8b9523c8ce17c4e38420894590706d7787e7a7a2dbf6e22ba4f1"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Weizmann_Institute.20200901-20200930.png",
+        "sha256": "49c9a1f8bd5a70f64c97a8adf33506f0af9eec5302aed926873a9efa5b6c8a7b"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Weizmann_Institute.20200901-20200930.protocol.json",
+        "sha256": "df942830256139e1429cbc8649c9ffb827f74f27ae55c2762b5f42b14f30d02e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Masdar_Institute",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Masdar_Institute.20200901-20200930.pdf",
+        "sha256": "0fc47de3884c6dc55de80d2517095cd8c8437ee21aa78cb05d352e6cc0cf9998"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Masdar_Institute.20200901-20200930.png",
+        "sha256": "0d8af60591aad1ad77d09fdd28fdd09def4ccdcd71ed188ed67d4b68373ca8e0"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Masdar_Institute.20200901-20200930.protocol.json",
+        "sha256": "b4e518e0c1657a54138967362a982b6ebad5c29dd6d19f9690bd01adda6ac468"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Trelew",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Trelew.20200901-20200930.pdf",
+        "sha256": "e0aca5a1f27ae0afa57db9f70f51e0eda28d81ec5c3afc0c14c1b4a0e4509bf2"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Trelew.20200901-20200930.png",
+        "sha256": "321d8586d42758069f71586ddd590f4f48bcdf1cae10737f16b15f6aa1e231d8"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Trelew.20200901-20200930.protocol.json",
+        "sha256": "2b1262fead6939ef3f66cc819003bb4224eb9d7331d0f9feb74c4774fbe3c9cc"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Birdsville",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Birdsville.20200901-20200930.pdf",
+        "sha256": "f9bec9d52a735c31c59fa6b0c47b6ad5b9a84b1bf64450ed61bdcfce41a51edc"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Birdsville.20200901-20200930.png",
+        "sha256": "8bcaf49c46e1b034dece3a416f98e9b9167dbb162bb159d6f61b89d50d7b63d6"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Birdsville.20200901-20200930.protocol.json",
+        "sha256": "60a9ff13e679ccac3ba1b4e89a581861975cc86222681f5e986621aba784c525"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_CUT-TEPAK",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_CUT-TEPAK.20200901-20200930.pdf",
+        "sha256": "040939f7a12d06050743fc6c6b7571e70e4f277669ec20bf769bab966d7e53d6"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_CUT-TEPAK.20200901-20200930.png",
+        "sha256": "b45642f8e78f97fa3b67e6125bae75a6440998fac1cd16e8c51b0633dbc111c8"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_CUT-TEPAK.20200901-20200930.protocol.json",
+        "sha256": "b89fc152aa4880abddd36eff57de561d0599d7ec331bb65aab69450975c3712a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Learmonth",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Learmonth.20200901-20200930.pdf",
+        "sha256": "e7e3bf8b186b955850d03f6b98ab27fdbc5070cd849aa6f1dac98e2f365ef0b7"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Learmonth.20200901-20200930.png",
+        "sha256": "faaa205e8c3ebbac7ca122d650693c2e3154db1de56aa26cb5e344f860decb54"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Learmonth.20200901-20200930.protocol.json",
+        "sha256": "50d9250aa730102673e29ec637d1c10a4f793ae62b536bf18562c573d1529d4b"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Migal",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Migal.20200901-20200930.pdf",
+        "sha256": "0e6c143188fd91e69c2f6e0a8c035a00ed7f368bc6083c10a82757ad7ce8a46b"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Migal.20200901-20200930.png",
+        "sha256": "962bc26f16e00b81337231823ca26b5778083de5d1843f60ae9d4007dd01b1f8"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Migal.20200901-20200930.protocol.json",
+        "sha256": "e21415819227af37880be61514eda3f61a1c8e950dbe0f54c5056406a20be2fc"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Tamanrasset_INM",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Tamanrasset_INM.20200901-20200930.pdf",
+        "sha256": "423a7da911b7a1c2b70bbfdc3fcd070bedef32c874e7e619c4420df71a56f7ae"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Tamanrasset_INM.20200901-20200930.png",
+        "sha256": "0ba4005d452323325627c521b76bd07f1d69fc1fdf97628dc3d6171ca96c5592"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Tamanrasset_INM.20200901-20200930.protocol.json",
+        "sha256": "94845c869e49867a77d54f6a765dda47f306113f123624dd119ee65d1e8ecae1"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Fowlers_Gap",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Fowlers_Gap.20200901-20200930.pdf",
+        "sha256": "5fc5b3d0bba24d432ebd54af41f0dbb931acb9ffbb417c1cbcfcb5154158504a"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Fowlers_Gap.20200901-20200930.png",
+        "sha256": "a09c9e904ca2367aa772ccb274ef7bb61b621d52f1c83e43309bf8fc141076ed"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Fowlers_Gap.20200901-20200930.protocol.json",
+        "sha256": "22862845256ed988f3b78f74c66a2cc9e71e131898f5d7c54493f4140f9d7ab0"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Lubango",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Lubango.20200901-20200930.pdf",
+        "sha256": "50b39b4d33997c7e5a974a8abf552a282b9b78cb7477b7587b727e7c3a63b911"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Lubango.20200901-20200930.png",
+        "sha256": "bc45c79a92183d00ab6cf2422b7f2835935ee1d0f51e78ebe96b753a414c5009"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Lubango.20200901-20200930.protocol.json",
+        "sha256": "26aa987af6ca78d13544c09ac787e2021500f00f9cf98bcf532f1ff283afdb90"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Pretoria_CSIR-EC",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Pretoria_CSIR-EC.20200901-20200930.pdf",
+        "sha256": "8068c612a557442e8ad26ccde57f016125c41847cfb06e253591a7bd818b3e9f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Pretoria_CSIR-EC.20200901-20200930.png",
+        "sha256": "a558aef70a5cc5272e1182b0efcf1af3c5e2452ef9029037fc7590947b2f3758"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Pretoria_CSIR-EC.20200901-20200930.protocol.json",
+        "sha256": "d8cb44fe75291b7f7873a64b0b61c0e60e831e926161f0eeadcc8ca2194c8884"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_AgiaMarina_Xyliatou",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_AgiaMarina_Xyliatou.20200901-20200930.pdf",
+        "sha256": "fd5ac48e3ffa670c2162b8c1461a369103f859c8c4896dfc2ded7204ac1b5071"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_AgiaMarina_Xyliatou.20200901-20200930.png",
+        "sha256": "bff4ca33728df1360b40d1c5bedae8e74da16cfd9247d5a98c2e14ed4e9a66c4"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_AgiaMarina_Xyliatou.20200901-20200930.protocol.json",
+        "sha256": "ce6ded8b680bafe535a69e97d1eec9f2df44434414357fdbd49848140d7a5be8"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Lake_Argyle",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Lake_Argyle.20200901-20200930.pdf",
+        "sha256": "53f1cde7816e16876c5fbaec137da419bd47bb2392d9e5fc5d0a4b2b2c4e66e3"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Lake_Argyle.20200901-20200930.png",
+        "sha256": "407db69023cd59faf2502d7e0255ffb6031ad08aa9aa4b2378987d0ff41646e5"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Lake_Argyle.20200901-20200930.protocol.json",
+        "sha256": "c954ceaa03ce9890d0df7c8418682e56d2d4bfbe644597b04b29aeef888b171f"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_site_timeseries",
+      "name": "site_Mongu_Inn",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Mongu_Inn.20200901-20200930.pdf",
+        "sha256": "b56325320bad3dd984c75cb7189bf8e0bca2196d09602bf808d01adcb4226459"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Mongu_Inn.20200901-20200930.png",
+        "sha256": "63b1a19962def130aeb967fad44c1604d9ce4b8f1e73851268bc45cab3b297fd"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/site_Mongu_Inn.20200901-20200930.protocol.json",
+        "sha256": "d6ed1bb05ead6bd9091362266a0d6a7c1798e6a05ae04b256880ad8fc5d82b2a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "grid_binned_bias",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_binned_bias.20200901-20200930.pdf",
+        "sha256": "7d11fa4fd88e67aff0f02f5f76d59e1463dd4ffc965aaa7e1540d15a59598f50"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_binned_bias.20200901-20200930.png",
+        "sha256": "0b0940bb2ba93b7655099d50ce90a34abd30cd9660daccf35f4a589c9f197c7a"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_binned_bias.20200901-20200930.protocol.json",
+        "sha256": "bae7e2a0a14bcfcd20735fd1f896a7d84e40c7a3992ce98cfd2eca302f03d709"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "grid_z",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_z.20200901-20200930.pdf",
+        "sha256": "66589d95eaa989d60c3200736caf9bd3059278c16ae4a22e79da748d7bfc9d57"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_z.20200901-20200930.png",
+        "sha256": "48156ff11a00e26c3f3d813aa201e3e8dff6256aea260a81591a98178f564840"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_z.20200901-20200930.protocol.json",
+        "sha256": "7c1af2304665a9b76bd0bb6d878dee12f896140e9e2b5eaeac1a7f7eb74a8dcd"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "grid_scorecard",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_scorecard.20200901-20200930.pdf",
+        "sha256": "144f02342e81fd257974395066b3090e3e3f1e074d787d246b5004b99eca6a34"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_scorecard.20200901-20200930.png",
+        "sha256": "8b2f0bce063f5d8e390e2f34aa0dc42a001161f73a503cd8e203b88c1d017289"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_scorecard.20200901-20200930.protocol.json",
+        "sha256": "acc3181dfe63403af3b8bc0e0b1f9928692dcbdfd6e719f2fd130f5f1085c653"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "grid_taylor",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_taylor.20200901-20200930.pdf",
+        "sha256": "124dcdb9cb5bf9db8b611477bc92d175d63dbdc47070fe951c9812170cb784a0"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_taylor.20200901-20200930.png",
+        "sha256": "5ff98ffa466f2891d9046c697fba371fabd7f5694d10e42034ade55fc21a57be"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_taylor.20200901-20200930.protocol.json",
+        "sha256": "bf83beac259e8a88401030185c4940cec5033e69e221d33c02e4ad646637c5f1"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "grid_regional_box",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_regional_box.20200901-20200930.pdf",
+        "sha256": "dca911d1b02856ce79b0590ec36dc7e529565ad014a72060c5c2bd7a82623eee"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_regional_box.20200901-20200930.png",
+        "sha256": "0bb2f8c347d39897c36b964151310bb3144fc38d9fc02bd35cf641b34d9b26ec"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/grid_regional_box.20200901-20200930.protocol.json",
+        "sha256": "cb6595607b0af7dce6a5134e7b27eb77ac70acaed629464954c6009522ba279a"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "l2_binned_bias",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_binned_bias.20200901-20200930.pdf",
+        "sha256": "ba23b3ecb0fa4649d6ddd5e1b6a759dddf0f23da3e40e1b9ce674bc0e22edf0f"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_binned_bias.20200901-20200930.png",
+        "sha256": "db38fad5bb73721afa90994b6c856e67be3d4422b2851a29ad6d0658e62f9227"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_binned_bias.20200901-20200930.protocol.json",
+        "sha256": "61ff985ca8ccf11251cd2882dc3ec747fa356bcfc1debcbe019270bd200ebfaf"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "l2_z",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_z.20200901-20200930.pdf",
+        "sha256": "d4beff4f15bdfd747de1952e5cafe027c608896ba53504be257ca7b8b53380df"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_z.20200901-20200930.png",
+        "sha256": "01bbf00dffc4c75c075f82535a858b9db221de19b69b66ae962825a3c6b92037"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_z.20200901-20200930.protocol.json",
+        "sha256": "5b555c25759ec8a3e0dea258acc9f442acaa186389081d53710b51a925c239ef"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "l2_scorecard",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_scorecard.20200901-20200930.pdf",
+        "sha256": "ea7b1be4cf78231eb42fb296d32fab69343c03c7691e6961c36a2466423200b2"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_scorecard.20200901-20200930.png",
+        "sha256": "c51372c77cf536309cfb4032c257b2630314de5d7e0080ba40715e1ee56955c2"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_scorecard.20200901-20200930.protocol.json",
+        "sha256": "ad05f82590c9672d5b1242fae55c36683ce30448b39b9b380f6d77983e8a9362"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "l2_taylor",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_taylor.20200901-20200930.pdf",
+        "sha256": "016fe9820fd2b10029968bca5efd053c6e286fe7f1b357b8c5b4581334217aca"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_taylor.20200901-20200930.png",
+        "sha256": "abc651260c42d0b7cbf4e181bee045fedf168fd0041ded2f7a6d0c5ea3ef1590"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_taylor.20200901-20200930.protocol.json",
+        "sha256": "129e9088ca0b1f9bb427be6cf922f55d3e1a3e7ebf470138c10c8f9559d30758"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "evaluation_summary",
+      "name": "l2_regional_box",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_regional_box.20200901-20200930.pdf",
+        "sha256": "b1a7bcf2ef1c2b4f1191efa675c78d1270c591279b80642aa40388f19b42e280"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_regional_box.20200901-20200930.png",
+        "sha256": "89f86ccbf54149b5fd3f0b5b8b6cc600f11e0115585953f4dc59849ada64c35a"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/l2_regional_box.20200901-20200930.protocol.json",
+        "sha256": "95f8955e263f5bceab7d89ace78f38346122ecf031845aa7a0f07960965fda7e"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    }
+  ],
+  "suite_protocols": [
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_regional_timeseries/protocol.20200901-20200930.json",
+      "sha256": "e9900dac5e789ccbd3a0bb14657aba53eaec0f0a7db351c6ccf481d6d2ebc639",
+      "passed": true,
+      "figure_count": 15
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_scatter/protocol.20200901-20200930.json",
+      "sha256": "f5b16405f54068605eb6e001759de7e5719eedcdba9e536f12630d3360f3f29f",
+      "passed": true,
+      "figure_count": 8
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_bias/protocol.20200901-20200930.json",
+      "sha256": "d010d80d801b6f9faab2db909e741ec847ace1c6583d3bde1c8477b148d21b62",
+      "passed": true,
+      "figure_count": 90
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_site_timeseries/protocol.20200901-20200930.json",
+      "sha256": "20c7a978f2531bbe388012979ee378c00ca6d5a0eea02d9d53caf68f3f52e5e0",
+      "passed": true,
+      "figure_count": 20
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/evaluation_summary/protocol.20200901-20200930.json",
+      "sha256": "b2df124599c35bae2e8e280011da10dc7f8b5cc2dbb6b1ccea6e63512cbf476c",
+      "passed": true,
+      "figure_count": 10
+    }
+  ],
+  "inspection_contact_sheets": [
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_001.20200901-20200930.png",
+      "sha256": "1aa085133fe183d8bd08cb685e7e07c91672797557a71dfbb80254dbeb9dcef6",
+      "figures": [
+        "region_canada",
+        "region_east_asia",
+        "region_eastern_us",
+        "region_global",
+        "region_india",
+        "region_labor_day_2020_smoke",
+        "region_middle_east",
+        "region_north_africa",
+        "region_north_atlantic_ocean",
+        "region_north_indian_ocean",
+        "region_south_america",
+        "region_south_atlantic_ocean"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_002.20200901-20200930.png",
+      "sha256": "af825fe9b6785b5c0493d6a0e5d6acb05a030ea2021ba3fa66daed23d91c7013",
+      "figures": [
+        "region_southern_africa",
+        "region_southern_ocean",
+        "region_western_us",
+        "grid_global",
+        "grid_regions",
+        "l2_global",
+        "l2_regions",
+        "l2_stream_aqua_db",
+        "l2_stream_aqua_dt",
+        "l2_stream_terra_db",
+        "l2_stream_terra_dt",
+        "grid_canada_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_003.20200901-20200930.png",
+      "sha256": "1052104ffdd343fb0d2e9e3124e2efb576a1d7d77db7eef7a81aefef25578307",
+      "figures": [
+        "grid_canada_r",
+        "grid_canada_rmse",
+        "grid_east_asia_mb",
+        "grid_east_asia_r",
+        "grid_east_asia_rmse",
+        "grid_eastern_us_mb",
+        "grid_eastern_us_r",
+        "grid_eastern_us_rmse",
+        "grid_global_mb",
+        "grid_global_r",
+        "grid_global_rmse",
+        "grid_india_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_004.20200901-20200930.png",
+      "sha256": "823b7fcdb2a1452bfb9b80c876e44e23b30b9a7d4949e81589af57d856cc2f69",
+      "figures": [
+        "grid_india_r",
+        "grid_india_rmse",
+        "grid_labor_day_2020_smoke_mb",
+        "grid_labor_day_2020_smoke_r",
+        "grid_labor_day_2020_smoke_rmse",
+        "grid_middle_east_mb",
+        "grid_middle_east_r",
+        "grid_middle_east_rmse",
+        "grid_north_africa_mb",
+        "grid_north_africa_r",
+        "grid_north_africa_rmse",
+        "grid_north_atlantic_ocean_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_005.20200901-20200930.png",
+      "sha256": "6d9b38746fc67960400ce607acbc4ae9f2a012f9fd0818130dfaa684104b9a83",
+      "figures": [
+        "grid_north_atlantic_ocean_r",
+        "grid_north_atlantic_ocean_rmse",
+        "grid_north_indian_ocean_mb",
+        "grid_north_indian_ocean_r",
+        "grid_north_indian_ocean_rmse",
+        "grid_south_america_mb",
+        "grid_south_america_r",
+        "grid_south_america_rmse",
+        "grid_south_atlantic_ocean_mb",
+        "grid_south_atlantic_ocean_r",
+        "grid_south_atlantic_ocean_rmse",
+        "grid_southern_africa_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_006.20200901-20200930.png",
+      "sha256": "fb330b479b685ada243ef285ddc53a8410a8d4ed79bead00aca9754607fdea14",
+      "figures": [
+        "grid_southern_africa_r",
+        "grid_southern_africa_rmse",
+        "grid_southern_ocean_mb",
+        "grid_southern_ocean_r",
+        "grid_southern_ocean_rmse",
+        "grid_western_us_mb",
+        "grid_western_us_r",
+        "grid_western_us_rmse",
+        "l2_canada_mb",
+        "l2_canada_r",
+        "l2_canada_rmse",
+        "l2_east_asia_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_007.20200901-20200930.png",
+      "sha256": "b913bff3e8d0bc526c857685f85cdde7332e22db4e8aad3ddcf3cafaeacc93f7",
+      "figures": [
+        "l2_east_asia_r",
+        "l2_east_asia_rmse",
+        "l2_eastern_us_mb",
+        "l2_eastern_us_r",
+        "l2_eastern_us_rmse",
+        "l2_global_mb",
+        "l2_global_r",
+        "l2_global_rmse",
+        "l2_india_mb",
+        "l2_india_r",
+        "l2_india_rmse",
+        "l2_labor_day_2020_smoke_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_008.20200901-20200930.png",
+      "sha256": "7c31fe7fdd80af9efa68a25172e99d506e6eb6545e71ee3ecbb2c1b36fcc8565",
+      "figures": [
+        "l2_labor_day_2020_smoke_r",
+        "l2_labor_day_2020_smoke_rmse",
+        "l2_middle_east_mb",
+        "l2_middle_east_r",
+        "l2_middle_east_rmse",
+        "l2_north_africa_mb",
+        "l2_north_africa_r",
+        "l2_north_africa_rmse",
+        "l2_north_atlantic_ocean_mb",
+        "l2_north_atlantic_ocean_r",
+        "l2_north_atlantic_ocean_rmse",
+        "l2_north_indian_ocean_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_009.20200901-20200930.png",
+      "sha256": "2ec7626bba1f5e9fd1dfe5b7e1b3522f456d7aa4a13a971a217f225fedfbb3c5",
+      "figures": [
+        "l2_north_indian_ocean_r",
+        "l2_north_indian_ocean_rmse",
+        "l2_south_america_mb",
+        "l2_south_america_r",
+        "l2_south_america_rmse",
+        "l2_south_atlantic_ocean_mb",
+        "l2_south_atlantic_ocean_r",
+        "l2_south_atlantic_ocean_rmse",
+        "l2_southern_africa_mb",
+        "l2_southern_africa_r",
+        "l2_southern_africa_rmse",
+        "l2_southern_ocean_mb"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_010.20200901-20200930.png",
+      "sha256": "d81785e135f38e6d2f5b4af6e0de61dc22eda335cf578fe02c64908ec2db01cc",
+      "figures": [
+        "l2_southern_ocean_r",
+        "l2_southern_ocean_rmse",
+        "l2_western_us_mb",
+        "l2_western_us_r",
+        "l2_western_us_rmse",
+        "site_AgiaMarina_Xyliatou",
+        "site_Birdsville",
+        "site_CUT-TEPAK",
+        "site_Fowlers_Gap",
+        "site_Gobabeb",
+        "site_HESS",
+        "site_KAUST_Campus"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_011.20200901-20200930.png",
+      "sha256": "5fbb50973b07b7494d1a0b13ddc5a45c00a11973c8c2e7a04f0f33d0bb21c603",
+      "figures": [
+        "site_Kuwait_University",
+        "site_Lake_Argyle",
+        "site_Learmonth",
+        "site_Lubango",
+        "site_Masdar_Institute",
+        "site_Mezaira",
+        "site_Migal",
+        "site_Mongu_Inn",
+        "site_Pretoria_CSIR-EC",
+        "site_SEDE_BOKER",
+        "site_Tamanrasset_INM",
+        "site_Trelew"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/modis_l2_202009_gls_rho05/aeronet_inspection/contact_012.20200901-20200930.png",
+      "sha256": "3b6b0182fd21a18d5f2edff6b4de04f61a4c9be5fcbe08de8d281d2db50ba9ec",
+      "figures": [
+        "site_Weizmann_Institute",
+        "grid_binned_bias",
+        "grid_regional_box",
+        "grid_scorecard",
+        "grid_taylor",
+        "grid_z",
+        "l2_binned_bias",
+        "l2_regional_box",
+        "l2_scorecard",
+        "l2_taylor",
+        "l2_z"
+      ],
+      "visual_inspection": "passed"
+    }
+  ],
+  "plot_config_sha256": "9ec864a8a10103dca363900a6f6acad04a684eef2133658c0c220c92460ec3dd"
+}

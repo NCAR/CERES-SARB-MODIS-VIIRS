@@ -15,6 +15,7 @@ from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Literal, cast
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -344,6 +345,11 @@ def regional_figure(config: RunConfig, region: str, inputs: SuiteInputs) -> Figu
         pd.Timestamp(config.period.start) - pd.Timedelta(hours=2),
         pd.Timestamp(config.period.end) + pd.Timedelta(days=1),
     )
+    # Calendar-aligned ticks can put September 29 beside October 1. Uniform
+    # intervals avoid a crowded final tick when the configured month ends.
+    locator = mdates.AutoDateLocator(minticks=4, maxticks=8, interval_multiples=False)
+    axis.xaxis.set_major_locator(locator)
+    axis.xaxis.set_major_formatter(mdates.AutoDateFormatter(locator))
     metadata["full_regional_daily"] = full
     return figure
 

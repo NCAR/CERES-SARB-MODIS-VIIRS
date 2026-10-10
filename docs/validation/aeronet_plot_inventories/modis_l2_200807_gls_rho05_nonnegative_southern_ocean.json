@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "run": "modis_l2_200807_gls_rho05_nonnegative",
+  "config": "config/runs/modis_l2_200807_gls_rho05_nonnegative.yaml",
+  "period": {
+    "start": "2008-07-01",
+    "end": "2008-07-31"
+  },
+  "pairing": "default",
+  "levels": [
+    "grid"
+  ],
+  "config_sha256": "a9769649be7db7b9e96ebb12d52510cb0a00cf801f02d24ad70955c47c6c272c",
+  "processing_sha256": "471308312d5f7377be78656613c9d62db0af2937a77ee60fa82555ea4b04b919",
+  "plot_selection": {
+    "suites": [
+      "aeronet_regional_timeseries"
+    ],
+    "regions": [
+      "southern_ocean"
+    ],
+    "sites": null,
+    "global_context": true
+  },
+  "acceptance_scope": "Figure protocol and visual inspection only; scientific gates are reported separately.",
+  "status": "accepted",
+  "figure_count": 2,
+  "suite_count": 1,
+  "suite_figure_counts": {
+    "aeronet_regional_timeseries": 2
+  },
+  "visual_inspection_count": 2,
+  "inspection_method": "Full-size inspection of every PNG; dates, legends, curves, sampling gaps, and regional labels checked.",
+  "inspection_conventions": [
+    "Scatter compares satellite and AERONET: quantity-only AOD title and source names on axes follow DAVINCI CLAUDE.md lines 813-823.",
+    "Southern Ocean is the region south of 40 degrees S, including land and islands; it is not an ocean-only surface mask."
+  ],
+  "matchup_inputs": [
+    {
+      "path": "{data_root}/evaluation/modis_l2_200807_gls_rho05_nonnegative/matchups_grid_default_20080701_20080731.nc",
+      "sha256": "77f66fa44e304be354e55473ac945e62cba97a89d1b93a7e75d65998acceacec"
+    }
+  ],
+  "comparison_matchup_inputs": [],
+  "figures": [
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_global",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/region_global.20080701-20080731.pdf",
+        "sha256": "913da8dcaaa7ba4b2e80d0cd5560497b03799dd5931147d9a626647bc58871b4"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/region_global.20080701-20080731.png",
+        "sha256": "08605680ebe090abba22491100e8e95beb07b3203c1006743a7fa9dc304e07ed"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/region_global.20080701-20080731.protocol.json",
+        "sha256": "a323c60260413c6e762ff191f4e480a7abe1fdea7f614fb76c583f1820e30b71"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    },
+    {
+      "suite": "aeronet_regional_timeseries",
+      "name": "region_southern_ocean",
+      "pdf": {
+        "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/region_southern_ocean.20080701-20080731.pdf",
+        "sha256": "c78e5efead14326542a839e98a664675eb660fb73741929c195ef01867004f57"
+      },
+      "png": {
+        "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/region_southern_ocean.20080701-20080731.png",
+        "sha256": "0884fc6b62b6fcefd61d56e95bed8c1bb85df38d835f800637bcf05d9fb3d25e"
+      },
+      "protocol": {
+        "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/region_southern_ocean.20080701-20080731.protocol.json",
+        "sha256": "aab9fb3c7eb97e697dc9bea5f30fd86c6113ec386e92519702930862ad2d86ac"
+      },
+      "protocol_passed": true,
+      "visual_inspection": "passed"
+    }
+  ],
+  "suite_protocols": [
+    {
+      "path": "{data_root}/plots/modis_l2_200807_gls_rho05_nonnegative/aeronet_regional_timeseries/protocol.20080701-20080731.json",
+      "sha256": "6cd1a5c7d04974b450e5f3d1ffb93988a4d2718a537f004a53a9c712484d1b8c",
+      "passed": true,
+      "figure_count": 2
+    }
+  ],
+  "inspection_contact_sheets": [],
+  "inspection_utc": "2026-10-10T21:41:01.572243+00:00"
+}
