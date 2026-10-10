@@ -39,6 +39,11 @@ OUTPUT_FIELDS = frozenset(
 )
 
 
+AERONET_FIELDS = frozenset(
+    {"data_root", "product", "avg", "year", "month", "day", "doy", "yyyymmdd"}
+)
+
+
 def template_fields(template: str) -> set[str]:
     """Return the placeholder names used in a ``str.format`` template."""
     return {field for _, field, _, _ in string.Formatter().parse(template) if field}
@@ -185,6 +190,11 @@ DEFAULT_MANIFEST = (
 DEFAULT_OUTPUT = "{data_root}/CAM7/{stem}/{run}/{year}/{month}/{day}/{stem}.{yyyymmdd}.{sssss}.nc"
 
 
+DEFAULT_AERONET = (
+    "{data_root}/AERONET/{product}/{year}/{month}/{day}/" "AERONET_{product}_{avg}_{yyyymmdd}.csv"
+)
+
+
 class PathsConfig(StrictModel):
     """Machine-specific locations. Templates are Python ``str.format`` strings."""
 
@@ -200,6 +210,20 @@ class PathsConfig(StrictModel):
         return _check_template(
             value, frozenset({"data_root", "run", "stem", "start", "end"}), "paths.summary"
         )
+
+    aeronet: str = DEFAULT_AERONET
+
+    @field_validator("aeronet")
+    @classmethod
+    def _aeronet_fields(cls, value: str) -> str:
+        _check_template(value, AERONET_FIELDS, "paths.aeronet")
+        fields = template_fields(value)
+        dated = (
+            "yyyymmdd" in fields or {"year", "month", "day"} <= fields or {"year", "doy"} <= fields
+        )
+        if not {"product", "avg"} <= fields or not dated:
+            raise ValueError("paths.aeronet must include {product}, {avg}, and a complete date")
+        return value
 
     @field_validator("output")
     @classmethod
@@ -367,11 +391,26 @@ class OutputConfig(StrictModel):
 
 
 class AeronetConfig(StrictModel):
-    """AERONET spectral conversion and reference uncertainty."""
+    """Direct-sun acquisition, spectral conversion, and reference uncertainty."""
 
+    product: Literal["AOD10", "AOD15", "AOD20"] = "AOD20"
+    avg: Literal["all_points", "daily"] = "all_points"
+    min_interval_s: float = Field(default=6.0, ge=6.0, allow_inf_nan=False)
+    retries: int = Field(default=3, ge=0, strict=True)
+    sites: list[str] | None = None
     spectral: Literal["quadratic_loglog", "angstrom_500"] = "quadratic_loglog"
     include_extrapolated: bool = True
     instrument_sigma: float = Field(default=0.01, gt=0, allow_inf_nan=False)
+
+    @field_validator("sites")
+    @classmethod
+    def _site_names(cls, value: list[str] | None) -> list[str] | None:
+        if value is not None:
+            if not value or any(not name.strip() or name != name.strip() for name in value):
+                raise ValueError("aeronet.sites must contain nonempty, trimmed site identifiers")
+            if len(value) != len(set(value)):
+                raise ValueError("aeronet.sites contains duplicate identifiers")
+        return value
 
 
 class RunConfig(StrictModel):

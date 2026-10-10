@@ -107,3 +107,19 @@ def cam_namelist(config: RunConfig) -> dict[str, str]:
     if len(template) > 80 or expanded_length >= 256:
         raise ValueError("CAM output template exceeds 80 characters or full path reaches 256")
     return {"aod_obs_path": prefix, "aod_obs_template": template}
+
+
+def aeronet_path(config: RunConfig, day: date) -> Path:
+    """Daily all-site AERONET cache, partitioned by quality level and averaging."""
+    return Path(
+        config.paths.aeronet.format(
+            data_root=str(config.paths.data_root),
+            product=config.aeronet.product,
+            avg="ALLPOINTS" if config.aeronet.avg == "all_points" else "DAILY",
+            year=f"{day:%Y}",
+            month=f"{day:%m}",
+            day=f"{day:%d}",
+            doy=f"{day:%j}",
+            yyyymmdd=f"{day:%Y%m%d}",
+        )
+    )

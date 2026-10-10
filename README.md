@@ -111,3 +111,16 @@ window-center time, f09 bounds, per-stream counts/means, uncertainty and QC diag
 `show-config` prints CAM's `aod_obs_path` (with the required trailing slash) and
 `aod_obs_template`. Summaries use `paths.summary`; their period mean is area-weighted
 across count-weighted cell means. Summarization rejects stale processing definitions.
+
+## AERONET caches
+
+```bash
+sarb-aod aeronet stage -c config/runs/modis_l2_200807.yaml
+sarb-aod aeronet audit -c config/runs/modis_l2_200807.yaml
+```
+
+Daily all-site responses are cached under `paths.aeronet`, checked structurally before
+atomic replacement, and paired with checksum manifests. Requests use the following
+midnight as their end bound and are paced at least six seconds apart. Selected sites
+are validated against AERONET's catalog and filtered on reading, so site subsets share
+the cache. L2 collocation needs an extra cached day before and after the study period.

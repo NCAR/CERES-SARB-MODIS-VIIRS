@@ -16,6 +16,9 @@ from sarb_aod.stage.runner import stage as stage_granules
 
 app = typer.Typer(no_args_is_help=True, add_completion=False, help=__doc__)
 
+aeronet_app = typer.Typer(no_args_is_help=True, help="Acquire and audit AERONET direct-sun caches.")
+app.add_typer(aeronet_app, name="aeronet")
+
 ConfigOpt = typer.Option(..., "--config", "-c", exists=True, dir_okay=False, help="Run config YAML")
 ProfileOpt = typer.Option(None, "--profile", "-p", help="Machine profile name or YAML path")
 
@@ -154,6 +157,46 @@ def summarize_command(config: Path = ConfigOpt, profile: Optional[str] = Profile
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     typer.echo(f"{path}: period AOD mean={rows[-1]['area_mean']:.6f}, p99.9={rows[-1]['p999']:.6f}")
+
+
+@aeronet_app.command("stage")
+def aeronet_stage(
+    config: Path = ConfigOpt,
+    profile: Optional[str] = ProfileOpt,
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Inspect caches and report requests only"
+    ),
+) -> None:
+    """Download complete UTC days, with resume checks and service pacing."""
+    from sarb_aod.aeronet.fetch import AeronetFetchError
+    from sarb_aod.aeronet.fetch import stage as stage_aeronet
+
+    cfg = _load(config, profile)
+    try:
+        summary = stage_aeronet(cfg, dry_run=dry_run)
+    except AeronetFetchError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(
+        f"AERONET {cfg.aeronet.product}: days={summary.days} present={summary.already_present} "
+        f"downloaded={summary.downloaded} empty={summary.empty} rows={summary.rows} "
+        f"failed={len(summary.failed)}"
+    )
+    for problem in summary.failed[:20]:
+        typer.echo(f"  {problem}", err=True)
+    raise typer.Exit(1 if summary.failed else 0)
+
+
+@aeronet_app.command("audit")
+def aeronet_audit(config: Path = ConfigOpt, profile: Optional[str] = ProfileOpt) -> None:
+    """Check every configured day's cache and checksum manifest without network."""
+    from sarb_aod.aeronet.fetch import audit as audit_aeronet
+
+    results = audit_aeronet(_load(config, profile))
+    for result in results:
+        status = f"{result.rows} rows OK" if result.problem is None else result.problem
+        typer.echo(f"AERONET {result.day}: {status}")
+    raise typer.Exit(1 if any(result.problem is not None for result in results) else 0)
 
 
 if __name__ == "__main__":

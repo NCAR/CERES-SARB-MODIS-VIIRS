@@ -68,9 +68,9 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.4 | MODIS HDF4 reader (+ generic NetCDF reader core) | 1.1, 1.2, 1.3, 1.5 | Done | 5853522 |
 | 1.7 | Weighting (GLS, count) | 1.6 | Done | 3862a2e |
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Done | bb40c69, fb1af85 |
-| 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Done | Task 1.9 (this commit) |
+| 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Done | 83979d9 |
 | 3.4 | Regions | — | Done | 9433481 |
-| 3.1 | AERONET fetcher | — | Not started | |
+| 3.1 | AERONET fetcher | — | Done | Task 3.1 (this commit) |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
 | 3.3 | Metrics, grouped statistics | — | Not started | |
 | 4.1 | Style, labeling, display tables | — | Not started | |
@@ -1225,6 +1225,12 @@ network access to LAADS and AERONET.
   catalog recipes; evaluation/plot settings do not invalidate gridded values.
   Review findings about catalog changes and downstream provenance are fixed.
   Fifteen pipeline tests and repository gates pass.
+
+- Task 3.1: 21 offline fetch tests plus the live GSFC full-day request pass.
+  Caches are all-site, atomically published after structural validation, with per-day
+  checksum manifests; site filters do not collide. Pacing covers retries and catalog
+  lookups. July/September acquisition (with boundary days) is running in detached
+  `sarb-aeronet`; its completion/audit belongs to Task 3.7. Repository gates and review pass.
 
 ## Open items and risks
 
