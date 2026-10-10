@@ -39,6 +39,10 @@ Test periods:
   variance, uncertainty inflated by the Birge ratio when streams disagree. ρ is a config
   parameter (ρ = 0 → pure inverse-variance). Also provide **simple count weighting with no
   uncertainty** (CAM7 `prepare_modis_era5_grid.py` behavior).
+- **No monetio dependency.** AERONET is fetched straight from the AERONET Web Service v3
+  (URL and CSV rules re-implemented from what DAVINCI's `AERONETReader` delegates to
+  monetio). The validation suite ports DAVINCI's metrics, grouped-statistics calculator,
+  output formatter, `PointStrategy` matching and `AEROSOL_REGIONS` (plan Phase 3).
 - **QA defaults follow the retrieval teams' recommendations** (verified 2026-10-10), with a
   `cam7_v2` preset (QA≥1 everywhere, `Effective_Optical_Depth_Best_Ocean`) for regression
   against CAM7 products:
@@ -151,6 +155,25 @@ Borrow from these; do not modify them from this repo's tasks.
   unarchived data-prep pipeline (daily averaging, a `VIIRS_corrected` intermediate); it is
   seed material only.
 
+## Plotting rules (DAVINCI practice; details in plan Phase 4)
+
+- All text goes through `sarb_aod/plots/labeling.py` (ported from DAVINCI). Titles are terse:
+  the quantity plus an operation word only when it changes meaning; single-source titles put
+  the source first (`MODIS AOD`). Never put dates, statistics, `vs <source>`, raw variable
+  names, internal labels (phase/task, `gls`, `rho`, `cam7_v2`) or `x`/`y` in titles. Dates go in
+  the subtitle (`YYYY-MM-DD – YYYY-MM-DD`), maps add ` | Mean: <area-weighted mean>`.
+- Absolute AOD maps: `geosit_aod_levels()` (0.05 bins to a 1.0 cap plus 0.005/0.01/0.02/0.03/0.04),
+  `turbo`, `BoundaryNorm`, `extend="max"`. Differences/biases: `RdBu_r`, robust symmetric
+  limits, `TwoSlopeNorm` at 0, colorbar `bias_label` (`<Y> − <X>`, U+2212).
+- Rasterize dense filled layers (pcolormesh, contourf, fill_between, large scatters); keep
+  text, axes, colorbars and contour lines vector.
+- Global PlateCarree maps by default; coastlines and solid gridlines; no political borders.
+- PDF deliverables with PNG previews; dates/configuration in filenames, not titles. A suite is
+  accepted only after its protocol report passes and its previews are visually inspected.
+
 ## Git workflow
 
 - Develop strictly on `main`. Do not create branches or worktrees unless explicitly instructed.
+- When a plan task or phase is complete, tested and reviewed, commit it on `main` and push to
+  `origin/main` right away (one commit per task, `Task N.M: <summary>`), updating the plan's
+  Status table in the same commit. See "Workflow" in `docs/IMPLEMENTATION_PLAN.md`.
