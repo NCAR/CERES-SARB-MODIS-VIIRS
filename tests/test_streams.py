@@ -41,6 +41,10 @@ def test_every_catalog_collection_has_resolvable_or_explicitly_unsupported_reade
         "terra_db",
         "aqua_dt",
         "aqua_db",
+        "snpp_db",
+        "snpp_db",
+        "noaa20_db",
+        "noaa20_db",
     ]
 
 

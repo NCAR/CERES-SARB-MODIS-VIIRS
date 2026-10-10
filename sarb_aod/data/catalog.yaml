@@ -70,16 +70,38 @@ products:
     provider: LAADS
     stream_prefix: snpp
     collections:
-      "2": {cmr_version: "2", file_token: "002", file_format: netcdf4}
-      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+      "2": &viirs_db_v2
+        cmr_version: "2"
+        file_token: "002"
+        file_format: netcdf4
+        geolocation: &viirs_db_geo
+          {lat: Latitude, lon: Longitude, time: Scan_Start_Time, time_kind: tai93}
+        algorithms: &viirs_db_algorithms
+          db:
+            family: viirs_db
+            surfaces:
+              land:
+                aod: {name: Aerosol_Optical_Thickness_550_Land}
+                qa: {name: Aerosol_Optical_Thickness_QA_Flag_Land}
+                sigma: {name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land}
+              ocean:
+                aod: {name: Aerosol_Optical_Thickness_550_Ocean}
+                qa: {name: Aerosol_Optical_Thickness_QA_Flag_Ocean}
+                sigma: {name: Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean}
+      "2.1": &viirs_db_v21
+        cmr_version: "2.1"
+        file_token: "021"
+        file_format: netcdf4
+        geolocation: *viirs_db_geo
+        algorithms: *viirs_db_algorithms
   AERDB_L2_VIIRS_NOAA20:
     platform: NOAA-20
     instrument: VIIRS
     provider: LAADS
     stream_prefix: noaa20
     collections:
-      "2": {cmr_version: "2", file_token: "002", file_format: netcdf4}
-      "2.1": {cmr_version: "2.1", file_token: "021", file_format: netcdf4}
+      "2": *viirs_db_v2
+      "2.1": *viirs_db_v21
   AERDT_L2_VIIRS_SNPP:
     platform: SNPP
     instrument: VIIRS

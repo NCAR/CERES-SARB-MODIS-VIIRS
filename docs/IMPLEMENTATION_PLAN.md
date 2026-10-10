@@ -46,7 +46,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 |---|---|---|
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done** (code; Task 0.1). Data: July 2008 MODIS C6.1 staged and audited (9,518/9,518). Sept 2020 staging runs detached in `screen -S sarb-stage`; it is complete when `~/Data/logs/sarb-aod/stage_modis_viirs_l2_202009.log` ends with `=== audit exit 0 ===`. Never kill or restart that session while it runs; a re-run resumes. |
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | In progress |
-| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Not started; real-data steps wait for the Sept 2020 staging |
+| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | In progress; full-period verification waits for the Sept 2020 staging |
 | 3 | AERONET validation suite; choose ρ and other defaults | In progress |
 | 4 | Plotting and diagnostics (DAVINCI style) | Not started |
 | 5 | Production profile (AMI), multi-year runs | Blocked: AMI details from the user |
@@ -70,7 +70,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 1.8 | CAM7 contract writer/validator, output paths | 1.5, 1.7 | Done | bb40c69, fb1af85 |
 | 1.9 | Pipeline, run-config sections, CLI | 1.4, 1.6, 1.7, 1.8 | Done | 83979d9 |
 | 3.4 | Regions | — | Done | 9433481 |
-| 3.1 | AERONET fetcher | — | Done | Task 3.1 (this commit) |
+| 3.1 | AERONET fetcher | — | Done | 1388a75 |
 | 3.2 | AERONET parser, 550 nm conversion | — (fixtures) | Done | ed2acd5 |
 | 3.3 | Metrics, grouped statistics | — | Not started | |
 | 4.1 | Style, labeling, display tables | — | Not started | |
@@ -82,7 +82,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Not started | |
 | 4.5b | AERONET suites | 4.5a, 3.5 | Not started | |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Not started | |
-| 2.1 | VIIRS Deep Blue reader | 1.4 | Not started | |
+| 2.1 | VIIRS Deep Blue reader | 1.4 | Done | Task 2.1 (this commit) |
 | 2.2 | VIIRS Dark Target reader | 1.4 | Not started | |
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Not started | |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Not started | |
@@ -1231,6 +1231,12 @@ network access to LAADS and AERONET.
   checksum manifests; site filters do not collide. Pacing covers retries and catalog
   lookups. July/September acquisition (with boundary days) is running in detached
   `sarb-aeronet`; its completion/audit belongs to Task 3.7. Repository gates and review pass.
+
+- Task 2.1: shared VIIRS DB v2/v2.1 maps pass synthetic fill/overlap/uncertainty
+  tests and six real preset/version checks. SNPP 2020-09-08 20:24 yields 55,748
+  retrieval-team pixels; cam7_v2 yields 60,293 land + 14,125 ocean - 300 overlaps
+  = 74,118. NOAA-20 v2/v2.1 both yield 34,110 default pixels in the checked granule.
+  Full-month science verification remains Task 2.4. Repository gates and review pass.
 
 ## Open items and risks
 
