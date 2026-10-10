@@ -75,8 +75,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 3.3 | Metrics, grouped statistics | — | Done | 28a15bc |
 | 4.1 | Style, labeling, display tables | — | Done | 9a4b2c4 |
 | 4.2 | Map renderers | 4.1, 1.5, 3.4 | Done | c471097 |
-| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | Task 4.3 (this commit) |
-| 4.4 | Plot protocol | 4.2, 4.3 | In progress | |
+| 4.3 | Series, scatter, summary renderers | 4.1, 3.3 | Done | 8ff4cba |
+| 4.4 | Plot protocol | 4.2, 4.3 | Done | Task 4.4 (this commit) |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | In progress | |
 | 1.10 | July 2008 verification | 1.9, 4.5a | In progress | |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
@@ -1273,6 +1273,13 @@ network access to LAADS and AERONET.
   cover binned bias, z, rho, scorecards, Taylor and regional boxes. Analytic
   renderer tests and the protocol pass; previews for all nine figure types and
   scatter panels were visually inspected. Review and repository gates pass.
+
+- Task 4.4: every figure is drawn and audited for titles, display names,
+  text/legend layout, dense rasterization, vector line contours/axes/colorbars,
+  field norms and shared AOD levels/ticks. Failure reports are written before
+  raising. Eighty-three positive/negative protocol tests cover every rule and
+  all renderer families, including real cached coastlines. Full repository gates
+  and review pass; new suite integration is tested separately.
 
 ## Open items and risks
 
