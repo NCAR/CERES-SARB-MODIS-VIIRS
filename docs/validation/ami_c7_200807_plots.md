@@ -3,7 +3,7 @@
 Generated on 2026-10-11 on AMI's interactive node
 `la2520-hn-grid-ami01-pi.cluster.net`, without a scheduler job. The rendering
 code was initially commit `557a1c0`; the monthly spatial figure was refreshed
-with commit `131cb29` as described below. The plot selection is recorded in the
+with commit `56a7642` as described below. The plot selection is recorded in the
 [July C7 run config](../../config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05.yaml).
 The underlying 248 grids are the [completed AMI operational run](ami_c7_200807.md).
 
@@ -27,9 +27,9 @@ The files were copied with `scp` to the same run subdirectory beneath
   suite protocol reports pass. All 15 previews were visually inspected for
   labels, layout, curves, bands, coastlines and inset placement.
 
-The 15 PDFs now total 2,237,692 bytes. All 47 delivered files (PDFs, PNGs and
+The 15 PDFs now total 2,238,688 bytes. All 47 delivered files (PDFs, PNGs and
 protocol reports) matched AMI by SHA-256 and byte count after transfer;
-their total size is 4,568,940 bytes. The
+their total size is 4,572,714 bytes. The
 [PDF inventory](ami_c7_200807_plots.tsv) records individual sizes and hashes.
 The daily matchup NetCDF, CSV tables and evaluation JSON were also copied
 to `~/Data/evaluation/modis_c7_l2_200807_f09_3hr_gls_rho05/`.
@@ -39,10 +39,12 @@ to `~/Data/evaluation/modis_c7_l2_200807_f09_3hr_gls_rho05/`.
 Task 4.11 first refreshed the monthly maps with `d2c94b5`; Task 4.13
 regenerated both using plotting commit `b49a0ff`. Task 4.15 refreshed both
 on 2026-10-11 with the title alignment and DAVINCI attribution from `131cb29`.
+Task 4.21 refreshed both with `56a7642`, integrating the bold DAVINCI
+attribution, narrowing the colorbar and adding the wavelength.
 The C6.1 plot was rendered on the laptop; AMI
 fast-forward pulled the same code and regenerated C7 interactively. Both
-aggregate maps now align with the top row and read `MODIS C6.1 AOD` or
-`MODIS C7 AOD`. The lower-left cell records grid creation dates/revisions,
+aggregate maps now align with the top row and read `MODIS C6.1 AOD 550 nm` or
+`MODIS C7 AOD 550 nm`. The lower-left cell records grid creation dates/revisions,
 plot creation date/revision, weighting and QA preset, configured L2 directory
 templates, the grid output template and canonical PDF destination. Full
 timestamps, actual grid filenames and QC configuration are embedded in PDF
@@ -52,8 +54,9 @@ The latest panel starts with the clickable repository URL aligned with the
 Aqua map titles, followed by a bold Provenance heading. Bold labels sit above
 indented values; shared L2 roots are grouped and paths wrap at directory
 boundaries, retaining complete names. `Time Windows: 248 × 3 Hours` states
-both count and duration. The exact DAVINCI name and expansion requested by the
-user are centered above the shared colorbar. Full runtime/configuration inventories are reserved for new
+both count and duration. The bold, wrapped DAVINCI name and expansion end
+the same provenance text block. The colorbar spans only the center/right
+retrieval columns, beneath their maps. Every spatial AOD title includes 550 nm. Full runtime/configuration inventories are reserved for new
 NetCDF outputs; see [NetCDF provenance](../PROVENANCE.md).
 
 The C7 PDF, PNG and protocol files were copied again from AMI; all 47 C7
@@ -64,24 +67,24 @@ the laptop Desktop:
 
 | Desktop filename | Bytes | SHA-256 |
 |---|---:|---|
-| `MODIS_C6.1_AOD_Monthly_Mean_2008-07.pdf` | 516012 | `63ef9e4c2627a9fdaef692b79a3981798bf290666fcad0dfc0c6f0c4447c3b35` |
-| `MODIS_C7_AOD_Monthly_Mean_2008-07.pdf` | 530349 | `ec14a5bb319b866725374946084249808ffa87252725767fd6fafadb90634552` |
+| `MODIS_C6.1_AOD_Monthly_Mean_2008-07.pdf` | 516584 | `b22cb56b65ac6a0789718ced8298eda6985e597edd20bbe067550a462c8f4f4c` |
+| `MODIS_C7_AOD_Monthly_Mean_2008-07.pdf` | 531345 | `18c7b3ee414a880cc80958c24a19ae6c2da5a735cc8f56bc0432a38590c9ff05` |
 
 The C6.1 canonical file is
 `~/Data/plots/modis_l2_200807_gls_rho05/aod_maps/mean_aod.20080701-20080731.pdf`;
 C7 retains the `monthly_mean/` location documented above.
 
-The final code passes 943 offline tests, mypy, Black and isort. Review findings
-were fixed: reused L2 matchups retain source history separately and refresh
-target provenance, while shallow regional maps keep enough space for readable
-type. Regional time-series artifacts retain their original hashes.
+The final code passes 952 offline tests, mypy, Black and isort. The review
+found a South Atlantic spatial provenance clipping case with three processing
+revisions; page padding fixes it and a regression verifies the repair.
+No review findings remain open. Regional time-series artifacts retain their original hashes.
 
 AMI also passed a diskless NetCDF metadata write/read check at `b49a0ff`.
 It recorded Red Hat Enterprise Linux 9.8 (Plow), Python 3.13.14, 154 Python
 package records and 354 Conda build records, with the original run/profile
 YAML snapshots and clean producing revision. This verified metadata support
 without rewriting the July grids. The current C7 plotting configuration hash
-is `5cb1ae8276b2835c29af95602554d2dde5e5854a291435edb98f4a5c95720da5`;
+is `203c9bee88ccf6d32899f68f239edf75a97700746b0184e40fb337a451f26071`;
 its scientific processing hash remains unchanged.
 
 ## Daily comparison result
@@ -161,4 +164,4 @@ config hash `23777f17aee6c2dbb2559e47d2eedc1e7811e121a1434453ae704ebc52969945`.
 The processing hash remains
 `f0656a6c81d3dceb02c5353bdd69bf119d817600417fe66167ff52e7a67c2991`;
 no gridding or scientific settings changed. The initial 933-test gate passed;
-the expanded 943-test gate for the latest code is recorded above.
+the expanded 952-test gate for the latest code is recorded above.

@@ -106,7 +106,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.17 | Render and deliver reviewed July C6.1 regional summaries on the laptop | 4.16 | Done; 14 PDFs, protocol and visual checks pass, Desktop copies match | Task 4.17 (this commit) |
 | 4.18 | Compact regional layout, provenance explanations, grey cities and DAVINCI footer | 4.17 | Done; 951 offline tests and all plot protocols pass; reviewed | `957622c` |
 | 4.19 | Refresh compact July C6.1 regional PDFs on Desktop | 4.18 | Done; 14 protocols, inspected previews and Desktop checksums pass | Task 4.19 (this commit) |
-| 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | Task 4.20 (this commit) |
+| 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | `56a7642` |
+| 4.21 | Refresh Desktop regional and spatial PDFs with integrated attribution and 550 nm labels | 4.20 | Done; protocols, previews, embedded revisions and copy checks pass | Task 4.21 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1581,7 +1582,12 @@ network access to LAADS and AERONET.
   passes afterward, alongside the shallow-region readability checks.
   The final full gate passes all 952 offline tests; type/format checks pass
   and no review findings remain open.
-  Delivery follows the code commit so PDF provenance records clean code.
+  Task 4.21 regenerated both monthly spatial plots and all 14 C6.1 regional
+  summaries at clean revision `56a7642`. C7 ran interactively on AMI
+  after a fast-forward pull; all 47 C7 artifacts match the laptop by size and
+  SHA-256. The updated PDFs are on Desktop. Final spatial/Western US previews
+  were inspected, and all protocols and embedded revisions pass. The delivery
+  reports and inventories record the new sizes and hashes.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.
