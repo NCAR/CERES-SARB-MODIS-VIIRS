@@ -97,7 +97,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | Done; operational acceptance | Task 5.3 (this commit) |
 | 4.9 | AMI July C7 monthly map and regional daily PDFs | 4.8, 5.3 | Done; plots accepted, science gate open | Task 4.9 (this commit) |
 | 4.10 | Collection titles and provenance panel in period-mean maps | 4.7, 4.9 | Done | Task 4.10 (this commit) |
-| 4.11 | Refresh July C6.1/C7 monthly PDFs and deliver to Desktop | 4.10 | In progress | |
+| 4.11 | Refresh July C6.1/C7 monthly PDFs and deliver to Desktop | 4.10 | Done; protocol, visual and transfer checks pass | Task 4.11 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1474,8 +1474,11 @@ network access to LAADS and AERONET.
   offline tests, mypy, Black and isort pass. Review caught a QA-override
   provenance omission: the panel now marks overrides and PDF metadata keeps
   the full QC configuration and processing hash; a regression verifies it.
-  Final regeneration with the
-  committed plotting revision and Desktop delivery is Task 4.11.
+  All 936 tests pass after the fix. Task 4.11 regenerated C6.1 on the laptop
+  and C7 on AMI with plotting commit `d2c94b5`, inspected both previews,
+  verified protocols and transfer hashes, and placed both PDFs on the Desktop
+  with collection-specific filenames. Details and hashes are in
+  `docs/validation/ami_c7_200807_plots.md`.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.

@@ -2,7 +2,8 @@
 
 Generated on 2026-10-11 on AMI's interactive node
 `la2520-hn-grid-ami01-pi.cluster.net`, without a scheduler job. The rendering
-code was commit `557a1c0`; the plot selection is now recorded in the
+code was initially commit `557a1c0`; the monthly spatial figure was refreshed
+with commit `d2c94b5` as described below. The plot selection is recorded in the
 [July C7 run config](../../config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05.yaml).
 The underlying 248 grids are the [completed AMI operational run](ami_c7_200807.md).
 
@@ -26,12 +27,44 @@ The files were copied with `scp` to the same run subdirectory beneath
   suite protocol reports pass. All 15 previews were visually inspected for
   labels, layout, curves, bands, coastlines and inset placement.
 
-The 15 PDFs total 2,162,189 bytes. All 47 delivered files (PDFs, PNGs and
+The 15 PDFs now total 2,221,123 bytes. All 47 delivered files (PDFs, PNGs and
 protocol reports) matched AMI by SHA-256 and byte count after transfer;
-their total size is 4,458,508 bytes. The
+their total size is 4,540,992 bytes. The
 [PDF inventory](ami_c7_200807_plots.tsv) records individual sizes and hashes.
 The daily matchup NetCDF, CSV tables and evaluation JSON were also copied
 to `~/Data/evaluation/modis_c7_l2_200807_f09_3hr_gls_rho05/`.
+
+### Collection titles, provenance panel and Desktop refresh
+
+Task 4.11 regenerated the C6.1 and C7 monthly maps on 2026-10-11 using
+plotting commit `d2c94b5`. The C6.1 plot was rendered on the laptop; AMI
+fast-forward pulled the same code and regenerated C7 interactively. Both
+aggregate maps now align with the top row and read `MODIS C6.1 AOD` or
+`MODIS C7 AOD`. The lower-left cell records grid creation dates/revisions,
+plot creation date/revision, weighting and QA preset, configured L2 directory
+templates, the grid output template and canonical PDF destination. Full
+timestamps, actual grid filenames and QC configuration are embedded in PDF
+Keywords. The gridded data and scientific settings were unchanged.
+
+The C7 PDF, PNG and protocol files were copied again from AMI; all 47 C7
+artifacts were checked by byte count and SHA-256 against AMI. Both revised
+previews were visually inspected and passed the plotting protocol. Canonical
+copies remain in each run's plot directory; identical PDFs were placed on
+the laptop Desktop:
+
+| Desktop filename | Bytes | SHA-256 |
+|---|---:|---|
+| `MODIS_C6.1_AOD_Monthly_Mean_2008-07.pdf` | 494581 | `14de6db275def9513a973f8b14338b686b7e0d9d0e6a4960678d5ae0747e2c79` |
+| `MODIS_C7_AOD_Monthly_Mean_2008-07.pdf` | 513780 | `106d6ff53cb8f94608c99bfb03b3e23f064d35571e6199c14d21c714e686b59f` |
+
+The C6.1 canonical file is
+`~/Data/plots/modis_l2_200807_gls_rho05/aod_maps/mean_aod.20080701-20080731.pdf`;
+C7 retains the `monthly_mean/` location documented above.
+
+The final code passes 936 offline tests, mypy, Black and isort. Review's QA
+override finding was fixed: the panel marks overrides and full QC settings
+are retained in metadata. Regional time-series artifacts retain their
+original hashes.
 
 ## Daily comparison result
 
