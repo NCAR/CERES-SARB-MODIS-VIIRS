@@ -451,8 +451,16 @@ def test_monthly_collection_title_layout_and_recorded_provenance(
     np.testing.assert_allclose(axes[0].get_position().bounds[1:], axes[1].get_position().bounds[1:])
     assert panel.get_text() == "Provenance"
     assert panel.get_fontweight() == "bold"
-    np.testing.assert_allclose(panel.get_window_extent().y1, axes[3].get_window_extent().y1)
+    colorbar = metadata["colorbars"][0]
+    tagline = next(text for text in colorbar.ax.texts if text.get_text().startswith("DAVINCI"))
+    assert tagline.get_text() == (
+        "DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry"
+    )
+    assert tagline.get_window_extent().y0 > colorbar.ax.get_window_extent().y1
     repository_text = metadata["provenance_text"][-1]
+    np.testing.assert_allclose(
+        repository_text.get_window_extent().y1, axes[3].title.get_window_extent().y1
+    )
     assert repository_text.get_text() == "https://github.com/NCAR/CERES-SARB-MODIS-VIIRS"
     assert repository_text.get_url() == repository_text.get_text()
     assert repository_text.get_window_extent().y0 > panel.get_window_extent().y1

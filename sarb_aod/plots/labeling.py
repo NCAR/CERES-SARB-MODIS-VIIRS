@@ -31,6 +31,11 @@ if TYPE_CHECKING:
 _DIMENSIONLESS = {"", "1", "none", "dimensionless", "unitless", "fraction"}
 
 
+def davinci_tagline() -> str:
+    """Attribution above the shared colorbar in period-mean spatial figures."""
+    return "DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry"
+
+
 def format_units(units: str | None) -> str:
     """Rewrite a raw unit string to negative-exponent SI LaTeX (D3).
 

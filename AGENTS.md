@@ -268,9 +268,10 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     Blue columns. MODIS aggregate titles include the collection (C6.1 or C7). The lower-left
     cell holds provenance: recorded grid creation dates and processing revisions, plot date
     and revision, weighting/QA, configured L2 path templates, grid paths and PDF destination.
-    Align the bold Provenance heading with the top border of the map to its right. Use bold
+    Align the first line of the provenance block with the title of the map to its right. Use bold
     entry labels above indented values; wrap paths only at directory boundaries, preserving
     complete directory names and filenames. Leave clear space above the shared colorbar.
+    Above that bar, center `DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry`.
     Put the clickable repository URL above Provenance. Label the count and duration as
     `Time Windows: 248 × 3 Hours` (values from the run). Keep the PDF concise; detailed
     runtime, environment, config snapshots and development-agent metadata belong in NetCDF.

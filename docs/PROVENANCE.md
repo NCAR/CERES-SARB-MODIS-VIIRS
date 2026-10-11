@@ -87,5 +87,7 @@ The monthly PDF panel stays selective: repository link, creation dates, method,
 grid and time-window count/duration, code revisions and source/output locations.
 Runtime inventories and YAML contents stay in NetCDF rather than crowding the
 panel. PDF Keywords retain the figure's existing detailed input/provenance record.
-Global maps align the heading to the neighboring map border; regional maps use
-the full reserved cell so shallow latitude bands do not force tiny text.
+Global maps align the block's first line to the neighboring map title; regional maps use
+the full reserved cell so shallow latitude bands do not force tiny text. The
+DAVINCI name and expansion sit above the shared colorbar with a clear gap from
+the provenance entries.

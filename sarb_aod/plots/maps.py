@@ -621,8 +621,30 @@ def map_panels(
         plot_type=plot_type,
     )
     if provenance is not None and arranged is not None:
+        tagline = colorbar.ax.text(
+            0.5,
+            1,
+            labeling.davinci_tagline(),
+            transform=colorbar.ax.transAxes + ScaledTranslation(0, 8 / 72, figure.dpi_scale_trans),
+            ha="center",
+            va="bottom",
+            fontsize=10,
+        )
         panel = arranged["provenance"]
         panel.set_axis_off()
+        url = labeling.provenance_repository_url(provenance)
+        repository_text = panel.text(
+            0,
+            1,
+            url,
+            ha="left",
+            va="bottom",
+            fontsize=8,
+            color="#365f80",
+            url=url,
+            parse_math=False,
+        )
+        repository_text.set_in_layout(False)
         panel_position = panel.get_subplotspec()
         assert panel_position is not None  # subplot_mosaic always supplies a spec
         neighbor = next(
@@ -635,22 +657,34 @@ def map_panels(
             ),
             panel,
         )
-        # Global maps align to the neighboring map border, even during PDF
+        # Global maps align the block's first line (the repository URL) to
+        # the neighboring map title, even during PDF
         # draws. Regional maps use the whole cell: a narrow latitude band's
         # aspect must not force the metadata into an unreadably short block.
-        top_padding = 24 if neighbor is panel else 0
-        anchor = blended_transform_factory(panel.transAxes, neighbor.transAxes) + ScaledTranslation(
-            0, -top_padding / 72, figure.dpi_scale_trans
-        )
         figure.canvas.draw()
         renderer = figure.canvas.get_renderer()  # type: ignore[attr-defined]
+        title_offset = (
+            -24
+            if neighbor is panel
+            else (
+                neighbor.title.get_window_extent(renderer).y1
+                - neighbor.get_window_extent().y1
+                - repository_text.get_window_extent(renderer).height
+            )
+            * 72
+            / figure.dpi
+            - 6
+        )
+        anchor = blended_transform_factory(panel.transAxes, neighbor.transAxes) + ScaledTranslation(
+            0, title_offset / 72, figure.dpi_scale_trans
+        )
         available = panel.get_window_extent(renderer)
         bottom = available.y0
         if panel_position.rowspan.stop == rows:
             # The final row has unused space above the shared colorbar. Use it
-            # for readable metadata while leaving a clear gap above the bar.
-            bottom = colorbar.ax.get_window_extent(renderer).y1 + 12 * figure.dpi / 72
-        height = neighbor.get_window_extent(renderer).y1 - top_padding * figure.dpi / 72 - bottom
+            # for readable metadata, leaving a clear gap above the attribution.
+            bottom = tagline.get_window_extent(renderer).y1 + 12 * figure.dpi / 72
+        height = neighbor.get_window_extent(renderer).y1 + title_offset * figure.dpi / 72 - bottom
         entries = []
         offset = 0.0
         widest = 0.0
@@ -690,20 +724,7 @@ def map_panels(
                 offset += 2 * scale_factor
             text.set_transform(anchor + ScaledTranslation(0, -offset / 72, figure.dpi_scale_trans))
             offset += text.get_window_extent(renderer).height * 72 / figure.dpi + 0.5
-        url = labeling.provenance_repository_url(provenance)
-        repository_text = panel.text(
-            0,
-            1,
-            url,
-            transform=anchor + ScaledTranslation(0, 6 / 72, figure.dpi_scale_trans),
-            ha="left",
-            va="bottom",
-            fontsize=8,
-            color="#365f80",
-            url=url,
-            parse_math=False,
-        )
-        repository_text.set_in_layout(False)
+        repository_text.set_transform(anchor + ScaledTranslation(0, 6 / 72, figure.dpi_scale_trans))
         metadata = getattr(figure, "_sarb_plot_metadata")
         metadata.update(
             provenance=provenance,
