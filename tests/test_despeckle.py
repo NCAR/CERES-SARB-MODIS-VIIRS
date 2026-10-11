@@ -5,10 +5,27 @@ import math
 import numpy as np
 import pytest
 from pydantic import ValidationError
+from test_combine import _one_cell
 
 from sarb_aod.config.loader import load_config
 from sarb_aod.config.schema import DespeckleConfig
-from sarb_aod.despeckle import EARTH_RADIUS_KM, cell_areas, neighborhoods
+from sarb_aod.despeckle import (
+    DONORS_MISSING,
+    EARTH_RADIUS_KM,
+    FLAG_FILL,
+    ISOLATED,
+    REPLACED,
+    SPIKE_MASKED,
+    Neighborhoods,
+    NeighborRow,
+    SourceFilter,
+    cell_areas,
+    combine_filtered,
+    filter_source,
+    neighborhoods,
+    weighted_median,
+)
+from sarb_aod.grid.combine import combine
 from sarb_aod.grid.spec import load_grid
 from sarb_aod.pipeline import processing_sha256
 
@@ -114,3 +131,182 @@ def test_disabled_retains_existing_hash_and_enabled_definition_changes():
     assert processing_sha256(enabled) != processing_sha256(base)
     changed = enabled.model_copy(update={"despeckle": settings(radius_km=100)})
     assert processing_sha256(enabled) != processing_sha256(changed)
+
+
+def ring_geometry(n, areas=None):
+    return Neighborhoods(
+        (1, n),
+        (NeighborRow(np.zeros(n - 1, dtype=int), np.arange(1, n)),),
+        np.ones((1, n)) if areas is None else np.asarray(areas)[None, :],
+    )
+
+
+def ring_settings(**kwargs):
+    return settings(min_valid_neighbors=3, **kwargs)
+
+
+def test_weighted_median_lower_tie_and_unequal_areas():
+    assert weighted_median(np.array([3.0, 1.0, 2.0, 4.0]), np.ones(4)) == 2
+    assert weighted_median(np.array([1.0, 2.0, 3.0]), np.array([1.0, 1.0, 8.0])) == 3
+
+
+def test_isolated_high_is_masked_but_low_and_original_missing_are_preserved():
+    x = np.array([[2.0, 0.1, -999.0, np.nan, -0.05]])
+    original = x.copy()
+    result = filter_source(x, ring_geometry(5), ring_settings())
+    np.testing.assert_array_equal(result.flag, [[ISOLATED, 0, FLAG_FILL, FLAG_FILL, 0]])
+    np.testing.assert_array_equal(result.mean, [[-999.0, 0.1, -999.0, -999.0, -0.05]])
+    assert result.neighbor_count[0, 0] == 2
+    assert result.support_fraction[0, 0] == 0.5
+    np.testing.assert_array_equal(x, original)
+
+
+def test_spike_replacement_uses_area_mean_excludes_center_and_retains_counts():
+    x = np.array([[2.0, 0.05, 0.1, 0.15, 0.2]])
+    area = np.array([50.0, 1.0, 2.0, 3.0, 4.0])
+    result = filter_source(x, ring_geometry(5, area), ring_settings())
+    assert result.flag[0, 0] == REPLACED
+    assert result.mean[0, 0] == pytest.approx(np.average(x[0, 1:], weights=area[1:]))
+    assert result.neighbor_count[0, 0] == result.donor_count[0, 0] == 4
+    assert result.donor_fraction[0, 0] == 1
+    np.testing.assert_array_equal(result.mean[0, 1:], x[0, 1:])
+
+
+@pytest.mark.parametrize("action", ["neighbor_mean", "mask"])
+def test_spike_actions_zero_mad_and_original_donors_only(action):
+    x = np.array([[5.0, 6.0, 0.1, 0.1, 0.1, 0.1]])
+    cfg = ring_settings(spike={"action": action})
+    result = filter_source(x, ring_geometry(6), cfg)
+    assert np.all(result.flag[0, :2] == (REPLACED if action == "neighbor_mean" else SPIKE_MASKED))
+    assert np.all(result.mean[0, :2] == (0.1 if action == "neighbor_mean" else -999))
+    if action == "neighbor_mean":
+        assert np.all(result.donor_count[0, :2] == 4)
+        assert np.all(result.donor_fraction[0, :2] == 0.8)
+    rotated = filter_source(np.roll(x, 2, axis=1), ring_geometry(6), cfg)
+    np.testing.assert_array_equal(rotated.mean, np.roll(result.mean, 2, axis=1))
+
+
+@pytest.mark.parametrize(
+    "x,fraction", [([5.0, 6.0, 0.1, 0.1], 0.2), ([5.0, 6.0, 0.1, 0.1, 0.1, 0.1], 0.9)]
+)
+def test_replacements_without_enough_unflagged_donors_become_missing(x, fraction):
+    result = filter_source(
+        np.array([x]), ring_geometry(len(x)), ring_settings(min_valid_area_fraction=fraction)
+    )
+    np.testing.assert_array_equal(result.flag[0, :2], [DONORS_MISSING] * 2)
+    assert np.all(result.mean[0, :2] == -999)
+
+
+def test_uniform_high_gradient_and_disabled_are_unchanged():
+    for x in (np.ones((1, 6)), np.array([[0.1, 0.2, 0.3, 0.4, 0.5, 0.6]])):
+        result = filter_source(x, ring_geometry(6), ring_settings())
+        np.testing.assert_array_equal(result.mean, x)
+        assert not result.flag.any()
+    x = np.array([[5.0, 0.1, 0.1, 0.1]])
+    result = filter_source(x, ring_geometry(4), DespeckleConfig())
+    np.testing.assert_array_equal(result.mean, x)
+    assert not result.flag.any()
+
+
+def test_spike_strict_excess_threshold_and_disabled_spike():
+    x = np.array([[0.5, 0.25, 0.25, 0.25]])
+    exact = filter_source(x, ring_geometry(4), ring_settings(spike={"min_excess": 0.25}))
+    assert exact.flag[0, 0] == 0
+    result = filter_source(x * 4, ring_geometry(4), ring_settings(spike={"enabled": False}))
+    np.testing.assert_array_equal(result.mean, x * 4)
+
+
+def test_latitude_bands_preserve_outside_targets_and_use_outside_donors():
+    grid = load_grid()
+    cfg = DespeckleConfig(enabled=True, latitude_bands=((grid.lat[170], grid.lat[171]),))
+    geo = neighborhoods(grid, cfg)
+    values = np.full(grid.shape, 0.1)
+    values[170, 0] = 5
+    values[169, 140] = 5  # Outside: never altered despite local spike.
+    result = filter_source(values, geo, cfg)
+    assert result.flag[170, 0] == REPLACED
+    assert result.mean[170, 0] == pytest.approx(0.1)
+    assert result.flag[169, 140] == 0 and result.mean[169, 140] == 5
+    empty = filter_source(np.full(grid.shape, -999.0), geo, cfg)
+    assert np.all(empty.flag == FLAG_FILL) and np.all(empty.mean == -999)
+
+
+def planted_filter(value, action):
+    x = np.array([[[value]]])
+    return SourceFilter(
+        x,
+        np.full(x.shape, action, dtype=np.int8),
+        np.full(x.shape, -999.0),
+        np.full(x.shape, -1),
+        np.full(x.shape, -1),
+        np.full(x.shape, -999.0),
+    )
+
+
+@pytest.mark.parametrize("method", ["count", "gls"])
+def test_frozen_source_combination_and_changed_sigma(method):
+    acc = _one_cell(([2.0, 2.0], [0.2, 0.2]), ([0.1], [0.1]))
+    base = combine(acc, method=method, rho=0.5)
+    before = base.mean.copy()
+    first = planted_filter(0.2, REPLACED)
+    second = planted_filter(0.1, 0)
+    filtered = combine_filtered(base, [first, second])
+    weights = base.stream_weight.ravel()
+    expected_weights = (
+        [2, 1] if method == "count" else [1 / (0.5 * 0.2**2 + 0.5 / (2 / 0.2**2)), 100]
+    )
+    np.testing.assert_allclose(weights, expected_weights)
+    assert filtered.mean.item() == pytest.approx(np.average([0.2, 0.1], weights=expected_weights))
+    assert filtered.sigma.item() == -999 and filtered.flags.item() == 2
+    masked = combine_filtered(base, [planted_filter(-999, ISOLATED), second])
+    assert masked.mean.item() == pytest.approx(0.1) and masked.flags.item() == 1
+    assert (
+        combine_filtered(base, [planted_filter(-999, ISOLATED), second], min_pixels=2).mean.item()
+        == -999
+    )
+    np.testing.assert_array_equal(base.mean, before)
+
+
+def test_combination_noop_missing_sources_and_no_resurrection():
+    base = combine(_one_cell(([0.1], [0.1]), ([0.2], [np.nan])))
+    result = combine_filtered(base, [planted_filter(0.1, 0), planted_filter(-999, FLAG_FILL)])
+    np.testing.assert_array_equal(result.mean, base.mean)
+    np.testing.assert_array_equal(result.sigma, base.sigma)
+    assert result.flags.item() == 0
+    missing = combine(_one_cell(([0.1], [0.1])), min_pixels=2)
+    assert combine_filtered(missing, [planted_filter(0.3, REPLACED)]).mean.item() == -999
+    empty = combine(_one_cell(([0.1], [0.1])), stream_indices=[])
+    assert combine_filtered(empty, []).mean.item() == -999
+
+
+def test_broad_plume_interior_survives_and_thin_plume_risk_is_visible():
+    grid = load_grid()
+    cfg = settings()
+    geo = neighborhoods(grid, cfg)
+    broad = np.full(grid.shape, 0.1)
+    broad[165:175, 20:50] = 2.0
+    result = filter_source(broad, geo, cfg)
+    assert result.flag[170, 35] == 0 and result.mean[170, 35] == 2
+    thin = np.full(grid.shape, 0.1)
+    thin[170, 20:50] = 2.0
+    narrow = filter_source(thin, geo, cfg)
+    # The robust-spike rule cannot distinguish a thin real plume from artifacts.
+    # Keep this limitation explicit; baseline data must remain untouched.
+    assert np.any(narrow.flag[170, 20:50] == REPLACED)
+    assert np.all(thin[170, 20:50] == 2)
+
+
+@pytest.mark.parametrize("layout", ["C", "F", "strided"])
+def test_filter_handles_memory_layout_without_losing_output_writes(layout):
+    x = np.full((2, 1, 8), 0.1)
+    x[:, 0, 2] = 5
+    if layout == "strided":
+        x = x[:, :, ::2]
+    else:
+        x = np.array(x, order=layout)
+    original = x.copy()
+    filtered = filter_source(x, ring_geometry(x.shape[-1]), ring_settings())
+    spikes = x == 5
+    assert np.all(filtered.flag[spikes] == REPLACED)
+    np.testing.assert_allclose(filtered.mean[spikes], 0.1)
+    np.testing.assert_array_equal(x, original)

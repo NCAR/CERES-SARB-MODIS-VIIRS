@@ -1,8 +1,8 @@
 # Spatial despeckling: July 2008 MODIS C6.1 laptop trial
 
 Status: **implementation in progress**. Requested 2026-10-11. Task 6.1 implements
-configuration and geographic neighborhoods; filtering, output integration and
-the experiment remain pending. Tasks and
+configuration and geographic neighborhoods; Task 6.2 implements the pure filter
+and experimental source combination. Output integration and the experiment remain pending. Tasks and
 commits are tracked in [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md), Phase 6.
 
 ## Objective and scope
@@ -93,8 +93,8 @@ For each source, use its estimable three-hour gridded AOD before final CAM clipp
 A missing estimate or failed existing minimum-count requirement is never a candidate
 for filling. Treat missing values as missing, never as zero AOD.
 
-Use a shared helper in `grid/combine.py` to expose the original per-source
-combination coefficients without changing baseline arithmetic:
+Expose the existing per-source combination coefficients through `CombinedGrid.stream_weight`
+in `grid/combine.py`, without changing baseline arithmetic:
 
 - Count mode: source coefficient is its accepted pixel count N.
 - GLS mode: source coefficient is 1/V, using the existing within-source variance

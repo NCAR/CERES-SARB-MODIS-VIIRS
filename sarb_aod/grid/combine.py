@@ -25,7 +25,8 @@ class CombinedGrid:
 
     ``stream_mean`` and ``stream_count`` retain a stream axis at position 1,
     ordered by ``stream_indices``. Means are deliberately not clipped at zero;
-    clipping belongs to the output writer.
+    clipping belongs to the output writer. ``stream_weight`` exposes the original
+    source coefficients (N for count, 1/V for GLS), zero for inestimable means.
 
     ``count`` is zero wherever no product can be estimated, including cells
     below ``min_pixels`` and GLS cells with no usable sigma. In contrast,
@@ -41,6 +42,7 @@ class CombinedGrid:
     chi2_per_dof: np.ndarray
     stream_mean: np.ndarray
     stream_count: np.ndarray
+    stream_weight: np.ndarray
     stream_indices: tuple[int, ...]
     count_negative: np.ndarray
     count_sigma_missing: np.ndarray
@@ -105,6 +107,7 @@ def combine(
     enough_pixels = n_total >= min_pixels
 
     if method == "count":
+        weights = n.astype(np.float64)
         sum_x = acc.sum_x[:, selection]
         total_x = sum_x.sum(axis=1)
         total_x2 = acc.sum_x2[:, selection].sum(axis=1)
@@ -167,6 +170,7 @@ def combine(
         chi2_per_dof=chi2_per_dof,
         stream_mean=stream_mean,
         stream_count=n.copy(),
+        stream_weight=np.where(np.isfinite(stream_mean) & (stream_mean > -900), weights, 0),
         stream_indices=indices,
         count_negative=acc.n_neg[:, selection].sum(axis=1, dtype=np.int64),
         count_sigma_missing=acc.n_sigma_missing[:, selection].sum(axis=1, dtype=np.int64),

@@ -117,8 +117,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; array 5034005 submitted, first four days successful; monthly completion pending | Task 5.6 (this commit) |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
-| 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | Task 6.1 (this commit) |
-| 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Planned | |
+| 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
+| 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Done | Task 6.2 (this commit) |
 | 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Planned | |
 | 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Planned | |
 | 6.5 | July 2008 C6.1 laptop trial and scientific assessment | 6.4 | Planned | |
@@ -1690,6 +1690,18 @@ raises a clear error rather than silently writing unfiltered-only output.
 Validation: 1,009 offline tests, mypy, Black/isort and whitespace checks pass;
 review found no actionable defects (its localhost socket fixture is sandbox-blocked,
 but passed in the full primary gate).
+
+Task 6.2 implements source-wise original-field isolation and weighted-MAD spike
+classification, simultaneous original-donor replacement, insufficient-support
+masking, and frozen-coefficient source combination. The existing combiner exposes
+its already-computed coefficients without reordering baseline mathematics.
+Altered combinations have unavailable uncertainty; unchanged combinations are
+copied exactly. A planted thin-plume case explicitly demonstrates possible real
+feature loss, while broad plume interiors are retained. Pipeline integration is
+still Task 6.3; the experimental feature remains disabled in existing configs.
+Validation: 1,026 offline tests, mypy, Black/isort and whitespace checks pass.
+Review identified lost writes on Fortran-ordered arrays; normalizing array layout
+fixes it, with C/Fortran/strided regression cases. No review findings remain open.
 
 ## Open items and risks
 
