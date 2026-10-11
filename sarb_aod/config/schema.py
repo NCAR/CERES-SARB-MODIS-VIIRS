@@ -342,6 +342,7 @@ class GridConfig(StrictModel):
     source: str = "f09"
     times_per_day: Literal[8] = 8
     edge_granules: bool = False
+    missing_products: Literal["error", "fill"] = "error"
     streams: dict[str, StreamSelection] = Field(default_factory=dict)
 
     @field_validator("source")

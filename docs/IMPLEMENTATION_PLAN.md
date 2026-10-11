@@ -113,10 +113,12 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | `56a7642` |
 | 4.21 | Refresh Desktop regional and spatial PDFs with integrated attribution and 550 nm labels | 4.20 | Done; protocols, previews, embedded revisions and copy checks pass | Task 4.21 (this commit) |
 | 4.22 | Compact single-platform DT/DB monthly maps and September NOAA-20 plot config | 4.21, 5.6 | Done | `65f556d` |
-| 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
+| 5.4 | Multi-year production | 5.3, selected periods and science settings | April 2000–March 2022 C7 campaign authorized; Tasks 5.8/5.9 | |
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; all 30 tasks succeeded, 240 files validated | `90e4bab`; completion recorded in Task 5.7 |
 | 5.7 | Verify September NOAA-20 completion and deliver AMI spatial/regional PDFs | 5.6, 4.22 | Done; 240 grids validated, 16 plots accepted and two Desktop PDFs delivered; science bias gate fails | Task 5.7 (this commit) |
+| 5.8 | Explicit gap outputs and 22 tracked April–March MODIS C7 configs | 5.3, 5.7 | Done; 1,071 offline tests pass, review findings fixed | Task 5.8 (this commit) |
+| 5.9 | Deploy and queue 22 yearly MODIS C7 AMI tasks | 5.8 | Pending deployment | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
@@ -1849,3 +1851,30 @@ defects after checking artifact hashes, statistics, gates, processing hashes and
 reproduction imports.
 Global daily RMSE 0.05735 and R 0.92737 pass, but bias −0.04035 fails the 0.03
 absolute-bias limit; Western US and smoke-event biases remain science findings.
+
+## Annual AMI MODIS C7 campaign (2026-10-11)
+
+User direction activates April 2000–March 2022 C7 Terra/Aqua DT+DB gridding in
+22 April–March jobs. Every yearly config explicitly disables despeckling and
+retains Seiji's native combined diagnostic. A shared run name gives one continuous
+64,280-file tree. Missing products contribute zero observations; all-missing days
+still write eight valid files with missing flags. The default stays strict, and
+its historical processing fingerprints remain compatible. Gap provenance and
+monthly metrics expose absent products, and resume rebuilds a gap day if its
+product has arrived.
+
+A bounded directory inventory finds 38 days without either product directory.
+July AMI timings project to 6.5–7.5 hours/year, so use `scf.q` with a 12-hour
+limit and four concurrent serial tasks. The short queue cannot fit a year.
+Projected output is about 330 GiB against 1,027.4 GiB shared free space at the
+check. See `docs/AMI_MODIS_C7_CAMPAIGN.md` for configs, inventory, estimates and
+submission/recovery instructions. Task 5.9 records job IDs after deployment.
+
+Task 5.8 validation: 1,071 offline tests pass (one network test deselected),
+as do mypy, Black, isort, Bash syntax and whitespace checks. Review's interrupted
+gap-rebuild finding was fixed by comparing all eight windows' gap provenance;
+its reproduction and the new regression pass. Directory permission/I/O failures
+propagate rather than becoming gaps. The optional HDF4 test import was moved
+inside its test: all nine gap tests pass with HDF4, and simulated absence gives
+one C7 pass/eight skips without breaking collection. No review findings remain.
+The July C7 and September NOAA-20 legacy processing hashes are unchanged.

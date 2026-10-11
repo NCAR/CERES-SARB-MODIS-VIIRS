@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+from fnmatch import fnmatchcase
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -39,6 +41,7 @@ class DayResult:
     source_granule_count: int = 0
     pixel_counts: dict[str, dict[str, int]] = field(default_factory=dict)
     error: str | None = None
+    missing_products: list[str] = field(default_factory=list)
 
 
 def config_sha256(config: RunConfig) -> str:
@@ -57,6 +60,9 @@ def processing_sha256(config: RunConfig) -> str:
         key: getattr(config, key).model_dump(mode="json")
         for key in ("grid", "qc", "uncertainty", "weighting", "time", "output")
     }
+    # Preserve existing strict-mode fingerprints when introducing gap handling.
+    if config.grid.missing_products == "error":
+        definition["grid"].pop("missing_products")
     # Identity defaults preserve resume compatibility with pre-correction runs.
     corrections = active_corrections(config.aod_correction)
     if corrections:
@@ -124,13 +130,17 @@ def stream_recipes(config: RunConfig) -> list[StreamRecipe]:
 
 def _granules(directory: Path, file_format: str, pattern: str = "*") -> list[Path]:
     suffixes = {".hdf"} if file_format == "hdf4" else {".nc", ".nc4", ".h5", ".hdf5"}
-    if not directory.is_dir():
+    try:
+        with os.scandir(directory) as entries:
+            return sorted(
+                Path(entry.path)
+                for entry in entries
+                if fnmatchcase(entry.name, pattern)
+                and Path(entry.name).suffix.lower() in suffixes
+                and entry.is_file()
+            )
+    except FileNotFoundError:
         return []
-    return sorted(
-        path
-        for path in directory.glob(pattern)
-        if path.is_file() and path.suffix.lower() in suffixes
-    )
 
 
 def discover_granules(
@@ -151,7 +161,12 @@ def discover_granules(
             granule_pattern(config.paths, catalog, product, collection, day),
         )
         if not files:
-            raise ValueError(f"no primary granules for {product} {collection} {day}: {directory}")
+            if config.grid.missing_products == "error":
+                raise ValueError(
+                    f"no primary granules for {product} {collection} {day}: {directory}"
+                )
+            # A missing day contributes no observations, including edge granules.
+            continue
         primary_count += len(files)
         inputs.extend((path, selected) for path in files)
         if config.grid.edge_granules:
@@ -227,6 +242,7 @@ def _provenance(
 
 def _already_complete(config: RunConfig, files: list[Path], day: date) -> bool:
     expected = processing_sha256(config)
+    missing: list[str] = []
     for index, path in enumerate(files):
         if not path.is_file() or not validate_contract_file(path)[0]:
             return False
@@ -235,6 +251,23 @@ def _already_complete(config: RunConfig, files: list[Path], day: date) -> bool:
                 return False
             if float(dataset["time"][...]) != cf_hours(window_bounds(day, index)[2]):
                 return False
+            if index == 0:
+                missing = json.loads(getattr(dataset, "primary_products_missing", "[]"))
+            elif json.loads(getattr(dataset, "primary_products_missing", "[]")) != missing:
+                # An interrupted rebuild can leave a mix of gap and fresh windows.
+                return False
+    # A previously absent product may have arrived since the last run.
+    # Rebuild gap outputs instead of permanently resuming their fill values.
+    catalog = config.load_catalog()
+    for product in missing:
+        selected = next(s for s in config.grid.streams.values() if s.product == product)
+        collection = catalog.collection(product, selected.collection)
+        if _granules(
+            granule_dir(config.paths, catalog, product, selected.collection, day),
+            collection.file_format,
+            granule_pattern(config.paths, catalog, product, selected.collection, day),
+        ):
+            return False
     return True
 
 
@@ -245,11 +278,13 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
     recipes = stream_recipes(config)
     files = [output_path(config, window_bounds(day, i)[0]) for i in range(8)]
     if not overwrite and _already_complete(config, files, day):
-        return DayResult(day=day, files=files, skipped=True)
+        with netCDF4.Dataset(files[0]) as dataset:
+            missing_products = json.loads(getattr(dataset, "primary_products_missing", "[]"))
+        return DayResult(day=day, files=files, skipped=True, missing_products=missing_products)
     grid = load_grid(config.grid.source)
     inputs, missing, primary_count = discover_granules(config, day, recipes)
-    if not primary_count:
-        raise ValueError(f"no primary granules for {day}")
+    present = {recipe.product for _, selected in inputs for recipe in selected}
+    missing_products = sorted({recipe.product for recipe in recipes} - present)
     a = Accumulators.create(len(recipes))
     native = Accumulators.create(3) if config.combined_product.enabled else None
     indices = {r.stream_id: i for i, r in enumerate(recipes)}
@@ -323,6 +358,8 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
                 min_pixels=config.weighting.min_pixels,
             )
     attrs = _provenance(config, recipes, len(inputs), missing)
+    attrs["primary_products_missing"] = json.dumps(missing_products)
+    attrs["primary_granule_count"] = primary_count
     if native is not None:
         attrs["combined_product_config"] = config.combined_product.model_dump_json()
         attrs["combined_product_aggregation"] = (
@@ -369,6 +406,7 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
         files=files,
         source_granule_count=len(inputs),
         pixel_counts={s: dict(c) for s, c in counts.items()},
+        missing_products=missing_products,
     )
 
 

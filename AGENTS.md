@@ -74,6 +74,11 @@ At session start, also check the repo root for cross-model handoff files (`HANDO
   (down to −0.05); the earlier MODIS-only statement was corrected by a complete September 8
   scan (`docs/validation/sept2020_negative_aod.tsv`). No negative DT ocean or DB AOD was found
   in that scan. Keep values ≥ −0.05 in averages and clip the final cell mean at 0 for CAM.
+- **Data gaps** (user direction, 2026-10-11): annual AMI C7 production sets
+  `grid.missing_products: fill`. Use available satellites; if none have data, still write
+  all eight files with missing AOD flags and zero counts. Record missing products in NetCDF
+  provenance and monthly metrics. Defaults remain strict (`error`) for other runs.
+  The April 2000–March 2022 campaign explicitly sets `despeckle.enabled: false`.
 - **Time:** TAI93 → UTC subtracts leap seconds (6 s in 2008, 10 s from 2017). VIIRS DT has no
   per-pixel time; it is derived from the `time_coverage_*` attributes.
 - **Per-source AOD correction** (user request, 2026-10-11): `aod_correction` maps

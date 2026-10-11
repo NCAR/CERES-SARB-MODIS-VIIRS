@@ -75,6 +75,7 @@ class MonthResult:
             "processed_days": self.processed_days,
             "resumed_days": self.resumed_days,
             "failed_days": sum(day.error is not None for day in self.days),
+            "days_with_missing_products": sum(bool(day.missing_products) for day in self.days),
             "source_granules_processed": self.source_granules,
             "granules_per_second": (
                 self.source_granules / self.gridding_seconds
@@ -97,6 +98,7 @@ class MonthResult:
                     files=len(day.files),
                     source_granules=day.source_granule_count,
                     error=day.error,
+                    missing_products=day.missing_products,
                 )
                 for day in self.days
             ],

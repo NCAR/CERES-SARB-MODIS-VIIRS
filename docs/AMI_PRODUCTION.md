@@ -1,5 +1,8 @@
 # AMI production and portable monthly driver
 
+The authorized [April 2000–March 2022 MODIS C7 campaign](AMI_MODIS_C7_CAMPAIGN.md)
+uses 22 annual jobs, explicit missing-data outputs and no despeckling.
+
 ## July 2008 C7 deployment
 
 The production root is `/CERES/sarb/dfillmor/MODIS_VIIRS`. The tracked
