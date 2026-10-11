@@ -13,7 +13,7 @@ import pandas as pd
 from cartopy.io import shapereader
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from matplotlib.transforms import Bbox, ScaledTranslation
+from matplotlib.transforms import Bbox, ScaledTranslation, blended_transform_factory
 
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import REPOSITORY_URL, git_commit
@@ -86,6 +86,7 @@ def _label_cities(axis: Any, candidates: pd.DataFrame, limit: int) -> pd.DataFra
             textcoords="offset points",
             fontsize=8,
             color="black",
+            zorder=8,
             clip_on=True,
             bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.8, "pad": 0.2},
         )
@@ -193,7 +194,7 @@ def _draw_map(
                 [],
                 marker="o",
                 linestyle="none",
-                color="black",
+                color="0.7",
                 markersize=np.sqrt(20),
                 label=labeling.title_text("Major Cities"),
             )
@@ -201,7 +202,7 @@ def _draw_map(
     axis.legend(
         handles=handles,
         loc="upper center",
-        bbox_to_anchor=(0.5, -0.13),
+        bbox_to_anchor=(0.5, -0.08),
         ncols=2,
         fontsize=8,
         frameon=False,
@@ -217,7 +218,7 @@ def _draw_map(
             city_frame.latitude,
             transform=ccrs.PlateCarree(),
             s=20,
-            color="black",
+            color="0.7",
             edgecolors="none",
             rasterized=True,
             zorder=7,
@@ -321,7 +322,7 @@ def _draw_provenance(figure: Figure) -> None:
                 text.set_in_layout(False)
                 entries.append(text)
     box = axis.get_window_extent(renderer)
-    height = sum(text.get_window_extent(renderer).height + 3 * figure.dpi / 72 for text in entries)
+    height = sum(text.get_window_extent(renderer).height + 2 * figure.dpi / 72 for text in entries)
     width = max(text.get_window_extent(renderer).width for text in entries)
     factor = min(
         1, 0.98 * (box.height + top_offset * figure.dpi / 72) / height, 0.98 * box.width / width
@@ -333,7 +334,7 @@ def _draw_provenance(figure: Figure) -> None:
             axis.transAxes
             + ScaledTranslation(0, (top_offset - offset) / 72, figure.dpi_scale_trans)
         )
-        offset += text.get_window_extent(renderer).height * 72 / figure.dpi + 3
+        offset += text.get_window_extent(renderer).height * 72 / figure.dpi + 2
     entries[0].set_url(REPOSITORY_URL)
     entries[0].set_color("#365f80")
     metadata["provenance_text"] = entries
@@ -391,8 +392,8 @@ def compose(
     for text in metadata["statistics_annotations"]:
         text.remove()
     metadata["statistics_annotations"] = []
-    figure.set_size_inches(16.2, 9.2)
-    figure.set_layout_engine("constrained", rect=(0, 0.055, 1, 0.945), h_pad=0.15, w_pad=0.16)
+    figure.set_size_inches(16.2, 8.7)
+    figure.set_layout_engine("constrained", rect=(0, 0.04, 1, 0.96), h_pad=0.10, w_pad=0.16)
     grid = figure.add_gridspec(2, 3, height_ratios=[0.9, 1.1], width_ratios=[1.05, 1.05, 1])
     series_axis.set_subplotspec(grid[0, :])
     panel = figure.add_subplot(grid[1, 0])
@@ -430,5 +431,13 @@ def compose(
     _draw_map(figure, map_axis, config, pairs, subset)
     _draw_provenance(figure)
     _place_statistics(figure)
-    figure.text(0.5, 0.017, labeling.regional_spread_note(), ha="center", fontsize=9)
+    figure.text(
+        0,
+        0.012,
+        labeling.davinci_tagline(separator=" "),
+        transform=blended_transform_factory(series_axis.transAxes, figure.transFigure),
+        ha="left",
+        va="bottom",
+        fontsize=9,
+    )
     return figure

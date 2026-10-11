@@ -21,10 +21,11 @@ verified daily matchups; it does not recompute gridded data or evaluation.
 - Top: AERONET and MODIS C6.1 daily means across the full figure width, with
   the same overlapping middle-50%-of-sites bands as the existing time series.
 - Bottom left: repository link, bold provenance entries, plot date/revision,
-  processing method, actual matchup input, tracked plot configuration and
+  processing method, line/band/error definitions, actual matchup input, tracked plot configuration and
   actual PDF destination. Paths break only between directory components.
 - Bottom center: surrounding geography, the analysis rectangle in orange,
-  active paired AERONET sites in blue, and labeled major cities in black.
+  active paired AERONET sites in blue, and major cities in light grey with
+  black labels drawn above the orange analysis rectangle.
   City markers have area 20 pt² and site markers 12 pt²: approximately a
   one-point increase in marker diameter. Only sites contributing finite
   pairs during the displayed period appear.
@@ -32,6 +33,8 @@ verified daily matchups; it does not recompute gridded data or evaluation.
   count, bias, RMSE, correlation and normalized absolute error. These are
   the exact same daily means/statistics as the top panel. The scatter does
   not pool individual site-days. Empty regions remain explicit empty plots.
+- Footer: left-aligned “DAVINCI Data Analysis and Visual Intelligence for
+  Climate & Chemistry”. The shorter page and closer map legend reduce bottom whitespace.
 
 Global cannot show geography beyond the globe. Other map extents use the
 configured padding, at least five degrees on each side, and extra latitude

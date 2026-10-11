@@ -31,9 +31,9 @@ if TYPE_CHECKING:
 _DIMENSIONLESS = {"", "1", "none", "dimensionless", "unitless", "fraction"}
 
 
-def davinci_tagline() -> str:
-    """Attribution above the shared colorbar in period-mean spatial figures."""
-    return "DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry"
+def davinci_tagline(*, separator: str = " - ") -> str:
+    """DAVINCI attribution for spatial colorbars and regional figure footers."""
+    return f"DAVINCI{separator}Data Analysis and Visual Intelligence for Climate & Chemistry"
 
 
 def city_label(name: str) -> str:
@@ -55,7 +55,14 @@ def regional_provenance_sections(provenance: Mapping[str, Any]) -> list[tuple[st
         ("Code (Git):", f"  Plot: {provenance['plot_git_commit'][:12]}"),
         (
             "Method:",
-            f"  {provenance['source']} | {method}\n  {qa}\n  Independent UTC Daily Means\n  Equal Weight per Active Site",
+            f"  {provenance['source']} | {method}\n  {qa}\n"
+            "  Independent UTC Daily Means\n"
+            "  Lines: Equal-Site Daily Means\n"
+            "  Bands: Middle 50% of Sites",
+        ),
+        (
+            "Absolute Error (%):",
+            "  Mean Absolute Difference / Mean AERONET × 100",
         ),
         (
             "Daily Matchups (Read):",

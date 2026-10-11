@@ -298,8 +298,10 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     provenance, a larger context map with the analysis rectangle, and scatter/statistics.
     Scatter points are the same equal-site regional daily means as the top curves.
     The context map shows active paired AERONET sites and labeled major cities from the
-    explicitly cached Natural Earth populated-places layer; city dots are black and one
-    marker-size step larger than site dots. Geographic padding and city count are config
+    explicitly cached Natural Earth populated-places layer; city dots are light grey and one
+    marker-size step larger than site dots, with black labels above the analysis rectangle.
+    Put line/band/error explanations in Provenance and the left-aligned DAVINCI expansion
+    at the bottom, with compact spacing. Geographic padding and city count are config
     options. Retain the existing inset layout by default pending user iteration.
   - Never put dates, years, statistics, `vs <source>`, raw keys, internal labels or `x`/`y` in
     titles. Dates go in the subtitle; maps add ` | Mean: <value>`.
