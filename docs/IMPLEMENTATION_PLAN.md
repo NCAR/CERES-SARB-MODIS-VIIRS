@@ -116,8 +116,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; array 5034005 submitted, first four days successful; monthly completion pending | Task 5.6 (this commit) |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
-| 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | Task 6.0 (this commit) |
-| 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Planned | |
+| 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
+| 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | Task 6.1 (this commit) |
 | 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Planned | |
 | 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Planned | |
 | 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Planned | |
@@ -1680,6 +1680,16 @@ Task 6.0 validation: local documentation links, fenced blocks and whitespace che
 pass; `codex review --uncommitted` found no actionable defects. All 986 offline
 tests pass (one network test deselected), as do mypy, Black and isort. This commit
 changes documentation only; no filtering or trial-data results are claimed.
+
+Task 6.1 adds strict disabled-by-default configuration, canonical multiple-band
+unions, finite spherical cell areas and cached rotationally shared geographic
+neighborhoods. Pole wedges have positive area and neighbors cross band/dateline
+boundaries. Enabled settings/version affect the processing hash; disabled settings
+retain historical hashes. Until Task 6.3 integrates filtering, enabled gridding
+raises a clear error rather than silently writing unfiltered-only output.
+Validation: 1,009 offline tests, mypy, Black/isort and whitespace checks pass;
+review found no actionable defects (its localhost socket fixture is sandbox-blocked,
+but passed in the full primary gate).
 
 ## Open items and risks
 

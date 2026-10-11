@@ -1,7 +1,8 @@
 # Spatial despeckling: July 2008 MODIS C6.1 laptop trial
 
-Status: **implementation plan only**. Requested 2026-10-11; no filtering code,
-new processing run, or scientific threshold selection is complete yet. Tasks and
+Status: **implementation in progress**. Requested 2026-10-11. Task 6.1 implements
+configuration and geographic neighborhoods; filtering, output integration and
+the experiment remain pending. Tasks and
 commits are tracked in [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md), Phase 6.
 
 ## Objective and scope
@@ -53,7 +54,7 @@ metric alone does not establish that the removed observations were erroneous.
 
 Add one strict pydantic `DespeckleConfig` to `RunConfig`, disabled by default.
 Settings apply to all selected sources and dates, separately for each source.
-The following block documents a future interface; it is not loadable until Task 6.1.
+The following configuration loads after Task 6.1; enabled gridding requires Task 6.3.
 
 ```yaml
 despeckle:

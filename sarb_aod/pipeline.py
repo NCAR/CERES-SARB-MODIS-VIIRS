@@ -19,6 +19,7 @@ from sarb_aod.config.loader import configuration_metadata
 from sarb_aod.config.schema import AODCorrectionConfig, RunConfig
 from sarb_aod.contract import validate_contract_file, write_contract_file
 from sarb_aod.correction import active_corrections
+from sarb_aod.despeckle import DESPECKLE_VERSION
 from sarb_aod.grid.combine import CombinedGrid, combine
 from sarb_aod.grid.kernels import Accumulators, accumulate, count_pixels
 from sarb_aod.grid.spec import load_grid, normalize_longitude
@@ -59,6 +60,11 @@ def processing_sha256(config: RunConfig) -> str:
     corrections = active_corrections(config.aod_correction)
     if corrections:
         definition["aod_correction"] = corrections
+    if config.despeckle.enabled:
+        definition["despeckle"] = {
+            "version": DESPECKLE_VERSION,
+            **config.despeckle.model_dump(mode="json"),
+        }
     definition["recipes"] = [
         {
             "stream": recipe.stream_id,
@@ -235,6 +241,10 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
     """Process a day; any read/write error propagates to the day's caller."""
     if not config.period.start <= day <= config.period.end:
         raise ValueError(f"{day} outside configured period")
+    if config.despeckle.enabled:
+        raise NotImplementedError(
+            "despeckle configuration is available; gridding integration is pending Task 6.3"
+        )
     recipes = stream_recipes(config)
     files = [output_path(config, window_bounds(day, i)[0]) for i in range(8)]
     if not overwrite and _already_complete(config, files, day):

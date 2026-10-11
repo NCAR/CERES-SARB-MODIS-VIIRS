@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import string
 from datetime import date, timedelta
 from importlib import resources
@@ -366,6 +367,44 @@ class AODCorrectionConfig(StrictModel):
         return self.scale == 1.0 and self.offset == 0.0
 
 
+class DespeckleSpikeConfig(StrictModel):
+    enabled: bool = True
+    mad_multiplier: float = Field(default=3.0, gt=0, allow_inf_nan=False)
+    min_excess: float = Field(default=0.20, gt=0, allow_inf_nan=False)
+    action: Literal["neighbor_mean", "mask"] = "neighbor_mean"
+
+
+class DespeckleConfig(StrictModel):
+    """Experimental spatial filtering; band endpoints are inclusive latitude centers."""
+
+    enabled: bool = False
+    latitude_bands: tuple[tuple[float, float], ...] = ()
+    radius_km: float = Field(default=150.0, gt=0, le=math.pi * 6371.0, allow_inf_nan=False)
+    aod_min: float = Field(default=0.5, ge=0, allow_inf_nan=False)
+    min_valid_area_fraction: float = Field(default=0.20, gt=0, le=1, allow_inf_nan=False)
+    min_valid_neighbors: int = Field(default=5, ge=3, strict=True)
+    spike: DespeckleSpikeConfig = Field(default_factory=DespeckleSpikeConfig)
+
+    @field_validator("latitude_bands")
+    @classmethod
+    def _bands(cls, bands: tuple[tuple[float, float], ...]) -> tuple[tuple[float, float], ...]:
+        if any(not (-90 <= lo < hi <= 90) for lo, hi in bands):
+            raise ValueError("latitude bands require finite -90 <= south < north <= 90")
+        merged: list[tuple[float, float]] = []
+        for lo, hi in sorted(bands):
+            if merged and lo <= merged[-1][1]:
+                merged[-1] = (merged[-1][0], max(hi, merged[-1][1]))
+            else:
+                merged.append((lo, hi))
+        return tuple(merged)
+
+    @model_validator(mode="after")
+    def _enabled_bands(self) -> "DespeckleConfig":
+        if self.enabled and not self.latitude_bands:
+            raise ValueError("enabled despeckling requires latitude_bands")
+        return self
+
+
 class QAOverride(StrictModel):
     qa_min: int = Field(ge=1, le=3, strict=True)
 
@@ -619,6 +658,7 @@ class RunConfig(StrictModel):
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)
     aod_correction: dict[str, AODCorrectionConfig] = Field(default_factory=dict)
+    despeckle: DespeckleConfig = Field(default_factory=DespeckleConfig)
     uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
     qc: QCConfig = Field(default_factory=QCConfig)
     weighting: WeightingConfig = Field(default_factory=WeightingConfig)
