@@ -99,7 +99,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.10 | Collection titles and provenance panel in period-mean maps | 4.7, 4.9 | Done | Task 4.10 (this commit) |
 | 4.11 | Refresh July C6.1/C7 monthly PDFs and deliver to Desktop | 4.10 | Done; protocol, visual and transfer checks pass | Task 4.11 (this commit) |
 | 4.12 | Readable map provenance and reproducibility metadata in NetCDF | 4.11, 1.8, 3.5 | Done | Task 4.12 (this commit) |
-| 4.13 | Deploy provenance changes and refresh July Desktop PDFs | 4.12 | In progress | — |
+| 4.13 | Deploy provenance changes and refresh July Desktop PDFs | 4.12 | Done; metadata, protocol, visual and transfer checks pass | Task 4.13 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1500,7 +1500,14 @@ network access to LAADS and AERONET.
   Global alignment is preserved. Review's own run passed 940 tests and could
   not bind the localhost fixture in its nested sandbox; the full task run
   passes, including that fixture and the two added regional regressions.
-  Task 4.13 covers AMI deployment and final PDF delivery.
+  Task 4.13 deployed `b49a0ff` to AMI, passed a NetCDF metadata round trip
+  using AMI's actual OS/Python/Conda inventory, and regenerated both monthly
+  maps. Both previews were inspected and passed protocols; all 47 C7 plot
+  artifacts matched AMI by size/SHA-256, and both Desktop PDFs match their
+  canonical copies. Delivery review independently verified local hashes,
+  sizes and totals and found no actionable issue. Updated delivery hashes are in
+  `docs/validation/ami_c7_200807_plots.md`. The original July grids were not
+  rewritten; richer NetCDF metadata applies to future processing runs.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.
