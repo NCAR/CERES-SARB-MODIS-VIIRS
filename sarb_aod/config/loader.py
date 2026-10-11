@@ -14,6 +14,8 @@ An unset variable is an error rather than an empty string.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import re
 from pathlib import Path
@@ -57,15 +59,26 @@ _UniqueKeySafeLoader.add_constructor(
 )
 
 
-def read_yaml(path: Path) -> dict[str, Any]:
+def read_yaml(
+    path: Path, *, sources: list[dict[str, str]] | None = None, role: str = "run"
+) -> dict[str, Any]:
     """Read a YAML mapping, rejecting duplicate keys."""
     try:
-        with path.open() as handle:
-            data = yaml.load(handle, Loader=_UniqueKeySafeLoader)
+        content = path.read_bytes()
+        data = yaml.load(content, Loader=_UniqueKeySafeLoader)
     except FileNotFoundError as exc:
         raise ConfigurationError(f"Configuration file not found: {path}") from exc
     except yaml.YAMLError as exc:
         raise ConfigurationError(f"Invalid YAML in {path}: {exc}") from exc
+    if sources is not None:
+        sources.append(
+            {
+                "role": role,
+                "path": str(path.resolve()),
+                "sha256": hashlib.sha256(content).hexdigest(),
+                "content": content.decode("utf-8"),
+            }
+        )
     if data is None:
         return {}
     if not isinstance(data, dict):
@@ -155,13 +168,20 @@ def find_profile(name: str, config_path: Path | None) -> Path:
     raise ConfigurationError(f"Profile {name!r} not found; searched {searched}")
 
 
-def resolve_raw(config_path: Path, profile: str | None = None) -> dict[str, Any]:
+def resolve_raw(
+    config_path: Path,
+    profile: str | None = None,
+    *,
+    sources: list[dict[str, str]] | None = None,
+) -> dict[str, Any]:
     """Return the merged, env-expanded mapping before schema validation."""
-    run_data = read_yaml(config_path)
+    run_data = read_yaml(config_path, sources=sources)
     profile_name = profile or os.environ.get(PROFILE_ENV) or run_data.get("profile")
     merged: dict[str, Any] = {}
     if profile_name:
-        profile_data = read_yaml(find_profile(str(profile_name), config_path))
+        profile_data = read_yaml(
+            find_profile(str(profile_name), config_path), sources=sources, role="profile"
+        )
         profile_data.pop("profile", None)
         merged = deep_merge(profile_data, run_data)
         merged["profile"] = str(profile_name)
@@ -173,9 +193,28 @@ def resolve_raw(config_path: Path, profile: str | None = None) -> dict[str, Any]
 def load_config(config_path: str | Path, profile: str | None = None) -> RunConfig:
     """Load and validate a run configuration."""
     path = Path(config_path).expanduser()
-    raw = resolve_raw(path, profile)
+    sources: list[dict[str, str]] = []
+    raw = resolve_raw(path, profile, sources=sources)
     raw.setdefault("name", path.stem)
     try:
-        return RunConfig.model_validate(raw)
+        config = RunConfig.model_validate(raw)
+        config._config_sources = sources
+        return config
     except Exception as exc:  # pydantic.ValidationError, re-raised with context
         raise ConfigurationError(f"Invalid configuration {path}:\n{exc}") from exc
+
+
+def configuration_metadata(config: RunConfig) -> dict[str, str]:
+    """NetCDF-safe JSON for effective settings and the original run/profile YAML.
+
+    Source texts are snapshots taken during loading. Effective settings include
+    later CLI/programmatic overrides. Programmatic configs have no source files.
+    """
+    return {
+        "config": json.dumps(config.model_dump(mode="json"), sort_keys=True, separators=(",", ":")),
+        "config_files": json.dumps(config._config_sources, sort_keys=True),
+        "development_agents": json.dumps(
+            [agent.model_dump(mode="json") for agent in config.provenance.development_agents],
+            sort_keys=True,
+        ),
+    }

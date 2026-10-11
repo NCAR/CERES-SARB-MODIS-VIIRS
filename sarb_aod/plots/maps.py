@@ -24,7 +24,7 @@ from cartopy.io import Downloader
 from cartopy.util import add_cyclic_point
 from matplotlib.colors import BoundaryNorm, Colormap, Normalize, TwoSlopeNorm
 from matplotlib.figure import Figure
-from matplotlib.transforms import ScaledTranslation
+from matplotlib.transforms import ScaledTranslation, blended_transform_factory
 from matplotlib.typing import HashableList
 from numpy.typing import ArrayLike
 
@@ -596,7 +596,10 @@ def map_panels(
         titles.append(heading)
         subtitles.append(subtitle)
         gridliners.append(gridliner)
-    colorbar = _colorbar(figure, artists[0], axes, scale, units)
+    colorbar_axes = (
+        [*axes, arranged["provenance"]] if provenance is not None and arranged is not None else axes
+    )
+    colorbar = _colorbar(figure, artists[0], colorbar_axes, scale, units)
     for ax in axes:
         position = ax.get_subplotspec()
         if position is not None and len(position.rowspan) > 1:
@@ -620,30 +623,92 @@ def map_panels(
     if provenance is not None and arranged is not None:
         panel = arranged["provenance"]
         panel.set_axis_off()
-        text = panel.text(
-            0,
-            1,
-            labeling.provenance_panel_text(provenance),
-            transform=panel.transAxes,
-            ha="left",
-            va="top",
-            fontsize=8,
-            fontfamily="monospace",
-            linespacing=1.15,
-            parse_math=False,
+        panel_position = panel.get_subplotspec()
+        assert panel_position is not None  # subplot_mosaic always supplies a spec
+        neighbor = next(
+            (
+                ax
+                for ax in axes
+                if (subset is None or subset.key == "global")
+                and (position := ax.get_subplotspec()) is not None
+                and position.rowspan.start == panel_position.rowspan.start
+            ),
+            panel,
         )
-        # Paths can be longer on other machines. Fit within the reserved cell
-        # without allowing the annotation to change the map-column geometry.
-        text.set_in_layout(False)
+        # Global maps align to the neighboring map border, even during PDF
+        # draws. Regional maps use the whole cell: a narrow latitude band's
+        # aspect must not force the metadata into an unreadably short block.
+        top_padding = 24 if neighbor is panel else 0
+        anchor = blended_transform_factory(panel.transAxes, neighbor.transAxes) + ScaledTranslation(
+            0, -top_padding / 72, figure.dpi_scale_trans
+        )
         figure.canvas.draw()
         renderer = figure.canvas.get_renderer()  # type: ignore[attr-defined]
-        box = text.get_window_extent(renderer)
         available = panel.get_window_extent(renderer)
-        text.set_fontsize(
-            8 * min(1, 0.98 * available.width / box.width, 0.98 * available.height / box.height)
+        bottom = available.y0
+        if panel_position.rowspan.stop == rows:
+            # The final row has unused space above the shared colorbar. Use it
+            # for readable metadata while leaving a clear gap above the bar.
+            bottom = colorbar.ax.get_window_extent(renderer).y1 + 12 * figure.dpi / 72
+        height = neighbor.get_window_extent(renderer).y1 - top_padding * figure.dpi / 72 - bottom
+        entries = []
+        offset = 0.0
+        widest = 0.0
+        for index, (heading, body) in enumerate(labeling.provenance_panel_sections(provenance)):
+            for value, bold in ((heading, True), (body, False)):
+                if not value:
+                    continue
+                text = panel.text(
+                    0,
+                    1,
+                    value,
+                    ha="left",
+                    va="top",
+                    fontsize=10 if index == 0 else 8,
+                    fontweight="bold" if bold else "normal",
+                    fontfamily="sans-serif" if bold else "monospace",
+                    linespacing=1.05,
+                    parse_math=False,
+                )
+                text.set_in_layout(False)
+                box = text.get_window_extent(renderer)
+                entries.append((text, offset))
+                offset += box.height * 72 / figure.dpi + 0.5
+                widest = max(widest, box.width)
+            offset += 2
+        # Fit long paths within the reserved cell without changing map geometry.
+        scale_factor = min(
+            1, 0.98 * available.width / widest, 0.98 * height / (offset * figure.dpi / 72)
         )
+        for text, _ in entries:
+            text.set_fontsize(text.get_fontsize() * scale_factor)
+        # Re-measure at the fitted font size: glyph heights are not perfectly
+        # linear in fontsize, especially for long multiline path blocks.
+        offset = 0.0
+        for text, _ in entries:
+            if offset and text.get_fontweight() == "bold":
+                offset += 2 * scale_factor
+            text.set_transform(anchor + ScaledTranslation(0, -offset / 72, figure.dpi_scale_trans))
+            offset += text.get_window_extent(renderer).height * 72 / figure.dpi + 0.5
+        url = labeling.provenance_repository_url(provenance)
+        repository_text = panel.text(
+            0,
+            1,
+            url,
+            transform=anchor + ScaledTranslation(0, 6 / 72, figure.dpi_scale_trans),
+            ha="left",
+            va="bottom",
+            fontsize=8,
+            color="#365f80",
+            url=url,
+            parse_math=False,
+        )
+        repository_text.set_in_layout(False)
         metadata = getattr(figure, "_sarb_plot_metadata")
-        metadata.update(provenance=provenance, provenance_text=[text])
+        metadata.update(
+            provenance=provenance,
+            provenance_text=[text for text, _ in entries] + [repository_text],
+        )
     return figure
 
 

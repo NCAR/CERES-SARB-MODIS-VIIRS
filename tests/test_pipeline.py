@@ -1,3 +1,5 @@
+import hashlib
+import json
 import shutil
 from datetime import date
 from pathlib import Path
@@ -39,7 +41,7 @@ def pipeline_config(tmp_path, hdf_granule):
 
 
 def test_full_day_contract_and_idempotent_rerun(pipeline_config):
-    config, _ = pipeline_config
+    config, config_path = pipeline_config
     day = date(2008, 7, 1)
     result = grid_day(config, day)
     assert len(result.files) == 8 and result.source_granule_count == 1 and not result.skipped
@@ -52,6 +54,11 @@ def test_full_day_contract_and_idempotent_rerun(pipeline_config):
         assert np.any(dataset["aod_mean_terra_dt"][:] == np.float32(-0.05))
         assert dataset["aod_weighted_mean_viirs"][:].max() == -999
         assert dataset.config_sha256 == config_sha256(config)
+        assert hashlib.sha256(dataset.config.encode()).hexdigest() == dataset.config_sha256
+        assert json.loads(dataset.config)["grid"]["streams"] == config.grid.model_dump()["streams"]
+        source = json.loads(dataset.config_files)[0]
+        assert source["path"] == str(config_path.resolve())
+        assert source["content"] == config_path.read_text()
     for path in result.files[1:]:
         with netCDF4.Dataset(path) as dataset:
             dataset.set_auto_mask(False)

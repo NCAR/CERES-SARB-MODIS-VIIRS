@@ -15,6 +15,7 @@ import netCDF4
 import numpy as np
 
 from sarb_aod.combined_product import accumulate_product, product_window
+from sarb_aod.config.loader import configuration_metadata
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import validate_contract_file, write_contract_file
 from sarb_aod.grid.combine import CombinedGrid, combine
@@ -190,6 +191,7 @@ def _provenance(
         ),
         "leap_seconds": config.time.leap_seconds,
         "config_sha256": config_sha256(config),
+        **configuration_metadata(config),
         "processing_sha256": processing_sha256(config),
         "source_granule_count": source_count,
         "edge_granules_missing": json.dumps(missing),

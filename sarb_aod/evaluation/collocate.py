@@ -31,8 +31,9 @@ from sarb_aod.aeronet.spectral import (
     convert_550nm,
     window_uncertainty,
 )
+from sarb_aod.config.loader import configuration_metadata
 from sarb_aod.config.schema import RunConfig
-from sarb_aod.contract import validate_contract_file
+from sarb_aod.contract import code_provenance, validate_contract_file
 from sarb_aod.evaluation.regions import regions_for_location
 from sarb_aod.grid.spec import GridSpec, load_grid
 from sarb_aod.paths import aeronet_path, output_path
@@ -43,6 +44,7 @@ from sarb_aod.pipeline import (
     require_processing_provenance,
     stream_recipes,
 )
+from sarb_aod.provenance import runtime_global_attrs
 from sarb_aod.readers import LAND, OCEAN, PixelBatch, read_granule
 from sarb_aod.streams import StreamRecipe
 from sarb_aod.windows import window_bounds
@@ -675,6 +677,8 @@ def write_matchups(
             "reference": "AERONET",
             "difference_convention": "y - x (satellite - AERONET)",
             "time_zone": "UTC",
+            **code_provenance(),
+            **runtime_global_attrs(),
         }
     )
     for key, value in (attributes or {}).items():
@@ -831,7 +835,7 @@ def build_matchups(
             "config_sha256": config_sha256(config),
             "processing_sha256": processing_sha256(config),
             "retains_sensitivity_candidates": 1,
-            "config": config.model_dump(mode="json"),
+            **configuration_metadata(config),
             "collocation_options": asdict(opts),
             "source_files": sorted(sources),
             "aeronet_cache_files": [str(aeronet_path(config, day)) for day in sorted(cached)],

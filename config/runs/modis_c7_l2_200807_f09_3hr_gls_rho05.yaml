@@ -1,5 +1,20 @@
 # Production test: use --day 2008-07-01 for a smoke test of this same definition.
 profile: ami-modis-c7
+provenance:
+  development_agents:
+    - tool: Codex
+      provider: OpenAI
+      model_name: unknown
+      model_version: unknown
+      reasoning_effort: unknown
+      notes: "Provenance/plot updates, 2026-10-11; exact model details unverified."
+    - tool: Codex CLI 0.162.1
+      provider: OpenAI
+      model_name: gpt-6-astra
+      model_version: unknown
+      reasoning_effort: xhigh
+      role: code_review
+      notes: "Task 4.12 review, 2026-10-11; alias and effort reported by the review command, exact snapshot unavailable."
 period:
   start: 2008-07-01
   end: 2008-07-31

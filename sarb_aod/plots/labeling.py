@@ -8,8 +8,8 @@ building label/title strings themselves.
 from __future__ import annotations
 
 import math
+import posixpath
 import re
-import textwrap
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -135,8 +135,42 @@ def collection_source_name(source: str, collections: Sequence[str]) -> str:
     return f"{name} {' / '.join('C' + value for value in sorted(set(collections)))}"
 
 
-def provenance_panel_text(provenance: Mapping[str, Any], *, width: int = 66) -> str:
-    """Compact provenance labels; preserve literal path and revision spelling."""
+def _provenance_path_lines(path: str, width: int) -> list[str]:
+    """Indent values and wrap only at slashes, never inside a path component."""
+    lines = []
+    line = "  "
+    for part in re.findall(r"[^/]*/|[^/]+$", path):
+        if line.strip() and len(line + part) > width:
+            lines.append(line)
+            line = "    "
+        line += part
+    if line.strip():
+        lines.append(line)
+    return lines
+
+
+def provenance_repository_url(provenance: Mapping[str, Any]) -> str:
+    """Keep the repository's literal URL intact above the provenance heading."""
+    return str(provenance["repository_url"])
+
+
+def _provenance_paths(paths: Sequence[str], width: int) -> list[str]:
+    """Group multiple absolute inputs beneath their shared directory root."""
+    if len(paths) > 1 and all(path.startswith("/") for path in paths):
+        root = posixpath.commonpath(paths).rstrip("/") + "/"
+        if root != "/":
+            return _provenance_path_lines(root, width) + [
+                "  " + line
+                for path in paths
+                for line in _provenance_path_lines(path.removeprefix(root), width - 2)
+            ]
+    return [line for path in paths for line in _provenance_path_lines(path, width)]
+
+
+def provenance_panel_sections(
+    provenance: Mapping[str, Any], *, width: int = 66
+) -> list[tuple[str, str]]:
+    """Heading/body pairs, with indented values and intact path components."""
     dates = sorted({value[:10] for value in provenance["grid_created_utc"]})
     processed = " – ".join(dict.fromkeys([dates[0], dates[-1]])) if dates else "Unknown"
     method = source_display_name(provenance["weighting"], rho=provenance["rho"])
@@ -145,27 +179,48 @@ def provenance_panel_text(provenance: Mapping[str, Any], *, width: int = 66) -> 
     qa = source_display_name(provenance["qc"])
     if provenance["qc_config"]["overrides"]:
         qa += " + Overrides"
-    lines = [
-        "Provenance",
-        f"Grids Created (UTC): {processed}",
-        f"Plot Created (UTC): {provenance['plot_created_utc']}",
-        f"Weighting: {method}",
-        f"QA Preset: {qa} | Mean: Count-Weighted",
-        f"Grid: {provenance['grid']} | Windows: {provenance['windows']}",
-        "Processing Code: " + ", ".join(value[:12] for value in provenance["processing_commits"]),
-        f"Plot Code: {provenance['plot_git_commit'][:12]}",
+    sections = [
+        ("Provenance", ""),
+        (
+            "Created (UTC):",
+            f"  Grids: {processed}\n  Plot: {provenance['plot_created_utc']}",
+        ),
+        (
+            "Method:",
+            f"  {method} | {qa}\n"
+            f"  {provenance['grid']} | Count-Weighted Mean\n"
+            f"  Time Windows: {provenance['windows']} × "
+            f"{provenance['window_duration_seconds'] / 3600:g} Hours",
+        ),
+        (
+            "Code (Git):",
+            "  Grids: "
+            + ", ".join(value[:12] for value in provenance["processing_commits"])
+            + f"\n  Plot: {provenance['plot_git_commit'][:12]}",
+        ),
     ]
     for label, paths in (
         ("L2 Inputs (Configured)", provenance["l2_input_templates"]),
         ("Grid Outputs (Read)", [provenance["grid_output_template"]]),
         ("PDF Output", [provenance["pdf_output"]]),
     ):
-        lines.append(label + ":")
-        for path in paths:
-            lines.extend(
-                textwrap.wrap(path, width=width, break_on_hyphens=False, subsequent_indent="  ")
+        sections.append(
+            (
+                label + ":",
+                "\n".join(_provenance_paths(paths, width)),
             )
-    return "\n".join(lines)
+        )
+    return sections
+
+
+def provenance_panel_text(provenance: Mapping[str, Any], *, width: int = 66) -> str:
+    """Plain-text equivalent of the styled panel (also useful outside plots)."""
+    return "\n".join(
+        text
+        for section in provenance_panel_sections(provenance, width=width)
+        for text in section
+        if text
+    )
 
 
 def _normalize_quantity_label(raw: str) -> str:

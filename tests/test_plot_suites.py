@@ -449,6 +449,13 @@ def test_monthly_collection_title_layout_and_recorded_provenance(
     assert list(panel.axes.get_subplotspec().rowspan) == [1]
     assert suites.validate_rendered_figures({spec.key: figure})["passed"]
     np.testing.assert_allclose(axes[0].get_position().bounds[1:], axes[1].get_position().bounds[1:])
+    assert panel.get_text() == "Provenance"
+    assert panel.get_fontweight() == "bold"
+    np.testing.assert_allclose(panel.get_window_extent().y1, axes[3].get_window_extent().y1)
+    repository_text = metadata["provenance_text"][-1]
+    assert repository_text.get_text() == "https://github.com/NCAR/CERES-SARB-MODIS-VIIRS"
+    assert repository_text.get_url() == repository_text.get_text()
+    assert repository_text.get_window_extent().y0 > panel.get_window_extent().y1
     provenance = json.loads(suites.pdf_metadata(config, figure)["Keywords"])["provenance"]
     assert provenance["grid_created_utc"] == ["2021-01-01T12:00:00Z", "2021-01-02T12:00:00Z"]
     assert provenance["processing_commits"] == ["a" * 40]
@@ -456,7 +463,20 @@ def test_monthly_collection_title_layout_and_recorded_provenance(
     assert provenance["pdf_output"] == str(
         plot_path(config, spec.suite, spec.name, spec.start, spec.end)
     )
-    assert "L2 Inputs (Configured)" in panel.get_text()
+    panel_text = "\n".join(text.get_text() for text in metadata["provenance_text"])
+    assert "L2 Inputs (Configured):\n  " in panel_text
+    assert "Time Windows: 8 × 3 Hours" in panel_text
+    # Wrapped path pieces reconstruct the full path without splitting a component.
+    from sarb_aod.plots.labeling import _provenance_path_lines
+
+    for path in [
+        *provenance["l2_input_templates"],
+        provenance["grid_output_template"],
+        provenance["pdf_output"],
+    ]:
+        lines = _provenance_path_lines(path, width=45)
+        assert "".join(line.strip() for line in lines) == path
+        assert all(line.endswith("/") for line in lines[:-1])
     # The exception for literal provenance must not exempt ordinary plot text.
     axes[0].text(0.5, 0.5, "raw_internal_key", transform=axes[0].transAxes)
     report = suites.validate_rendered_figures({spec.key: figure}, raise_on_failure=False)
@@ -477,4 +497,28 @@ def test_provenance_identifies_qc_overrides(inputs: RunConfig) -> None:
     spec = suites.map_figure_specs(config)[0]
     provenance = suites._map_provenance(config, suites.aggregate_maps(inputs), spec)
     assert provenance["qc_config"]["overrides"]["modis_dt"]["ocean"]["qa_min"] == 3
-    assert "QA Preset: Retrieval-Team QC + Overrides" in provenance_panel_text(provenance)
+    assert "Retrieval-Team QC + Overrides" in provenance_panel_text(provenance)
+
+
+@pytest.mark.parametrize("region", ["canada", "southern_ocean"])
+def test_shallow_regional_provenance_remains_readable(inputs: RunConfig, region: str) -> None:
+    data = suites.aggregate_maps(inputs)
+    streams = {
+        stream: inputs.grid.streams["terra_dt"].model_copy(update={"product": product})
+        for stream, product in (
+            ("terra_dt", "MOD04_L2"),
+            ("terra_db", "MOD04_L2"),
+            ("aqua_dt", "MYD04_L2"),
+            ("aqua_db", "MYD04_L2"),
+        )
+    }
+    config = inputs.model_copy(update={"grid": inputs.grid.model_copy(update={"streams": streams})})
+    data = replace(data, means={**data.means, **{key: data.means["terra_dt"] for key in streams}})
+    spec = suites.MapFigureSpec(
+        "aod_maps", "mean_aod", inputs.period.start, inputs.period.end, "mean_aod", region
+    )
+    with ncar_style("publication"):
+        figure = suites.render_map_figure(config, data, spec)
+        assert suites.validate_rendered_figures({spec.key: figure})["passed"]
+    texts = getattr(figure, "_sarb_plot_metadata")["provenance_text"]
+    assert min(text.get_fontsize() for text in texts) >= 7

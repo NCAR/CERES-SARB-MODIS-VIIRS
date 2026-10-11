@@ -211,6 +211,13 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
   `time` at the window **center**, in hours. Extra variables are ignored.
 - Keep the CAM7 SP1 companions: `aod_count`, `aod_uncertainty`, `aod_weighted_mean_modis`/`_viirs`,
   `lat_bnds`, `lon_bnds`, `time_bnds`, and the 15 provenance globals.
+- New grid and matchup NetCDF files additionally record the repository URL, full Git SHA,
+  tag-relative revision and exact HEAD tags; host/OS and Python/native package environment;
+  effective configuration and original run/profile YAML snapshots (paths, text, SHA-256).
+  `provenance.development_agents` carries declared LLM tool, provider, model name/version,
+  reasoning effort and role. Never infer unverified model details. This describes development
+  assistance, not an LLM in the numerical pipeline. See `docs/PROVENANCE.md` for attributes
+  and limits. Preserve existing grid files' recorded processing history.
 - CAM builds the path as `aod_obs_path // interpret_filename_spec(aod_obs_template)` with no
   separator, so `aod_obs_path` must end in `/`.
   - `%y/%m/%d/` subdirectories in the template are verified in CAM `filenames.F90` (cam6_4_161):
@@ -261,6 +268,12 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     Blue columns. MODIS aggregate titles include the collection (C6.1 or C7). The lower-left
     cell holds provenance: recorded grid creation dates and processing revisions, plot date
     and revision, weighting/QA, configured L2 path templates, grid paths and PDF destination.
+    Align the bold Provenance heading with the top border of the map to its right. Use bold
+    entry labels above indented values; wrap paths only at directory boundaries, preserving
+    complete directory names and filenames. Leave clear space above the shared colorbar.
+    Put the clickable repository URL above Provenance. Label the count and duration as
+    `Time Windows: 248 × 3 Hours` (values from the run). Keep the PDF concise; detailed
+    runtime, environment, config snapshots and development-agent metadata belong in NetCDF.
     Keep full timestamps and file paths in PDF metadata. Literal paths in this registered
     provenance panel are exempt from raw-key text checks, but retain layout/vector checks.
   - Regional time series show independently calculated AERONET and satellite daily means

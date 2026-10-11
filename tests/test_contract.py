@@ -1,5 +1,6 @@
 """CAM7 oracle compatibility, atomic writes and contract failure cases."""
 
+import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -73,6 +74,10 @@ def test_reference_structure_attributes_values_and_validator(tmp_path: Path) -> 
         assert actual.bias_correction_method == "none"
         assert actual.bias_correction_version == "none"
         assert actual.aod_wavelength_nm == 550
+        for key, value in c.code_provenance().items():
+            assert actual.getncattr(key) == value
+        assert json.loads(actual.compute_platform)["os_name"]
+        assert json.loads(actual.python_environment)["packages"]
 
 
 def test_roundtrip_center_and_absent_companions(tmp_path: Path) -> None:

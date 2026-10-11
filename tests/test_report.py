@@ -479,7 +479,15 @@ def test_grid_evaluation_propagates_compatible_l2_coastal_evidence(tmp_path, mon
 
 
 def test_l2_reuse_ignores_grid_weights_but_rejects_changed_retrieval(tmp_path):
+    import yaml
+
+    from sarb_aod.config.loader import configuration_metadata, load_config
+    from sarb_aod.config.schema import DevelopmentAgent, ProvenanceConfig
+
     source = config(tmp_path)
+    source_yaml = tmp_path / "source.yaml"
+    source_yaml.write_text(yaml.safe_dump(source.model_dump(mode="json")))
+    source = load_config(source_yaml)
     directory = tmp_path / "evaluation/test_run"
     values = frame().assign(run=source.name)
     source_path = directory / "matchups_l2_default_20080701_20080731.nc"
@@ -490,15 +498,23 @@ def test_l2_reuse_ignores_grid_weights_but_rejects_changed_retrieval(tmp_path):
             "level": "l2",
             "pairing": "default",
             "processing_sha256": processing_sha256(source),
-            "config": source.model_dump(mode="json"),
+            **configuration_metadata(source),
+            "git_commit": "source-revision",
+            "date_created": "2020-01-01T00:00:00Z",
         },
     )
     target = source.model_copy(
         update={
             "name": "count",
             "weighting": source.weighting.model_copy(update={"method": "count"}),
+            "provenance": ProvenanceConfig(
+                development_agents=[DevelopmentAgent(tool="Target Agent")]
+            ),
         }
     )
+    target_yaml = tmp_path / "target.yaml"
+    target_yaml.write_text(yaml.safe_dump(target.model_dump(mode="json")))
+    target = load_config(target_yaml)
     result = reuse_l2_matchups(source, target)
     assert result.frame.run.eq("count").all()
     pd.testing.assert_series_equal(result.frame.x, values.x)
@@ -508,6 +524,14 @@ def test_l2_reuse_ignores_grid_weights_but_rejects_changed_retrieval(tmp_path):
     with xr.open_dataset(result.path) as dataset:
         assert dataset.attrs["reused_l2_file"] == str(source_path)
         assert len(dataset.attrs["reused_l2_sha256"]) == 64
+        for key, value in configuration_metadata(target).items():
+            assert dataset.attrs[key] == value
+        history = json.loads(dataset.attrs["reused_l2_provenance"])
+        assert json.loads(history["config_files"])[0]["path"] == str(source_yaml)
+        assert history["git_commit"] == "source-revision"
+        assert history["date_created"] == "2020-01-01T00:00:00Z"
+        assert dataset.attrs["git_commit"] != "source-revision"
+        assert dataset.attrs["date_created"] != history["date_created"]
     changed = target.model_copy(update={"qc": target.qc.model_copy(update={"preset": "cam7_v2"})})
     with pytest.raises(ValueError, match="identical recipes"):
         reuse_l2_matchups(source, changed)

@@ -24,6 +24,7 @@ from numpy.typing import ArrayLike
 from . import __version__
 from .combined_product import AOD_NAME, COUNT_NAMES, FLAG_NAME, TOTAL_NAME, CombinedWindow
 from .grid.spec import NLAT, NLON, f09_lat, f09_lat_bnds, f09_lon, f09_lon_bnds
+from .provenance import runtime_global_attrs
 from .windows import TIME_CALENDAR, TIME_UNITS, WINDOW_LENGTH_SEC, cf_hours
 
 FILL_FLOAT = np.float32(-999.0)
@@ -31,6 +32,7 @@ FILL_COUNT = np.int32(0)
 NBNDS = 2
 FILENAME_TEMPLATE = "MODIS_VIIRS_AOD_3hr_f09.{ymd}.{secs:05d}.nc"
 PRIMARY_STD_NAME = "atmosphere_optical_thickness_due_to_ambient_aerosol_particles"
+REPOSITORY_URL = "https://github.com/NCAR/CERES-SARB-MODIS-VIIRS"
 REQUIRED_GLOBAL_ATTRS = (
     "Conventions",
     "title",
@@ -79,17 +81,35 @@ def contract_filename(window_start: datetime) -> str:
     return FILENAME_TEMPLATE.format(ymd=start.strftime("%Y%m%d"), secs=start.hour * 3600)
 
 
-def git_commit() -> str:
-    """Current source revision, or ``unknown`` outside a Git checkout."""
+def _git_value(*arguments: str) -> str:
     try:
         return subprocess.check_output(
-            ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "HEAD"],
+            ["git", "-C", str(Path(__file__).resolve().parent), *arguments],
             stderr=subprocess.DEVNULL,
             text=True,
             timeout=5,
         ).strip()
     except (OSError, subprocess.SubprocessError):
         return "unknown"
+
+
+def git_commit() -> str:
+    """Current source revision, or ``unknown`` outside a Git checkout."""
+    return _git_value("rev-parse", "HEAD")
+
+
+def code_provenance() -> dict[str, str]:
+    """Repository, full revision, tag-relative revision and exact HEAD tags.
+
+    ``git_describe`` includes ``-dirty`` for modified tracked files. No tags
+    at HEAD is ``none``; unavailable Git information is explicitly ``unknown``.
+    """
+    return {
+        "repository_url": REPOSITORY_URL,
+        "git_commit": git_commit(),
+        "git_describe": _git_value("describe", "--tags", "--always", "--dirty", "--abbrev=12"),
+        "git_tags": ", ".join(_git_value("tag", "--points-at", "HEAD").splitlines()) or "none",
+    }
 
 
 def default_global_attrs() -> dict[str, Any]:
@@ -111,8 +131,8 @@ def default_global_attrs() -> dict[str, Any]:
         "bias_correction_version": "none",
         "grid": "f09 FV 0.9x1.25 (192x288)",
         "aod_wavelength_nm": np.int32(550),
-        "date_created": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "git_commit": git_commit(),
+        **code_provenance(),
+        **runtime_global_attrs(),
     }
 
 

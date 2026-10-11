@@ -23,7 +23,7 @@ from matplotlib.figure import Figure
 from netCDF4 import Dataset
 
 from sarb_aod.config.schema import AlgorithmFamily, RunConfig
-from sarb_aod.contract import git_commit, validate_contract_file
+from sarb_aod.contract import REPOSITORY_URL, code_provenance, git_commit, validate_contract_file
 from sarb_aod.evaluation.regions import REGIONS
 from sarb_aod.grid.spec import GridSpec, load_grid
 from sarb_aod.paths import cartopy_data_dir, output_path, plot_path
@@ -32,7 +32,7 @@ from sarb_aod.plots import labeling, maps
 from sarb_aod.plots.protocol import PROTOCOL, PlotProtocolError, validate_rendered_figures
 from sarb_aod.plots.style import geosit_aod_levels, ncar_style
 from sarb_aod.qc import resolve_rule
-from sarb_aod.windows import TIMES_PER_DAY, window_bounds
+from sarb_aod.windows import TIMES_PER_DAY, WINDOW_LENGTH_SEC, window_bounds
 
 
 @dataclass(frozen=True)
@@ -305,7 +305,7 @@ def pdf_metadata(config: RunConfig, figure: Figure) -> dict[str, str]:
         },
         "config_sha256": config_sha256(config),
         "processing_sha256": processing_sha256(config),
-        "git_commit": git_commit(),
+        **code_provenance(),
     }
     if metadata.get("comparison_provenance"):
         keywords["comparison"] = metadata["comparison_provenance"]
@@ -519,6 +519,7 @@ def _map_provenance(
         patterns.append(resolve(config.paths.granule_pattern, values))
     return {
         **aggregate.provenance,
+        "repository_url": REPOSITORY_URL,
         "grid_created_utc": aggregate.provenance.get("grid_created_utc", []),
         "processing_commits": aggregate.provenance.get("processing_commits", ["unknown"]),
         "plot_created_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
@@ -530,6 +531,7 @@ def _map_provenance(
         "qc_config": config.qc.model_dump(mode="json"),
         "grid": f"{config.grid.source} ({aggregate.grid.shape[0]} × {aggregate.grid.shape[1]})",
         "windows": aggregate.windows,
+        "window_duration_seconds": WINDOW_LENGTH_SEC,
         "period_mean_weighting": "observation_count",
         "l2_input_templates": list(dict.fromkeys(inputs)),
         "l2_filename_patterns": list(dict.fromkeys(patterns)),

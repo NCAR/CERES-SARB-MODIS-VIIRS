@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Iterator, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator, model_validator
 
 # Placeholders available to path templates. Granule templates are rendered per
 # (product, collection, day); manifest templates per (product, collection, period).
@@ -575,7 +575,27 @@ class CombinedProductConfig(StrictModel):
         return self
 
 
+class DevelopmentAgent(StrictModel):
+    """Declared code-development assistance, not part of numerical processing."""
+
+    tool: str = "unknown"
+    provider: str = "unknown"
+    model_name: str = "unknown"
+    model_version: str = "unknown"
+    reasoning_effort: str = "unknown"
+    role: str = "code_development"
+    notes: str = ""
+
+
+class ProvenanceConfig(StrictModel):
+    development_agents: list[DevelopmentAgent] = Field(default_factory=list)
+
+
 class RunConfig(StrictModel):
+    # Captured source files are provenance, not settings: exclude them from
+    # model_dump/config hashes, but preserve them in copies and worker pickles.
+    _config_sources: list[dict[str, str]] = PrivateAttr(default_factory=list)
+
     name: str = Field(default="run", pattern=r"^[A-Za-z0-9_.-]+$")
     profile: str | None = None
     catalog: Path | None = None
@@ -592,6 +612,7 @@ class RunConfig(StrictModel):
     aeronet: AeronetConfig = Field(default_factory=AeronetConfig)
     evaluation: EvaluationConfig = Field(default_factory=EvaluationConfig)
     plots: PlotsConfig = Field(default_factory=PlotsConfig)
+    provenance: ProvenanceConfig = Field(default_factory=ProvenanceConfig)
 
     @model_validator(mode="after")
     def _products_in_catalog(self) -> "RunConfig":

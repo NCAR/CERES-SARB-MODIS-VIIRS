@@ -98,6 +98,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.9 | AMI July C7 monthly map and regional daily PDFs | 4.8, 5.3 | Done; plots accepted, science gate open | Task 4.9 (this commit) |
 | 4.10 | Collection titles and provenance panel in period-mean maps | 4.7, 4.9 | Done | Task 4.10 (this commit) |
 | 4.11 | Refresh July C6.1/C7 monthly PDFs and deliver to Desktop | 4.10 | Done; protocol, visual and transfer checks pass | Task 4.11 (this commit) |
+| 4.12 | Readable map provenance and reproducibility metadata in NetCDF | 4.11, 1.8, 3.5 | Done | Task 4.12 (this commit) |
+| 4.13 | Deploy provenance changes and refresh July Desktop PDFs | 4.12 | In progress | — |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1479,6 +1481,26 @@ network access to LAADS and AERONET.
   verified protocols and transfer hashes, and placed both PDFs on the Desktop
   with collection-specific filenames. Details and hashes are in
   `docs/validation/ami_c7_200807_plots.md`.
+
+- Task 4.12: anchor Provenance to the neighboring map's top border, with bold
+  heading/entry labels and indented values. Paths wrap only at directory
+  boundaries, retaining complete components and filenames. A clickable
+  repository URL sits above the heading; Time Windows gives count and duration.
+  The last row uses vacant space above the shared colorbar to keep text readable.
+  New NetCDFs carry repository/revision/tags, captured run/profile YAML and
+  effective configuration, configurable development-agent identity/effort,
+  platform/OS, Python packages, Conda builds, native libraries and selected
+  thread/scheduler settings. Processing hashes exclude descriptive provenance.
+  Existing grid histories remain unchanged. `docs/PROVENANCE.md` documents
+  fields and reproducibility limits. All 943 offline tests, mypy, Black and
+  isort pass; the C6.1 preview passes protocol and visual checks. Independent
+  review found two issues, now fixed and regression-tested: reused L2 matchups
+  retain original attributes separately while refreshing target provenance;
+  regional panels use their whole cell to avoid tiny type for shallow bands.
+  Global alignment is preserved. Review's own run passed 940 tests and could
+  not bind the localhost fixture in its nested sandbox; the full task run
+  passes, including that fixture and the two added regional regressions.
+  Task 4.13 covers AMI deployment and final PDF delivery.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.

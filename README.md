@@ -126,6 +126,11 @@ window-center time, f09 bounds, per-stream counts/means, uncertainty and QC diag
 `aod_obs_template`. Summaries use `paths.summary`; their period mean is area-weighted
 across count-weighted cell means. Summarization rejects stale processing definitions.
 
+New grid and matchup NetCDFs also carry code/repository revisions, original and
+effective configuration, declared LLM development provenance, and the producing
+host/Python environment. See [NetCDF provenance](docs/PROVENANCE.md) for fields,
+configuration and reproducibility limits. Existing grids keep their original history.
+
 ## AERONET caches
 
 ```bash

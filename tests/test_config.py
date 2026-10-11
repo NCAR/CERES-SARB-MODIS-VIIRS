@@ -1,9 +1,18 @@
+import hashlib
+import json
+import pickle
 from datetime import date
 from pathlib import Path
 
 import pytest
 
-from sarb_aod.config.loader import PROFILE_DIR_ENV, PROFILE_ENV, expand_string, load_config
+from sarb_aod.config.loader import (
+    PROFILE_DIR_ENV,
+    PROFILE_ENV,
+    configuration_metadata,
+    expand_string,
+    load_config,
+)
 from sarb_aod.config.schema import load_catalog
 from sarb_aod.errors import ConfigurationError
 
@@ -62,6 +71,59 @@ def test_profile_precedence_argument_then_env(layout, monkeypatch):
     monkeypatch.setenv(PROFILE_ENV, "prod")
     assert load_config(run).paths.data_root == Path("/prod")
     assert load_config(run, profile="dev").paths.data_root == Path("/dev/data")
+
+
+def test_config_provenance_snapshots_selected_files_and_effective_overrides(layout, monkeypatch):
+    from sarb_aod.pipeline import config_sha256
+
+    monkeypatch.setenv("PROD_ROOT", "/production/data")
+    run = write(layout / "config/runs/r.yaml", "# Original Run\nprofile: dev\n" + RUN)
+    profile = layout / "config/profiles/prod.yaml"
+    originals = {str(path.resolve()): path.read_bytes() for path in (run, profile)}
+    config = load_config(run, profile="prod")
+    # Later filesystem changes cannot rewrite the configuration history.
+    run.write_text("# Changed after loading\n")
+    profile.unlink()
+    changed = pickle.loads(pickle.dumps(config.model_copy(update={"name": "runtime_override"})))
+    metadata = configuration_metadata(changed)
+    effective = json.loads(metadata["config"])
+    assert effective["name"] == "runtime_override"
+    assert effective["profile"] == "prod"
+    assert effective["paths"]["data_root"] == "/production/data"
+    sources = json.loads(metadata["config_files"])
+    assert [source["role"] for source in sources] == ["run", "profile"]
+    for source in sources:
+        original = originals[source["path"]]
+        assert source["content"].encode("utf-8") == original
+        assert source["sha256"] == hashlib.sha256(original).hexdigest()
+    assert hashlib.sha256(metadata["config"].encode()).hexdigest() == config_sha256(changed)
+    assert config_sha256(type(changed).model_validate(effective)) == config_sha256(changed)
+
+
+def test_development_agent_is_recorded_without_changing_processing(layout):
+    from sarb_aod.config.schema import DevelopmentAgent, ProvenanceConfig
+    from sarb_aod.pipeline import processing_sha256
+
+    run = write(
+        layout / "config/runs/r.yaml",
+        "profile: dev\n"
+        + RUN
+        + 'grid:\n  streams:\n    terra_dt: {product: MOD04_L2, collection: "6.1"}\n',
+    )
+    original = load_config(run)
+    agent = DevelopmentAgent(
+        tool="Codex",
+        provider="OpenAI",
+        model_name="example-model",
+        model_version="example-snapshot",
+        reasoning_effort="high",
+    )
+    declared = original.model_copy(
+        update={"provenance": ProvenanceConfig(development_agents=[agent])}
+    )
+    attrs = configuration_metadata(declared)
+    assert json.loads(attrs["development_agents"])[0] == agent.model_dump(mode="json")
+    assert processing_sha256(original) == processing_sha256(declared)
 
 
 def test_profile_dir_env_and_explicit_path(tmp_path, monkeypatch):

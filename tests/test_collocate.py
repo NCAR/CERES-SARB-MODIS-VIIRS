@@ -1,5 +1,6 @@
 """Planted overpass and cell matchups, midnight edges, and CAM7 regression mode."""
 
+import json
 from datetime import date, datetime
 from pathlib import Path
 
@@ -376,6 +377,8 @@ def test_neighbor_loading_requests_both_adjacent_utc_dates(tmp_path):
 
 
 def test_netcdf_roundtrip_retains_times_numbers_flags_and_sources(tmp_path):
+    from sarb_aod.contract import code_provenance
+
     reference = aero(["2008-07-01T00:00Z", "2008-07-01T00:01Z"], [0.1, 0.3])
     matched = collocate_l2([("source.hdf", batch([0.2] * 3))], reference, recipes=[RECIPE])
     path = write_matchups(tmp_path / "matchups.nc", matched, attributes={"config": {"test": True}})
@@ -386,6 +389,10 @@ def test_netcdf_roundtrip_retains_times_numbers_flags_and_sources(tmp_path):
         assert saved["coastal_site"].values[0] == 0
         assert saved["source_granules"].values[0] == '["source.hdf"]'
         assert saved.attrs["time_zone"] == "UTC"
+        for key, value in code_provenance().items():
+            assert saved.attrs[key] == value
+        assert json.loads(saved.attrs["compute_platform"])["os_name"]
+        assert json.loads(saved.attrs["python_environment"])["packages"]
     empty = collocate_l2([], reference, recipes=[RECIPE])
     write_matchups(tmp_path / "empty.nc", empty)
     with xr.open_dataset(tmp_path / "empty.nc") as saved:
@@ -430,6 +437,8 @@ def test_l2_driver_deduplicates_edge_granules_and_records_provenance(tmp_path, m
     assert result.path.is_file()
     with xr.open_dataset(result.path) as saved:
         assert "config_sha256" in saved.attrs and "aeronet_cache_files" in saved.attrs
+        assert json.loads(saved.attrs["config_files"]) == []  # programmatic test configuration
+        assert json.loads(saved.attrs["config"]) == cfg.model_dump(mode="json")
 
 
 @pytest.mark.parametrize("pairing", ["default", "daily"])

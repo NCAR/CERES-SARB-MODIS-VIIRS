@@ -19,7 +19,9 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+from sarb_aod.config.loader import configuration_metadata
 from sarb_aod.config.schema import RunConfig
+from sarb_aod.contract import code_provenance
 from sarb_aod.evaluation.calculator import (
     DEFAULT_AOD_BINS,
     MONTH_TO_METEOROLOGICAL_SEASON,
@@ -38,6 +40,7 @@ from sarb_aod.evaluation.collocate import (
 from sarb_aod.evaluation.metrics import STANDARD_METRICS, get_metric
 from sarb_aod.evaluation.regions import REGIONS, region_mask
 from sarb_aod.pipeline import config_sha256, processing_sha256, stream_recipes
+from sarb_aod.provenance import runtime_global_attrs
 
 SP1_BASELINE = {"N": 8875, "MB": 0.0195, "RMSE": 0.1464, "R": 0.8555}
 _CONTEXT = ["configuration", "sensor", "stream", "collection", "aeronet_level"]
@@ -719,14 +722,18 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
         raise ValueError(
             "L2 reuse requires retained extrapolation sensitivity candidates; rerun source evaluate"
         )
+    source_provenance = _json_value(dict(attributes))
     attributes.update(
+        **configuration_metadata(target),
+        **code_provenance(),
+        **runtime_global_attrs(),
         run=target.name,
-        config=target.model_dump(mode="json"),
         config_sha256=config_sha256(target),
         processing_sha256=processing_sha256(target),
         reused_l2_file=str(source_path),
         reused_l2_sha256=hashlib.sha256(source_path.read_bytes()).hexdigest(),
         reused_l2_streams=sorted(target_recipes),
+        reused_l2_provenance=source_provenance,
     )
     path = write_matchups(target_dir / filename, values, attributes=attributes)
     return MatchupResult(values, path)
