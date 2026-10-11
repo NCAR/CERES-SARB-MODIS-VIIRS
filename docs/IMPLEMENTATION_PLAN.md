@@ -106,6 +106,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.17 | Render and deliver reviewed July C6.1 regional summaries on the laptop | 4.16 | Done; 14 PDFs, protocol and visual checks pass, Desktop copies match | Task 4.17 (this commit) |
 | 4.18 | Compact regional layout, provenance explanations, grey cities and DAVINCI footer | 4.17 | Done; 951 offline tests and all plot protocols pass; reviewed | `957622c` |
 | 4.19 | Refresh compact July C6.1 regional PDFs on Desktop | 4.18 | Done; 14 protocols, inspected previews and Desktop checksums pass | Task 4.19 (this commit) |
+| 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | Task 4.20 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1567,6 +1568,20 @@ network access to LAADS and AERONET.
   rechecked the Western US and global previews, verified embedded input/code
   identities and all protocols, and replaced the Desktop PDFs byte for byte.
   The delivery report and inventory record the new sizes and checksums.
+
+- Task 4.20: both provenance blocks end with the same bold, wrapped DAVINCI
+  attribution. The regional page no longer reserves a separate footer. A
+  dedicated spatial colorbar row spans the center/right retrieval columns
+  while preserving map-row alignment. Spatial AOD labels include 550 nm.
+  All 951 offline tests, mypy, Black and isort pass; the C6.1 monthly map and
+  all 14 regional summaries pass protocols and visual inspection.
+  Review exposed clipping of the final attribution in a South Atlantic
+  spatial panel with three processing revisions. Reserving 12 points of
+  bottom page padding fixes it; the new regression fails before the fix and
+  passes afterward, alongside the shallow-region readability checks.
+  The final full gate passes all 952 offline tests; type/format checks pass
+  and no review findings remain open.
+  Delivery follows the code commit so PDF provenance records clean code.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.

@@ -246,7 +246,9 @@ def test_regional_panels_pass_protocol(inputs: RunConfig) -> None:
         figure = suites.render_map_figure(config, data, spec)
         result = suites.validate_rendered_figures({spec.key: figure})
     assert result["passed"]
-    assert getattr(figure, "_sarb_plot_metadata")["titles"][0].get_text() == "AOD - Western US"
+    assert (
+        getattr(figure, "_sarb_plot_metadata")["titles"][0].get_text() == "AOD 550 nm - Western US"
+    )
 
 
 def test_complete_offline_suite_passes_protocol_and_writes_pdf_png(inputs: RunConfig) -> None:
@@ -396,7 +398,7 @@ def test_comparison_labels_describe_sensor_version_and_qc_changes(config: RunCon
 
 @pytest.mark.parametrize("stream,source", [("terra_dt", "MODIS"), ("snpp_db", "VIIRS")])
 @pytest.mark.parametrize(
-    "field,quantity", [("daily_mean_aod", "AOD"), ("uncertainty", "AOD Uncertainty")]
+    "field,quantity", [("daily_mean_aod", "AOD 550 nm"), ("uncertainty", "AOD Uncertainty 550 nm")]
 )
 def test_single_sensor_global_maps_identify_source(
     inputs: RunConfig, stream: str, source: str, field: str, quantity: str
@@ -440,8 +442,8 @@ def test_monthly_collection_title_layout_and_recorded_provenance(
     spec = suites.map_figure_specs(config)[0]
     figure = suites.render_map_figure(config, data, spec)
     metadata = getattr(figure, "_sarb_plot_metadata")
-    assert metadata["titles"][0].get_text() == f"MODIS C{collection} AOD"
-    assert metadata["titles"][1].get_text() == "Terra Dark Target AOD"
+    assert metadata["titles"][0].get_text() == f"MODIS C{collection} AOD 550 nm"
+    assert metadata["titles"][1].get_text() == "Terra Dark Target AOD 550 nm"
     axes = metadata["data_axes"]
     assert len(axes) == 5
     assert list(axes[0].get_subplotspec().rowspan) == [0]
@@ -452,11 +454,16 @@ def test_monthly_collection_title_layout_and_recorded_provenance(
     assert panel.get_text() == "Provenance"
     assert panel.get_fontweight() == "bold"
     colorbar = metadata["colorbars"][0]
-    tagline = next(text for text in colorbar.ax.texts if text.get_text().startswith("DAVINCI"))
-    assert tagline.get_text() == (
-        "DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry"
+    tagline = next(
+        text for text in metadata["provenance_text"] if text.get_text().startswith("DAVINCI")
     )
-    assert tagline.get_window_extent().y0 > colorbar.ax.get_window_extent().y1
+    assert tagline.axes is panel.axes
+    assert tagline.get_fontweight() == "bold"
+    assert tagline.get_text().replace("\n", " ") == (
+        "DAVINCI Data Analysis and Visual Intelligence for Climate & Chemistry"
+    )
+    assert colorbar.ax.get_position().x0 >= axes[1].get_position().x0 - 0.01
+    assert colorbar.ax.get_position().x1 <= axes[2].get_position().x1 + 0.01
     repository_text = metadata["provenance_text"][-1]
     np.testing.assert_allclose(
         repository_text.get_window_extent().y1, axes[3].title.get_window_extent().y1
@@ -530,3 +537,49 @@ def test_shallow_regional_provenance_remains_readable(inputs: RunConfig, region:
         assert suites.validate_rendered_figures({spec.key: figure})["passed"]
     texts = getattr(figure, "_sarb_plot_metadata")["provenance_text"]
     assert min(text.get_fontsize() for text in texts) >= 7
+
+
+def test_south_atlantic_provenance_with_multiple_revisions_fits(config: RunConfig) -> None:
+    from sarb_aod.config.loader import load_config
+    from sarb_aod.grid.spec import load_grid
+    from sarb_aod.paths import cartopy_data_dir
+
+    run = load_config("config/runs/modis_l2_200807_gls_rho05.yaml", profile="mac")
+    run = run.model_copy(
+        update={
+            "paths": run.paths.model_copy(
+                update={
+                    "data_root": Path("/example/researcher/Data"),
+                    "cartopy_data_dir": str(cartopy_data_dir(config)),
+                }
+            )
+        }
+    )
+    grid = load_grid()
+    values = np.full(grid.shape, 0.15)
+    data = suites.MapAggregate(
+        grid=grid,
+        means={name: values for name in ["product", "modis", *run.grid.streams]},
+        uncertainty=values,
+        count=values,
+        observation_fraction=values,
+        chi2=values,
+        negative_fraction=values,
+        daily_means={},
+        windows=248,
+        provenance={
+            "grid_created_utc": ["2026-10-11T00:00:00Z"],
+            "processing_commits": ["a" * 40, "b" * 40, "c" * 40],
+        },
+    )
+    spec = suites.MapFigureSpec(
+        "aod_maps",
+        "mean_aod_south_atlantic_ocean",
+        run.period.start,
+        run.period.end,
+        "mean_aod",
+        "south_atlantic_ocean",
+    )
+    with ncar_style("publication"):
+        figure = suites.render_map_figure(run, data, spec)
+        assert suites.validate_rendered_figures({spec.key: figure})["passed"]

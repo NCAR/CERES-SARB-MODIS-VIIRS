@@ -359,7 +359,10 @@ def _quantity(kind: FieldKind, quantity: str | None) -> str:
         "rmse": "AOD Error",
         "correlation": "AOD Correlation",
     }
-    return labeling.title_text(quantity or defaults[kind])
+    label = quantity or defaults[kind]
+    if "AOD" in label and "550 nm" not in label:
+        label += " 550 nm"
+    return labeling.title_text(label)
 
 
 def _title(ax: Any, title: str, subtitle: str) -> tuple[Any, Any]:
@@ -380,10 +383,19 @@ def _title(ax: Any, title: str, subtitle: str) -> tuple[Any, Any]:
     return heading, detail
 
 
-def _colorbar(figure: Figure, artist: Any, axes: Any, scale: FieldScale, units: str | None) -> Any:
+def _colorbar(
+    figure: Figure,
+    artist: Any,
+    axes: Any,
+    scale: FieldScale,
+    units: str | None,
+    *,
+    cax: Any = None,
+) -> Any:
     colorbar = figure.colorbar(
         artist,
         ax=axes,
+        cax=cax,
         orientation="horizontal",
         fraction=0.055,
         pad=0.09,
@@ -557,10 +569,15 @@ def map_panels(
     else:
         rows, columns = len(mosaic), len(mosaic[0])
     figure = plt.figure(figsize=(5.4 * columns, 3.6 * rows + 0.9), constrained_layout=True)
+    if provenance is not None:
+        # An explicit scale row keeps every map row aligned while reserving
+        # the bottom-left column for the full provenance block.
+        mosaic.append(["."] + ["colorbar"] * (columns - 1) if columns > 1 else ["colorbar"])
     arranged = (
         figure.subplot_mosaic(
             cast(list[HashableList[str]], mosaic),
             per_subplot_kw={source: {"projection": _projection(subset)} for source in sources},
+            gridspec_kw={"height_ratios": [1] * rows + [0.075]} if provenance is not None else {},
         )
         if layout is not None
         else None
@@ -596,10 +613,10 @@ def map_panels(
         titles.append(heading)
         subtitles.append(subtitle)
         gridliners.append(gridliner)
-    colorbar_axes = (
-        [*axes, arranged["provenance"]] if provenance is not None and arranged is not None else axes
-    )
-    colorbar = _colorbar(figure, artists[0], colorbar_axes, scale, units)
+    if provenance is not None and arranged is not None:
+        colorbar = _colorbar(figure, artists[0], axes, scale, units, cax=arranged["colorbar"])
+    else:
+        colorbar = _colorbar(figure, artists[0], axes, scale, units)
     for ax in axes:
         position = ax.get_subplotspec()
         if position is not None and len(position.rowspan) > 1:
@@ -621,15 +638,6 @@ def map_panels(
         plot_type=plot_type,
     )
     if provenance is not None and arranged is not None:
-        tagline = colorbar.ax.text(
-            0.5,
-            1,
-            labeling.davinci_tagline(),
-            transform=colorbar.ax.transAxes + ScaledTranslation(0, 8 / 72, figure.dpi_scale_trans),
-            ha="center",
-            va="bottom",
-            fontsize=10,
-        )
         panel = arranged["provenance"]
         panel.set_axis_off()
         url = labeling.provenance_repository_url(provenance)
@@ -681,9 +689,11 @@ def map_panels(
         available = panel.get_window_extent(renderer)
         bottom = available.y0
         if panel_position.rowspan.stop == rows:
-            # The final row has unused space above the shared colorbar. Use it
-            # for readable metadata, leaving a clear gap above the attribution.
-            bottom = tagline.get_window_extent(renderer).y1 + 12 * figure.dpi / 72
+            # Provenance can use the space beside the retrieval-column colorbar.
+            bottom = min(bottom, colorbar.ax.get_tightbbox(renderer).y0)
+        # Leave physical page padding even when the colorbar's tick labels
+        # reach the edge; font-size rounding can add height after fitting.
+        bottom = max(bottom, 12 * figure.dpi / 72)
         height = neighbor.get_window_extent(renderer).y1 + title_offset * figure.dpi / 72 - bottom
         entries = []
         offset = 0.0

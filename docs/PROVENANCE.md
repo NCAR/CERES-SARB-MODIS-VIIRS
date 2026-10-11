@@ -89,5 +89,6 @@ Runtime inventories and YAML contents stay in NetCDF rather than crowding the
 panel. PDF Keywords retain the figure's existing detailed input/provenance record.
 Global maps align the block's first line to the neighboring map title; regional maps use
 the full reserved cell so shallow latitude bands do not force tiny text. The
-DAVINCI name and expansion sit above the shared colorbar with a clear gap from
-the provenance entries.
+DAVINCI name and expansion form a bold, wrapped final entry in the provenance
+block, in both spatial and regional summary figures. Spatial AOD labels include
+550 nm; the shared colorbar sits under only the center/right retrieval columns.

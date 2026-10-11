@@ -270,8 +270,10 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     and revision, weighting/QA, configured L2 path templates, grid paths and PDF destination.
     Align the first line of the provenance block with the title of the map to its right. Use bold
     entry labels above indented values; wrap paths only at directory boundaries, preserving
-    complete directory names and filenames. Leave clear space above the shared colorbar.
-    Above that bar, center `DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry`.
+    complete directory names and filenames. End the text block with the bold, wrapped
+    `DAVINCI Data Analysis and Visual Intelligence for Climate & Chemistry` attribution.
+    Put the shared colorbar beneath only the center/right retrieval columns, and include
+    `550 nm` in spatial AOD labels.
     Put the clickable repository URL above Provenance. Label the count and duration as
     `Time Windows: 248 × 3 Hours` (values from the run). Keep the PDF concise; detailed
     runtime, environment, config snapshots and development-agent metadata belong in NetCDF.
@@ -300,8 +302,8 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     The context map shows active paired AERONET sites and labeled major cities from the
     explicitly cached Natural Earth populated-places layer; city dots are light grey and one
     marker-size step larger than site dots, with black labels above the analysis rectangle.
-    Put line/band/error explanations in Provenance and the left-aligned DAVINCI expansion
-    at the bottom, with compact spacing. Geographic padding and city count are config
+    Put line/band/error explanations and the bold, wrapped DAVINCI expansion in Provenance,
+    with compact spacing. Geographic padding and city count are config
     options. Retain the existing inset layout by default pending user iteration.
   - Never put dates, years, statistics, `vs <source>`, raw keys, internal labels or `x`/`y` in
     titles. Dates go in the subtitle; maps add ` | Mean: <value>`.

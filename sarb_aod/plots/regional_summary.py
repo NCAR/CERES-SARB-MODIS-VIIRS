@@ -13,7 +13,7 @@ import pandas as pd
 from cartopy.io import shapereader
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from matplotlib.transforms import Bbox, ScaledTranslation, blended_transform_factory
+from matplotlib.transforms import Bbox, ScaledTranslation
 
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import REPOSITORY_URL, git_commit
@@ -393,7 +393,7 @@ def compose(
         text.remove()
     metadata["statistics_annotations"] = []
     figure.set_size_inches(16.2, 8.7)
-    figure.set_layout_engine("constrained", rect=(0, 0.04, 1, 0.96), h_pad=0.10, w_pad=0.16)
+    figure.set_layout_engine("constrained", h_pad=0.10, w_pad=0.16)
     grid = figure.add_gridspec(2, 3, height_ratios=[0.9, 1.1], width_ratios=[1.05, 1.05, 1])
     series_axis.set_subplotspec(grid[0, :])
     panel = figure.add_subplot(grid[1, 0])
@@ -431,13 +431,4 @@ def compose(
     _draw_map(figure, map_axis, config, pairs, subset)
     _draw_provenance(figure)
     _place_statistics(figure)
-    figure.text(
-        0,
-        0.012,
-        labeling.davinci_tagline(separator=" "),
-        transform=blended_transform_factory(series_axis.transAxes, figure.transFigure),
-        ha="left",
-        va="bottom",
-        fontsize=9,
-    )
     return figure

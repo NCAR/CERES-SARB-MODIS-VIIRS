@@ -33,8 +33,9 @@ verified daily matchups; it does not recompute gridded data or evaluation.
   count, bias, RMSE, correlation and normalized absolute error. These are
   the exact same daily means/statistics as the top panel. The scatter does
   not pool individual site-days. Empty regions remain explicit empty plots.
-- Footer: left-aligned “DAVINCI Data Analysis and Visual Intelligence for
-  Climate & Chemistry”. The shorter page and closer map legend reduce bottom whitespace.
+- The bottom-left text block ends with bold, wrapped “DAVINCI Data Analysis
+  and Visual Intelligence for Climate & Chemistry”. There is no separate page footer.
+  The shorter page and closer map legend reduce bottom whitespace.
 
 Global cannot show geography beyond the globe. Other map extents use the
 configured padding, at least five degrees on each side, and extra latitude

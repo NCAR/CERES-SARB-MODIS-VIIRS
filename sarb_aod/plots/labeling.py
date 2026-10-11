@@ -31,9 +31,9 @@ if TYPE_CHECKING:
 _DIMENSIONLESS = {"", "1", "none", "dimensionless", "unitless", "fraction"}
 
 
-def davinci_tagline(*, separator: str = " - ") -> str:
-    """DAVINCI attribution for spatial colorbars and regional figure footers."""
-    return f"DAVINCI{separator}Data Analysis and Visual Intelligence for Climate & Chemistry"
+def davinci_tagline() -> str:
+    """Wrapped attribution shared by spatial and regional provenance blocks."""
+    return "DAVINCI Data Analysis and Visual Intelligence\nfor Climate & Chemistry"
 
 
 def city_label(name: str) -> str:
@@ -73,6 +73,7 @@ def regional_provenance_sections(provenance: Mapping[str, Any]) -> list[tuple[st
             "\n".join(_provenance_paths(provenance["config_files"], 66)) or "  Programmatic",
         ),
         ("PDF Output:", "\n".join(_provenance_path_lines(provenance["pdf_output"], 66))),
+        (davinci_tagline(), ""),
     ]
     return sections
 
@@ -256,6 +257,7 @@ def provenance_panel_sections(
                 "\n".join(_provenance_paths(paths, width)),
             )
         )
+    sections.append((davinci_tagline(), ""))
     return sections
 
 

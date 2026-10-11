@@ -71,7 +71,7 @@ def test_absolute_map_scale_bounds_context_and_vector_text(coastline_cache: Path
     assert artist.cmap.name == "turbo"
     assert all(item.get_rasterized() for item in metadata["dense_artists"])
     assert all(not item.get_rasterized() for item in figure.findobj(Text))
-    assert metadata["titles"][0].get_text() == "MODIS AOD"
+    assert metadata["titles"][0].get_text() == "MODIS AOD 550 nm"
     assert metadata["subtitles"][0].get_text() == "2008-07-01 – 2008-07-31 | Mean: 0.400"
     assert metadata["colorbars"][0].extend == "max"
     assert metadata["colorbars"][0].ax.get_xlabel() == ""
@@ -172,7 +172,7 @@ def test_regional_map_uses_named_extent_and_subset_title(coastline_cache: Path) 
     np.testing.assert_allclose(
         metadata["data_axes"][0].get_extent(), get_region("western_us").extent
     )
-    assert metadata["titles"][0].get_text() == "AOD - Western US"
+    assert metadata["titles"][0].get_text() == "AOD 550 nm - Western US"
     grid = load_grid()
     mean = maps.area_mean(data, grid.lat, grid.lon, "western_us")
     assert metadata["subtitles"][0].get_text().endswith(f"Mean: {mean:.3f}")
