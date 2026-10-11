@@ -529,6 +529,8 @@ def _evaluation_envelopes() -> dict[str, ExpectedErrorEnvelopeConfig]:
 class EvaluationConfig(StrictModel):
     """Matchup selection, grouped statistics, and published expected errors."""
 
+    aod_variant: Literal["unfiltered", "filtered"] = "unfiltered"
+    sample_support: Literal["available", "common"] = "available"
     min_samples: int = Field(default=3, ge=1, strict=True)
     round_precision: int = Field(default=4, ge=0, le=15, strict=True)
     ee: dict[str, ExpectedErrorEnvelopeConfig] = Field(default_factory=_evaluation_envelopes)
@@ -553,6 +555,7 @@ class EvaluationConfig(StrictModel):
 PlotSuite = Literal[
     "aod_maps",
     "aod_differences",
+    "aod_despeckle_comparison",
     "aeronet_site_bias",
     "aeronet_site_timeseries",
     "aeronet_regional_timeseries",

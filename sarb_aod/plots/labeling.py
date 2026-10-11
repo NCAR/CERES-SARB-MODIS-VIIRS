@@ -671,3 +671,46 @@ __all__ = [
     "regional_spread_note",
     "region_label",
 ]
+
+
+def despeckle_label(key: str) -> str:
+    """Central labels for experimental paired AOD diagnostics."""
+    return {
+        "unfiltered": "Unfiltered",
+        "filtered": "Filtered",
+        "unfiltered_common": "Unfiltered (Common Samples)",
+        "filtered_common": "Filtered (Common Samples)",
+        "removed_fraction": "Removed",
+        "replaced_fraction": "Replaced",
+        "changed_fraction": "Changed",
+        "unfiltered_coverage": "Unfiltered Coverage",
+        "filtered_coverage": "Filtered Coverage",
+        "available": "Available Samples; Original Observation-Count Weights",
+        "common": "Common Cell-Windows; Filtered Minus Unfiltered",
+        "fractions": "Fraction of Originally Valid Cell-Windows",
+        "coverage": "Fraction of All Time Windows (3 Hours Each)",
+        "time": "Time (UTC)",
+        "fraction": "Area Fraction",
+        "aod": "AOD (550 nm)",
+    }.get(key, source_display_name(key))
+
+
+def latitude_band_name(south: float, north: float) -> str:
+    def latitude(value: float) -> str:
+        return f"{abs(value):g}° {'N' if value >= 0 else 'S'}"
+
+    return f"{latitude(south)} – {latitude(north)}"
+
+
+def subset_map_title(quantity: str, key: str, display_name: str) -> str:
+    """Custom diagnostic extents need not mutate the published region catalog."""
+    return f"{quantity} - {display_name}"
+
+
+def despeckle_window_note(key: str) -> str:
+    return {
+        "means": "Paired Source AOD; Before / After Filtering",
+        "counts": "Original Accepted Retrieval Counts",
+        "support": "Valid Neighbor Area Fraction; Examined Candidates Only",
+        "flags": "Action: 0 Unchanged; 1 Isolated; 2 Replaced; 3 Masked Spike; 4 Insufficient Donors",
+    }[key]

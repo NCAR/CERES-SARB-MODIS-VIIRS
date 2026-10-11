@@ -109,6 +109,10 @@ def plot_path(config: RunConfig, suite: str, name: str, start: date, end: date) 
     """PDF deliverable; previews and protocol reports replace this suffix."""
     import re
 
+    from sarb_aod.variants import comparison_tag
+
+    if suite != "aod_despeckle_comparison":
+        name += comparison_tag(config)
     for value in (suite, name):
         if not re.fullmatch(r"[A-Za-z0-9_.-]+", value):
             raise ValueError("plot suite and name must be filename-safe identifiers")
@@ -163,3 +167,19 @@ def cam_namelist(config: RunConfig) -> dict[str, str]:
     if len(template) > 80 or expanded_length >= 256:
         raise ValueError("CAM output template exceeds 80 characters or full path reaches 256")
     return {"aod_obs_path": prefix, "aod_obs_template": template}
+
+
+def summary_path(config: RunConfig) -> Path:
+    """One shared variant-aware summary destination for all consumers."""
+    from sarb_aod.variants import comparison_tag
+
+    path = Path(
+        config.paths.summary.format(
+            data_root=config.paths.data_root,
+            stem=config.output.stem,
+            run=config.name,
+            start=f"{config.period.start:%Y%m%d}",
+            end=f"{config.period.end:%Y%m%d}",
+        )
+    )
+    return path.with_stem(path.stem + comparison_tag(config))

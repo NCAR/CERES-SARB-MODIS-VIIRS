@@ -22,8 +22,9 @@ from sarb_aod.evaluation.report import (
     matchup_signature,
 )
 from sarb_aod.grid.spec import load_grid
-from sarb_aod.paths import output_path
+from sarb_aod.paths import output_path, summary_path
 from sarb_aod.pipeline import processing_sha256, require_processing_provenance
+from sarb_aod.variants import comparison_tag, read_grid_field
 from sarb_aod.windows import window_bounds
 
 Level = Literal["l2", "grid"]
@@ -68,8 +69,8 @@ def json_values(value: Any) -> Any:
 
 
 def report_path(config: RunConfig, level: Level, *, pairing: Pairing = "default") -> Path:
-    return evaluation_directory(config) / (
-        f"{config.name}_{level}_{pairing}_"
+    return evaluation_directory(config, level) / (
+        f"{config.name}_{level}_{pairing}{comparison_tag(config, level)}_"
         f"{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}_report.json"
     )
 
@@ -95,12 +96,15 @@ def verified_tables(
     ):
         raise ValueError("Report run, level or pairing does not match the campaign")
     stored = RunConfig.model_validate(provenance["config"])
-    if matchup_signature(stored) != matchup_signature(config):
+    if matchup_signature(stored, level) != matchup_signature(config, level):
         raise ValueError("Report scientific configuration is stale")
-    if provenance.get("processing_sha256") != processing_sha256(config):
+    if provenance.get("processing_sha256") != processing_sha256(
+        stored if level == "l2" else config
+    ):
         raise ValueError("Report resolved processing configuration is stale")
-    matchups = evaluation_directory(config) / (
-        f"matchups_{level}_{pairing}_" f"{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+    matchups = evaluation_directory(config, level) / (
+        f"matchups_{level}_{pairing}{comparison_tag(config, level)}_"
+        f"{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
     )
     if Path(provenance["matchup_file"]).resolve() != matchups.resolve():
         raise ValueError("Report points to an unexpected matchup file")
@@ -259,15 +263,7 @@ def coverage(config: RunConfig) -> dict[str, Any]:
     Coverage is the fraction of f09 cells, not an area-weighted fraction. Period
     coverage means observed at least once; mean window coverage measures sampling.
     """
-    path = Path(
-        config.paths.summary.format(
-            data_root=config.paths.data_root,
-            stem=config.output.stem,
-            run=config.name,
-            start=f"{config.period.start:%Y%m%d}",
-            end=f"{config.period.end:%Y%m%d}",
-        )
-    )
+    path = summary_path(config)
     summary_bytes = path.read_bytes()
     table = pd.read_csv(io.BytesIO(summary_bytes), sep="\t")
     windows = table.loc[table.kind == "window"]
@@ -287,7 +283,7 @@ def coverage(config: RunConfig) -> dict[str, Any]:
         with netCDF4.Dataset(output_path(config, start)) as dataset:
             require_processing_provenance(dataset, config, start)
             dataset.set_auto_mask(False)
-            mean = np.asarray(dataset["aod_weighted_mean"][:], dtype=float)
+            mean = read_grid_field(dataset, config, "aod_weighted_mean")
             count = np.asarray(dataset["aod_count"][:], dtype=np.int64)
             valid = (count > 0) & np.isfinite(mean) & (mean > -900)
             if int(count[valid].sum()) != recorded.aod_count or not np.isclose(

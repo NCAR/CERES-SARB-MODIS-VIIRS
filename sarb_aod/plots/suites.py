@@ -32,6 +32,7 @@ from sarb_aod.plots import labeling, maps
 from sarb_aod.plots.protocol import PROTOCOL, PlotProtocolError, validate_rendered_figures
 from sarb_aod.plots.style import geosit_aod_levels, ncar_style
 from sarb_aod.qc import resolve_rule
+from sarb_aod.variants import read_grid_field
 from sarb_aod.windows import TIMES_PER_DAY, WINDOW_LENGTH_SEC, window_bounds
 
 
@@ -152,7 +153,7 @@ def aggregate_maps(config: RunConfig) -> MapAggregate:
                 def read(name: str) -> np.ndarray:
                     if name not in dataset.variables:
                         raise ValueError(f"Map input {path} is missing {name}; rerun grid")
-                    values = np.asarray(dataset[name][:], dtype=np.float64)
+                    values = read_grid_field(dataset, config, name)
                     if values.shape != grid.shape:
                         raise ValueError(f"Map input {path}: {name} has an invalid grid shape")
                     return values
@@ -297,6 +298,8 @@ def pdf_metadata(config: RunConfig, figure: Figure) -> dict[str, str]:
     titles = [item.get_text() for item in metadata.get("titles", [])]
     keywords = {
         "run": config.name,
+        "aod_variant": config.evaluation.aod_variant,
+        "sample_support": config.evaluation.sample_support,
         "weighting": config.weighting.method,
         "rho": config.weighting.rho,
         "qc": config.qc.preset,

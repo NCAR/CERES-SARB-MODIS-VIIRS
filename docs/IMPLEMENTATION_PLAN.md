@@ -119,8 +119,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
 | 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Done | `2bfed5c` |
-| 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Done | Task 6.3 (this commit) |
-| 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Planned | |
+| 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Done | f5d7a53 |
+| 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Done | Task 6.4 (this commit) |
 | 6.5 | July 2008 C6.1 laptop trial and scientific assessment | 6.4 | Planned | |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
@@ -1781,3 +1781,23 @@ semantics, and limits of operational acceptance.
 Task 6.3 validation: 1,042 offline tests passed; mypy, Black, isort and diff checks passed.
 `codex review --uncommitted` found no actionable regressions, including additional mixed-sensor
 and minimum-count checks. Atomic failure tests preserve previously published files.
+
+Task 6.4 adds the `aod_despeckle_comparison` suite: global and configured latitude-band
+paired monthly maps, common-window differences, coverage/action fractions and time series.
+Selected-window renderers expose source pairs, counts, neighborhood support and flags.
+`evaluation.aod_variant` selects unfiltered/filtered values; `sample_support` selects
+available/common windows before daily accumulation. Original counts remain temporal weights.
+Grid matchup/report/plot paths and metadata separate all four combinations; L2 caches ignore
+these grid-only settings and remain reusable. Summaries and independent plot series honor
+the selection. Planted sampling tests distinguish removal effects from replacement effects.
+
+Task 6.4 review: fixed variant summary destinations in monthly batches/campaign reads,
+colorbar endpoint roundoff, and the review finding that sparse action categories could
+saturate to the same color. Action colors now use five fixed categories with integer ticks.
+The selected July source-pair, count, support and action previews were visually inspected;
+all 20 individual protocols passed. Available/common-sample tests verify site-day and
+window-weight identity, L2 cache reuse, batch summaries, and global/custom-band plot protocols.
+
+Task 6.4 final gate: 1,052 offline tests passed; mypy, Black, isort and diff checks passed.
+The review sandbox could not bind the existing local HTTP test socket; the primary full
+gate ran that test successfully. No review findings remain unresolved.

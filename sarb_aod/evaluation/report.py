@@ -42,6 +42,7 @@ from sarb_aod.evaluation.metrics import STANDARD_METRICS, get_metric
 from sarb_aod.evaluation.regions import REGIONS, region_mask
 from sarb_aod.pipeline import config_sha256, processing_sha256, stream_recipes
 from sarb_aod.provenance import runtime_global_attrs
+from sarb_aod.variants import comparison_tag, evaluation_directory
 
 SP1_BASELINE = {"N": 8875, "MB": 0.0195, "RMSE": 0.1464, "R": 0.8555}
 _CONTEXT = ["configuration", "sensor", "stream", "collection", "aeronet_level"]
@@ -335,6 +336,8 @@ def build_report(
         "run": config.name,
         "level": level,
         "pairing": pairing,
+        "aod_variant": config.evaluation.aod_variant if level == "grid" else "original_l2",
+        "sample_support": config.evaluation.sample_support if level == "grid" else "available",
         "difference_convention": "y - x (satellite - AERONET)",
         "global_aggregation": "original matchups, never the sum of overlapping regions",
         "regional_aggregation": "paired site-day means, then equally weighted active sites per region-day",
@@ -430,13 +433,7 @@ def write_report(
     return report
 
 
-def evaluation_directory(config: RunConfig) -> Path:
-    return Path(
-        config.paths.evaluation_dir.format(data_root=str(config.paths.data_root), run=config.name)
-    )
-
-
-def matchup_signature(config: RunConfig) -> dict[str, Any]:
+def matchup_signature(config: RunConfig, level: str = "grid") -> dict[str, Any]:
     # JSON metadata sorts mapping keys. Compare scientific definitions as
     # mappings here; preserve the original processing hash for file validation.
     processing = {
@@ -454,11 +451,22 @@ def matchup_signature(config: RunConfig) -> dict[str, Any]:
         }
         for recipe in stream_recipes(config)
     }
+    evaluation = config.evaluation.model_dump(mode="json")
+    if level == "grid" and config.despeckle.enabled:
+        from sarb_aod.despeckle import DESPECKLE_VERSION
+
+        processing["despeckle"] = {
+            "version": DESPECKLE_VERSION,
+            **config.despeckle.model_dump(mode="json"),
+        }
+    if level == "l2":
+        evaluation.pop("aod_variant")
+        evaluation.pop("sample_support")
     return {
         "processing": processing,
         "period": config.period.model_dump(mode="json"),
         "aeronet": config.aeronet.model_dump(mode="json"),
-        "evaluation": config.evaluation.model_dump(mode="json"),
+        "evaluation": evaluation,
     }
 
 
@@ -471,8 +479,8 @@ def load_matchups(
     """Read verified matchups for the requested pairing without altering archives."""
     if pairing not in {"default", "cam7", "daily"} or (level == "l2" and pairing != "default"):
         raise ValueError("Invalid matchup level or pairing")
-    path = evaluation_directory(config) / (
-        f"matchups_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+    path = evaluation_directory(config, level) / (
+        f"matchups_{level}_{pairing}{comparison_tag(config, level)}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
     )
     if not path.is_file():
         raise FileNotFoundError(f"Missing {level} matchups: {path}; run sarb-aod evaluate first")
@@ -480,15 +488,15 @@ def load_matchups(
         if dataset.attrs.get("level") != level or dataset.attrs.get("pairing") != pairing:
             raise ValueError(f"Unexpected matchup level or pairing in {path}")
         stored = RunConfig.model_validate_json(dataset.attrs.get("config", "{}"))
-        if matchup_signature(stored) != matchup_signature(config):
+        if matchup_signature(stored, level) != matchup_signature(config, level):
             raise ValueError(f"Stale matchup configuration in {path}; rerun evaluate")
         fingerprint = dataset.attrs.get("processing_sha256")
         if fingerprint is None:
             # Earlier evaluations recorded this hash in report provenance;
             # accept that evidence only when the report's file checksum matches.
             report_path = (
-                evaluation_directory(config)
-                / f"{config.name}_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}_report.json"
+                evaluation_directory(config, level)
+                / f"{config.name}_{level}_{pairing}{comparison_tag(config, level)}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}_report.json"
             )
             if report_path.is_file():
                 provenance = json.loads(report_path.read_text()).get("provenance", {})
@@ -497,7 +505,9 @@ def load_matchups(
                     == hashlib.sha256(path.read_bytes()).hexdigest()
                 ):
                     fingerprint = provenance.get("processing_sha256")
-        if fingerprint != processing_sha256(config):
+        if fingerprint != processing_sha256(
+            config.model_copy(update={"despeckle": stored.despeckle}) if level == "l2" else config
+        ):
             raise ValueError(
                 f"Missing or stale matchup processing provenance in {path}; rerun evaluate"
             )
@@ -560,16 +570,14 @@ def evaluate(
     reuse_l2_from: RunConfig | None = None,
 ) -> EvaluationReport:
     """Build matchups, tables and any configured AERONET plot suites."""
-    output_dir = Path(
-        config.paths.evaluation_dir.format(data_root=str(config.paths.data_root), run=config.name)
-    )
+    output_dir = evaluation_directory(config, level)
     options = CollocationOptions(
         **{name: getattr(config.evaluation, name) for name in _COLLOCATION_FIELDS}
     )
     coastal_provenance: dict[str, Any] = {}
     if level == "grid" and coastal_sites is None:
         l2_path = (
-            output_dir
+            evaluation_directory(config, "l2")
             / f"matchups_l2_default_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
         )
         if l2_path.is_file():
@@ -608,13 +616,13 @@ def evaluate(
         matchup_file=str(matchups.path),
         matchup_sha256=hashlib.sha256(matchups.path.read_bytes()).hexdigest(),
         processing_sha256=processing_sha256(config),
+        aod_variant=config.evaluation.aod_variant if level == "grid" else "original_l2",
+        sample_support=config.evaluation.sample_support if level == "grid" else "available",
     )
     sources.update(coastal_provenance)
     report = build_report(matchups.frame, config, level=level, pairing=pairing, provenance=sources)
     report.matchup_path = matchups.path
-    stem = (
-        f"{config.name}_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}"
-    )
+    stem = f"{config.name}_{level}_{pairing}{comparison_tag(config, level)}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}"
     write_report(report, output_dir, stem=stem, precision=config.evaluation.round_precision)
     # Lazy import keeps the statistics API usable without initializing plotting.
     from sarb_aod.paths import plot_path
@@ -631,7 +639,7 @@ def evaluate(
                 from sarb_aod.evaluation.campaign import verified_tables
 
                 daily_archive = output_dir / (
-                    f"matchups_grid_daily_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+                    f"matchups_grid_daily{comparison_tag(config)}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
                 )
                 if daily_archive.exists():
                     load_matchups(config, "grid", pairing="daily")
@@ -685,8 +693,8 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
     representativeness flags from their retained streams.
     """
     adjusted = target.model_copy(update={"weighting": source.weighting, "output": source.output})
-    source_definition = matchup_signature(source)["processing"]
-    target_definition = matchup_signature(adjusted)["processing"]
+    source_definition = matchup_signature(source, "l2")["processing"]
+    target_definition = matchup_signature(adjusted, "l2")["processing"]
     source_recipes = source_definition.pop("recipes")
     target_recipes = target_definition.pop("recipes")
     # Corrections for excluded source streams do not affect a valid subset reuse.
@@ -702,12 +710,11 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
         source_recipes[name] == recipe for name, recipe in target_recipes.items()
     )
     if (
-        not same_recipes
+        matchup_signature(source, "l2")["evaluation"]
+        != matchup_signature(target, "l2")["evaluation"]
+        or not same_recipes
         or source_definition != target_definition
-        or any(
-            getattr(source, key) != getattr(target, key)
-            for key in ("period", "aeronet", "evaluation")
-        )
+        or any(getattr(source, key) != getattr(target, key) for key in ("period", "aeronet"))
     ):
         raise ValueError(
             "L2 reuse requires identical recipes, QC, time, uncertainty, AOD correction "

@@ -14,8 +14,9 @@ import numpy as np
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import validate_contract_file
 from sarb_aod.grid.spec import load_grid
-from sarb_aod.paths import output_path
+from sarb_aod.paths import output_path, summary_path
 from sarb_aod.pipeline import require_processing_provenance
+from sarb_aod.variants import read_grid_field
 from sarb_aod.windows import window_bounds
 
 
@@ -45,7 +46,7 @@ def summarize(config: RunConfig) -> tuple[Path, list[dict[str, Any]]]:
             with netCDF4.Dataset(path) as dataset:
                 require_processing_provenance(dataset, config, start)
                 dataset.set_auto_mask(False)
-                mean = np.asarray(dataset["aod_weighted_mean"][:], dtype=float)
+                mean = read_grid_field(dataset, config, "aod_weighted_mean")
                 count = np.asarray(dataset["aod_count"][:], dtype=np.int64)
                 ok = (count > 0) & np.isfinite(mean) & (mean > -900)
                 total_count += np.where(ok, count, 0)
@@ -85,15 +86,7 @@ def summarize(config: RunConfig) -> tuple[Path, list[dict[str, Any]]]:
         **contribution,
     }
     rows.append(period)
-    target = Path(
-        config.paths.summary.format(
-            data_root=config.paths.data_root,
-            stem=config.output.stem,
-            run=config.name,
-            start=f"{config.period.start:%Y%m%d}",
-            end=f"{config.period.end:%Y%m%d}",
-        )
-    )
+    target = summary_path(config)
     target.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=target.name + ".", suffix=".tmp", dir=target.parent)
     try:

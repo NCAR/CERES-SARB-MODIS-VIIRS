@@ -47,6 +47,7 @@ from sarb_aod.pipeline import (
 from sarb_aod.provenance import runtime_global_attrs
 from sarb_aod.readers import LAND, OCEAN, PixelBatch, read_granule
 from sarb_aod.streams import StreamRecipe
+from sarb_aod.variants import comparison_tag, select_grid_variant
 from sarb_aod.windows import window_bounds
 
 EARTH_RADIUS_KM = 6371.0
@@ -785,6 +786,7 @@ def build_matchups(
                 sources.add(str(path))
                 with xr.open_dataset(path, decode_times=False) as dataset:
                     require_processing_provenance(dataset, config, window_start=start)
+                    dataset = select_grid_variant(dataset, config)
                     if pairing == "daily":
                         names = [
                             name
@@ -823,9 +825,7 @@ def build_matchups(
         table = flag_representativeness(
             table, high_elevation_m=opts.high_elevation_m, coastal_sites=coastal_sites
         )
-    filename = (
-        f"matchups_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
-    )
+    filename = f"matchups_{level}_{pairing}{comparison_tag(config, level)}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
     path = write_matchups(
         output_dir / filename,
         table,
@@ -833,6 +833,8 @@ def build_matchups(
             "run": config.name,
             "level": level,
             "pairing": pairing,
+            "aod_variant": config.evaluation.aod_variant if level == "grid" else "original_l2",
+            "sample_support": config.evaluation.sample_support if level == "grid" else "available",
             "config_sha256": config_sha256(config),
             "processing_sha256": processing_sha256(config),
             "retains_sensitivity_candidates": 1,

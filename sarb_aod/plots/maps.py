@@ -468,13 +468,14 @@ def plot_map(
     coastline_resolution: str | None = None,
     figsize: tuple[float, float] = (9, 5),
     rasterized: bool = True,
+    scale: FieldScale | None = None,
 ) -> Figure:
     """One grid map; callers save with bbox_inches=figure.bbox_inches."""
     if cartopy_data_dir is not None:
         configure_cartopy(cartopy_data_dir)
     spec = grid if grid is not None else load_grid()
     subset = get_region(region) if region is not None else None
-    scale = field_scale(values, kind, aod_levels=aod_levels)
+    scale = scale if scale is not None else field_scale(values, kind, aod_levels=aod_levels)
     figure, ax = plt.subplots(figsize=figsize, subplot_kw={"projection": _projection(subset)})
     _, gridliner = _map_context(ax, subset, coastline_resolution)
     artist = draw_spatial_field(
@@ -490,7 +491,7 @@ def plot_map(
     )
     quantity_text = _quantity(kind, quantity)
     title = (
-        labeling.title_for_labeled_subset(quantity_text, subset.key)[0]
+        labeling.subset_map_title(quantity_text, subset.key, subset.display_name)
         if subset and subset.key != "global"
         else labeling.sourced_title(source, quantity_text)
     )
@@ -535,6 +536,7 @@ def map_panels(
     aod_levels: ArrayLike | None = None,
     cartopy_data_dir: str | Path | None = None,
     coastline_resolution: str | None = None,
+    scale: FieldScale | None = None,
 ) -> Figure:
     """Shared-scale panels, with a single horizontal vector colorbar.
 
@@ -560,8 +562,14 @@ def map_panels(
         configure_cartopy(cartopy_data_dir)
     spec = grid if grid is not None else load_grid()
     subset = get_region(region) if region is not None else None
-    scale = field_scale(
-        np.concatenate([_values(field).ravel() for field in fields]), kind, aod_levels=aod_levels
+    scale = (
+        scale
+        if scale is not None
+        else field_scale(
+            np.concatenate([_values(field).ravel() for field in fields]),
+            kind,
+            aod_levels=aod_levels,
+        )
     )
     if layout is None:
         columns = min(columns, len(fields))
@@ -622,7 +630,7 @@ def map_panels(
         if position is not None and len(position.rowspan) > 1:
             ax.set_anchor("C")
     if subset and subset.key != "global":
-        overall = labeling.title_for_labeled_subset(quantity_text, subset.key)[0]
+        overall = labeling.subset_map_title(quantity_text, subset.key, subset.display_name)
         titles.insert(0, figure.suptitle(overall))
     _metadata(
         figure,
@@ -798,7 +806,7 @@ def plot_site_map(
     )
     quantity_text = _quantity(kind, quantity)
     title = (
-        labeling.title_for_labeled_subset(quantity_text, subset.key)[0]
+        labeling.subset_map_title(quantity_text, subset.key, subset.display_name)
         if subset and subset.key != "global"
         else labeling.sourced_title(source, quantity_text)
     )

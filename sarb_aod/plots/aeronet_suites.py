@@ -44,6 +44,7 @@ from sarb_aod.plots.regional_inset import add_regional_inset
 from sarb_aod.plots.series import TimedValues
 from sarb_aod.plots.style import NCAR_PALETTE, ncar_style
 from sarb_aod.plots.suites import PlotArtifact, plot_regions, save_figure, write_protocol_report
+from sarb_aod.variants import read_grid_field
 from sarb_aod.windows import window_bounds
 
 Level = Literal["grid", "l2"]
@@ -153,7 +154,7 @@ def load_grid_series(config: RunConfig, sites: pd.DataFrame, regions: Sequence[s
                 dataset.set_auto_mask(False)
 
                 def read(name: str) -> np.ndarray:
-                    data = np.asarray(dataset[name][:], dtype=float)
+                    data = read_grid_field(dataset, config, name)
                     if data.shape != grid.shape:
                         raise ValueError(f"Unexpected grid shape for {name} in {path}")
                     return data

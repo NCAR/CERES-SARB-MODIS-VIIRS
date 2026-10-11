@@ -19,7 +19,7 @@ import typer
 from sarb_aod.config.loader import load_config
 from sarb_aod.config.schema import Period, RunConfig
 from sarb_aod.errors import SarbAodError
-from sarb_aod.paths import output_path
+from sarb_aod.paths import output_path, summary_path
 from sarb_aod.pipeline import DayResult, _run_day, config_sha256, processing_sha256, stream_recipes
 from sarb_aod.summarize import summarize
 from sarb_aod.windows import window_bounds
@@ -118,15 +118,7 @@ def month_periods(period: Period) -> list[Period]:
 
 
 def _summary_path(config: RunConfig, period: Period) -> Path:
-    return Path(
-        config.paths.summary.format(
-            data_root=config.paths.data_root,
-            stem=config.output.stem,
-            run=config.name,
-            start=f"{period.start:%Y%m%d}",
-            end=f"{period.end:%Y%m%d}",
-        )
-    )
+    return summary_path(config.model_copy(update={"period": period}))
 
 
 def _destinations(config: RunConfig, periods: list[Period]) -> list[tuple[Path, Path]]:

@@ -272,3 +272,26 @@ product is separate from comparison against the external SP1 archive.
 The [map evidence](docs/validation/map_plot_verification.md) and
 [AERONET plot evidence](docs/validation/aeronet_plot_verification.md) identify the
 accepted PDF/PNG sets, inspection results and artifact hashes.
+
+### Despeckle comparisons
+
+Enabled paired outputs support `plots.suites: [aod_despeckle_comparison]` for global
+and each configured latitude-band PDF/PNG maps, coverage/action fractions and time series.
+The difference uses identical cell-windows and original observation-count weights;
+available-sample means and removal fractions are shown separately. Per-window numeric
+summaries accompany the figures. `sarb_aod.plots.despeckle.render_window` renders selected
+source-level closeups with counts, support and action flags.
+
+For `summarize`, grid `evaluate`, and ordinary plots, choose:
+
+```yaml
+evaluation:
+  aod_variant: filtered         # default: unfiltered
+  sample_support: common        # default: available
+```
+
+Common support intersects the paired fields before temporal averaging, preserving identical
+site-days and window weights for AERONET comparisons. Daily AERONET still uses all valid
+observations that UTC day. Each variant/support selection has separate grid matchup, report,
+summary and plot paths. L2 matchups retain their original retrieval interpretation and caches.
+Raw counts are fixed sampling weights; they are not counts of independent donor estimates.

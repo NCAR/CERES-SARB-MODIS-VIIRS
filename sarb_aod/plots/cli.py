@@ -45,7 +45,11 @@ def plot_command(
             return
         comparisons = [load_config(path, profile) for path in (compare or [])]
         artifacts = render_map_suites(cfg, compare_configs=comparisons)
-        if set(cfg.plots.suites) - {"aod_maps", "aod_differences"}:
+        if "aod_despeckle_comparison" in cfg.plots.suites:
+            from sarb_aod.plots.despeckle import render_comparison
+
+            artifacts.extend(render_comparison(cfg))
+        if set(cfg.plots.suites) - {"aod_maps", "aod_differences", "aod_despeckle_comparison"}:
             artifacts.extend(render_aeronet_suites(cfg, compare_configs=comparisons))
         for artifact in artifacts:
             typer.echo(str(artifact.pdf))
