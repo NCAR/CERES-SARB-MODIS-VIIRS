@@ -295,3 +295,7 @@ site-days and window weights for AERONET comparisons. Daily AERONET still uses a
 observations that UTC day. Each variant/support selection has separate grid matchup, report,
 summary and plot paths. L2 matchups retain their original retrieval interpretation and caches.
 Raw counts are fixed sampling weights; they are not counts of independent donor estimates.
+
+The [July 2008 C6.1 trial](docs/validation/july2008_despeckle.md) records the three
+tracked configs, measured coverage changes, sensitivity, AERONET limits and reproduction
+commands. It is technically complete; filtered AOD remains experimental and opt-in.

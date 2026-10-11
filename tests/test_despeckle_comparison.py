@@ -96,7 +96,7 @@ def test_filtered_selection_rejects_disabled_config(tmp_path):
         select_grid_variant(field(), cfg)
 
 
-@pytest.mark.parametrize("high", [0.8, 1.2, 1.1])
+@pytest.mark.parametrize("high", [0.8, 1.2, 1.1, 2.2])
 def test_comparison_suite_protocol_and_custom_latitude_extent(tmp_path, monkeypatch, high):
     from test_aeronet_suites import config as maps_config
 
@@ -114,6 +114,23 @@ def test_comparison_suite_protocol_and_custom_latitude_extent(tmp_path, monkeypa
             time=f"2008-07-{day:02d}",
             bands=((65, 90),),
         )
+    from sarb_aod.plots import despeckle
+
+    original_save = despeckle.save_figure
+
+    def checked_save(config, figure, **kwargs):
+        if kwargs["name"] == "band_1_common":
+            figure.canvas.draw()
+            renderer = figure.canvas.get_renderer()
+            metadata = getattr(figure, "_sarb_plot_metadata")
+            bar = metadata["colorbars"][0].ax.get_window_extent(renderer)
+            for gridliner in metadata["gridliners"]:
+                for label in gridliner.bottom_label_artists:
+                    if label.get_visible():
+                        assert not bar.overlaps(label.get_window_extent(renderer))
+        return original_save(config, figure, **kwargs)
+
+    monkeypatch.setattr(despeckle, "save_figure", checked_save)
     artifacts = render_comparison(cfg, result)
     assert len(artifacts) == 10
     assert all(a.report["passed"] and a.pdf.is_file() and a.png.is_file() for a in artifacts)
@@ -193,6 +210,48 @@ def test_sparse_action_flags_keep_five_distinct_categories(tmp_path, monkeypatch
         assert validate_rendered_figures({"flags": figure})["passed"]
         np.testing.assert_array_equal(
             getattr(figure, "_sarb_plot_metadata")["colorbars"][0].get_ticks(), np.arange(5)
+        )
+    finally:
+        plt.close(figure)
+
+
+def test_selected_window_footer_clears_colorbar_on_four_source_rows(tmp_path, monkeypatch):
+    import matplotlib.pyplot as plt
+    from test_aeronet_suites import config as maps_config
+
+    from sarb_aod.evaluation.regions import Region
+    from sarb_aod.paths import cartopy_data_dir
+    from sarb_aod.plots import labeling, maps
+    from sarb_aod.plots.despeckle import _sampling_note
+    from sarb_aod.plots.protocol import validate_rendered_figures
+
+    cfg = maps_config.__wrapped__(tmp_path, monkeypatch)
+    sources = [
+        f"{source}_{variant}"
+        for source in ("terra_dt", "terra_db", "aqua_dt", "aqua_db")
+        for variant in ("unfiltered", "filtered")
+    ]
+    figure = maps.map_panels(
+        [np.full(load_grid().shape, 0.8)] * len(sources),
+        sources,
+        columns=2,
+        source_labels={source: source.replace("_", " ").title() for source in sources},
+        region=Region("selected", "Selected Window", (105, 135, 65, 79)),
+        coastline_resolution="110m",
+        start=cfg.period.start,
+        end=cfg.period.end,
+        cartopy_data_dir=cartopy_data_dir(cfg),
+    )
+    try:
+        _sampling_note(figure, labeling.despeckle_window_note("means") + " | 03:00 UTC")
+        assert validate_rendered_figures({"selected": figure})["passed"]
+        renderer = figure.canvas.get_renderer()
+        footer = figure.texts[-1].get_window_extent(renderer)
+        colorbar = getattr(figure, "_sarb_plot_metadata")["colorbars"][0]
+        assert all(
+            label.get_window_extent(renderer).y0 > footer.y1
+            for label in colorbar.ax.get_xticklabels()
+            if label.get_visible()
         )
     finally:
         plt.close(figure)

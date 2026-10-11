@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "baseline_arrays_equal": true,
+  "outside_band_equal": true,
+  "missing_targets_preserved": true,
+  "files": 120,
+  "days_per_run": 5,
+  "configs": {
+    "baseline": {
+      "path": "config/runs/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_off.yaml",
+      "sha256": "970aa8c03e67327b12ddc2baccbf37c4e15915363074029f4a9612b666fcf66d",
+      "processing_sha256": "9845977da679b3129f4accbc37b925c4bde11c415e71dbd235de78688407f112"
+    },
+    "mask": {
+      "path": "config/runs/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mask.yaml",
+      "sha256": "2ea4e888777f6aa05cab6f2ef6f1e12e61dfa677595fd8f09e0bfea0b9921a12",
+      "processing_sha256": "a10572b6b9d2e21f97c93c268bef3f3430aaa53768c31518350ae69e791c8314"
+    },
+    "mean": {
+      "path": "config/runs/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mean.yaml",
+      "sha256": "113ce079eae94ef0c3c548e43550c2a360d90ab94a3d4b78263c9b922a901e90",
+      "processing_sha256": "d1befadbf05ad6985ac0092e4cd0a7d945e08513a2eb5d6e44206ad4ad470704"
+    }
+  },
+  "inventory_sha256": "e6a27948c6826645b911471d5045f0b12040f97e091cd0f079482cb6cbe5ca0a",
+  "repository_url": "https://github.com/NCAR/CERES-SARB-MODIS-VIIRS",
+  "git_commit": "f5d7a53c3ec247714fff0ccdb212815f5ad8f5b4",
+  "git_describe": "f5d7a53c3ec2-dirty",
+  "git_tags": "none"
+}

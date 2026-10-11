@@ -1,0 +1,92 @@
+[
+  {
+    "latitude": 65.49738219895289,
+    "radius_km": 100,
+    "potential_neighbors": 2
+  },
+  {
+    "latitude": 69.26701570680629,
+    "radius_km": 100,
+    "potential_neighbors": 4
+  },
+  {
+    "latitude": 72.09424083769633,
+    "radius_km": 100,
+    "potential_neighbors": 4
+  },
+  {
+    "latitude": 74.92146596858638,
+    "radius_km": 100,
+    "potential_neighbors": 4
+  },
+  {
+    "latitude": 79.63350785340313,
+    "radius_km": 100,
+    "potential_neighbors": 6
+  },
+  {
+    "latitude": 90.0,
+    "radius_km": 100,
+    "potential_neighbors": 287
+  },
+  {
+    "latitude": 65.49738219895289,
+    "radius_km": 150,
+    "potential_neighbors": 10
+  },
+  {
+    "latitude": 69.26701570680629,
+    "radius_km": 150,
+    "potential_neighbors": 16
+  },
+  {
+    "latitude": 72.09424083769633,
+    "radius_km": 150,
+    "potential_neighbors": 16
+  },
+  {
+    "latitude": 74.92146596858638,
+    "radius_km": 150,
+    "potential_neighbors": 20
+  },
+  {
+    "latitude": 79.63350785340313,
+    "radius_km": 150,
+    "potential_neighbors": 30
+  },
+  {
+    "latitude": 90.0,
+    "radius_km": 150,
+    "potential_neighbors": 575
+  },
+  {
+    "latitude": 65.49738219895289,
+    "radius_km": 200,
+    "potential_neighbors": 18
+  },
+  {
+    "latitude": 69.26701570680629,
+    "radius_km": 200,
+    "potential_neighbors": 22
+  },
+  {
+    "latitude": 72.09424083769633,
+    "radius_km": 200,
+    "potential_neighbors": 24
+  },
+  {
+    "latitude": 74.92146596858638,
+    "radius_km": 200,
+    "potential_neighbors": 28
+  },
+  {
+    "latitude": 79.63350785340313,
+    "radius_km": 200,
+    "potential_neighbors": 44
+  },
+  {
+    "latitude": 90.0,
+    "radius_km": 200,
+    "potential_neighbors": 575
+  }
+]

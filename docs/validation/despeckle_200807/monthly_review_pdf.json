@@ -1,0 +1,20 @@
+{
+  "pdf": "/Users/dfillmor/Desktop/MODIS_C61_July2008_Monthly_Means.pdf",
+  "pdf_sha256": "d205b0c3c88650fb357cdb8f720eced536a63995fcc1cbfb46fe6dcc3b33ec54",
+  "pages": 2,
+  "assembly": "PDFKit concatenation of two unchanged, protocol-checked monthly-mean pages",
+  "filter": "neighbor_mean",
+  "sampling": "available per variant; changed coverage contributes to the monthly-mean difference",
+  "source_pages": [
+    {
+      "pdf": "/Users/dfillmor/Data/plots/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mean/aod_despeckle_comparison/global_available.20080701-20080731.pdf",
+      "pdf_sha256": "1d8d5d4460c131e7f4a00e4090fa21ff20abad3d557931dd0a5e940fa944ce83"
+    },
+    {
+      "pdf": "/Users/dfillmor/Data/plots/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mean/aod_despeckle_comparison/band_1_available.20080701-20080731.pdf",
+      "pdf_sha256": "07464fa98dae6921ceb20ed9fbeb694666609dbc65f37c3c69ca3870a9506125"
+    }
+  ],
+  "preview_visually_inspected": true,
+  "page_count_verified": true
+}

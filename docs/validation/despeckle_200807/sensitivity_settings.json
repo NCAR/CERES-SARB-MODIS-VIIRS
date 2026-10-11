@@ -1,0 +1,119 @@
+{
+  "scope": "Selected days; source fields from stored float32 unfiltered means; no combined-product recomputation",
+  "settings": {
+    "reference": {
+      "enabled": true,
+      "latitude_bands": [
+        [
+          65.0,
+          90.0
+        ]
+      ],
+      "radius_km": 150.0,
+      "aod_min": 0.5,
+      "min_valid_area_fraction": 0.2,
+      "min_valid_neighbors": 5,
+      "spike": {
+        "enabled": true,
+        "mad_multiplier": 3.0,
+        "min_excess": 0.2,
+        "action": "neighbor_mean"
+      }
+    },
+    "radius_100": {
+      "enabled": true,
+      "latitude_bands": [
+        [
+          65.0,
+          90.0
+        ]
+      ],
+      "radius_km": 100.0,
+      "aod_min": 0.5,
+      "min_valid_area_fraction": 0.2,
+      "min_valid_neighbors": 5,
+      "spike": {
+        "enabled": true,
+        "mad_multiplier": 3.0,
+        "min_excess": 0.2,
+        "action": "neighbor_mean"
+      }
+    },
+    "radius_200": {
+      "enabled": true,
+      "latitude_bands": [
+        [
+          65.0,
+          90.0
+        ]
+      ],
+      "radius_km": 200.0,
+      "aod_min": 0.5,
+      "min_valid_area_fraction": 0.2,
+      "min_valid_neighbors": 5,
+      "spike": {
+        "enabled": true,
+        "mad_multiplier": 3.0,
+        "min_excess": 0.2,
+        "action": "neighbor_mean"
+      }
+    },
+    "support_0.1": {
+      "enabled": true,
+      "latitude_bands": [
+        [
+          65.0,
+          90.0
+        ]
+      ],
+      "radius_km": 150.0,
+      "aod_min": 0.5,
+      "min_valid_area_fraction": 0.1,
+      "min_valid_neighbors": 5,
+      "spike": {
+        "enabled": true,
+        "mad_multiplier": 3.0,
+        "min_excess": 0.2,
+        "action": "neighbor_mean"
+      }
+    },
+    "support_0.3": {
+      "enabled": true,
+      "latitude_bands": [
+        [
+          65.0,
+          90.0
+        ]
+      ],
+      "radius_km": 150.0,
+      "aod_min": 0.5,
+      "min_valid_area_fraction": 0.3,
+      "min_valid_neighbors": 5,
+      "spike": {
+        "enabled": true,
+        "mad_multiplier": 3.0,
+        "min_excess": 0.2,
+        "action": "neighbor_mean"
+      }
+    },
+    "mad_4": {
+      "enabled": true,
+      "latitude_bands": [
+        [
+          65.0,
+          90.0
+        ]
+      ],
+      "radius_km": 150.0,
+      "aod_min": 0.5,
+      "min_valid_area_fraction": 0.2,
+      "min_valid_neighbors": 5,
+      "spike": {
+        "enabled": true,
+        "mad_multiplier": 4.0,
+        "min_excess": 0.2,
+        "action": "neighbor_mean"
+      }
+    }
+  }
+}

@@ -18,11 +18,13 @@ Pipeline:
 4. **Write** CAM7 contract files (below).
 5. **Validate** against AERONET and **plot** in DAVINCI style.
 
-Spatial despeckling is being implemented (user request, 2026-10-11) for a July 2008 C6.1
-laptop trial; see `docs/DESPECKLE_PLAN.md` and Phase 6 of the implementation plan.
-Gridding now writes same-file unfiltered/filtered AOD and diagnostic flags when enabled;
-the trial preserves unfiltered `aod_weighted_mean`. Comparison tools and data runs are
-pending. Temporal smoothing and AERONET-anchored VIIRS→MODIS bias correction remain deferred.
+Spatial despeckling and the July 2008 C6.1 laptop trial are implemented (2026-10-11).
+See `docs/DESPECKLE_PLAN.md` and `docs/validation/july2008_despeckle.md`: three complete
+runs, 744 validated files, same-file paired fields, and available/common-sample
+comparisons. Filtering remains disabled by default and the canonical CAM field
+remains unfiltered. No AERONET site-day value changed in this trial; scientific
+promotion and filtered uncertainty remain open. Temporal smoothing and
+AERONET-anchored VIIRS→MODIS bias correction remain deferred.
 
 Test periods:
 - **July 2008:** MODIS Terra + Aqua, Collections 6.1 and 7 (MODIS-only; predates VIIRS).
@@ -271,6 +273,10 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
   pipeline. It is seed material only.
 
 ## Plotting rules (DAVINCI practice; full rules in plan Phase 4)
+
+- **Comparison deliverables (user direction, 2026-10-11):** prioritize monthly mean
+  spatial plots. For despeckle review, deliver one short PDF with global and analysis-band
+  before/after maps; put the full diagnostic inventory in a subordinate folder.
 
 - **Text:** all of it goes through `sarb_aod/plots/labeling.py`.
   - Use Title Case for labels, legend entries and annotations, retaining acronym and unit

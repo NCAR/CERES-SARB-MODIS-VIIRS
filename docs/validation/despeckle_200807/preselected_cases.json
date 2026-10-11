@@ -1,0 +1,153 @@
+{
+  "baseline_config": "config/runs/modis_l2_200807_gls_rho05.yaml",
+  "files": 248,
+  "bytes": 1051764528,
+  "selection": "Unfiltered archive only, before filter implementation/outcomes; maxima by rank with earliest UTC tie. North >=65N, band edge within 1 degree. Populated means greatest pixel count, not confirmed valid aerosol.",
+  "cases": {
+    "populated_high_north": {
+      "rank": 226.0,
+      "window_start": "2008-07-12T03:00:00",
+      "path": "/Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_l2_200807_gls_rho05/2008/07/12/MODIS_VIIRS_AOD_3hr_f09.20080712.10800.nc",
+      "lat_index": 172,
+      "lon_index": 96,
+      "latitude": 72.09424083769633,
+      "longitude": 120.0,
+      "aod": 1.0339467525482178,
+      "count": 226,
+      "streams": {
+        "terra_dt": {
+          "aod": 1.0600945949554443,
+          "count": 62
+        },
+        "terra_db": {
+          "aod": 0.9534959197044373,
+          "count": 52
+        },
+        "aqua_dt": {
+          "aod": 1.0620918273925781,
+          "count": 56
+        },
+        "aqua_db": {
+          "aod": 1.0603476762771606,
+          "count": 56
+        }
+      }
+    },
+    "populated_high_outside": {
+      "rank": 151.0,
+      "window_start": "2008-07-04T00:00:00",
+      "path": "/Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_l2_200807_gls_rho05/2008/07/04/MODIS_VIIRS_AOD_3hr_f09.20080704.00000.nc",
+      "lat_index": 152,
+      "lon_index": 126,
+      "latitude": 53.24607329842931,
+      "longitude": 157.5,
+      "aod": 3.3911006450653076,
+      "count": 151,
+      "streams": {
+        "terra_dt": {
+          "aod": 4.421480178833008,
+          "count": 18
+        },
+        "terra_db": {
+          "aod": 2.923492908477783,
+          "count": 60
+        },
+        "aqua_dt": {
+          "aod": -999.0,
+          "count": 0
+        },
+        "aqua_db": {
+          "aod": 3.0782878398895264,
+          "count": 73
+        }
+      }
+    },
+    "northern_low_control": {
+      "rank": 306.0,
+      "window_start": "2008-07-02T06:00:00",
+      "path": "/Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_l2_200807_gls_rho05/2008/07/02/MODIS_VIIRS_AOD_3hr_f09.20080702.21600.nc",
+      "lat_index": 167,
+      "lon_index": 49,
+      "latitude": 67.38219895287958,
+      "longitude": 61.25,
+      "aod": 0.028021257370710373,
+      "count": 306,
+      "streams": {
+        "terra_dt": {
+          "aod": -0.004987398628145456,
+          "count": 78
+        },
+        "terra_db": {
+          "aod": 0.05405031144618988,
+          "count": 78
+        },
+        "aqua_dt": {
+          "aod": -0.024711405858397484,
+          "count": 75
+        },
+        "aqua_db": {
+          "aod": 0.047992657870054245,
+          "count": 75
+        }
+      }
+    },
+    "band_edge_high": {
+      "rank": 295.0,
+      "window_start": "2008-07-21T00:00:00",
+      "path": "/Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_l2_200807_gls_rho05/2008/07/21/MODIS_VIIRS_AOD_3hr_f09.20080721.00000.nc",
+      "lat_index": 164,
+      "lon_index": 124,
+      "latitude": 64.55497382198953,
+      "longitude": 155.0,
+      "aod": 0.6240134239196777,
+      "count": 295,
+      "streams": {
+        "terra_dt": {
+          "aod": 0.6214401125907898,
+          "count": 75
+        },
+        "terra_db": {
+          "aod": 0.5975837707519531,
+          "count": 77
+        },
+        "aqua_dt": {
+          "aod": 0.6632808446884155,
+          "count": 75
+        },
+        "aqua_db": {
+          "aod": 0.6182548403739929,
+          "count": 68
+        }
+      }
+    },
+    "known_sparse_north": {
+      "rank": 4.335999965667725,
+      "window_start": "2008-07-23T03:00:00",
+      "path": "/Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_l2_200807_gls_rho05/2008/07/23/MODIS_VIIRS_AOD_3hr_f09.20080723.10800.nc",
+      "lat_index": 174,
+      "lon_index": 207,
+      "latitude": 73.97905759162305,
+      "longitude": 258.75,
+      "aod": 4.335999965667725,
+      "count": 1,
+      "streams": {
+        "terra_dt": {
+          "aod": 4.335999965667725,
+          "count": 1
+        },
+        "terra_db": {
+          "aod": -999.0,
+          "count": 0
+        },
+        "aqua_dt": {
+          "aod": -999.0,
+          "count": 0
+        },
+        "aqua_db": {
+          "aod": -999.0,
+          "count": 0
+        }
+      }
+    }
+  }
+}

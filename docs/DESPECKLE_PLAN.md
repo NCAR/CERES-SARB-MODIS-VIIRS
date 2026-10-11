@@ -1,10 +1,10 @@
 # Spatial despeckling: July 2008 MODIS C6.1 laptop trial
 
-Status: **implementation in progress**. Requested 2026-10-11. Task 6.1 implements
-configuration and geographic neighborhoods; Task 6.2 implements the pure filter
-and experimental source combination. Task 6.3 connects gridding to the paired
-NetCDF extension. Comparison tools and the experiment remain pending. Tasks and
-commits are tracked in [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md), Phase 6.
+Status: **implemented; July laptop trial complete** (2026-10-11). Tasks 6.1–6.5
+provide configuration/geography, source filtering, paired NetCDF output, comparison
+tools and the three-run July experiment. Filtering remains disabled by default;
+scientific promotion is open. See [the measured results and limits](validation/july2008_despeckle.md)
+and [the task/commit record](IMPLEMENTATION_PLAN.md), Phase 6.
 
 ## Objective and scope
 
@@ -51,12 +51,12 @@ The thresholds below are **trial values**, not retrieval-team recommendations or
 validated scientific defaults. A lower mean, smoother picture, or improved global
 metric alone does not establish that the removed observations were erroneous.
 
-## Proposed configuration
+## Configuration
 
-Add one strict pydantic `DespeckleConfig` to `RunConfig`, disabled by default.
+One strict pydantic `DespeckleConfig` in `RunConfig` is disabled by default.
 Settings apply to all selected sources and dates, separately for each source.
 The following configuration and paired gridding are implemented; numerical values
-remain experimental until the laptop assessment.
+remain experimental after the laptop assessment; independent accuracy evidence is still needed.
 
 ```yaml
 despeckle:

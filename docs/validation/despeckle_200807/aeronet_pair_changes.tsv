@@ -1,0 +1,5 @@
+mode	support	site_days_before	site_days_after	common_site_days	changed_site_days	maximum_absolute_difference
+mask	available	3249	3249	3249	0	0.0
+mask	common	3249	3249	3249	0	0.0
+mean	available	3249	3249	3249	0	0.0
+mean	common	3249	3249	3249	0	0.0

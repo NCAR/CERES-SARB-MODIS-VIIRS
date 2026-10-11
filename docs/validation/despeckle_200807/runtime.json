@@ -1,0 +1,40 @@
+{
+  "single_day": {
+    "day": "2008-07-23",
+    "wall_seconds": 6.46,
+    "max_resident_set_size_bytes": 868794368,
+    "scope": "one worker, initial mean-filter smoke test"
+  },
+  "months": [
+    {
+      "mode": "off",
+      "seconds": 74.7215254579969,
+      "config": "config/runs/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_off.yaml",
+      "workers": 2,
+      "overwrite": true,
+      "max_resident_set_size_bytes": 1006174208,
+      "output_bytes": 1067919496,
+      "log_text": "2008-07-01/2008-07-31: complete; 31 processed, 0 resumed; 248 files, 1067919496 bytes; 73.30 s\nmetrics: /Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_off/summary_20080701_20080731.metrics.json\n       74.46 real        66.93 user        38.13 sys\n          1006174208  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n             3025571  page reclaims\n                6351  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n              363724  voluntary context switches\n               97019  involuntary context switches\n         57981777817  instructions retired\n         15156145116  cycles elapsed\n           171951136  peak memory footprint\n"
+    },
+    {
+      "mode": "n65_mask",
+      "seconds": 88.96772150000106,
+      "config": "config/runs/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mask.yaml",
+      "workers": 2,
+      "overwrite": true,
+      "max_resident_set_size_bytes": 1321402368,
+      "output_bytes": 1166804889,
+      "log_text": "2008-07-01/2008-07-31: complete; 31 processed, 0 resumed; 248 files, 1166804889 bytes; 87.64 s\nmetrics: /Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mask/summary_20080701_20080731.metrics.json\n       88.95 real        80.58 user        47.89 sys\n          1321402368  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n             3631706  page reclaims\n                6521  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n              370828  voluntary context switches\n               93916  involuntary context switches\n        129206925264  instructions retired\n         34693504236  cycles elapsed\n           181044352  peak memory footprint\n"
+    },
+    {
+      "mode": "n65_mean",
+      "seconds": 90.10382904100334,
+      "config": "config/runs/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mean.yaml",
+      "workers": 2,
+      "overwrite": true,
+      "max_resident_set_size_bytes": 1482915840,
+      "output_bytes": 1166862031,
+      "log_text": "2008-07-01/2008-07-31: complete; 31 processed, 0 resumed; 248 files, 1166862031 bytes; 89.08 s\nmetrics: /Users/dfillmor/Data/CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_c61_l2_200807_f09_3hr_gls_rho05_despeckle_n65_mean/summary_20080701_20080731.metrics.json\n       90.09 real        80.68 user        49.18 sys\n          1482915840  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n             3590890  page reclaims\n                6465  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n              369509  voluntary context switches\n               96443  involuntary context switches\n        128917412154  instructions retired\n         34524661535  cycles elapsed\n           179864584  peak memory footprint\n"
+    }
+  ]
+}

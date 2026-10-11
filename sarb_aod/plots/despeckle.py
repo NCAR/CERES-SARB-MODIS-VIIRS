@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.colors import BoundaryNorm
 from matplotlib.figure import Figure
+from matplotlib.transforms import Bbox
 
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.despeckle_comparison import PairedAggregate, aggregate_comparison, comparison_table
@@ -28,19 +29,40 @@ def _sampling_note(figure: Figure, text: str) -> None:
         colorbar.ax.tick_params(labelsize=9)
     figure.canvas.draw()
     figure.set_layout_engine(None)
-    height = figure.get_size_inches()[1]
-    margin = min(0.14, 0.55 / height)
-    for axis in figure.axes:
-        box = axis.get_position()
+    # Freeze the extension-adjusted colorbar rectangle. Matplotlib's locator
+    # otherwise reinstates its original aspect ratio after our footer resize.
+    renderer = getattr(figure.canvas, "get_renderer")()
+    for colorbar in getattr(figure, "_sarb_plot_metadata", {}).get("colorbars", []):
+        axis = colorbar.ax
+        box = axis.get_position().frozen()
+        locator = axis.get_axes_locator()
+        allocated = locator(axis, renderer) if locator is not None else box
+        axis.set_axes_locator(None)
+        axis.set_box_aspect(None)
+        axis.set_aspect("auto")
+        # Use the allocated width but the rendered vertical clearance. The
+        # colorbar's default aspect can halve a deliberately wide, thin bar.
+        axis.set_position(Bbox.from_bounds(allocated.x0, box.y0, allocated.width, box.height))
+    width, height = figure.get_size_inches()
+    footer_height = 0.55
+    new_height = height + footer_height
+    positions = [(axis, axis.get_position().frozen()) for axis in figure.axes]
+    # Append space instead of compressing the axes: geographic axes preserve
+    # their aspect ratio, and tall source panels need their original clearance.
+    figure.set_size_inches(width, new_height)
+    for axis, box in positions:
         axis.set_position(
             (
                 box.x0,
-                margin + (1 - margin - 0.015) * box.y0,
+                (height * box.y0 + footer_height) / new_height,
                 box.width,
-                (1 - margin - 0.015) * box.height,
+                height * box.height / new_height,
             )
         )
-    figure.text(0.5, 0.15 / height, text, ha="center", fontsize=8)
+    for label in figure.texts:
+        x, y = label.get_position()
+        label.set_position((x, (height * y + footer_height) / new_height))
+    figure.text(0.5, 0.15 / new_height, text, ha="center", fontsize=8)
 
 
 def comparison_series(table: pd.DataFrame, *, start: object, end: object, title: str) -> Figure:
@@ -121,7 +143,7 @@ def render_comparison(
                     fields[names[0]],
                     quantity=labeling.title_text("AOD (550 nm)", "Difference"),
                     scale=_difference_scale(fields[names[0]]),
-                    figsize=(12, 2.8) if region else (9, 5),
+                    figsize=(12, 3.0) if region else (9, 5),
                     **common,
                 )
             else:
@@ -134,6 +156,10 @@ def render_comparison(
                     aod_levels=levels if kind == "aod" else None,
                     **common,
                 )
+            if region is not None and kind == "difference":
+                figure.set_layout_engine(None)
+                figure.axes[0].set_position((0.09, 0.30, 0.84, 0.24))
+                figure.axes[-1].set_position((0.10, 0.07, 0.80, 0.025))
             if region is not None and kind != "difference":
                 figure.set_size_inches(12, 5.4)
                 figure.set_layout_engine(None)
@@ -143,7 +169,7 @@ def render_comparison(
                     heading.remove()
                 for i, axis in enumerate(figure.axes[:-1]):
                     axis.set_position((0.09, 0.65 - 0.40 * i, 0.84, 0.15))
-                figure.axes[-1].set_position((0.15, 0.075, 0.7, 0.025))
+                figure.axes[-1].set_position((0.09, 0.075, 0.84, 0.025))
             # Sampling is interpretation metadata, separate from quantity titles.
             _sampling_note(
                 figure,
