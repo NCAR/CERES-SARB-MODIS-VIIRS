@@ -100,7 +100,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.11 | Refresh July C6.1/C7 monthly PDFs and deliver to Desktop | 4.10 | Done; protocol, visual and transfer checks pass | Task 4.11 (this commit) |
 | 4.12 | Readable map provenance and reproducibility metadata in NetCDF | 4.11, 1.8, 3.5 | Done | Task 4.12 (this commit) |
 | 4.13 | Deploy provenance changes and refresh July Desktop PDFs | 4.12 | Done; metadata, protocol, visual and transfer checks pass | Task 4.13 (this commit) |
-| 4.14 | Align provenance with map titles and add DAVINCI attribution | 4.13 | Done | Task 4.14 (this commit) |
+| 4.14 | Align provenance with map titles and add DAVINCI attribution | 4.13 | Done | `131cb29` |
+| 4.15 | Refresh monthly Desktop PDFs with alignment and attribution | 4.14 | Done; protocols, previews and transfer hashes verified | Task 4.15 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1519,6 +1520,10 @@ network access to LAADS and AERONET.
   actionable regressions after 166 plotting tests and representative MODIS,
   VIIRS and mixed-sensor renders. Refreshing the delivered PDFs follows this
   code commit so their recorded plotting revision identifies clean code.
+  Task 4.15 regenerated C6.1 locally and C7 on AMI at `131cb29`, visually
+  checked both previews and passing protocols, verified all 47 C7 artifacts
+  against AMI, and replaced both Desktop PDFs. The 14 regional PDFs retain
+  their prior hashes. Updated sizes/hashes are in the delivery record.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.

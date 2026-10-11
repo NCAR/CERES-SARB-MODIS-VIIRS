@@ -3,7 +3,7 @@
 Generated on 2026-10-11 on AMI's interactive node
 `la2520-hn-grid-ami01-pi.cluster.net`, without a scheduler job. The rendering
 code was initially commit `557a1c0`; the monthly spatial figure was refreshed
-with commit `b49a0ff` as described below. The plot selection is recorded in the
+with commit `131cb29` as described below. The plot selection is recorded in the
 [July C7 run config](../../config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05.yaml).
 The underlying 248 grids are the [completed AMI operational run](ami_c7_200807.md).
 
@@ -27,9 +27,9 @@ The files were copied with `scp` to the same run subdirectory beneath
   suite protocol reports pass. All 15 previews were visually inspected for
   labels, layout, curves, bands, coastlines and inset placement.
 
-The 15 PDFs now total 2,236,739 bytes. All 47 delivered files (PDFs, PNGs and
+The 15 PDFs now total 2,237,692 bytes. All 47 delivered files (PDFs, PNGs and
 protocol reports) matched AMI by SHA-256 and byte count after transfer;
-their total size is 4,563,175 bytes. The
+their total size is 4,568,940 bytes. The
 [PDF inventory](ami_c7_200807_plots.tsv) records individual sizes and hashes.
 The daily matchup NetCDF, CSV tables and evaluation JSON were also copied
 to `~/Data/evaluation/modis_c7_l2_200807_f09_3hr_gls_rho05/`.
@@ -37,7 +37,8 @@ to `~/Data/evaluation/modis_c7_l2_200807_f09_3hr_gls_rho05/`.
 ### Collection titles, provenance panel and Desktop refresh
 
 Task 4.11 first refreshed the monthly maps with `d2c94b5`; Task 4.13
-regenerated both again on 2026-10-11 using plotting commit `b49a0ff`.
+regenerated both using plotting commit `b49a0ff`. Task 4.15 refreshed both
+on 2026-10-11 with the title alignment and DAVINCI attribution from `131cb29`.
 The C6.1 plot was rendered on the laptop; AMI
 fast-forward pulled the same code and regenerated C7 interactively. Both
 aggregate maps now align with the top row and read `MODIS C6.1 AOD` or
@@ -47,12 +48,12 @@ templates, the grid output template and canonical PDF destination. Full
 timestamps, actual grid filenames and QC configuration are embedded in PDF
 Keywords. The gridded data and scientific settings were unchanged.
 
-The latest panel has the clickable repository URL above a bold Provenance
-heading aligned with the top border of the Aqua maps. Bold labels sit above
+The latest panel starts with the clickable repository URL aligned with the
+Aqua map titles, followed by a bold Provenance heading. Bold labels sit above
 indented values; shared L2 roots are grouped and paths wrap at directory
 boundaries, retaining complete names. `Time Windows: 248 × 3 Hours` states
-both count and duration. Body text remains approximately 7.9 pt for C6.1 and
-7.8 pt for C7. Full runtime/configuration inventories are reserved for new
+both count and duration. The exact DAVINCI name and expansion requested by the
+user are centered above the shared colorbar. Full runtime/configuration inventories are reserved for new
 NetCDF outputs; see [NetCDF provenance](../PROVENANCE.md).
 
 The C7 PDF, PNG and protocol files were copied again from AMI; all 47 C7
@@ -63,8 +64,8 @@ the laptop Desktop:
 
 | Desktop filename | Bytes | SHA-256 |
 |---|---:|---|
-| `MODIS_C6.1_AOD_Monthly_Mean_2008-07.pdf` | 513904 | `34b752293224f1877e77f58acc74eb6e6bf36d6d6ab9dfc57a21baaf5d8495ab` |
-| `MODIS_C7_AOD_Monthly_Mean_2008-07.pdf` | 529396 | `3a547b8d4890a8d5241b4a4bdd788dcabed822b3e3e01f2b11d2092bb427a721` |
+| `MODIS_C6.1_AOD_Monthly_Mean_2008-07.pdf` | 516012 | `63ef9e4c2627a9fdaef692b79a3981798bf290666fcad0dfc0c6f0c4447c3b35` |
+| `MODIS_C7_AOD_Monthly_Mean_2008-07.pdf` | 530349 | `ec14a5bb319b866725374946084249808ffa87252725767fd6fafadb90634552` |
 
 The C6.1 canonical file is
 `~/Data/plots/modis_l2_200807_gls_rho05/aod_maps/mean_aod.20080701-20080731.pdf`;
