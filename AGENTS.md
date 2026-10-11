@@ -288,7 +288,9 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
   - Global map panels use source-specific titles without a redundant figure-wide `AOD`
     heading. Period mean maps omit the duplicate Product panel for single-sensor runs;
     the sensor aggregate sits at the upper left, with platform rows and Dark Target / Deep
-    Blue columns. MODIS aggregate titles include the collection (C6.1 or C7). The lower-left
+    Blue columns. Single-platform DT/DB runs use a 2×2 layout: aggregate upper left,
+    DT upper right, provenance lower left and DB lower right.
+    MODIS aggregate titles include the collection (C6.1 or C7). The lower-left
     cell holds provenance: recorded grid creation dates and processing revisions, plot date
     and revision, weighting/QA, configured L2 path templates, grid paths and PDF destination.
     Align the first line of the provenance block with the title of the map to its right. Use bold

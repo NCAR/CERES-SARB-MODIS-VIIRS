@@ -112,10 +112,11 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.19 | Refresh compact July C6.1 regional PDFs on Desktop | 4.18 | Done; 14 protocols, inspected previews and Desktop checksums pass | Task 4.19 (this commit) |
 | 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | `56a7642` |
 | 4.21 | Refresh Desktop regional and spatial PDFs with integrated attribution and 550 nm labels | 4.20 | Done; protocols, previews, embedded revisions and copy checks pass | Task 4.21 (this commit) |
-| 4.22 | Compact single-platform DT/DB monthly maps and September NOAA-20 plot config | 4.21, 5.6 | Done | Task 4.22 (this commit) |
+| 4.22 | Compact single-platform DT/DB monthly maps and September NOAA-20 plot config | 4.21, 5.6 | Done | `65f556d` |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
-| 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; array 5034005 submitted, first four days successful; monthly completion pending | Task 5.6 (this commit) |
+| 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; all 30 tasks succeeded, 240 files validated | `90e4bab`; completion recorded in Task 5.7 |
+| 5.7 | Verify September NOAA-20 completion and deliver AMI spatial/regional PDFs | 5.6, 4.22 | Done; 240 grids validated, 16 plots accepted and two Desktop PDFs delivered; science bias gate fails | Task 5.7 (this commit) |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
@@ -1735,7 +1736,7 @@ preserved. Comparison tools and the July laptop experiment remain Tasks 6.4/6.5.
 | Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
 | AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 complete: 248 C7 July files validated. Task 4.9 generated and delivered 15 PDF plots with passing protocol and visual checks. July daily bias/RMSE pass, but R = 0.7920 misses 0.8; C7 science acceptance, external acquisition and multi-year production remain open. See `docs/validation/ami_c7_200807_plots.md`. |
-| NOAA-20 September AMI run | Task 5.5 completes an explicit Collection 002 DT/DB run definition using 8,240 local archive files. DT product v2.0.1 differs from the laptop baseline's Collection 021. All 954 offline tests, mypy, Black and isort pass; review found no remaining defects after correcting the empty plot-suite setting and catalog inventory expectation. Existing July C7 and September mixed-baseline processing hashes are unchanged. Task 5.6 deployed `11cd141` and submitted array 5034005 (30 serial tasks, concurrency four); first four days exited successfully and a sampled NetCDF passed contract/provenance checks. Full monthly completion remains to be checked; plots and scientific validation are deferred by user direction. See `docs/AMI_PRODUCTION.md`. |
+| NOAA-20 September AMI run | Task 5.5 completes an explicit Collection 002 DT/DB run definition using 8,240 local archive files. DT product v2.0.1 differs from the laptop baseline's Collection 021. All 954 offline tests, mypy, Black and isort pass; review found no remaining defects after correcting the empty plot-suite setting and catalog inventory expectation. Existing July C7 and September mixed-baseline processing hashes are unchanged. Task 5.6 deployed `11cd141` and submitted array 5034005 (30 serial tasks, concurrency four); first four days exited successfully and a sampled NetCDF passed contract/provenance checks. All 30 tasks and 240 files have now been verified; Task 5.7 delivers protocol-accepted spatial/regional PDFs; the independent daily global bias is −0.04035 (fails), while RMSE 0.05735 and R 0.92737 pass. See `docs/AMI_PRODUCTION.md`. |
 | Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Spatial despeckling was tested in Phase 6 for northern July C6.1 cells; Southern Ocean adoption and temporal smoothing remain deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
 
 ## AMI C7 implementation revision (2026-10-11)
@@ -1833,3 +1834,18 @@ as do mypy, Black, isort and whitespace checks. The new source-layout PDF passes
 the plot protocol and its synthetic preview was inspected. Review found no
 actionable regressions across 140 relevant tests and additional style/region
 checks. Plot config identity matches the existing NOAA-20 processing hash exactly.
+
+Task 5.7 completes the AMI delivery: all 30 scheduler tasks succeeded; all 240
+NetCDF files pass contract/provenance checks. The monthly 2×2 spatial plot and
+15 regional summaries were rendered interactively at `65f556d`. All 16 final
+plot protocols pass and previews were visually inspected. The 76 transferred
+plot/evaluation artifacts match remote checksums; the Desktop contains one
+monthly PDF and one bookmarked regional booklet. Its 15 pages retain their
+source dimensions and searchable text. Evidence, reproduction instructions and
+full-precision statistics are in `docs/validation/ami_noaa20_202009_plots.md`.
+The final offline gate passes 1,055 tests (one network test deselected); mypy,
+Black, isort and whitespace checks pass. Required review found no actionable
+defects after checking artifact hashes, statistics, gates, processing hashes and
+reproduction imports.
+Global daily RMSE 0.05735 and R 0.92737 pass, but bias −0.04035 fails the 0.03
+absolute-bias limit; Western US and smoke-event biases remain science findings.

@@ -148,11 +148,15 @@ catalog recipes read the September 8 19:36 DT/DB samples successfully.
   checks for the two NOAA-20 streams, Collection 002, processing hash, clean
   source revision, full config/source YAML, development-agent and runtime metadata.
 
-This records successful submission and initial processing, not completed monthly processing.
-Confirm task exit statuses with `qacct -j 5034005` and validate all 240 files
-before reporting the month complete. Leave the remote source checkout at the
-processing revision while array tasks are pending/running; later documentation
-commits do not need to be pulled during the job.
+Completion checked on 2026-10-11: all 30 array tasks have `failed=0` and
+`exit_status=0`. The last task ended at 20:32:49.825 UTC, 375.382 seconds after
+the first started. All 240 expected files passed contract and processing-provenance
+validation, with no empty windows. Output size is 828,918,960 bytes (0.7720 GiB).
+The original processing revision and hash agree across the files.
+
+The subsequent authorized interactive plotting uses the tracked
+`config/plots/viirs_noaa20_c2_202009_regional_summary.yaml` at `65f556d`.
+See [the completion and plot-delivery record](validation/ami_noaa20_202009_plots.md).
 
 ## Monthly behavior and recovery
 

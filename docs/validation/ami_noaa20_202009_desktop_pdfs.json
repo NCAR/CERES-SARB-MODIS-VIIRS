@@ -1,0 +1,131 @@
+{
+  "run": "viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05",
+  "render_revision": "65f556d0cf19758876d4943fb2c242645b27c55a",
+  "files": [
+    {
+      "path": "/Users/dfillmor/Desktop/VIIRS_NOAA20_C002_AOD_Monthly_Mean_2020-09.pdf",
+      "bytes": 393217,
+      "sha256": "5ee6357a6917c95e07b9056e251f7f560ac993763bc132e81f93de58324adc3d",
+      "pages": 1,
+      "source_relative_path": "monthly_mean/mean_aod.20200901-20200930.pdf"
+    },
+    {
+      "path": "/Users/dfillmor/Desktop/VIIRS_NOAA20_C002_AOD_Regional_Summaries_2020-09.pdf",
+      "bytes": 2835991,
+      "sha256": "6dcca1996e4ec611582a683c20597f8aa87fd8d341517c5f740e97a0b1df0211",
+      "assembly_tool": "pypdf",
+      "version": "6.20.0",
+      "pages": 15,
+      "bookmarks": 15,
+      "source_text_preserved": true,
+      "page_dimensions_preserved": true,
+      "page_sources": [
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_global.20200901-20200930.pdf",
+          "bytes": 246203,
+          "sha256": "f31050f69c4d68427c93cf2a89e4f9b49c4c38e95af311f0064b4688250bf106",
+          "label": "Global",
+          "page": 1
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_western_us.20200901-20200930.pdf",
+          "bytes": 176391,
+          "sha256": "b562297d9b5dc8979322f0733d1e1c5701c4c253e166421b2411c7a80553aea2",
+          "label": "Western US",
+          "page": 2
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_labor_day_2020_smoke.20200901-20200930.pdf",
+          "bytes": 109010,
+          "sha256": "a2e017cbda34b22ee5bf84570ad2ccde7b34df4af8b9d8e61e34dfb1c78596da",
+          "label": "Labor Day Smoke",
+          "page": 3
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_eastern_us.20200901-20200930.pdf",
+          "bytes": 182823,
+          "sha256": "27aa06321878d337b5d7a80a9727bbb0d45c1ddc1d0a77c50bbf5fcd7750ea4e",
+          "label": "Eastern US",
+          "page": 4
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_canada.20200901-20200930.pdf",
+          "bytes": 199583,
+          "sha256": "24241afc5701097ccfda287793cad75ccb503fdb97a07770a972995b966684b3",
+          "label": "Canada",
+          "page": 5
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_south_america.20200901-20200930.pdf",
+          "bytes": 190160,
+          "sha256": "84d7ffe7e7b793cffeaaf156c343659cb2eafaebb4f5963880d5ca69f4eab575",
+          "label": "South America",
+          "page": 6
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_north_atlantic_ocean.20200901-20200930.pdf",
+          "bytes": 228012,
+          "sha256": "93a2c99a08ff12794d54846b0fdae2dcf41588672295ef347cacf9364f00229b",
+          "label": "North Atlantic Ocean",
+          "page": 7
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_south_atlantic_ocean.20200901-20200930.pdf",
+          "bytes": 221048,
+          "sha256": "5961eb2d6ee99c917687a000dcb2a95de4fea20450829c7e5aeac70fc7bc39b8",
+          "label": "South Atlantic Ocean",
+          "page": 8
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_north_africa.20200901-20200930.pdf",
+          "bytes": 213823,
+          "sha256": "79179c7ae44dfc20116ef0d1601d67812dbb73b5d4bc069b5587db7023de8587",
+          "label": "North Africa (Sahara)",
+          "page": 9
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_southern_africa.20200901-20200930.pdf",
+          "bytes": 193301,
+          "sha256": "783f5faef136806401598538cda6c7fb5e270f04ecfe75f5a21792786f8d301d",
+          "label": "Southern Africa",
+          "page": 10
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_middle_east.20200901-20200930.pdf",
+          "bytes": 201299,
+          "sha256": "fa1d913ed8c17888a7a3d8801ae20f9d4c6b1e861ecbe36aab550aa41e278539",
+          "label": "Middle East",
+          "page": 11
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_north_indian_ocean.20200901-20200930.pdf",
+          "bytes": 170463,
+          "sha256": "69cd8d468efd7a108902325efaf104ece0460e0cfd68e30bc02f9791d466be9c",
+          "label": "North Indian Ocean",
+          "page": 12
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_india.20200901-20200930.pdf",
+          "bytes": 190213,
+          "sha256": "da4d15754da3419a010f1b311dd110976af0c1e096e78218a6a24450c3e47550",
+          "label": "India",
+          "page": 13
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_east_asia.20200901-20200930.pdf",
+          "bytes": 201447,
+          "sha256": "15937eaa1f93df8d8c2902d6744f3ae2fd2338a228fcf5868bcc911e3bca8b6b",
+          "label": "East Asia",
+          "page": 14
+        },
+        {
+          "path": "/Users/dfillmor/Data/plots/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/aeronet_regional_summary/region_southern_ocean.20200901-20200930.pdf",
+          "bytes": 188965,
+          "sha256": "37d33a7f5e650ef32cb18f5127f76aea595556be46a1c5c7d84dca8dd38ba8bf",
+          "label": "Southern Ocean",
+          "page": 15
+        }
+      ]
+    }
+  ]
+}
