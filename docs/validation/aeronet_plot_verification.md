@@ -63,8 +63,50 @@ suite with `regions: [southern_ocean]` and `levels=("grid",)`, producing a globa
 context figure and Southern Ocean figure for each run. The baseline Southern Ocean
 series are already included in the complete suites. Southern Ocean means the
 configured latitude band south of 40 degrees S, including land and islands, rather
-than an ocean-only surface mask. These series use independent cached AERONET and
-grid context; absent nonnegative L2 archives are not required.
+than an ocean-only surface mask. These regional series now use the verified
+independent daily grid-matchup archives directly; absent nonnegative L2 archives are not required.
+Independent AERONET and full grid samples remain inputs to the site time-series suite.
+
+Task 4.8 updates the 124 regional time-series figures at the user's request.
+The full-region satellite curve is replaced by overlapping AERONET and satellite
+bands spanning the 25th–75th percentiles of the matched sites' daily means.
+Both sources use the same finite site-days, after independently averaging each
+day's AERONET observations and count-weighting the available satellite cell fields.
+Each active site receives equal weight in the regional mean. AERONET observations
+are not restricted to satellite-containing three-hour windows. Missing days
+interrupt lines and bands; single-site days show a point without a spread band.
+Isolated multi-site days show their interval in a short band extending six hours
+on either side of the daily point. This is spatial variation across sites, not a
+confidence interval or retrieval uncertainty.
+
+Each figure reports matched days, mean bias, RMSE, correlation and normalized
+mean absolute error (100 × mean absolute difference / mean AERONET). These
+statistics use the displayed daily regional averages and the configured minimum
+sample count. User direction on 2026-10-11 makes these the acceptance basis,
+replacing the historical three-hour gates. The July baseline global series gives
+N=31, bias=+0.01512, RMSE=0.02069, R=0.88018 and normalized absolute error=7.9%;
+its unrounded plot statistics equal the acceptance report and pass all three gates.
+The percentage formula and meaning of the shaded bands appear in the footer.
+Optional sensor/stream requests produce separate paired comparison figures with
+each component's count-weighted daily satellite mean and paired AERONET daily sample.
+
+The title sits directly above the axes at left, with the subtitle at right:
+latitude and longitude ranges separated by a space, before the dates and active-site
+counts, all on one line.
+The title and AOD axis read `AOD 550 nm`; date ticks rotate 20° to save
+vertical space. `Time` is inside the axes above the bottom border, while dates
+remain outside. Both footer lines align with the plot's left edge, with the band
+and percentage definitions combined on one line. Labels and annotations use Title Case,
+including `Active Sites`, `Daily Means` and `Absolute Error`. An automatically positioned inset
+shows the region outline, coastlines and contributing AERONET sites. It is drawn
+below the translucent site-spread bands and time-series curves, preserving those
+curves through overlaps. It stays fully inside the plot box, selecting among four corners,
+top center and bottom center for the most free space among the curves, bands and legend.
+Bottom-center placement clears the Time label. Coastlines are clipped to the
+exact region box, with no surrounding geographic padding. Site markers include only finite
+pairs within the displayed period. The 124 daily regional figures have explicit daily input provenance; the
+other 1,014 AERONET figures retain their historical diagnostic sampling and bytes.
+Current science results are in [daily_acceptance_campaign.md](daily_acceptance_campaign.md).
 
 ## Inspection and corrections
 

@@ -1,5 +1,12 @@
 # July 2008 and September 2020 evaluation evidence
 
+**Historical diagnostic campaign.** User direction on 2026-10-11 supersedes this
+campaign's three-hour product acceptance criteria with independent daily regional
+means. Current acceptance is recorded in
+[daily_acceptance_campaign.md](daily_acceptance_campaign.md). The tables and failures
+below preserve the original sampling definition and do not determine acceptance of
+the daily product. Individual L2 overpass comparisons retain ±30-minute matching.
+
 The campaign evidence is **complete: all 32 expected reports and all 23 grid
 summaries are verified**. Completion establishes artifact integrity, not scientific
 acceptance: every global RMSE gate fails, and no tested rho calibrates global grid

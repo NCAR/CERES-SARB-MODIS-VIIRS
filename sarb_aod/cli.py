@@ -203,7 +203,11 @@ def evaluate(
     config: Path = ConfigOpt,
     profile: Optional[str] = ProfileOpt,
     level: str = typer.Option("grid", "--level", help="Matchup level: l2 or grid"),
-    pairing: str = typer.Option("default", "--pairing", help="Pairing: default or cam7"),
+    pairing: str = typer.Option(
+        "auto",
+        "--pairing",
+        help="Pairing: daily, default (three-hour grid diagnostic), or cam7; auto uses daily for grid and overpasses for L2",
+    ),
 ) -> None:
     """Build AERONET matchups, grouped tables, and unrounded scientific gates."""
     from typing import Literal, cast
@@ -211,20 +215,27 @@ def evaluate(
     from sarb_aod.errors import SarbAodError
     from sarb_aod.evaluation.report import evaluate as evaluate_config
 
-    if level not in {"l2", "grid"} or pairing not in {"default", "cam7"}:
-        raise typer.BadParameter("--level must be l2|grid and --pairing must be default|cam7")
+    if level not in {"l2", "grid"} or pairing not in {"auto", "default", "cam7", "daily"}:
+        raise typer.BadParameter(
+            "--level must be l2|grid and --pairing must be auto|daily|default|cam7"
+        )
+    if pairing == "auto":
+        pairing = "daily" if level == "grid" else "default"
+    if level == "l2" and pairing != "default":
+        raise typer.BadParameter("L2 comparisons require default overpass pairing")
     try:
         report = evaluate_config(
             _load(config, profile),
             level=cast(Literal["l2", "grid"], level),
-            pairing=cast(Literal["default", "cam7"], pairing),
+            pairing=cast(Literal["default", "cam7", "daily"], pairing),
         )
     except (OSError, ValueError, SarbAodError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(2) from exc
-    summary = report.tables["summary"].iloc[0]
+    summary = report.tables["acceptance_summary" if pairing == "daily" else "summary"].iloc[0]
+    basis = "global daily means" if pairing == "daily" else "individual matchups (diagnostic)"
     typer.echo(
-        f"AERONET {level}/{pairing}: N={int(summary['N'])} "
+        f"AERONET {level}/{pairing}, {basis}: N={int(summary['N'])} "
         f"MB={summary['MB']:.4f} RMSE={summary['RMSE']:.4f} R={summary['R']:.4f}"
     )
     for name, gate in report.gates["checks"].items():

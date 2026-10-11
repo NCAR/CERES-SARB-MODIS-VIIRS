@@ -75,12 +75,23 @@ At session start, also check the repo root for cross-model handoff files (`HANDO
   `AERONETReader` delegates to monetio). A UTC day D is requested with
   `day2 = D+1, hour2 = 0`; `hour2 = 23` loses data. The validation suite ports DAVINCI's
   metrics, calculator, output formatter, nearest-cell index logic and `AEROSOL_REGIONS`.
+- **Validation timing (user direction, 2026-10-11):** merged Terra/Aqua or mixed-sensor
+  products are evaluated with independent UTC daily means, not three-hour collocation.
+  At each site, use all valid daily AERONET observations and the count-weighted daily
+  satellite cell mean. Pair site-days, then give active sites equal weight in regional
+  daily averages. Acceptance uses those regional daily averages (global for the run gate),
+  with |MB| ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8. Pooled site-day errors remain diagnostics.
+  Individual L2 overpasses retain ±30-minute AERONET matching. Historical three-hour and
+  CAM7 pairings remain separate diagnostics; CAM7 output files still use three-hour windows.
+  Daily satellite uncertainty is unavailable until a temporal covariance model is specified.
 - **Plots** follow DAVINCI plotting practice (rules below and in plan Phase 4).
-- **Campaign limits** (*measured 2026-10-10*): every tested July/September grid configuration
-  misses the RMSE acceptance gate. Retain retrieval-team QA, Average Ocean, valid DT-land negatives and
-  minimum count 1 as working defaults; no scientifically accepted uncertainty calibration
-  is claimed. See `docs/validation/evaluation_campaign.md`. The Southern Ocean region is
-  a latitude band without an ocean mask, and its AERONET stations are mostly land/coastal.
+- **Campaign limits** (*daily revision, 2026-10-11*): all 24 daily grid configurations
+  pass the global RMSE limit, and 18 pass all global criteria, including both baselines.
+  Regional failures remain; see `docs/validation/daily_acceptance_campaign.md`.
+  The former three-hour RMSE failures remain historical diagnostics. Retain retrieval-team
+  QA, Average Ocean, valid DT-land negatives and minimum count 1 as working defaults;
+  uncertainty calibration remains open. The Southern Ocean region is a latitude band
+  without an ocean mask, and its AERONET stations are mostly land/coastal.
 
 ## Layout
 
@@ -228,6 +239,8 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
 ## Plotting rules (DAVINCI practice; full rules in plan Phase 4)
 
 - **Text:** all of it goes through `sarb_aod/plots/labeling.py`.
+  - Use Title Case for labels, legend entries and annotations, retaining acronym and unit
+    spelling (for example, AOD, RMSE and nm) and lowercase particles such as `of`.
   - Titles are terse: the quantity, plus an operation word only when it changes meaning
     (`AOD Bias`, `AOD Difference`). Scatter, time-series and histogram titles get no
     plot-type word. Single-source titles put the source first (`MODIS AOD`).
@@ -235,6 +248,22 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
   - Global map panels use source-specific titles without a redundant figure-wide `AOD`
     heading. Period mean maps omit the duplicate Product panel for single-sensor runs;
     the sensor aggregate sits at left, with platform rows and Dark Target / Deep Blue columns.
+  - Regional time series show independently calculated AERONET and satellite daily means
+    paired by site-day, then averaged equally across sites, with
+    overlapping 25th–75th percentile bands across those sites (user choice, 2026-10-11).
+    These replace the full-region satellite curve. A footer reports matched days, bias,
+    RMSE, correlation and normalized mean absolute error (%), calculated from the plotted
+    daily means. Bands describe site spread; they are not uncertainty intervals.
+    Put `AOD 550 nm - <Region>` directly above the axes at left and the subtitle at right.
+    Begin the single-line subtitle with latitude and longitude ranges separated by a space,
+    then dates and active-site counts.
+    Label the AOD axis with 550 nm, rotate dates 20°, and left-align the
+    statistics and single-line explanatory footer. Put `Time` inside the axes above the
+    bottom border, with dates outside. A region/site inset stays fully inside the plot box;
+    choose among four corners, top center and bottom center for the most free space after
+    accounting for curves, site-spread bands and the legend. Keep bottom-center maps above
+    the Time label. Clip coastlines to the exact region box, without geographic padding.
+    The map stays beneath the translucent bands and time-series curves.
   - Never put dates, years, statistics, `vs <source>`, raw keys, internal labels or `x`/`y` in
     titles. Dates go in the subtitle; maps add ` | Mean: <value>`.
 - **Absolute AOD maps:**

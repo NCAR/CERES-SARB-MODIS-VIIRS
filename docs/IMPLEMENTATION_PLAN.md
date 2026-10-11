@@ -1,9 +1,10 @@
 # Implementation Plan: MODIS/VIIRS L2 → CAM7 AOD constraint files
 
-*Written 2026-10-10; revised the same day after a six-lens readiness review that checked every
+*Written 2026-10-10; revised after a six-lens readiness review that checked every
 claim against real July 2008 / Sept 2020 granules, the DAVINCI and CAM7 sources, CAM's
 `filenames.F90`, and the live AERONET service. Decisions are recorded in `AGENTS.md` ("Design
-decisions"). Where this plan cites a verified fact, it was measured on real data.*
+decisions"). The 2026-10-11 user revision makes independent daily regional means the
+AERONET acceptance basis. Where this plan cites a verified fact, it was measured on real data.*
 
 ## Workflow (every task)
 
@@ -47,7 +48,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done.** July 2008 audited 9,518/9,518; September 2020 audited 29,856/29,856 after resumable recovery of four DNS failures. |
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | Implemented and verified; VP1 scientific acceptance open |
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Implemented and verified for available collections; rejection-gate acceptance open; C7 activation blocked |
-| 3 | AERONET validation suite; choose ρ and other defaults | Campaign complete; working defaults retained; global uncertainty calibration and scientific acceptance open |
+| 3 | AERONET validation suite; choose ρ and other defaults | Daily campaign: 24 verified, 18 global passes including both baselines; regional failures and daily uncertainty remain open |
 | 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
 | 5 | Production profile (AMI), multi-year runs | Portable monthly driver done; AMI deployment blocked on site details |
 
@@ -88,7 +89,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | a733ece |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Campaign complete; calibration open | 9b496b2 |
 | 4.6 | Full plot runs | 3.7 | Plots accepted; science/SP1 acceptance open | 761c2da |
-| 4.7 | Mean AOD comparison layout | 4.6 | Done | Task 4.7 (this commit) |
+| 4.7 | Mean AOD comparison layout | 4.6 | Done | 35c6041 |
+| 4.8 | Daily-mean validation and regional time-series comparisons | 3.6, 4.5b, 4.7 | Done | Task 4.8 (this commit) |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
 | 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
@@ -790,13 +792,19 @@ Tasks 3.1–3.4 have no Phase 1 dependency.
 - **Grouped statistics** (calculator port: `min_samples` 3, rounding 4). Groups:
   configuration (QC preset, weighting, ρ), sensor and stream, product collection, surface,
   region, season, day, site, AOD bin, and the Southern Ocean band.
-- **Two regional aggregations:**
-  1. Pooled matchups, each weighted equally (the default for tables).
-  2. CAM7's regional time-series method (CAM7 `summarize_2008_regional_aeronet_band_comparison.py`
-     and its README): per site, average the matched pairs within each UTC day; per region-day,
-     average the active sites with equal weight; then compute metrics over region-days.
-     Report N = region-days plus site-days, matched pairs and mean active sites per day. Phase 4
-     regional time series use this method.
+- **Daily validation and regional aggregation** (user revision, 2026-10-11):
+  1. Calculate the AERONET daily mean independently from all eligible observations in the
+     UTC day. Calculate the satellite daily mean at the site's nearest cell using valid
+     window fields weighted by their observation counts. Join only after these means exist.
+     Three-hour coincidence is not required: Terra and Aqua do not sample an entire
+     three-hour interval, and their merged daily product has no single overpass time.
+  2. For each region-day, average its paired sites equally and compute metrics over days.
+     This retains CAM7's equal-site regional aggregation while replacing the old
+     preselected three-hour pairs. Report N days, site-days and active-site counts.
+     These daily regional means drive acceptance and the regional time-series plots.
+  3. Pooled site-day statistics retain local errors as diagnostics. Historical pooled
+     three-hour and individual-overpass statistics remain explicitly separate; their
+     errors must not be presented as errors of the daily regional curves.
 
 **Tests:** hand-computed expected values from the DAVINCI formulas, committed in the test (no
 `davinci_monet` import, since it isn't installed anywhere); asymmetric EE; RMA on exact lines;
@@ -852,16 +860,20 @@ Matchup tables are written as NetCDF under `paths.evaluation_dir` (default
     correlated); σ_aer per Task 3.2.
   - Surface class from the selected pixels: land, ocean, or coastal if mixed. One row per site ×
     overpass × stream.
-- **Grid level:**
+- **Grid level (`--pairing daily`, default CLI grid evaluation):**
   - The cell containing the site: latitude index = nearest of the 192 centers; longitude index =
     argmin |((lon_site − lon_c + 180) mod 360) − 180| (DAVINCI `_find_nearest_1d`,
     longitude=True).
   - **No radius cut.** DAVINCI `PointStrategy`'s default 12 km radius would drop almost every
     site on ~100 km cells, so port only the index logic.
-  - AERONET = mean of its 550 nm values in [window_start, + 3 h), requiring ≥ 2 observations
-    (`min_aeronet_grid`).
-  - Store the AERONET std and N, plus the cell's `aod_count`, `aod_uncertainty` and per-stream
-    counts; σ_sat = `aod_uncertainty`. One row per site × window × run.
+  - Independently average AERONET 550 nm observations in [UTC midnight, next midnight),
+    requiring ≥ `min_aeronet_grid` (2) valid observations. Count-weight the valid cell AOD
+    fields from all eight daily output windows; do not require AERONET in those windows.
+    Preserve observation and contributing-window counts. One row per paired site × day × run.
+  - Do not infer daily satellite uncertainty from one window or independent-error division
+    by √N: its temporal covariance is unspecified, so daily σ_sat and z remain unavailable.
+  - `--pairing default` explicitly retains the historical three-hour comparison as a
+    diagnostic in separate archives. It cannot determine acceptance of the daily product.
 - **`--pairing cam7` regression mode:**
   - AERONET hourly site means (UTC hour bins) of AOD_500nm and the 440–675 AE, converted with
     `angstrom_500`;
@@ -880,13 +892,25 @@ across windows.
 
 ### Task 3.6: Reports (`evaluation/report.py`, `sarb-aod evaluate`)
 
-- `sarb-aod evaluate -c run.yaml --level {l2,grid} [--pairing default|cam7]` builds the matchups,
+- `sarb-aod evaluate -c run.yaml --level {l2,grid} [--pairing daily|default|cam7]` builds the matchups,
   computes grouped statistics, and writes CSV and JSON tables (DAVINCI formatter) with the
   provenance of every input.
-- **Acceptance gates** (CAM7 VP2), pass/fail per run: |MB| ≤ 0.03, RMSE ≤ 0.10, R ≥ 0.8.
-  - The **baseline to beat** is CAM7's July 2008 MODIS-only SP1 result: N = 8875, MB = 0.0195,
-    RMSE = 0.1464, R = 0.8555. Compare it with `--pairing cam7`.
-  - The default pairing reports its own N.
+- **Acceptance gates** (user revision, 2026-10-11): apply |MB| ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8
+  to the **independent daily regional means**, using the same values shown in the regional
+  time-series plots. The run-level gate uses equal-weight daily averages across the global set of sites;
+  region-specific gate results are also reported. Global here describes available AERONET
+  sites, not an area-weighted whole-Earth sample. Each day has equal weight in the metrics.
+  - Require at least `evaluation.min_samples` matched days (default 3). Undefined metrics
+    are insufficient data, never a pass. Tests use unrounded values.
+  - Pooled site-day errors and historical three-hour matchups are diagnostics, not these
+    acceptance gates. Averaging can cancel local errors, so retain those diagnostics.
+  - L2 overpass validation retains ±30-minute reference matching, with explicitly named
+    overpass statistics. It is a separate comparison from the merged daily product.
+  - CAM7's published July SP1 statistics (N=8875, MB=0.0195, RMSE=0.1464, R=0.8555) use a
+    different sampling basis. Keep `--pairing cam7` as a historical regression, not a
+    numerical target for daily regional acceptance; identical input files remain unavailable.
+  - Grid CLI evaluation defaults to `daily`; L2 defaults to the existing overpass pairing.
+    Save daily archives/reports separately and preserve historical diagnostic evidence.
 - **Plots** come from the Task 4.5b suites.
 
 ### Task 3.7: Evaluation campaign and default selection
@@ -900,6 +924,13 @@ across windows.
 4. **Choose ρ** where std(z) ≈ 1 without losing RMSE; set the other defaults from the tables.
    Separate reports for the Southern Ocean band and the smoke box.
 5. Record the evidence and chosen defaults in `docs/validation/`; update `AGENTS.md`.
+
+The original campaign is retained as historical diagnostics. Task 4.8 reruns the
+24 grid configurations (including the separately plotted CAM7-v2 control) with
+independent daily pairing and regional daily acceptance. Both baseline global
+comparisons pass; six global configurations and some regions still fail individual
+criteria. Daily uncertainty calibration needs a temporal covariance model and is
+not inferred from the historical three-hour z statistics.
 
 ---
 
@@ -976,6 +1007,8 @@ are prefetched to `~/Data/cartopy`.
 
 **Labels.**
 - Only through `labeling.py`.
+- Title Case for labels, legend entries and annotations; preserve acronyms, unit spelling
+  (including `nm`) and lowercase particles such as `of`.
 - Single-source map colorbars show `format_units(units)` only, so absolute AOD maps have no
   colorbar label.
 - Scatter axes carry the source (`axis_label(q, units, source)`); time series carry sources in
@@ -1002,7 +1035,13 @@ are prefetched to `~/Data/cartopy`.
   (`_map_panels`).
 - `plots.coastline_resolution`: 110m for global maps, 50m for regional ones.
 
-**Time series.** Date ticks rotated 45°. AERONET in NCAR gray (`X_COLOR`), satellite in NCAR
+**Time series.** Regional date ticks rotate 20° (user revision, 2026-10-11); site date ticks
+retain 45°. Regional titles read `AOD 550 nm - <Region>` directly above the axes on the
+left, with the subtitle on the right: space-separated latitude/longitude ranges before the dates
+and active-site counts, all on one line. The vertical AOD axis also specifies
+550 nm. `Time` sits inside the axes just above the bottom border; dates remain outside.
+Both footer lines align to the plot's left edge; the band/error definitions share
+one line below the statistics. AERONET in NCAR gray (`X_COLOR`), satellite in NCAR
 blue (`Y_COLOR`), extras from `NCAR_PALETTE`. Positive bias red, negative blue.
 
 **Output.**
@@ -1062,13 +1101,14 @@ the display table.
 - **Time series:**
   - per site: AERONET all points (light) and window means (bold); the gridded value at the
     site's cell for **every** window, matched or not; L2 overpass means as markers;
-  - regional: Task 3.3 method (2).
+  - regional: Task 3.3 method (2), with paired site-spread bands and daily-mean
+    statistics as specified in Task 4.5b (user revision 2026-10-11).
 - **Density scatter** (rasterized): 1:1 line, EE envelope lines, OLS and RMA regression, and a
   stats box (N, MB, RMSE, R, %EE).
 - **Summary figures:** binned bias against AOD, z histogram with a unit-normal reference, ρ-sweep
   curves, region × metric scorecard, Taylor diagram, regional box plots.
 
-**Tests:** artist and label checks per figure type; 45° date ticks; stats-box values equal
+**Tests:** artist and label checks per figure type; 20° regional and 45° site date ticks; stats-box values equal
 `evaluation.metrics`.
 
 ### Task 4.4: Plot protocol (`plots/protocol.py`)
@@ -1122,7 +1162,7 @@ plots:
 |---|---|
 | **`aeronet_site_bias`** | Site markers colored by mean bias (`<product> − AERONET`), plus per-site RMSE and R maps; per level (L2, grid) and run; global and per region. |
 | **`aeronet_site_timeseries`** | One figure per selected site (`AOD - <Site>`): AERONET 550 nm from the parsed cache (all points light, window means bold); the gridded value at the site's f09 cell (Task 3.5 index logic) for every window; L2 overpass means as markers; one line per sensor or stream when requested. |
-| **`aeronet_regional_timeseries`** | Per region (`AOD - <Region>`): the daily regional AERONET mean (Task 3.3 method 2: CAM7's site-then-equal-weight, with matched 3-hour windows in place of hours) against the satellite subsampled to the same site-times (MODIS, VIIRS, mixed), plus the full regional area-weighted satellite mean (CAM7 `prepare_2008_regional_aod.py::area_weighted_mean`), so the sampling effect is visible. Subtitles carry active-site counts. |
+| **`aeronet_regional_timeseries`** | Per region (`AOD - <Region>`): independently calculated daily AERONET and satellite means paired by site-day, then equal-site regional averages (Task 3.3). Overlapping translucent bands show the 25th–75th percentiles across paired sites for each source. The full-region satellite curve is removed by user direction (2026-10-11). Missing days break lines and bands; one-site days have no band, and isolated multi-site days retain a short visible band. Titles and date/site-count subtitles are close together. A region/site inset stays fully inside the plot box, choosing among four corners, top center and bottom center for the most free space among the curves, bands and legend; bottom-center placement clears the Time label, and it remains beneath the bands and curves, with coastlines clipped to the exact region box and no geographic padding. Footer statistics use the displayed paired region-days: N days, MB, RMSE, R and NME = 100 × mean absolute difference / mean AERONET; `evaluation.min_samples` applies. These daily comparisons are the acceptance basis. Explicit sensor/stream requests produce separate companion figures with each component's own paired AERONET daily sample. |
 | **`aeronet_scatter`** | Density scatter per run, per region (small multiples), and per stream at L2. |
 | **`evaluation_summary`** | Binned bias, z histograms, ρ-sweep curves, region × metric scorecard, Taylor diagram, regional box plots. |
 
@@ -1362,7 +1402,8 @@ network access to LAADS and AERONET.
   test passes. Real July default and CAM7 pairings are reported; the SP1 archive
   remains unavailable and no identical-input baseline reproduction is claimed.
 
-- Task 3.7: all 32 primary reports (23 grid, nine L2) and all 23 grid summaries
+- Task 3.7 (historical sampling; acceptance superseded by Task 4.8): all 32 primary
+  reports (23 grid, nine L2) and all 23 grid summaries
   are verified against processing configuration, archive checksums and output
   arrays. Full-precision global, southern latitude-band and smoke comparisons,
   spectral extrapolation/instrument uncertainty sensitivities, and control
@@ -1410,18 +1451,40 @@ network access to LAADS and AERONET.
   its localhost fixture was blocked by its nested sandbox, while all 885 tests
   pass in the task environment. Numeric inputs and science gates are unchanged.
 
+- Task 4.8: independent UTC daily AERONET and satellite means are paired by
+  site-day, then averaged equally across sites for regional daily acceptance.
+  All 24 campaign reports are verified; 18 pass the global criteria, including
+  both baselines. Every global daily RMSE passes, while six configurations
+  retain other failed criteria and regional failures remain explicit. Historical
+  three-hour comparisons remain diagnostics; individual L2 comparisons retain
+  their ±30-minute overpass matching. Daily uncertainty calibration remains open.
+  The 124 regional figures now show matched-site middle-50% bands and statistics
+  from the same daily values used for acceptance. Geographic subtitles, Title
+  Case labels, 550 nm wavelength labels and compact footers follow user direction.
+  Insets choose among six internal positions, clear the Time label and clip
+  coastlines to each exact region. All replacement previews were inspected;
+  protocols, geometry checks and inventory hashes pass. The other 1,014 figures
+  and all 1,200 historical evaluation files retain their original bytes.
+  `codex review --uncommitted` found no remaining actionable regressions;
+  927 offline tests pass in the task environment, with 241 focused tests
+  passing after the final text revision. Mypy, Black and isort pass. The
+  nested review sandbox blocks its existing localhost fixture only; the
+  same test passes in the full task gate. The reviewed external-output-path
+  collector defect is fixed and covered by a regression test.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
 | Mean-map presentation | Task 4.7 removes duplicate single-sensor Product panels and global quantity headings, and aligns platform rows within algorithm columns. Existing scientific acceptance items remain independent of this presentation change. |
+| Daily validation and regional presentation | Task 4.8 uses independent UTC daily means and equal-site regional daily averages for acceptance and plotting. The numeric limits remain absolute bias ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8; the sampling basis replaces the former three-hour gate. Middle-50% site bands, daily statistics and a region/site inset describe the same cohort. Site spread is distinct from uncertainty in the regional mean. |
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
 | July VP1 acceptance | Task 1.10 measured written p99.9 > 3 for all four runs and coverage above the approximate 1–10% range. Monthly means pass; upper-tail evidence is in `docs/validation/july2008_verification.md`. Scientific disposition of these provisional gates remains open. |
 | September rejection gate | Task 2.4 passes three of four science gates; native valid ranges and QC both cap AOD at 5, making a strictly-above-5 rejection impossible. Endpoint counts remain separate. The original gate needs scientific disposition; it was not silently changed. |
 | Sept 2020 staging | Complete: 29,856/29,856 audited. Four files missed during a DNS failure were recovered by resumable staging; the recovery log is `.cache/stage_september_resume.log`. |
 | MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
 | DT ocean QA source conflict | Keep QA ≥ 1: the two-month QA = 3 sensitivity loses coverage and worsens global grid RMSE. Small southern land/coastal samples do not establish open-ocean skill. Evidence: `docs/validation/evaluation_campaign.md`. |
-| ρ default and scientific acceptance | Keep 0.5 provisional. No tested ρ ∈ [0, 1] calibrates global uncertainty; every grid experiment misses RMSE ≤ 0.10. Count weighting improves September RMSE but has much poorer uncertainty spread. Further uncertainty/representativeness work needs a scientific decision; no gate was relaxed. |
+| ρ default and scientific acceptance | Keep 0.5 provisional. Historical three-hour diagnostics did not calibrate uncertainty for any tested ρ ∈ [0, 1]; these are not daily-product acceptance failures. Task 4.8 records new daily regional acceptance separately in `docs/validation/daily_acceptance_campaign.md`. Daily uncertainty calibration requires an explicit temporal covariance model. |
 | DT and DB retrieve the same scene (correlated across streams) | v1 treats streams as independent; Birge inflation partly covers it; a cross-stream ρ is a later option |
 | CAM obs template | Expansion verified in CAM `filenames.F90` (cam6_4_161). Confirm only the `atm.log` check (Task 1.8) in one short derecho run |
 | CAM7 baseline comparison | Needs CAM7's July 2008 SP1 files copied from derecho (path from the user) for the `--pairing cam7` gate |

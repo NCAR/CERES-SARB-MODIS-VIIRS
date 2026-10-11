@@ -89,6 +89,7 @@ def inputs():
             "time": list(times) * 2,
             "source": "product",
             "aod": list(np.arange(8) / 10) * 2,
+            "count": 1,
             "sigma": 0.1,
         }
     )
@@ -100,8 +101,12 @@ def inputs():
             "aod": [0.7],
         }
     )
+    daily = pairs.iloc[[0, 4]].copy()
+    daily["time"] = pd.Timestamp("2008-07-01", tz="UTC")
+    daily["x"], daily["y"] = [0.25, 0.5], 0.35
+    daily["sigma_y"], daily["pairing"] = np.nan, "daily"
     return suites.SuiteInputs(
-        {"grid": pairs, "l2": pairs.copy()}, raw, suites.GridSeries(gridded, regional)
+        {"grid": pairs, "l2": pairs.copy()}, raw, suites.GridSeries(gridded, regional), daily
     )
 
 
@@ -148,7 +153,7 @@ def test_september_regional_date_ticks_do_not_collide_at_month_boundary(config, 
         }
     )
     revised = suites.SuiteInputs(
-        {"grid": pairs}, inputs.aeronet, suites.GridSeries(inputs.grid.sites, full)
+        {"grid": pairs}, inputs.aeronet, suites.GridSeries(inputs.grid.sites, full), pairs
     )
     with suites.ncar_style(config.plots.context):
         figure = suites.regional_figure(config, "global", revised)
@@ -266,9 +271,168 @@ def test_series_keep_unmatched_grid_and_equal_site_sampling(config, inputs):
     regional = suites.regional_figure(config, "global", inputs)
     metadata = regional._sarb_plot_metadata
     assert metadata["regional_daily"].x.iloc[0] == pytest.approx((0.25 + 0.5) / 2)
-    assert metadata["full_regional_daily"].aod.iloc[0] == 0.7
+    assert "full_regional_daily" not in metadata
+    assert len(regional.axes[0].lines) == 2
+    assert all("Full Region" not in line.get_label() for line in regional.axes[0].lines)
     assert "Active Sites: 2" in metadata["subtitles"][0].get_text()
     assert validate_rendered_figures({"site": site, "region": regional})["passed"]
+
+
+def test_regional_only_suite_uses_verified_matchups_without_independent_inputs(
+    config, inputs, monkeypatch
+):
+    cfg = config.model_copy(
+        update={
+            "plots": config.plots.model_copy(update={"suites": ["aeronet_regional_timeseries"]})
+        }
+    )
+
+    def no_independent_reload(*args, **kwargs):
+        raise AssertionError("Matched regional plots require no independent input reload")
+
+    monkeypatch.setattr(suites, "read_cached_day", no_independent_reload)
+    monkeypatch.setattr(suites, "load_grid_series", no_independent_reload)
+    calls = []
+
+    def verified_matchups(run, level, *, pairing):
+        calls.append((run.name, level, pairing))
+        return inputs.daily_grid
+
+    monkeypatch.setattr(suites, "load_matchups", verified_matchups)
+    artifacts = suites.render_aeronet_suites(cfg, levels=("grid",))
+    assert calls == [(cfg.name, "grid", "daily")]
+    assert len(artifacts) == 1 and artifacts[0].name == "region_global"
+    assert artifacts[0].report["passed"]
+
+
+def test_regional_inset_uses_only_sites_in_displayed_daily_period(config, inputs):
+    extra = inputs.daily_grid.iloc[:1].assign(
+        site="outside", time=pd.Timestamp("2008-07-02", tz="UTC"), x=8.0, y=9.0
+    )
+    supplied = suites.SuiteInputs(
+        {}, daily_grid=pd.concat([inputs.daily_grid, extra], ignore_index=True)
+    )
+    figure = suites.regional_figure(config, "global", supplied)
+    metadata = figure._sarb_plot_metadata
+    assert set(metadata["regional_inset"]["sites"].site) == {"A", "B"}
+    assert metadata["metrics"]["N"] == 1
+
+
+def test_regional_figure_rejects_window_pairs_labeled_as_daily_input(config, inputs):
+    supplied = suites.SuiteInputs({}, daily_grid=inputs.matchups["grid"].assign(pairing="default"))
+    with pytest.raises(ValueError, match="require daily pairing"):
+        suites.regional_figure(config, "global", supplied)
+
+
+def test_regional_component_uses_its_own_finite_aeronet_sample(config, inputs):
+    component = inputs.grid.sites.assign(source="terra_dt", aod=np.nan)
+    component.loc[component.index[0], "aod"] = 0.6
+    supplied = suites.SuiteInputs(
+        inputs.matchups,
+        grid=suites.GridSeries(component, pd.DataFrame()),
+        daily_grid=inputs.daily_grid,
+    )
+    primary = suites.regional_figure(config, "global", supplied)
+    figure = suites.regional_figure(config, "global", supplied, source="terra_dt")
+    daily = figure._sarb_plot_metadata["regional_daily"]
+    assert daily.x.iloc[0] == pytest.approx(0.25)
+    assert daily.y.iloc[0] == pytest.approx(0.6)
+    assert daily.active_sites.iloc[0] == 1
+    assert primary._sarb_plot_metadata["regional_daily"].active_sites.iloc[0] == 2
+    assert len(figure.axes[0].lines) == 2
+    assert validate_rendered_figures({"component": figure})["passed"]
+
+
+def test_standalone_plots_use_daily_grid_and_overpass_l2_archives(config, inputs, monkeypatch):
+    cfg = config.model_copy(
+        update={"plots": config.plots.model_copy(update={"suites": ["aeronet_scatter"]})}
+    )
+    calls = []
+
+    def load(run, level, *, pairing):
+        calls.append((level, pairing))
+        return inputs.daily_grid if level == "grid" else inputs.matchups["l2"]
+
+    monkeypatch.setattr(suites, "load_matchups", load)
+    artifacts = suites.render_aeronet_suites(cfg)
+    assert calls == [("grid", "daily"), ("l2", "default")]
+    assert {item.name for item in artifacts} == {
+        "daily_grid_global",
+        "l2_global",
+        "l2_stream_terra_dt",
+    }
+    empty_l2 = inputs.matchups["l2"].iloc[:0].assign(pairing="default")
+    supplied = suites.SuiteInputs({"grid": inputs.daily_grid, "l2": empty_l2})
+    artifacts = suites.render_aeronet_suites(cfg, inputs=supplied)
+    assert {item.name for item in artifacts} == {"daily_grid_global", "l2_global"}
+
+
+def test_combined_series_preserve_daily_only_sites_in_components(config, inputs, monkeypatch):
+    cfg = config.model_copy(
+        update={
+            "plots": config.plots.model_copy(
+                update={
+                    "suites": ["aeronet_site_timeseries", "aeronet_regional_timeseries"],
+                    "site_sources": "stream",
+                }
+            )
+        }
+    )
+    daily = pd.concat(
+        [
+            inputs.daily_grid,
+            inputs.daily_grid.iloc[:1].assign(site="C", x=0.8, y=0.9),
+        ],
+        ignore_index=True,
+    )
+    product = pd.concat(
+        [
+            inputs.grid.sites,
+            inputs.grid.sites.loc[inputs.grid.sites.site == "A"].assign(site="C", aod=0.9),
+        ],
+        ignore_index=True,
+    )
+
+    def reload(run, locations, regions):
+        assert set(locations.site) == {"A", "B", "C"}
+        return suites.GridSeries(
+            pd.concat([product, product.assign(source="terra_dt")], ignore_index=True),
+            pd.DataFrame(),
+        )
+
+    original_save = suites.save_figure
+
+    def save(run, figure, **kwargs):
+        if kwargs["name"] == "region_global_terra_dt":
+            daily = figure._sarb_plot_metadata["regional_daily"]
+            assert daily.active_sites.iloc[0] == 3
+            assert daily.x.iloc[0] == pytest.approx((0.25 + 0.5 + 0.8) / 3)
+            assert daily.y.iloc[0] == pytest.approx((0.35 + 0.35 + 0.9) / 3)
+        return original_save(run, figure, **kwargs)
+
+    monkeypatch.setattr(suites, "load_grid_series", reload)
+    monkeypatch.setattr(suites, "save_figure", save)
+    supplied = suites.SuiteInputs(inputs.matchups, inputs.aeronet, daily_grid=daily)
+    artifacts = suites.render_aeronet_suites(cfg, inputs=supplied)
+    assert len(artifacts) == 3
+
+
+def test_requested_regional_components_have_separate_figures(config, inputs):
+    cfg = config.model_copy(
+        update={"plots": config.plots.model_copy(update={"site_sources": "stream"})}
+    )
+    supplied = suites.SuiteInputs(
+        inputs.matchups,
+        grid=suites.GridSeries(inputs.grid.sites.assign(source="terra_dt"), pd.DataFrame()),
+        daily_grid=inputs.daily_grid,
+    )
+    figures = dict(suites._figures(cfg, "aeronet_regional_timeseries", supplied, {}, []))
+    assert set(figures) == {"region_global", "region_global_terra_dt"}
+    assert all(len(figure.axes[0].lines) == 2 for figure in figures.values())
+    sole_sensor = cfg.model_copy(
+        update={"plots": cfg.plots.model_copy(update={"site_sources": "sensor"})}
+    )
+    assert suites._regional_sources(sole_sensor) == []
 
 
 def test_all_suite_outputs_pass_protocol_and_include_expected_products(config, inputs):
@@ -335,7 +499,9 @@ def test_l2_series_derive_grid_context_without_grid_matchup_archive(config, inpu
         raise AssertionError("L2 plot integration must not require a grid matchup archive")
 
     monkeypatch.setattr(suites, "load_matchups", no_archive)
-    supplied = suites.SuiteInputs({"l2": inputs.matchups["l2"]}, inputs.aeronet, inputs.grid)
+    supplied = suites.SuiteInputs(
+        {"l2": inputs.matchups["l2"]}, inputs.aeronet, inputs.grid, inputs.daily_grid
+    )
     artifacts = suites.render_aeronet_suites(cfg, levels=("l2",), inputs=supplied)
     assert {item.name for item in artifacts} == {
         "site_A",
@@ -412,18 +578,19 @@ def test_evaluation_levels_keep_distinct_series_files_and_protocols(config, inpu
         assert json.loads(path.read_text())["passed"]
 
 
-def test_cam7_hourly_regional_components_use_containing_grid_window(config, inputs):
-    pairs = inputs.matchups["grid"].iloc[:3].copy()
-    pairs["time"] = pd.date_range("2008-07-01", periods=3, freq="h", tz="UTC")
-    component = inputs.grid.sites.assign(source="modis", aod=0.6)
+def test_regional_components_count_weight_all_daily_windows(config, inputs):
+    component = inputs.grid.sites.assign(source="modis", aod=np.nan)
+    component.loc[0, ["aod", "count"]] = [0.6, 1]
+    component.loc[1, ["aod", "count"]] = [1.0, 3]
     gridded = suites.GridSeries(
         pd.concat([inputs.grid.sites, component], ignore_index=True), inputs.grid.regional
     )
-    supplied = suites.SuiteInputs({"grid": pairs}, inputs.aeronet, gridded)
-    figure = suites.regional_figure(config, "global", supplied)
-    line = next(line for line in figure.axes[0].lines if line.get_label() == "MODIS Matched Sites")
-    np.testing.assert_allclose(line.get_ydata(), [0.6])
-    assert validate_rendered_figures({"hourly": figure})["passed"]
+    supplied = suites.SuiteInputs(inputs.matchups, inputs.aeronet, gridded, inputs.daily_grid)
+    figure = suites.regional_figure(config, "global", supplied, source="modis")
+    daily = figure._sarb_plot_metadata["regional_daily"]
+    np.testing.assert_allclose(daily.y, [0.9])
+    np.testing.assert_allclose(daily.x, [0.25])
+    assert validate_rendered_figures({"daily": figure})["passed"]
 
 
 def test_duplicate_figure_keys_and_failed_suite_protocol_raise(config, inputs, monkeypatch):

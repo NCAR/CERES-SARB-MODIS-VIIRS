@@ -6,7 +6,7 @@
     "start": "2020-09-01",
     "end": "2020-09-30"
   },
-  "pairing": "default",
+  "pairing": "daily",
   "levels": [
     "grid"
   ],
@@ -30,7 +30,7 @@
     "aeronet_regional_timeseries": 2
   },
   "visual_inspection_count": 2,
-  "inspection_method": "Full-size inspection of every PNG; dates, legends, curves, sampling gaps, and regional labels checked.",
+  "inspection_method": "Full-size inspection of every PNG; dates, legends, curves, sampling gaps, and regional labels checked. Regional middle-50% envelope revision: every affected preview reinspected in full-resolution four-up sheets and representative full-size figures, including sparse sites, missing days, absent one-site bands, statistics strips, legends, and extreme smoke AOD. Isolated-day interval repair: all changed figures individually reinspected at original resolution; unaffected panels retain prior inspection. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics.",
   "inspection_conventions": [
     "Scatter compares satellite and AERONET: quantity-only AOD title and source names on axes follow DAVINCI CLAUDE.md lines 813-823.",
     "Southern Ocean is the region south of 40 degrees S, including land and islands; it is not an ocean-only surface mask."
@@ -48,36 +48,48 @@
       "name": "region_global",
       "pdf": {
         "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/region_global.20200901-20200930.pdf",
-        "sha256": "d95db196922d636fd4ccd4fdcde1cc3d1f963928ea29c03c89a3b0ad22e58ba1"
+        "sha256": "f8729f550e35ec32815f6c75b9b8e529f7b82befc763b3372d84057f894c6a7c"
       },
       "png": {
         "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/region_global.20200901-20200930.png",
-        "sha256": "4e1872717e6b2788f7ecf80a77c298490f608820520f1f1c2de1ea4ae29437af"
+        "sha256": "38ced6ad4bf06530356c7999179749fde0874545ea37a744c765f4fc9860072a"
       },
       "protocol": {
         "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/region_global.20200901-20200930.protocol.json",
         "sha256": "b877b7c1720d512d573ff4362a8c23d03775a51e604b2c3500c0a764ef78460d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/mixed_l2_202009_gls_rho05_nonnegative/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "8698539cefabd12577c59436b5e843aa2cca44c623da7f653fa82e791b31134f"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_southern_ocean",
       "pdf": {
         "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.pdf",
-        "sha256": "f1ffe8e729e485fb3f8a489cb780bdd1c22a4bcf283e053e541f5fb61813508c"
+        "sha256": "3011a71326c259869463b4b6202b986a4462ae395321dcb56b458c4c51ad93f3"
       },
       "png": {
         "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.png",
-        "sha256": "ae7dc2fdad8b894c10002b575305050ccf96508b311058e34635349bab87f2b0"
+        "sha256": "d9ac5efb134f2799783c267d225efd6d924594db7947eac67772d5742738f179"
       },
       "protocol": {
         "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.protocol.json",
         "sha256": "a198ebaac1b417eb12105abaf80cd3e6cfcfdf21c3df29eb02a99a58784e671a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/mixed_l2_202009_gls_rho05_nonnegative/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "8698539cefabd12577c59436b5e843aa2cca44c623da7f653fa82e791b31134f"
+      }
     }
   ],
   "suite_protocols": [
@@ -85,9 +97,70 @@
       "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_regional_timeseries/protocol.20200901-20200930.json",
       "sha256": "2c7faa1a9c0c03fffca6ed8ea96a43198b2dbfdded36c76bce326a0694fc9724",
       "passed": true,
-      "figure_count": 2
+      "figure_count": 2,
+      "pairing": "daily",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/mixed_l2_202009_gls_rho05_nonnegative/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "8698539cefabd12577c59436b5e843aa2cca44c623da7f653fa82e791b31134f"
+      }
     }
   ],
-  "inspection_contact_sheets": [],
-  "inspection_utc": "2026-10-10T21:41:01.603657+00:00"
+  "inspection_contact_sheets": [
+    {
+      "path": "{data_root}/plots/mixed_l2_202009_gls_rho05_nonnegative/aeronet_inspection/regional_middle50_01.20200901-20200930.png",
+      "sha256": "15b2fe5d6eedf24777ec6097d000d62c7cd39fdf0e1bbc857708eb77687b469f",
+      "figures": [
+        "region_global",
+        "region_southern_ocean"
+      ],
+      "visual_inspection": "passed"
+    }
+  ],
+  "inspection_utc": "2026-10-10T21:41:01.603657+00:00",
+  "regional_envelope_revision": {
+    "rendered_utc": "2026-10-11T05:11:18.490872+00:00",
+    "figure_count": 2,
+    "plot_config_sha256": "5bf3f71200c362f6e4f28e7177b815a30d3a39fd2de8df3ad0369ec3f1354a46",
+    "pairing": "daily",
+    "sampling": "Each source independently averages its UTC-day samples; only site-days with both daily means enter the comparison.",
+    "band": "25th\u201375th percentiles across the same active sites, separately for each source\u2019s independently sampled daily means.",
+    "central_lines": "Equal-site regional daily means.",
+    "statistics": "Paired displayed daily regional averages: matched days, bias, RMSE, correlation and mean absolute difference / mean AERONET \u00d7 100.",
+    "isolated_interval_display": "Middle-50% bands extend six hours either side of isolated multi-site days; missing and single-site spread gaps remain open.",
+    "layout": "AOD 550 nm title left and geographic ranges before dates in the same right-aligned subtitle, Time inside axes, two left-aligned footer lines; geographic inset chooses the clearest position fully inside axes, underneath curves and translucent spread bands, with coastlines clipped to the exact region extent.",
+    "full_region_curve": false,
+    "visual_inspection": "passed",
+    "inspection_utc": "2026-10-11T05:12:33.708022+00:00",
+    "plot_config": {
+      "context": "publication",
+      "aod_fill": "pcolormesh",
+      "coastline_resolution": "110m",
+      "suites": [
+        "aeronet_regional_timeseries"
+      ],
+      "regions": [
+        "southern_ocean"
+      ],
+      "sites": {
+        "select": "top_n",
+        "n": 20
+      },
+      "site_sources": "product"
+    }
+  },
+  "suite_pairings": {
+    "aeronet_regional_timeseries": "daily"
+  },
+  "regional_daily_matchup_inputs": [
+    {
+      "path": "{data_root}/evaluation/mixed_l2_202009_gls_rho05_nonnegative/matchups_grid_daily_20200901_20200930.nc",
+      "sha256": "8698539cefabd12577c59436b5e843aa2cca44c623da7f653fa82e791b31134f"
+    }
+  ],
+  "regional_daily_report_inputs": [
+    {
+      "path": "{data_root}/evaluation/mixed_l2_202009_gls_rho05_nonnegative/mixed_l2_202009_gls_rho05_nonnegative_grid_daily_20200901_20200930_report.json",
+      "sha256": "74c9e026b433f07fbbd546f32706944a88e2fbcfb4c742270d37c4117507ff9f"
+    }
+  ]
 }

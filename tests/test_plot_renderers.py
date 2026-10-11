@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from matplotlib.colors import TwoSlopeNorm
+from matplotlib.dates import date2num
 from matplotlib.text import Text
 
 from sarb_aod.evaluation.calculator import binned_bias as calculate_binned_bias
@@ -94,7 +95,87 @@ def test_regional_series_uses_equal_site_daily_means():
     assert regional.x.iloc[0] == pytest.approx(0.3)
     assert regional.y.iloc[0] == pytest.approx(0.4)
     assert regional.active_sites.iloc[0] == 2
-    assert metadata["titles"][0].get_text() == "AOD - Western US"
+    assert metadata["titles"][0].get_text() == "AOD 550 nm - Western US"
+    spread = metadata["regional_spread"]
+    np.testing.assert_allclose(spread[["x_lower", "x_upper"]].iloc[0], [0.2, 0.4])
+    np.testing.assert_allclose(spread[["y_lower", "y_upper"]].iloc[0], [0.3, 0.5])
+    assert len(metadata["dense_artists"]) == 2
+    for band, limits in zip(metadata["dense_artists"], [(0.2, 0.4), (0.3, 0.5)]):
+        vertices = band.get_paths()[0].vertices
+        assert np.ptp(vertices[:, 0]) == pytest.approx(0.5)
+        np.testing.assert_allclose([vertices[:, 1].min(), vertices[:, 1].max()], limits)
+    assert metadata["metrics"]["N"] == 1
+    assert np.isnan(metadata["metrics"]["RMSE"])
+
+
+def test_regional_spread_and_statistics_use_same_sites_and_break_missing_days():
+    from sarb_aod.plots.protocol import validate_rendered_figures
+
+    pairs = pd.DataFrame(
+        {
+            "site": ["A", "A", "A", "B", "A", "B", "A", "B"],
+            "time": pd.to_datetime(["2008-07-01"] * 4 + ["2008-07-03"] * 2 + ["2008-07-04"] * 2),
+            "region": ["western_us"] * 8,
+            "x": [0.1, 0.1, 0.1, 0.5, 0.3, 0.7, 0.6, 9.0],
+            "y": [0.2, 0.2, 0.2, 0.6, 0.2, 0.8, 0.4, np.nan],
+        }
+    )
+    figure = regional_time_series(pairs, "western_us", start="2008-07-01", end="2008-07-04")
+    metadata = assert_artists(figure)
+    np.testing.assert_allclose(metadata["regional_daily"].x, [0.3, 0.5, 0.6])
+    np.testing.assert_allclose(metadata["regional_daily"].y, [0.4, 0.5, 0.4])
+    np.testing.assert_array_equal(metadata["regional_daily"].active_sites, [2, 2, 1])
+    spread = metadata["regional_spread"]
+    np.testing.assert_allclose(spread.x_lower[:2], [0.2, 0.4])
+    np.testing.assert_allclose(spread.x_upper[:2], [0.4, 0.6])
+    assert spread.loc[2, ["x_lower", "x_upper", "y_lower", "y_upper"]].isna().all()
+    for band in metadata["dense_artists"]:
+        paths = band.get_paths()
+        assert len(paths) == 2  # Missing July 2 and single-site July 4 have no band.
+        for path, day in zip(paths, ["2008-07-01", "2008-07-03"]):
+            vertices = path.vertices
+            center = date2num(pd.Timestamp(day))
+            np.testing.assert_allclose(
+                [vertices[:, 0].min(), vertices[:, 0].max()], [center - 0.25, center + 0.25]
+            )
+            assert np.ptp(vertices[:, 1]) > 0
+    lines = metadata["data_axes"][0].lines
+    np.testing.assert_allclose(lines[0].get_ydata(), [0.3, np.nan, 0.5, 0.6], equal_nan=True)
+    np.testing.assert_allclose(lines[1].get_ydata(), [0.4, np.nan, 0.5, 0.4], equal_nan=True)
+    assert metadata["metrics"]["N"] == 3
+    assert metadata["metrics"]["MB"] == pytest.approx(-0.1 / 3)
+    assert metadata["metrics"]["RMSE"] == pytest.approx(np.sqrt(0.05 / 3))
+    assert metadata["metrics"]["NME"] == pytest.approx(100 * 0.3 / 1.4)
+    assert "Absolute Error: 21.4%" in metadata["statistics_annotations"][0].get_text()
+    assert validate_rendered_figures({"regional": figure})["passed"]
+
+
+def test_empty_regional_spread_is_explicit_and_passes_protocol():
+    from sarb_aod.plots.protocol import validate_rendered_figures
+
+    pairs = pd.DataFrame(columns=["site", "time", "region", "x", "y"])
+    figure = regional_time_series(pairs, "global", start="2008-07-01", end="2008-07-31")
+    metadata = assert_artists(figure)
+    assert metadata["metrics"]["N"] == 0
+    assert any(text.get_text() == "No Finite Pairs" for text in figure.axes[0].texts)
+    assert validate_rendered_figures({"empty": figure})["passed"]
+
+
+def test_regional_statistics_exclude_days_outside_displayed_period():
+    pairs = pd.DataFrame(
+        {
+            "site": "A",
+            "time": pd.date_range("2008-07-01", periods=4, tz="UTC"),
+            "region": "global",
+            "x": [0.1, 0.2, 0.3, 0.4],
+            "y": [0.1, 0.2, 0.3, 9.0],
+        }
+    )
+    figure = regional_time_series(pairs, "global", start="2008-07-01", end="2008-07-03")
+    metadata = assert_artists(figure)
+    assert metadata["metrics"]["N"] == 3
+    assert metadata["metrics"]["RMSE"] == 0
+    assert len(metadata["regional_daily"]) == 3
 
 
 def test_numeric_times_are_unix_seconds_and_invalid_sigma_has_no_band_label():

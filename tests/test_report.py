@@ -115,6 +115,78 @@ def test_regional_daily_aggregation_weights_sites_equally(tmp_path):
     assert regional.N_pairs == 4
 
 
+def test_daily_acceptance_uses_region_days_and_retains_site_day_diagnostics(tmp_path):
+    values = frame(x=[0.1, 0.3, 0.2, 0.4, 0.3, 0.5], y=[0.3, 0.1, 0.4, 0.2, 0.5, 0.3])
+    values["site"] = ["A", "B"] * 3
+    values["time"] = pd.date_range("2008-07-01", periods=3, freq="D", tz="UTC").repeat(2)
+    values["sigma_y"] = np.nan
+    result = build_report(values, config(tmp_path), level="grid", pairing="daily")
+    assert result.tables["summary"].N.iloc[0] == 6
+    assert result.tables["summary"].RMSE.iloc[0] == pytest.approx(0.2)
+    assert result.tables["summary"].N_z.iloc[0] == 0
+    daily = result.tables["acceptance_summary"].iloc[0]
+    assert daily.N == 3 and daily.N_site_days == 6
+    assert daily.RMSE == pytest.approx(0)
+    assert result.gates["passed"]
+    assert result.gates["basis"] == "regional_daily"
+    assert result.gates["purpose"] == "acceptance" and result.gates["sample_count"] == 3
+    assert result.gates["checks"]["RMSE"]["value_unrounded"] == pytest.approx(0)
+    regions = result.tables["regional_acceptance"].set_index("region")
+    assert regions.loc["global", "gates_passed"]
+    assert regions.loc["southern_ocean", "N"] == 0
+    assert regions.loc["southern_ocean", "gate_R"] == "insufficient_data"
+    assert "independent UTC-day" in result.provenance["daily_pairing"]
+    assert "no temporal covariance" in result.provenance["daily_satellite_uncertainty"]
+
+
+def test_daily_gates_preserve_unrounded_precision_and_minimum_day_count(tmp_path):
+    values = frame(y=np.array([0.1, 0.2, 0.3]) + 0.03004)
+    values["time"] = pd.date_range("2008-07-01", periods=3, freq="D", tz="UTC")
+    result = build_report(values, config(tmp_path), level="grid", pairing="daily")
+    assert result.gates["checks"]["MB"]["status"] == "fail"
+    assert result.gates["checks"]["MB"]["value_unrounded"] == pytest.approx(0.03004)
+    for sample in (values.iloc[:2], values.iloc[:0]):
+        limited = build_report(sample, config(tmp_path), level="grid", pairing="daily")
+        assert not limited.gates["passed"]
+        assert limited.gates["sample_count"] == len(sample)
+        assert limited.gates["checks"]["RMSE"]["status"] == "insufficient_data"
+    with pytest.raises(ValueError, match="gridded"):
+        build_report(values, config(tmp_path), level="l2", pairing="daily")
+    with pytest.raises(ValueError, match="one independent row"):
+        build_report(frame(), config(tmp_path), level="grid", pairing="daily")
+    with pytest.raises(ValueError, match="daily-pairing"):
+        build_report(
+            values.assign(pairing="default"), config(tmp_path), level="grid", pairing="daily"
+        )
+
+
+def test_daily_matchup_reader_selects_distinct_verified_archive(tmp_path):
+    cfg = config(tmp_path)
+    paths = []
+    for pairing in ("default", "daily"):
+        values = frame()
+        values["y"] += 1 if pairing == "daily" else 0
+        path = tmp_path / f"evaluation/{cfg.name}/matchups_grid_{pairing}_20080701_20080731.nc"
+        write_matchups(
+            path,
+            values,
+            attributes={
+                "level": "grid",
+                "pairing": pairing,
+                "config": cfg.model_dump(mode="json"),
+                "processing_sha256": processing_sha256(cfg),
+            },
+        )
+        paths.append(path)
+    original = paths[0].read_bytes()
+    daily = load_matchups(cfg, "grid", pairing="daily")
+    legacy = load_matchups(cfg, "grid")
+    np.testing.assert_allclose(daily.y - legacy.y, 1)
+    assert paths[0].read_bytes() == original
+    with pytest.raises(ValueError, match="Invalid matchup"):
+        load_matchups(cfg, "l2", pairing="daily")
+
+
 def test_asymmetric_ocean_expected_errors_and_ambiguous_surface_exclusion(tmp_path):
     values = frame(x=[0.5, 0.5, 0.5], y=[0.43, 0.59, 0.5901])
     values["surface"] = "ocean"
@@ -239,6 +311,104 @@ def test_evaluate_exports_provenance_and_cli_reports_actual_gate_status(tmp_path
     assert failed.exit_code == 1 and "MB: fail" in failed.output
     invalid = runner.invoke(app, ["evaluate", "-c", str(run), "--level", "bad"])
     assert invalid.exit_code == 2
+
+
+def test_cli_defaults_grid_to_daily_acceptance_and_keeps_explicit_diagnostics(
+    tmp_path, monkeypatch
+):
+    cfg = config(tmp_path)
+    values = frame()
+    values["time"] = pd.date_range("2008-07-01", periods=3, freq="D", tz="UTC")
+    called = []
+
+    def evaluated(config, *, level, pairing):
+        called.append((level, pairing))
+        result = build_report(values, config, level=level, pairing=pairing)
+        result.files["report"] = tmp_path / f"{pairing}_report.json"
+        return result
+
+    monkeypatch.setattr(report, "evaluate", evaluated)
+    path = tmp_path / "run.yaml"
+    path.write_text(yaml.safe_dump(cfg.model_dump(mode="json")))
+    runner = CliRunner()
+    daily = runner.invoke(app, ["evaluate", "-c", str(path)])
+    assert daily.exit_code == 0, daily.output
+    assert called[-1] == ("grid", "daily")
+    assert "global daily means: N=3" in daily.output
+    diagnostic = runner.invoke(app, ["evaluate", "-c", str(path), "--pairing", "default"])
+    assert diagnostic.exit_code == 0, diagnostic.output
+    assert called[-1] == ("grid", "default")
+    assert "individual matchups (diagnostic)" in diagnostic.output
+    invalid = runner.invoke(
+        app, ["evaluate", "-c", str(path), "--level", "l2", "--pairing", "daily"]
+    )
+    assert invalid.exit_code == 2
+
+
+def test_diagnostic_regional_plots_build_missing_daily_evaluation_without_recursion(
+    tmp_path, monkeypatch
+):
+    from sarb_aod.evaluation import campaign
+    from sarb_aod.plots import aeronet_suites
+
+    cfg = config(tmp_path)
+    cfg = cfg.model_copy(
+        update={"plots": cfg.plots.model_copy(update={"suites": ["aeronet_regional_timeseries"]})}
+    )
+    built = []
+
+    def matchups(run, *, output_dir, level, pairing, **kwargs):
+        built.append((level, pairing, list(run.plots.suites)))
+        values = frame()
+        values["time"] = pd.date_range("2008-07-01", periods=3, freq="D", tz="UTC")
+        values["pairing"] = pairing
+        path = write_matchups(
+            output_dir / f"matchups_{level}_{pairing}_20080701_20080731.nc",
+            values,
+            attributes={
+                "source_files": [],
+                "aeronet_cache_files": [],
+                "config": run.model_dump(mode="json"),
+                "processing_sha256": processing_sha256(run),
+                "level": level,
+                "pairing": pairing,
+            },
+        )
+        return MatchupResult(values, path)
+
+    def missing(*args, **kwargs):
+        raise FileNotFoundError("Daily evaluation does not exist yet")
+
+    rendered = []
+
+    def render(run, **kwargs):
+        rendered.append(kwargs["pairing"])
+        daily = load_matchups(run, "grid", pairing="daily")
+        assert len(daily) == 3
+        assert (
+            tmp_path / "evaluation/test_run/test_run_grid_daily_20080701_20080731_report.json"
+        ).is_file()
+        return []
+
+    monkeypatch.setattr(report, "build_matchups", matchups)
+    monkeypatch.setattr(campaign, "verified_tables", missing)
+    monkeypatch.setattr(aeronet_suites, "render_aeronet_suites", render)
+    result = evaluate(cfg, level="l2", coastal_sites={})
+    assert built == [
+        ("l2", "default", ["aeronet_regional_timeseries"]),
+        ("grid", "daily", ["aod_maps"]),
+    ]
+    assert rendered == ["default"]
+    assert result.plots["status"] == "protocol_passed"
+
+    def stale(*args, **kwargs):
+        raise ValueError("Daily scientific configuration is stale")
+
+    monkeypatch.setattr(campaign, "verified_tables", stale)
+    built.clear()
+    with pytest.raises(ValueError, match="stale"):
+        evaluate(cfg, level="l2", coastal_sites={})
+    assert len(built) == 1 and built[0][0] == "l2"
 
 
 def test_evaluate_links_verified_plots_and_records_rendering_failures(tmp_path, monkeypatch):

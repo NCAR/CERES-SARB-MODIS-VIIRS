@@ -16,6 +16,7 @@ from sarb_aod.evaluation.collocate import (
     CollocationOptions,
     build_matchups,
     collocate_grid,
+    collocate_grid_daily,
     collocate_l2,
     flag_representativeness,
     great_circle_km,
@@ -275,6 +276,45 @@ def test_grid_windows_are_half_open_without_double_counting():
     assert collocate_grid(field(-999), reference, start=datetime(2008, 7, 1)).empty
 
 
+def test_daily_grid_means_are_independent_before_site_day_pairing():
+    fields = [field(-999, count=0) for _ in range(8)]
+    fields[0] = field(0.2, count=1)
+    fields[4] = field(0.8, count=3)
+    # All daily AERONET observations fall outside satellite-bearing windows.
+    # None would survive three-hour pairing, but the independent day is valid.
+    reference = aero(
+        [
+            "2008-06-30T23:59:59Z",
+            "2008-07-01T03:05:00Z",
+            "2008-07-01T03:10:00Z",
+            "2008-07-01T21:00:00Z",
+            "2008-07-02T00:00:00Z",
+        ],
+        [8, 0.1, 0.3, 0.8, 9],
+    )
+    matched = collocate_grid_daily(fields, reference, start=datetime(2008, 7, 1), recipes=[RECIPE])
+    assert len(matched) == 1
+    row = matched.iloc[0]
+    assert row.x == pytest.approx(0.4)
+    assert row.y == pytest.approx(0.65)
+    assert row.n_aeronet == 3 and row.n_satellite == 4 and row.n_satellite_windows == 2
+    assert row.aod_count_terra_dt == 4
+    assert row.pairing == "daily" and row.time == pd.Timestamp("2008-07-01T12:00Z")
+    assert np.isnan(row.sigma_y) and np.isnan(row.z)
+    assert np.isfinite(row.sigma_x)
+
+
+def test_daily_grid_requires_complete_consistent_fields_and_minimum_daily_aeronet():
+    reference = aero(["2008-07-01T01:00Z"], [0.2])
+    fields = [field() for _ in range(8)]
+    assert collocate_grid_daily(fields, reference, start=datetime(2008, 7, 1)).empty
+    with pytest.raises(ValueError, match="all eight"):
+        collocate_grid_daily(fields[:7], reference, start=datetime(2008, 7, 1))
+    fields[-1] = fields[-1].assign_coords(lon=fields[-1].lon + 0.01)
+    with pytest.raises(ValueError, match="identical coordinates"):
+        collocate_grid_daily(fields, reference, start=datetime(2008, 7, 1))
+
+
 def test_cam7_averages_bands_before_conversion_and_has_no_count_minimum():
     reference = aero(
         ["2008-07-01T00:05Z", "2008-07-01T00:10Z", "2008-07-01T01:05Z"], [0.1, 1.0, 0.2]
@@ -392,7 +432,10 @@ def test_l2_driver_deduplicates_edge_granules_and_records_provenance(tmp_path, m
         assert "config_sha256" in saved.attrs and "aeronet_cache_files" in saved.attrs
 
 
-def test_grid_driver_needs_only_period_days_and_rejects_stale_processing(tmp_path, monkeypatch):
+@pytest.mark.parametrize("pairing", ["default", "daily"])
+def test_grid_driver_needs_only_period_days_and_rejects_stale_processing(
+    tmp_path, monkeypatch, pairing
+):
     cfg = make_config(tmp_path)
     reference = aero(["2008-07-01T00:00Z", "2008-07-01T00:01Z"], [0.1, 0.3])
     calls = []
@@ -414,21 +457,26 @@ def test_grid_driver_needs_only_period_days_and_rejects_stale_processing(tmp_pat
             aod_count=np.full(grid.shape, 3),
             global_attrs={"processing_sha256": processing_sha256(cfg)},
         )
-    result = build_matchups(cfg, level="grid", output_dir=tmp_path / "evaluation")
+    result = build_matchups(cfg, level="grid", pairing=pairing, output_dir=tmp_path / "evaluation")
     assert len(result.frame) == 1 and calls == [DAY]
+    if pairing == "daily":
+        assert result.frame.n_satellite_windows.iloc[0] == 8
+        assert result.frame.n_satellite.iloc[0] == 24
+        assert result.frame.sigma_y.isna().all()
+        assert "_daily_" in result.path.name
     import netCDF4
 
     with netCDF4.Dataset(output_path(cfg, datetime(2008, 7, 1)), "a") as dataset:
         dataset.processing_sha256 = "stale"
     with pytest.raises(ValueError, match="processing provenance"):
-        build_matchups(cfg, level="grid", output_dir=tmp_path / "stale_evaluation")
+        build_matchups(cfg, level="grid", pairing=pairing, output_dir=tmp_path / "stale_evaluation")
     assert not (tmp_path / "stale_evaluation").exists()
     with netCDF4.Dataset(output_path(cfg, datetime(2008, 7, 1)), "a") as dataset:
         dataset.processing_sha256 = processing_sha256(cfg)
         dataset["time"][...] = float(dataset["time"][...]) + 3
         dataset["time_bnds"][:] = dataset["time_bnds"][:] + 3
     with pytest.raises(ValueError, match="time differs from the requested window"):
-        build_matchups(cfg, level="grid", output_dir=tmp_path / "wrong_window")
+        build_matchups(cfg, level="grid", pairing=pairing, output_dir=tmp_path / "wrong_window")
 
 
 def test_l2_driver_rejects_day_with_only_an_edge_granule(tmp_path, monkeypatch):

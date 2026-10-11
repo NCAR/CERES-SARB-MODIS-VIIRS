@@ -97,10 +97,11 @@ selects legacy time and count weighting to reproduce CAM7's diagnostic four-stre
 product; the QC preset alone does not change those settings.
 
 The working value `rho: 0.5` remains provisional. The July 2008 and September 2020
-[evaluation campaign](docs/validation/evaluation_campaign.md) found that no tested
-rho calibrated global uncertainty, and every tested grid configuration missed the
-RMSE acceptance gate. Verified output contracts and passing plot protocols do not
-imply scientific acceptance.
+[historical evaluation campaign](docs/validation/evaluation_campaign.md) found that no tested
+rho calibrated uncertainty in the three-hour diagnostics. Acceptance now uses
+[independent daily regional comparisons](docs/validation/daily_acceptance_campaign.md),
+following the revised sampling definition. Daily satellite uncertainty is not inferred
+without a temporal covariance model.
 
 ```bash
 sarb-aod grid -c config/runs/modis_l2_200807.yaml --workers 2
@@ -149,10 +150,18 @@ sarb-aod plot -c config/runs/modis_l2_200807_gls_rho05.yaml \
 ```
 
 Evaluation writes NetCDF matchups and CSV/JSON statistics under `paths.evaluation_dir`.
-The default grid pairing averages AERONET observations within each three-hour window;
-`--pairing cam7` reproduces hourly band conversion and nearest-cell pairing. L2 pairing
-uses a 25 km radius and ±30 minutes. Configurable observation minima and published
-expected-error envelopes live in `evaluation`. Scientific gates use unrounded metrics;
+Grid evaluation defaults to `--pairing daily`: independently average all valid daily
+AERONET observations and count-weight the day's available satellite cell fields, then
+pair by site-day. Acceptance compares equal-site regional daily means (global for the
+run gate), with |bias| ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8. Regional time-series plots use
+the same daily inputs and show middle-50% site envelopes, comparison statistics and
+a region/site inset below the curves. Pooled site-day errors remain separate diagnostics.
+Standalone plotting reads daily grid and individual-overpass L2 archives; daily
+grid diagnostic figure names include `daily_` to distinguish historical figures.
+`--pairing default` retains the historical three-hour diagnostic; `--pairing cam7`
+reproduces hourly band conversion and nearest-cell pairing. L2 pairing uses a 25 km
+radius and ±30 minutes. Configurable observation minima and published expected-error
+envelopes live in `evaluation`. Scientific gates use unrounded metrics;
 exit status 1 means a gate failed, and status 2 reports an input or processing error.
 A failed science gate does not delete its evidence.
 

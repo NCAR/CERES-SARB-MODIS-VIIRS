@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-10-10T22:08:06.478483+00:00",
+  "created_utc": "2026-10-11T05:12:42.651102+00:00",
   "path_convention": "Replace {data_root} with the data root used for these campaign artifacts. Configuration and processing hashes are those recorded during this run; relocating data does not change file bytes.",
   "acceptance_scope": "Publication protocol plus visual inspection, separate from scientific gate acceptance.",
   "status": "accepted",
@@ -11,7 +11,7 @@
   "inventories": [
     {
       "path": "aeronet_plot_inventories/modis_l2_200807_gls_rho05.json",
-      "sha256": "48ca0f97a4991c30ea2b5733abd00cc41eb6b14a5ec90619ad5c5fa5ed5ea51e",
+      "sha256": "3fc198cf470aea36ab979724fde7f4890fcfe28d040d16a0527ed38045f15f18",
       "run": "modis_l2_200807_gls_rho05",
       "levels": [
         "grid",
@@ -27,7 +27,7 @@
     },
     {
       "path": "aeronet_plot_inventories/modis_l2_200807_gls_rho0.json",
-      "sha256": "cdcc0c9bc4178dcf1512441ca99c252dc94828cc8d269c33058ce059c680feb2",
+      "sha256": "192706005d26b92b05997b445c54f88619f009d09d79d5418e77b6678f86e5be",
       "run": "modis_l2_200807_gls_rho0",
       "levels": [
         "grid",
@@ -43,7 +43,7 @@
     },
     {
       "path": "aeronet_plot_inventories/modis_l2_200807_count.json",
-      "sha256": "c3296a9814dc495022e5bdd7156a0f2377a0a44a2702a41f96343388926fe78b",
+      "sha256": "5c7103592c7e165f91e891435b9711aefb933246dee2ff51082545ddb531d8ef",
       "run": "modis_l2_200807_count",
       "levels": [
         "grid",
@@ -59,7 +59,7 @@
     },
     {
       "path": "aeronet_plot_inventories/modis_l2_200807_cam7_v2.json",
-      "sha256": "bd886f880c97a5f0e472dde5d4a1221b605e630d8607651f41f2eeff9316e517",
+      "sha256": "20c32c781100b085664242ef3daa613447e049bf2d6ef8e96045a774a2fbbf17",
       "run": "modis_l2_200807_cam7_v2",
       "levels": [
         "grid",
@@ -75,7 +75,7 @@
     },
     {
       "path": "aeronet_plot_inventories/modis_l2_202009_gls_rho05.json",
-      "sha256": "9ba332ef7568ca4885beeb0881ba6ba9790864cf6dfec4a8b0955f524ad9a25c",
+      "sha256": "1d251401cffab2a928b3ec0f79e283ad804d0d8d432f2695837f521d42b5a103",
       "run": "modis_l2_202009_gls_rho05",
       "levels": [
         "grid",
@@ -91,7 +91,7 @@
     },
     {
       "path": "aeronet_plot_inventories/viirs_l2_202009_gls_rho05.json",
-      "sha256": "fa3e87462e3d9e1f551aea025009a92338f23e678323f64bd7d1e2ba80cdf095",
+      "sha256": "a87eaecc98ab946b41e5189680d4b7477e587df106b24357450e422ce8a7f525",
       "run": "viirs_l2_202009_gls_rho05",
       "levels": [
         "grid",
@@ -107,7 +107,7 @@
     },
     {
       "path": "aeronet_plot_inventories/mixed_l2_202009_gls_rho05.json",
-      "sha256": "544d8ee76d60157146cd0d6c11da2f62d884633a7a4773e67bc224bb3be1570b",
+      "sha256": "a0cbdcd3975dd7732c88f998fb74ec53825cb523fa33707b3d36a8847ef72ce0",
       "run": "mixed_l2_202009_gls_rho05",
       "levels": [
         "grid",
@@ -123,7 +123,7 @@
     },
     {
       "path": "aeronet_plot_inventories/mixed_db21_l2_202009_gls_rho05.json",
-      "sha256": "e5af6e5a47df52675509d61752f92f7b6a81d56f1aaff45747003858b9e424cf",
+      "sha256": "99881218992adf72baa1d1d5c7e700d6f3977ae8a96bb54e8d45e4b70371a2f8",
       "run": "mixed_db21_l2_202009_gls_rho05",
       "levels": [
         "grid",
@@ -139,7 +139,7 @@
     },
     {
       "path": "aeronet_plot_inventories/modis_l2_200807_ocean_qa3_southern_ocean.json",
-      "sha256": "e4278b140ea4987fae5d0c42910b03a5210e7b28139f4c01dd6f6f1f8333835b",
+      "sha256": "789113ce497cddeee868e1aea808f5adf930462612abf1a0c2ee0e2b6055190d",
       "run": "modis_l2_200807_ocean_qa3",
       "levels": [
         "grid"
@@ -154,7 +154,7 @@
     },
     {
       "path": "aeronet_plot_inventories/modis_l2_200807_gls_rho05_nonnegative_southern_ocean.json",
-      "sha256": "b42a36812d1d3eca246d3d8971590f2314da5f6c62209fa11981ef94a4c00874",
+      "sha256": "8e1a6bf99398d508b77769e4e4b866e30fcf6d6a5ef01d12605fa1303a8296eb",
       "run": "modis_l2_200807_gls_rho05_nonnegative",
       "levels": [
         "grid"
@@ -169,7 +169,7 @@
     },
     {
       "path": "aeronet_plot_inventories/mixed_l2_202009_ocean_qa3_southern_ocean.json",
-      "sha256": "2e64f1be6d245e0fd6a4577bab5b1a6755ce33ed7e0956c1db4557b3739fbbf6",
+      "sha256": "a50f6db1573e3fa80bf813d380c4df22af80441434b5e28d933998c040b827b7",
       "run": "mixed_l2_202009_ocean_qa3",
       "levels": [
         "grid"
@@ -184,7 +184,7 @@
     },
     {
       "path": "aeronet_plot_inventories/mixed_l2_202009_gls_rho05_nonnegative_southern_ocean.json",
-      "sha256": "53c8177084d481a2c288735772462e69522b2a1998695aa9fbb6dd4bbace46ce",
+      "sha256": "54130c619116445499328d6e383e3aec020f2e51b22c952004d5a42298469758",
       "run": "mixed_l2_202009_gls_rho05_nonnegative",
       "levels": [
         "grid"
@@ -197,5 +197,7 @@
       "suite_protocols": 1,
       "visually_inspected_figures": 2
     }
-  ]
+  ],
+  "regional_daily_figure_count": 124,
+  "historical_diagnostic_figure_count": 1014
 }

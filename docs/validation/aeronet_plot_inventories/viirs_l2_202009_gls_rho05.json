@@ -6,7 +6,7 @@
     "start": "2020-09-01",
     "end": "2020-09-30"
   },
-  "pairing": "default",
+  "pairing": "daily regional; default historical diagnostics",
   "levels": [
     "grid",
     "l2"
@@ -40,7 +40,7 @@
     "evaluation_summary": 10
   },
   "visual_inspection_count": 143,
-  "inspection_method": "Every preview inspected on contact sheets, with full-size review of complex layouts and newly repaired summary figures. Titles, dates, axes, legends, dense data, source colors, empty regions, and clipping checked.",
+  "inspection_method": "Every preview inspected on contact sheets, with full-size review of complex layouts and newly repaired summary figures. Titles, dates, axes, legends, dense data, source colors, empty regions, and clipping checked. Regional middle-50% envelope revision: every affected preview reinspected in full-resolution four-up sheets and representative full-size figures, including sparse sites, missing days, absent one-site bands, statistics strips, legends, and extreme smoke AOD. Isolated-day interval repair: all changed figures individually reinspected at original resolution; unaffected panels retain prior inspection. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics. Independent daily revision: every changed regional preview inspected at original resolution, checking compact titles, map insets underneath curves, paired-site middle-50% spread, isolated intervals, missing days and daily statistics.",
   "inspection_conventions": [
     "Scatter compares satellite and AERONET: quantity-only AOD title and source names on axes follow DAVINCI CLAUDE.md lines 813-823.",
     "Southern Ocean is the region south of 40 degrees S, including land and islands; it is not an ocean-only surface mask."
@@ -62,270 +62,360 @@
       "name": "region_global",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_global.20200901-20200930.pdf",
-        "sha256": "87478d6ada431afcd8a7809a3f1071d06aa49b22f634ab4d1a87a8d211ac6bb0"
+        "sha256": "186309e7e6862719bffeeb57f43a1ae3daaafbd45643ecead395b3fb9bb7fe5a"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_global.20200901-20200930.png",
-        "sha256": "727e1e8cb3268373ab7b6375a8b86597b6747cf66406b47e62ab34e7d42a60de"
+        "sha256": "4ced9889598e3c1e6a1341e584ccf2fccd354e40071ba7d12b91d085c35f46bc"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_global.20200901-20200930.protocol.json",
         "sha256": "b877b7c1720d512d573ff4362a8c23d03775a51e604b2c3500c0a764ef78460d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_north_atlantic_ocean",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_atlantic_ocean.20200901-20200930.pdf",
-        "sha256": "0b857d1b566181275eaf8fd6ac8f1f3358f64465d58b5dba260218986f92da12"
+        "sha256": "a758c3f27325e3a9ab290b57262e4d59b35e2e64741a39ee36ba9357cca3a281"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_atlantic_ocean.20200901-20200930.png",
-        "sha256": "689c24421b7f384f2d71b09b51e58af45040172395da59099ee9bc5e95c178f6"
+        "sha256": "e5e4bdd04e3f7b610ae22ad2a37860609eeb3dddc7f4d43760c6be2d04ac3ba1"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_atlantic_ocean.20200901-20200930.protocol.json",
         "sha256": "30f1a0e5d02ba2e9ac9bef7a6ca28358c558c5e930f2a5e24ce7524a03c219ed"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_south_atlantic_ocean",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_atlantic_ocean.20200901-20200930.pdf",
-        "sha256": "917aac3c1d7076f14dc74de315a1f9060e44fde0499594b87736e6847f17dce3"
+        "sha256": "dc8892527d48287d35039be88f0d49f7b71e1f246770b0f4aca48ab1d19c3aeb"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_atlantic_ocean.20200901-20200930.png",
-        "sha256": "13ed97999246675126ea806ebe9f716b291bec5bada56df3d806e0bff3c6b031"
+        "sha256": "bc3f33a30b9fa52c64eb472e06c80159c2b2351f93b0b3771a73ba352e04a5fe"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_atlantic_ocean.20200901-20200930.protocol.json",
         "sha256": "1e3c6e56c557e4659c170abca559da93c4cee724482db86cbe42d2a72a7dbd05"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_north_indian_ocean",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_indian_ocean.20200901-20200930.pdf",
-        "sha256": "2a9172684fcc4763f2521f0af2b2b424560546a36f5e7a63c6208b18c59c8b8e"
+        "sha256": "56840162e36eaef2600bbcc2cf1fd2d272246c97b06420535d4bb6112619dafc"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_indian_ocean.20200901-20200930.png",
-        "sha256": "2f6dc38fda7e1aec0d481182467222bfdc3e702d6507494783abf83bd6cd3572"
+        "sha256": "46d4baf806a5300b7498783eea9527bbb6b2633ecdcd0072b9e77dcbe30669b6"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_indian_ocean.20200901-20200930.protocol.json",
         "sha256": "529c572d7df746d8abd67f334a6cf1775145dae57e39c040cd8bebfe068be45d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_north_africa",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_africa.20200901-20200930.pdf",
-        "sha256": "07d978e9493c2a53e6fb8c261cdcb6ec43378c58b4e84a50980a8bfa8e2fbf5c"
+        "sha256": "cc5c58f14bf5f305794260e75511362954a4b77d4cd60d794b2c004455cfbd80"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_africa.20200901-20200930.png",
-        "sha256": "822f600331c8ca879e4751d2b2d131e91c04abe7a689bbd18d09aa3f90687d9e"
+        "sha256": "f80a5feec537bc6aad2818dd5617b21fc2171cc0a418b5bcd2f7fd3ad12c0542"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_north_africa.20200901-20200930.protocol.json",
         "sha256": "02efe05c018674877cfb0974c9e01deda19593cc5c78b54521a1ab112c26107a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_southern_africa",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_africa.20200901-20200930.pdf",
-        "sha256": "a1fabcd9a27b74d00ad8192a3dbbac88929e8cf384ffb22674c495cb39352b2f"
+        "sha256": "3eedbdb935bed90e77a435e6ff7e38a043daa1157d954a1aaa5e7f5f0c30e1ed"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_africa.20200901-20200930.png",
-        "sha256": "aad17264c34dd6f6beeda590ad86b8fdb73284d93030b5b9fd4db2a8162a6675"
+        "sha256": "9acca504b4f3bd8f03e0f90bf958af20247d46c01f60b79400c7ce8570986dfe"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_africa.20200901-20200930.protocol.json",
         "sha256": "a81e6513a315864b10acb13b1a5e25d3dc5e522db82e34d4757a5c72b2f4472c"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_eastern_us",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_eastern_us.20200901-20200930.pdf",
-        "sha256": "b4ccd2522b7770fa4575711e51c084f9206d1bead17357d40720cebe38768ebd"
+        "sha256": "24a1edf0aa3ea21574f5f99ec0a8d22ee957ba956547880e93ed5ae94e99a0e1"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_eastern_us.20200901-20200930.png",
-        "sha256": "76b4a2c41a09921d7e0306ca8624e2ef6a0f3959316b001fb6f3b4438f4e0f51"
+        "sha256": "194f5a72497e5dfb17995c606bcb3db018f31ca8cc53ae08c4a582fc3d25e53f"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_eastern_us.20200901-20200930.protocol.json",
         "sha256": "648e948047b919d43fd71a301af4c8b95645cc2c7b9d287d638fa0d59c32dee1"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_western_us",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_western_us.20200901-20200930.pdf",
-        "sha256": "8a3553693c6a7471f318c42f2e31c45d8fd17968963c359e404b613477f7e4a0"
+        "sha256": "ba6a4d9fed1e7cbd04635d90e4be5188edca3c5f2fccecf9cf9d88357123fed0"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_western_us.20200901-20200930.png",
-        "sha256": "00a7c0488d228ae41ad2858c6547d9172edbc60c9077fc5040fab9802d69a03a"
+        "sha256": "8456b8a8aa5acab491de4aff65f09472e8c4c46d2b2bcfc6b9d8e5d0851109c4"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_western_us.20200901-20200930.protocol.json",
         "sha256": "4a6ef6c5db26e5e81da434d1f043bc205d552a1cd34e34d55ca187291167880c"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_canada",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_canada.20200901-20200930.pdf",
-        "sha256": "51da3f1231b6a16a1558edd18c27ca60812117a265e0525f0326eb7afc7947f5"
+        "sha256": "e7b072396ca5172a6c35a5fc241e3d1324a5e06f6748b67ea482ecb47364e351"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_canada.20200901-20200930.png",
-        "sha256": "c2d899274a8056d0718b4fbdf900a00b32b4276393179732e2329c6e77f002ad"
+        "sha256": "085191f085e49718fa3e5029c756b4c07ef24ec9d7c10b43516f04cae5f1dae8"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_canada.20200901-20200930.protocol.json",
         "sha256": "3fc7b2969d58c3e23ab0d45d55210e7be8e6c620c673f861af6855dad8b548c2"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_south_america",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_america.20200901-20200930.pdf",
-        "sha256": "874ac29e08f51472bce6b79fdb082a6c4707f02002c2255363fc81fe4cb77090"
+        "sha256": "35b4470b700d48686bbe2414bf3e70ca1795cd8f40db22aced690e4a07197ddc"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_america.20200901-20200930.png",
-        "sha256": "fb465179f21def65e5b9f679f1ecc7da409ae510f73bc82e18e887a46c988d63"
+        "sha256": "41af9c6ded54705df0181d13c25f47ef6644042cd96a5cce965a80e8fba32713"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_south_america.20200901-20200930.protocol.json",
         "sha256": "0cd36a0622722e280ab0cf17bf351616827c08737910ef7cbb83755dad36abe8"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_middle_east",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_middle_east.20200901-20200930.pdf",
-        "sha256": "5e8aea58d51a05c23fd27cab4970e96fc1487e515b8d843ea418ccec9449b06c"
+        "sha256": "5cc4d2cc81935eb437366454f74dc7f41085a59142197aebeb3f5502c6f5cc06"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_middle_east.20200901-20200930.png",
-        "sha256": "4f5504e70e5a4587f8dcd1723df2b0a444a19df969d9affa7bd9c811653273b9"
+        "sha256": "998778560aead3fa1b9217a36024f3f71ef5aad32a878e8a1c262bde94421a9b"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_middle_east.20200901-20200930.protocol.json",
         "sha256": "b09007c33b98710eabd8b03c380e6ffe69c88888b87eae4db3aa9ef25cb9e25c"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_east_asia",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_east_asia.20200901-20200930.pdf",
-        "sha256": "7a3959b072f79573d174d21e80bc9bbd67e5b87d89a60f445476c7eb168ae341"
+        "sha256": "b62ab1895d105b0f3d9334c697dad320481c4285ee3b6bb5f90e383ecac6d1df"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_east_asia.20200901-20200930.png",
-        "sha256": "4cc5f8df12a3a7b21abf396a5a2b622ccec4086ef3a28257ed819d9f4fcc45c9"
+        "sha256": "a884cef7d9d9a8e590339b399b07b73e84c76fcc0df04e5bf564bed9bd14b1c5"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_east_asia.20200901-20200930.protocol.json",
         "sha256": "f58f9240ac0333ffd29fe665d2b80cea097510d3b737ae8c52eedadbd1b13ab0"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_india",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_india.20200901-20200930.pdf",
-        "sha256": "446dc530165db8149e336da431bee7edca0674f299f59e34337d7f56f29f5489"
+        "sha256": "4e6797ee255e6c101024b4d73ee59b66049f07db339b6459053783ab7e18df20"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_india.20200901-20200930.png",
-        "sha256": "9f1f79259c1f9cdaf64d35dfd7508afcb4234b0bd37fbb13599a3c323d5c5f72"
+        "sha256": "6e26071f6cba7917484a8852c4c1516520f5d5dfa39ba32a41aa52c649360213"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_india.20200901-20200930.protocol.json",
         "sha256": "3a5057b6e901ad067f01e0d2a114c500aaa04b7356945dd36096e6ea605c0476"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_southern_ocean",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.pdf",
-        "sha256": "8e5367684fba0a3fbd2896e85472962cb2c7377a8065dda65fef47aeb914e7d9"
+        "sha256": "422fa88197809238097e849d6980fbbdf0edda27cb5952e9478f293764dd4ef1"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.png",
-        "sha256": "ad7f72d27ed4b8020b17183fb36ea1a87b19e11ac63de81ffab52dac9fcf500d"
+        "sha256": "729a801e8f83fd3497edfbc0b71912dc37caafe3c3f6901da9bfd5f27ff1e748"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_southern_ocean.20200901-20200930.protocol.json",
         "sha256": "a198ebaac1b417eb12105abaf80cd3e6cfcfdf21c3df29eb02a99a58784e671a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_regional_timeseries",
       "name": "region_labor_day_2020_smoke",
       "pdf": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_labor_day_2020_smoke.20200901-20200930.pdf",
-        "sha256": "d860e4c0a80691c18e3952806f0cab96cb4381380c4c3b8cf4e8348f92be93a5"
+        "sha256": "53551526b11c7ee8212babc30cff98d30f5f49f341b6cc0bd697c30925ba7576"
       },
       "png": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_labor_day_2020_smoke.20200901-20200930.png",
-        "sha256": "5157122e499eea054877b99e78f5dc401116ccc50b068fc6347928e0a0f8834c"
+        "sha256": "2afbfea28ae6bd8e32d0dab0a659fba4672babeb9c6a83bccb2f45c6e6d293e0"
       },
       "protocol": {
         "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/region_labor_day_2020_smoke.20200901-20200930.protocol.json",
         "sha256": "e94d3e7af5567e587918670986ce9cbe3337ba7eddca6b57f0159af93b87a671"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "daily",
+      "acceptance_role": "daily regional comparison",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "suite": "aeronet_scatter",
@@ -343,7 +433,9 @@
         "sha256": "971409a442ae3bfa8c019cc7222517ae4ffa42a01afca63719c830bee1c16a16"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -361,7 +453,9 @@
         "sha256": "8e7526e6f735dba3070352d9fef44308cf61870dc1d30e9d8b21fecbbc9ee416"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -379,7 +473,9 @@
         "sha256": "1799840b14a17d2ea646edf4ef53b2402523b5e7ed919dfe2c98feeda9617d70"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -397,7 +493,9 @@
         "sha256": "1a7bddcb22d35e2395179cd87e1fbfbbf3c20bd930d78b8fb2fb2ae9a7148707"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -415,7 +513,9 @@
         "sha256": "9b46cdedfbd25261c2d1f1cd49dcd7d8b4d1489361bece38e8d70af475e296fb"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -433,7 +533,9 @@
         "sha256": "2fe705df1bdc43001e6389dbd53284286a812c0d026634c8c1c691600354e4f8"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -451,7 +553,9 @@
         "sha256": "8a4a92eecf3526a5dbec2f27539381a99ac896aa7cdceceee486f3797d49ef22"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_scatter",
@@ -469,7 +573,9 @@
         "sha256": "1c2a3fd5e15c43601ba85ea0ae2d17c320def8295ff5525dac71343e2c7688f9"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -487,7 +593,9 @@
         "sha256": "e7dfb5eda3f58d1932a02e2d25695fa65ddd0475c10efdf396b37a4879c495f0"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -505,7 +613,9 @@
         "sha256": "2767760fb7b1d50ad568d9b5729d9d7e0e2df19266eabc4da0ee42de4dfece2b"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -523,7 +633,9 @@
         "sha256": "88deed5d3b7d495dad8223f06146ab1747d0d6631df39c8cce2d7f86bdfaecc5"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -541,7 +653,9 @@
         "sha256": "5a7bdefef06727616f588d5820e0abee356c08ec7a8973e89615562683a9e549"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -559,7 +673,9 @@
         "sha256": "1ab65e600ff9748c76c4ffe13788b6bc6f3f2c3a1c169da38af87099080b7416"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -577,7 +693,9 @@
         "sha256": "219867dea39d4a907c352ceeb6b7320e161500868079a8655c5c2101f5b0efd9"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -595,7 +713,9 @@
         "sha256": "68942fa5da44b07a69d241c9afbe9e54a7832a37281df478530911f8841fe7ac"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -613,7 +733,9 @@
         "sha256": "67f61bf44f98821fd9ac00973b2ec6addb1ed80274e85ea0c385734eb14aa578"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -631,7 +753,9 @@
         "sha256": "3f9be746e8455de85a0d7e3215d78c805ac7d8de86b51f11612490c6b996e79d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -649,7 +773,9 @@
         "sha256": "0e2f4c3a326c6de1950d76d6cd0f4458c16a1262814968ac5787086d6f85eb1d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -667,7 +793,9 @@
         "sha256": "8f3a74aeed67289dd0288ee33880d635d6f221bc0cf8618bb2324e8db33197de"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -685,7 +813,9 @@
         "sha256": "d5c7b4755ba9b5292e6f8991ea0812819e614dad2015f1cc6294ea48177f0687"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -703,7 +833,9 @@
         "sha256": "247a433d524cee264b477faf4be4782ad6f09608a323baa69f69dc6fd4833fc6"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -721,7 +853,9 @@
         "sha256": "3bd83cbd70dd3b9e27ebe85f93a1dc569afc5cb87436349b12105913947fb8f4"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -739,7 +873,9 @@
         "sha256": "969de62bc57337f835f63ac952bc7c9e4c3632b1c989088477e348ce82d79024"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -757,7 +893,9 @@
         "sha256": "4250fec9bf365debafdeb908c814746409130ecd4ee8fc89cd7e11dc1f54821c"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -775,7 +913,9 @@
         "sha256": "098ba607f5b70b278ef894381e37c13d96d90b1876dbf5ac854e5b8cbca0941e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -793,7 +933,9 @@
         "sha256": "bc78db7bb2667030e0e60e91225a24b080797211a70acda8521a63bb43df45ef"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -811,7 +953,9 @@
         "sha256": "76728f82b425b09e04f2520128419858180f1360e22cb7af6ea2dc044b290076"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -829,7 +973,9 @@
         "sha256": "bf1b6f47fe1f8b91d66fce0ab6acbe2f1c7a2abbee898b28895d53d37659716c"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -847,7 +993,9 @@
         "sha256": "319304390ebf265b0f6bbf803863860b3b24507a4fa1b647b21798f5730b1860"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -865,7 +1013,9 @@
         "sha256": "3da7efc536c1c218e9e8b597cfd62b924056d84dece31d5d8703d70fb87685ef"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -883,7 +1033,9 @@
         "sha256": "1281547536701a5d3b78f07959ef7b0b5d23808a4fced2b28a17400a57881b5f"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -901,7 +1053,9 @@
         "sha256": "28c014ccca6830684546bba4aa212cc882ec3bd9a992a2510bd28947cb22b4e8"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -919,7 +1073,9 @@
         "sha256": "09193c4582666ea4774a4137087c37505b18e761b66def89b4acfe68b255caa0"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -937,7 +1093,9 @@
         "sha256": "bc52b271a433c406d9f697cd72b5a75c78e91d84c9895e5bf5965722f96af7ff"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -955,7 +1113,9 @@
         "sha256": "bf49e6843df4ceb2783f40532b930f87eaaff39ba234576f60f7a9fb5eb09fb3"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -973,7 +1133,9 @@
         "sha256": "ed5aca36f7d50e2f6b2cc9abb6257aa28c3104c258ec858c08cad6b4c277f9d1"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -991,7 +1153,9 @@
         "sha256": "bf4bd1ff80f8c62d38660b42186d898e86fb25b7e7550b5555eca3fda29c6958"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1009,7 +1173,9 @@
         "sha256": "3767d8ba4309b5764c8de5f113676d53b0c1c13c43f01aeb71a854f12154100a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1027,7 +1193,9 @@
         "sha256": "000e126621b2c4060a28e1226a428f939811565d59084506828b8c21b0e3a251"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1045,7 +1213,9 @@
         "sha256": "67b8864b4d21799c18cacf284190a70976d9126391b1beb071045d8639bdab2a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1063,7 +1233,9 @@
         "sha256": "12dacd4ca97a0830de788975a3ea84424859369268d9405b7d33f23c6a1438ae"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1081,7 +1253,9 @@
         "sha256": "91f47672659d0092f9bd3cc88f84c4771c2f0bbf43c9b40c6a0a4db2bfde9b18"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1099,7 +1273,9 @@
         "sha256": "41e9bd1edd0600c275cc0bfb45aed15a58be0a4ab13314522c0ca98391260155"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1117,7 +1293,9 @@
         "sha256": "0af65a03eab64d70c126815cb04e3c47d7661327d0a367550c57ab360837812e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1135,7 +1313,9 @@
         "sha256": "c48a284c2cdc25d90f8c16949833becd15f28f3a393fb2e7e679a29a94ab3833"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1153,7 +1333,9 @@
         "sha256": "df3430d18d60f60f7926ff0140a27d0447a02d6f3ad7f50356f48081f8929c23"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1171,7 +1353,9 @@
         "sha256": "88975cfe884683e57659fdb17a29a6b174ada678e7c65dfb5841e9f7046a6d4e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1189,7 +1373,9 @@
         "sha256": "02134931196d4e1a12b7611f01116f7614e94187a05742b929f1bbc02456bcd5"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1207,7 +1393,9 @@
         "sha256": "1cfb2aac3976062c990b60eb09f946484b5547dd94b5e76fd640050577641876"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1225,7 +1413,9 @@
         "sha256": "299297e885e42f883a0a5cb1a3de5a82001679a9633c5d797cdf56877348a175"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1243,7 +1433,9 @@
         "sha256": "a7bdab08ee068e1884e64a6dc12f5c51d3a22c07ed43757ba12896bd20d57f1d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1261,7 +1453,9 @@
         "sha256": "5d7f84ddc021b19f939ab6c9c6e5e00687e0ffa25c2c67f2f893cc62988fe92a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1279,7 +1473,9 @@
         "sha256": "11780e9966d260602be88995c715183a21eb693dfe309fb9810f6513bef3127f"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1297,7 +1493,9 @@
         "sha256": "73f3bea52f75990d49f6decf721484668c176f383dde25dc1b70c14b98f4b750"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1315,7 +1513,9 @@
         "sha256": "701566b050c680dd62e8c843ce897437cb1194a9ddc54387e8e3a3c791711615"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1333,7 +1533,9 @@
         "sha256": "95e3af190eac8453279868bb32eaf221f6ddbd63a446fd697d76a0fcb42d04aa"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1351,7 +1553,9 @@
         "sha256": "517870e99e5e2b175362e3cbc0567cfa78f8e60408fffbface0c15cefac000be"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1369,7 +1573,9 @@
         "sha256": "8e45d7284a4013a0b2b5b335f1c0327e001174db7cf5fb45c60884c964554481"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1387,7 +1593,9 @@
         "sha256": "86d7fa5df0d9e8b3f2fd5e5fbf71904f0f4f5ba6ebd3ea15fa44e7e48448eddb"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1405,7 +1613,9 @@
         "sha256": "e70f1b27140fe0a4d4e576a652233af6827899e84286bbebe20e0643a1341f93"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1423,7 +1633,9 @@
         "sha256": "26747b03ad0eba6f06a02c10e54cf9f14f3b343b162eaf5c6ca93725c2f7b290"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1441,7 +1653,9 @@
         "sha256": "63b04035eb2cdaf01ca46e6472eb94a4c0a8bd15f799420c680bf349c12962bc"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1459,7 +1673,9 @@
         "sha256": "7a0d043af3a0bea348bd622a76932576fbd02b067ee043bbc44abd3874d8f0d7"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1477,7 +1693,9 @@
         "sha256": "5a2b98dd06ee739b7829ef3702e41d09f4f6a7c6f3ddafee1cb3ef797c282950"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1495,7 +1713,9 @@
         "sha256": "fcbf49a4de9bf666245c0a3cc4473df04436c11597d01198a85d4671cbd28050"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1513,7 +1733,9 @@
         "sha256": "068b5cbdd737fa3c8428e2f38d175d5f8306e0eafc176d12d67c4b7dea8ac033"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1531,7 +1753,9 @@
         "sha256": "2fde4a190892f8fb3829437cb8f66b8d148dc8479f00b8e37f74cb5d7ace9425"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1549,7 +1773,9 @@
         "sha256": "2de010379ec8bf833e1a29c40fdea0214a6b969e078238f6557539c858084784"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1567,7 +1793,9 @@
         "sha256": "c34257dc0fa873a483cdb3e0235871592d42052848ed2f939e2242506e4037de"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1585,7 +1813,9 @@
         "sha256": "5f5789316e0b96543af41deba84b8bb4d7acd849d5a77d4cfbda69acf0d8a0d1"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1603,7 +1833,9 @@
         "sha256": "f3150a84c0905dda54e125e78e9799b0e5fc214bdce322f82fdd6491b12d1cef"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1621,7 +1853,9 @@
         "sha256": "13fe44718b82f5861fc2aa52d0da8d60f449f425fedfe157163ff2e846739053"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1639,7 +1873,9 @@
         "sha256": "d93745881e489cfb7eb855939541f7ae809952a2b2277645bb3bc5044e165960"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1657,7 +1893,9 @@
         "sha256": "d0ef892b682754b078b2c5aaecce086b131d0facfb3eb45b0166d08a84c25335"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1675,7 +1913,9 @@
         "sha256": "26e4eadc33cfd1c3d48dc9585c2fd714a1b0ca60cfe77a4685362501f2e4b2e9"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1693,7 +1933,9 @@
         "sha256": "e20e477101250607de2f1d7f98a2c63bb2fb7c5d1803c59021a12e3b4d90aa21"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1711,7 +1953,9 @@
         "sha256": "b17ac5a6d5584c60471313207bd40d05f1c07a037d64f33e221bd7726862b1bf"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1729,7 +1973,9 @@
         "sha256": "7e92d7eddec516eafe99a2dcd1c7920b4e734fce064afa7541e7e1cbd0e4a423"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1747,7 +1993,9 @@
         "sha256": "2993ea2689f6a1c5bc9c39255ba18b4cc1c6a87ec15be9d88a281a1da14aba3d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1765,7 +2013,9 @@
         "sha256": "9a0f62d4f6146ecb334b817042f50da8a4d29fcbd59af4e16089c44dd422e772"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1783,7 +2033,9 @@
         "sha256": "00e30e4cb2347508aef26f05c78b8012664d7e026575a12275596ff335c77a5e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1801,7 +2053,9 @@
         "sha256": "2ed4278b0894fba9f74802e2604aad08b3071bd3213f8abdcc43192c978a696e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1819,7 +2073,9 @@
         "sha256": "1bf5202e51b0956d45af6569cb4f887c5d7ef11da27e8a31ecc0765986ce0eb3"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1837,7 +2093,9 @@
         "sha256": "9b06057c9da36096768d08cf14c0d005dd0b986b35a884421a6c44562c6ea51e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1855,7 +2113,9 @@
         "sha256": "00ff5227bb4d2a681019ec5a0192e30a0d3b8d609c7d6058c78bd46dcf12ba4c"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1873,7 +2133,9 @@
         "sha256": "4eb5def4d9ab9a813fd18139bbe369e257138a4a2275622e5cd08393fd0576af"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1891,7 +2153,9 @@
         "sha256": "c1c57ef103e4202eb5448a2fcd06536cb0699ab21ff0e05b585bbb37c30e4384"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1909,7 +2173,9 @@
         "sha256": "8c930bea4b403e40e74b6749389bdc14da8963ad60e61c8bae8b6edd443abb26"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1927,7 +2193,9 @@
         "sha256": "209bb5d5e57b1e2a6131ea956efca5040623ad77c66f37e6474f79d168b14c66"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1945,7 +2213,9 @@
         "sha256": "aa458b2bf562f469dc0aa6fb6ee5be14078e8dcb85c811c583eb660c9110a33e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1963,7 +2233,9 @@
         "sha256": "0e842c729778773d446d2dd5f54b17ef416d4cc8e0609e0d2edbc3a43622c04e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1981,7 +2253,9 @@
         "sha256": "a4402b9d159659c0271be336b630bd4c2225318a809c7ed94df4bc7a2adc9914"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -1999,7 +2273,9 @@
         "sha256": "092883136903421543d62c0a315460cfcc365b7ec4b4a1cac901acfd168e2a10"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -2017,7 +2293,9 @@
         "sha256": "eadaf2e97e7fb6e769177357da6e8562321b571242136e1393f1a6d0f908fe7d"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -2035,7 +2313,9 @@
         "sha256": "f45b18867ca31099852adead1eda3a5e667ed0a1fbd489deed0a9151424b5467"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -2053,7 +2333,9 @@
         "sha256": "92f6fc72de8a0b5b07e0c1413a97fa8b1fc11bb343668c7691b14b39fa3fc3e3"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -2071,7 +2353,9 @@
         "sha256": "025e4f2587b95677d50eb4000cab4f4d39fa21930fb319eaf697232386466186"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_bias",
@@ -2089,7 +2373,9 @@
         "sha256": "5d1432a26c52316a1466555841ccd39e2ce405d29adb3d233a1789268d933bfa"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2107,7 +2393,9 @@
         "sha256": "50d9250aa730102673e29ec637d1c10a4f793ae62b536bf18562c573d1529d4b"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2125,7 +2413,9 @@
         "sha256": "5a21a4dec14dc2b8d2196546ab37fba2e3199789d945c52be2e7d3164f3d36c6"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2143,7 +2433,9 @@
         "sha256": "a6e79e2aa5adcb90b2c4bba34a86efee7807d03aa3895285b1520e85672202c8"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2161,7 +2453,9 @@
         "sha256": "d6ed1bb05ead6bd9091362266a0d6a7c1798e6a05ae04b256880ad8fc5d82b2a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2179,7 +2473,9 @@
         "sha256": "883ce460077465dbd4f1848d85e0ee16ca8cc79e7e586c4fe37fba0cf19596e7"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2197,7 +2493,9 @@
         "sha256": "45f994c49d405d75f0c024c1193235e693794f40887a3211d8d313c08e9c2e56"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2215,7 +2513,9 @@
         "sha256": "940de99246db51a2368e370bdfa3562e5affafe0182d0b2b70fecab2eb5fc433"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2233,7 +2533,9 @@
         "sha256": "6f8721795e2d3b4ab06ee62c932a6b7b61f4a98222786821b62057f9f0103352"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2251,7 +2553,9 @@
         "sha256": "37156467ac18cbf92dac0949ae851a4cfdad838e6a4b9bd3da444d02532bc6bd"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2269,7 +2573,9 @@
         "sha256": "4729c7e503ebab10214c9b63c6c70a3d8b2c71c84ef51bcc9ca42b095e959d8e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2287,7 +2593,9 @@
         "sha256": "96096dfd8b0cd9be4e592e258fbb91f05204c5816d40c75b58eaaccd61846202"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2305,7 +2613,9 @@
         "sha256": "84a57a41440da89b34f6033c6ccca9cca458bf9ed956af8d4816506082026cb2"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2323,7 +2633,9 @@
         "sha256": "e0237fbe0dae0c820362e4aed0d7ec29173c7d34edac9c66f9d3e6979a086451"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2341,7 +2653,9 @@
         "sha256": "9e15f51ad32af026d9260b6b2cc9377f48d8a63695f399d5d475803f7fc032e6"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2359,7 +2673,9 @@
         "sha256": "b4e518e0c1657a54138967362a982b6ebad5c29dd6d19f9690bd01adda6ac468"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2377,7 +2693,9 @@
         "sha256": "36b0067b9d1d4e5748d033746a4d438463ce1cad5f0ed35ff90c8cdece9db9f8"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2395,7 +2713,9 @@
         "sha256": "c79afcf9c1856bae926376fcce4e4bcdd53e9b29d8f7bc4e50d1d49bb0fbe043"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2413,7 +2733,9 @@
         "sha256": "f37c3f0da0c7cc107a6bfceb20284718cfa1555da7cb7e376c26a27cefa4fef2"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2431,7 +2753,9 @@
         "sha256": "4b67f1cdddd44faaa91ce504823b6abc6ac3fa316d65556074558c6531c53020"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "aeronet_site_timeseries",
@@ -2449,7 +2773,9 @@
         "sha256": "d8cb44fe75291b7f7873a64b0b61c0e60e831e926161f0eeadcc8ca2194c8884"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2467,7 +2793,9 @@
         "sha256": "bae7e2a0a14bcfcd20735fd1f896a7d84e40c7a3992ce98cfd2eca302f03d709"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2485,7 +2813,9 @@
         "sha256": "7c1af2304665a9b76bd0bb6d878dee12f896140e9e2b5eaeac1a7f7eb74a8dcd"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2503,7 +2833,9 @@
         "sha256": "acc3181dfe63403af3b8bc0e0b1f9928692dcbdfd6e719f2fd130f5f1085c653"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2521,7 +2853,9 @@
         "sha256": "bf83beac259e8a88401030185c4940cec5033e69e221d33c02e4ad646637c5f1"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2539,7 +2873,9 @@
         "sha256": "cb6595607b0af7dce6a5134e7b27eb77ac70acaed629464954c6009522ba279a"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2557,7 +2893,9 @@
         "sha256": "61ff985ca8ccf11251cd2882dc3ec747fa356bcfc1debcbe019270bd200ebfaf"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2575,7 +2913,9 @@
         "sha256": "5b555c25759ec8a3e0dea258acc9f442acaa186389081d53710b51a925c239ef"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2593,7 +2933,9 @@
         "sha256": "ad05f82590c9672d5b1242fae55c36683ce30448b39b9b380f6d77983e8a9362"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2611,7 +2953,9 @@
         "sha256": "129e9088ca0b1f9bb427be6cf922f55d3e1a3e7ebf470138c10c8f9559d30758"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     },
     {
       "suite": "evaluation_summary",
@@ -2629,7 +2973,9 @@
         "sha256": "95f8955e263f5bceab7d89ace78f38346122ecf031845aa7a0f07960965fda7e"
       },
       "protocol_passed": true,
-      "visual_inspection": "passed"
+      "visual_inspection": "passed",
+      "pairing": "default",
+      "acceptance_role": "historical three-hour or L2 diagnostic"
     }
   ],
   "suite_protocols": [
@@ -2637,72 +2983,43 @@
       "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_regional_timeseries/protocol.20200901-20200930.json",
       "sha256": "e9900dac5e789ccbd3a0bb14657aba53eaec0f0a7db351c6ccf481d6d2ebc639",
       "passed": true,
-      "figure_count": 15
+      "figure_count": 15,
+      "pairing": "daily",
+      "matchup_input": {
+        "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+        "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+      }
     },
     {
       "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_scatter/protocol.20200901-20200930.json",
       "sha256": "9be3ec2bc14626e28304f4afd632adf8f977cd84474acddb798f561cf07f7404",
       "passed": true,
-      "figure_count": 8
+      "figure_count": 8,
+      "pairing": "default"
     },
     {
       "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_site_bias/protocol.20200901-20200930.json",
       "sha256": "d010d80d801b6f9faab2db909e741ec847ace1c6583d3bde1c8477b148d21b62",
       "passed": true,
-      "figure_count": 90
+      "figure_count": 90,
+      "pairing": "default"
     },
     {
       "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_site_timeseries/protocol.20200901-20200930.json",
       "sha256": "0544d105ff1fa1150e8b22d79da4b5796a5bb9218e9cfa49d82f82dae22ef860",
       "passed": true,
-      "figure_count": 20
+      "figure_count": 20,
+      "pairing": "default"
     },
     {
       "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/evaluation_summary/protocol.20200901-20200930.json",
       "sha256": "b2df124599c35bae2e8e280011da10dc7f8b5cc2dbb6b1ccea6e63512cbf476c",
       "passed": true,
-      "figure_count": 10
+      "figure_count": 10,
+      "pairing": "default"
     }
   ],
   "inspection_contact_sheets": [
-    {
-      "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/contact_001.20200901-20200930.png",
-      "sha256": "7d6e63e6a4af47bf915347e23e1f707e8108bc59f61d484cfe75e937eba58690",
-      "figures": [
-        "region_canada",
-        "region_east_asia",
-        "region_eastern_us",
-        "region_global",
-        "region_india",
-        "region_labor_day_2020_smoke",
-        "region_middle_east",
-        "region_north_africa",
-        "region_north_atlantic_ocean",
-        "region_north_indian_ocean",
-        "region_south_america",
-        "region_south_atlantic_ocean"
-      ],
-      "visual_inspection": "passed"
-    },
-    {
-      "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/contact_002.20200901-20200930.png",
-      "sha256": "04b5b3b079c96902ec2f575792a76a9280edd1465b4b4c12fe36b54aa72b3700",
-      "figures": [
-        "region_southern_africa",
-        "region_southern_ocean",
-        "region_western_us",
-        "grid_global",
-        "grid_regions",
-        "l2_global",
-        "l2_regions",
-        "l2_stream_noaa20_db",
-        "l2_stream_noaa20_dt",
-        "l2_stream_snpp_db",
-        "l2_stream_snpp_dt",
-        "grid_canada_mb"
-      ],
-      "visual_inspection": "passed"
-    },
     {
       "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/contact_003.20200901-20200930.png",
       "sha256": "d658f5bda566b5f98c5f9c6b8d83dc7582b35220919a3cfbcf4c64a1f01032e3",
@@ -2891,7 +3208,102 @@
         "l2_z"
       ],
       "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/regional_middle50_01.20200901-20200930.png",
+      "sha256": "f6cd8103aea6e7d2b07bd824f49279e01ef89e9ae29920a4ffae940ec84b3d00",
+      "figures": [
+        "region_global",
+        "region_north_atlantic_ocean",
+        "region_south_atlantic_ocean",
+        "region_north_indian_ocean"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/regional_middle50_02.20200901-20200930.png",
+      "sha256": "1a3c860f7a321274af474351b8421ad30a7ccf5868742f3e3fe53ddd470b9170",
+      "figures": [
+        "region_north_africa",
+        "region_southern_africa",
+        "region_eastern_us",
+        "region_western_us"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/regional_middle50_03.20200901-20200930.png",
+      "sha256": "8f5619c7f12b3354dd9e70aa4a412766719af350f714d3eebbf69d3765fe2a8d",
+      "figures": [
+        "region_canada",
+        "region_south_america",
+        "region_middle_east",
+        "region_east_asia"
+      ],
+      "visual_inspection": "passed"
+    },
+    {
+      "path": "{data_root}/plots/viirs_l2_202009_gls_rho05/aeronet_inspection/regional_middle50_04.20200901-20200930.png",
+      "sha256": "ff56ef96ff999331365cf1a5473914c081dc15aa45964c00cba4948dcd62dbd0",
+      "figures": [
+        "region_india",
+        "region_southern_ocean",
+        "region_labor_day_2020_smoke"
+      ],
+      "visual_inspection": "passed"
     }
   ],
-  "plot_config_sha256": "d5f3cce78e4bef02d60dd99c745fce158dd278d63e2d271783b87a12b99cd8bb"
+  "plot_config_sha256": "d5f3cce78e4bef02d60dd99c745fce158dd278d63e2d271783b87a12b99cd8bb",
+  "regional_envelope_revision": {
+    "rendered_utc": "2026-10-11T05:11:07.936256+00:00",
+    "figure_count": 15,
+    "plot_config_sha256": "d5f3cce78e4bef02d60dd99c745fce158dd278d63e2d271783b87a12b99cd8bb",
+    "pairing": "daily",
+    "sampling": "Each source independently averages its UTC-day samples; only site-days with both daily means enter the comparison.",
+    "band": "25th\u201375th percentiles across the same active sites, separately for each source\u2019s independently sampled daily means.",
+    "central_lines": "Equal-site regional daily means.",
+    "statistics": "Paired displayed daily regional averages: matched days, bias, RMSE, correlation and mean absolute difference / mean AERONET \u00d7 100.",
+    "isolated_interval_display": "Middle-50% bands extend six hours either side of isolated multi-site days; missing and single-site spread gaps remain open.",
+    "layout": "AOD 550 nm title left and geographic ranges before dates in the same right-aligned subtitle, Time inside axes, two left-aligned footer lines; geographic inset chooses the clearest position fully inside axes, underneath curves and translucent spread bands, with coastlines clipped to the exact region extent.",
+    "full_region_curve": false,
+    "visual_inspection": "passed",
+    "inspection_utc": "2026-10-11T05:12:37.939678+00:00",
+    "plot_config": {
+      "context": "publication",
+      "aod_fill": "pcolormesh",
+      "coastline_resolution": "110m",
+      "suites": [
+        "aeronet_regional_timeseries",
+        "aeronet_scatter",
+        "aeronet_site_bias",
+        "aeronet_site_timeseries",
+        "evaluation_summary"
+      ],
+      "regions": "all",
+      "sites": {
+        "select": "top_n",
+        "n": 20
+      },
+      "site_sources": "product"
+    }
+  },
+  "suite_pairings": {
+    "aeronet_regional_timeseries": "daily",
+    "aeronet_scatter": "default",
+    "aeronet_site_bias": "default",
+    "aeronet_site_timeseries": "default",
+    "evaluation_summary": "default"
+  },
+  "regional_daily_matchup_inputs": [
+    {
+      "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/matchups_grid_daily_20200901_20200930.nc",
+      "sha256": "a77558b01ce83033304f540dffc552151d4f00157d6bf60cba60f1e06f86bb7c"
+    }
+  ],
+  "regional_daily_report_inputs": [
+    {
+      "path": "{data_root}/evaluation/viirs_l2_202009_gls_rho05/viirs_l2_202009_gls_rho05_grid_daily_20200901_20200930_report.json",
+      "sha256": "754e7ce839faa0d9eaf5a70494b49cb7a089219f876e14980da7a6b524885840"
+    }
+  ]
 }

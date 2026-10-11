@@ -1,8 +1,8 @@
 """AERONET validation suites with independent sampling and shared statistics.
 
 Suite composition follows NCAR/DAVINCI's plotting practice (Apache-2.0).
-Regional series use CERES-SARB-CAM7's site-day then equal-site method;
-full-area means use cosine latitude weights on count-weighted daily fields.
+Regional series use CERES-SARB-CAM7's site-day then equal-site method,
+with independent daily satellite and AERONET means paired at the same sites.
 No reference repository is imported. Inputs are validated before rendering.
 """
 
@@ -27,9 +27,8 @@ from sarb_aod.aeronet.fetch import read_cached_day
 from sarb_aod.aeronet.spectral import convert_550nm, window_uncertainty
 from sarb_aod.config.schema import PlotSiteSelection, RunConfig
 from sarb_aod.contract import validate_contract_file
-from sarb_aod.evaluation.calculator import regional_daily_series
 from sarb_aod.evaluation.collocate import nearest_cell
-from sarb_aod.evaluation.regions import region_mask
+from sarb_aod.evaluation.regions import get_region, region_mask
 from sarb_aod.evaluation.report import (
     EvaluationReport,
     build_report,
@@ -41,6 +40,7 @@ from sarb_aod.paths import cartopy_data_dir, output_path
 from sarb_aod.pipeline import processing_sha256, require_processing_provenance
 from sarb_aod.plots import labeling, maps, scatter, series, summary
 from sarb_aod.plots.protocol import PlotProtocolError
+from sarb_aod.plots.regional_inset import add_regional_inset
 from sarb_aod.plots.series import TimedValues
 from sarb_aod.plots.style import NCAR_PALETTE, ncar_style
 from sarb_aod.plots.suites import PlotArtifact, plot_regions, save_figure, write_protocol_report
@@ -71,6 +71,7 @@ class SuiteInputs:
     matchups: Mapping[Level, pd.DataFrame]
     aeronet: pd.DataFrame | None = None
     grid: GridSeries | None = None
+    daily_grid: pd.DataFrame | None = None
 
 
 def select_sites(matchups: pd.DataFrame, selection: PlotSiteSelection | list[str]) -> list[str]:
@@ -181,6 +182,7 @@ def load_grid_series(config: RunConfig, sites: pd.DataFrame, regions: Sequence[s
                                 "time": pd.Timestamp(center, tz="UTC"),
                                 "source": name,
                                 "aod": values[ilat, ilon],
+                                "count": np.where(good, count, 0)[ilat, ilon],
                                 "sigma": np.where(sigma > -900, sigma, np.nan)[ilat, ilon],
                             }
                         )
@@ -287,60 +289,72 @@ def site_figure(config: RunConfig, site: str, inputs: SuiteInputs) -> Figure:
     return figure
 
 
-def regional_figure(config: RunConfig, region: str, inputs: SuiteInputs) -> Figure:
-    assert inputs.grid is not None
-    pairs = subset_region(inputs.matchups["grid"], region).assign(region=region)
+def _regional_sources(config: RunConfig) -> list[str]:
+    """Extra comparisons requested explicitly, omitting the sole-sensor duplicate."""
+    if config.plots.site_sources == "product":
+        return []
+    if config.plots.site_sources == "sensor":
+        sensors = list(_sources(config))
+        return sensors if len(sensors) > 1 else []
+    return list(config.grid.streams)
+
+
+def regional_figure(
+    config: RunConfig, region: str, inputs: SuiteInputs, *, source: str = "product"
+) -> Figure:
+    if inputs.daily_grid is None:
+        raise ValueError("Regional time series require independently paired daily grid means")
+    daily_grid = inputs.daily_grid
+    if "pairing" in daily_grid and not daily_grid["pairing"].eq("daily").all():
+        raise ValueError("Regional time series require daily pairing, not window matchups")
+    days = pd.to_datetime(daily_grid["time"], utc=True)
+    in_period = (days >= pd.Timestamp(config.period.start, tz="UTC")) & (
+        days < pd.Timestamp(config.period.end, tz="UTC") + pd.Timedelta(days=1)
+    )
+    pairs = subset_region(daily_grid.loc[in_period], region).assign(region=region)
+    if source != "product":
+        if inputs.grid is None:
+            raise ValueError("Regional component plots require grid samples")
+        field = inputs.grid.sites.loc[inputs.grid.sites["source"] == source]
+        field = field.loc[np.isfinite(field["aod"]) & (field["count"] > 0)].copy()
+        field["day"] = pd.to_datetime(field["time"], utc=True).dt.floor("D")
+        field["total"] = field["aod"] * field["count"]
+        daily = field.groupby(["site", "day"], observed=True)[["total", "count"]].sum()
+        daily["y"] = daily["total"] / daily["count"]
+        pairs = (
+            pairs.drop(columns="y")
+            .assign(day=pd.to_datetime(pairs["time"], utc=True).dt.floor("D"))
+            .merge(
+                daily[["y"]].reset_index(),
+                on=["site", "day"],
+                how="left",
+                validate="one_to_one",
+            )
+        )
     figure = series.regional_time_series(
         pairs,
         region,
-        source=_product_source(config),
+        source=_source_label(config, source),
         start=config.period.start,
         end=config.period.end,
+        min_samples=config.evaluation.min_samples,
     )
     metadata = getattr(figure, "_sarb_plot_metadata")
     axis = metadata["data_axes"][0]
     daily = metadata["regional_daily"]
-    full = inputs.grid.regional.loc[
-        (inputs.grid.regional["region"] == region) & (inputs.grid.regional["source"] == "product")
-    ]
-    axis.plot(
-        pd.to_datetime(full["day"]),
-        full["aod"],
-        linestyle="--",
-        marker="o",
-        markersize=3,
-        color=NCAR_PALETTE[1],
-        label=labeling.series_legend_label(_product_source(config), "full_region"),
-    )
-    for index, (source, group) in enumerate(
-        inputs.grid.sites.loc[inputs.grid.sites["source"] != "product"].groupby(
-            "source", sort=False
-        )
-    ):
-        pairing_windows = pairs.drop(columns="y").assign(
-            window=pd.to_datetime(pairs["time"], utc=True).dt.floor("3h")
-        )
-        field_windows = group.assign(window=pd.to_datetime(group["time"], utc=True).dt.floor("3h"))
-        matched = pairing_windows.merge(
-            field_windows[["site", "window", "aod"]],
-            on=["site", "window"],
-            how="left",
-            validate="many_to_one",
-        ).rename(columns={"aod": "y"})
-        _, sampled = regional_daily_series(matched)
-        axis.plot(
-            pd.to_datetime(sampled["day"], utc=True).dt.tz_convert(None),
-            sampled["y"],
-            color=NCAR_PALETTE[(index + 2) % len(NCAR_PALETTE)],
-            label=labeling.series_legend_label(str(source), "matched_sites"),
-        )
     minimum = int(daily["active_sites"].min()) if not daily.empty else 0
     maximum = int(daily["active_sites"].max()) if not daily.empty else 0
     for subtitle in metadata["subtitles"]:
         subtitle.set_text(
-            labeling.active_sites_subtitle(config.period.start, config.period.end, minimum, maximum)
+            labeling.active_sites_subtitle(
+                config.period.start,
+                config.period.end,
+                minimum,
+                maximum,
+                extent=get_region(region).extent,
+            )
         )
-    axis.legend(loc="lower left", bbox_to_anchor=(0, 1.01), fontsize=8, ncols=2)
+    axis.legend(loc="upper left", fontsize=8, ncols=2)
     axis.set_xlim(
         pd.Timestamp(config.period.start) - pd.Timedelta(hours=2),
         pd.Timestamp(config.period.end) + pd.Timedelta(days=1),
@@ -350,7 +364,7 @@ def regional_figure(config: RunConfig, region: str, inputs: SuiteInputs) -> Figu
     locator = mdates.AutoDateLocator(minticks=4, maxticks=8, interval_multiples=False)
     axis.xaxis.set_major_locator(locator)
     axis.xaxis.set_major_formatter(mdates.AutoDateFormatter(locator))
-    metadata["full_regional_daily"] = full
+    add_regional_inset(figure, pairs, region, cartopy_data_dir=cartopy_data_dir(config))
     return figure
 
 
@@ -378,6 +392,10 @@ def _figures(
     if suite == "aeronet_regional_timeseries":
         for region in regions:
             yield f"region_{region}", regional_figure(config, region, inputs)
+            for component in _regional_sources(config):
+                yield f"region_{region}_{_slug(component)}", regional_figure(
+                    config, region, inputs, source=component
+                )
         return
     for level, report in reports.items():
         pairs = inputs.matchups[level]
@@ -475,7 +493,7 @@ def render_aeronet_suites(
     compare_configs: Sequence[RunConfig] = (),
     levels: Sequence[Level] = ("grid", "l2"),
     inputs: SuiteInputs | None = None,
-    pairing: Literal["default", "cam7"] = "default",
+    pairing: Literal["default", "cam7", "daily"] | None = None,
     evaluation_level: Level | None = None,
 ) -> list[PlotArtifact]:
     """Render selected suites, failing explicitly on missing or stale inputs."""
@@ -486,14 +504,44 @@ def render_aeronet_suites(
         raise ValueError("AERONET plot levels must contain grid and/or l2 exactly once")
     if evaluation_level is not None and evaluation_level not in levels:
         raise ValueError("Evaluation plot scope must be included in the requested levels")
-    if pairing not in {"default", "cam7"} or (
-        pairing == "cam7" and ("l2" in levels or inputs is None)
+    if (
+        pairing not in {None, "default", "cam7", "daily"}
+        or (pairing in {"cam7", "daily"} and "l2" in levels)
+        or (pairing == "cam7" and inputs is None)
     ):
-        raise ValueError("CAM7 plot pairing requires explicitly supplied grid matchups")
+        raise ValueError(
+            "Daily/CAM7 pairing requires grid-only levels; CAM7 needs supplied matchups"
+        )
+    regional_series = "aeronet_regional_timeseries" in suites
+    only_regional = set(suites) == {"aeronet_regional_timeseries"}
+    level_pairings: dict[Level, Literal["default", "cam7", "daily"]] = {}
+    for level in dict.fromkeys([*levels, *(inputs.matchups if inputs is not None else [])]):
+        if pairing is not None:
+            level_pairings[level] = pairing
+        elif inputs is None:
+            level_pairings[level] = "daily" if level == "grid" else "default"
+        else:
+            frame = inputs.matchups.get(level)
+            level_pairings[level] = (
+                "daily"
+                if level == "grid"
+                and frame is not None
+                and not frame.empty
+                and "pairing" in frame
+                and frame["pairing"].eq("daily").all()
+                else "default"
+            )
     candidates = (
         dict(inputs.matchups)
         if inputs is not None
-        else {level: load_matchups(config, level) for level in levels}
+        else (
+            {}
+            if only_regional
+            else {
+                level: load_matchups(config, level, pairing=level_pairings[level])
+                for level in levels
+            }
+        )
     )
     frames = {
         level: frame.loc[
@@ -502,24 +550,31 @@ def render_aeronet_suites(
         ].copy()
         for level, frame in candidates.items()
     }
-    if inputs is not None:
-        inputs = SuiteInputs(frames, inputs.aeronet, inputs.grid)
-    series_needed = bool(set(suites) & {"aeronet_site_timeseries", "aeronet_regional_timeseries"})
-    if series_needed and (inputs is None or inputs.aeronet is None or inputs.grid is None):
+    daily_grid = inputs.daily_grid if inputs is not None else None
+    if regional_series and daily_grid is None:
+        daily_grid = (
+            frames["grid"]
+            if level_pairings.get("grid") == "daily" and "grid" in frames
+            else load_matchups(config, "grid", pairing="daily")
+        )
+    site_series = "aeronet_site_timeseries" in suites
+    independent_needed = site_series
+    grid_needed = independent_needed or (regional_series and bool(_regional_sources(config)))
+    aeronet = inputs.aeronet if inputs is not None else None
+    gridded = inputs.grid if inputs is not None else None
+    if independent_needed and aeronet is None:
         raw = pd.concat(
             [read_cached_day(config, day) for day in config.period.days()], ignore_index=True
         )
-        aeronet = (
-            inputs.aeronet
-            if inputs is not None and inputs.aeronet is not None
-            else convert_550nm(
-                raw,
-                method=config.aeronet.spectral,
-                include_extrapolated=config.aeronet.include_extrapolated,
-            )
+        aeronet = convert_550nm(
+            raw,
+            method=config.aeronet.spectral,
+            include_extrapolated=config.aeronet.include_extrapolated,
         )
-        locations = frames.get("grid")
+    if grid_needed and gridded is None:
+        locations = frames.get("grid") if site_series else daily_grid
         if locations is None:
+            assert aeronet is not None
             locations = aeronet.rename(
                 columns={
                     "AERONET_Site": "site",
@@ -532,25 +587,16 @@ def render_aeronet_suites(
                 & np.isfinite(locations["longitude"])
                 & locations["latitude"].between(-90, 90)
             ]
-        gridded = (
-            inputs.grid
-            if inputs is not None and inputs.grid is not None
-            else load_grid_series(
-                config, locations, [region or "global" for region in plot_regions(config)]
-            )
-        )
-        inputs = SuiteInputs(frames, aeronet, gridded)
-    inputs = inputs or SuiteInputs(frames)
-    if series_needed and (inputs.aeronet is None or inputs.grid is None):
-        raise ValueError(
-            "Time-series suite inputs require independent AERONET and full grid samples"
-        )
-    if series_needed and "grid" not in frames:
+        if regional_series and daily_grid is not None:
+            locations = pd.concat([locations, daily_grid], ignore_index=True)
+        gridded = load_grid_series(config, locations, [])
+    inputs = SuiteInputs(frames, aeronet, gridded, daily_grid)
+    if site_series and "grid" not in frames:
         assert inputs.aeronet is not None and inputs.grid is not None
         frames["grid"] = _series_grid_pairs(config, inputs.aeronet, inputs.grid)
-        inputs = SuiteInputs(frames, inputs.aeronet, inputs.grid)
+        inputs = SuiteInputs(frames, inputs.aeronet, inputs.grid, daily_grid)
     reports = {
-        level: build_report(frame, config, level=level, pairing=pairing)
+        level: build_report(frame, config, level=level, pairing=level_pairings[level])
         for level, frame in candidates.items()
     }
     comparisons = []
@@ -561,7 +607,12 @@ def render_aeronet_suites(
             (
                 other,
                 {
-                    level: build_report(load_matchups(other, level), other, level=level)
+                    level: build_report(
+                        load_matchups(other, level, pairing=level_pairings[level]),
+                        other,
+                        level=level,
+                        pairing=level_pairings[level],
+                    )
                     for level in levels
                 },
             )
@@ -571,13 +622,22 @@ def render_aeronet_suites(
         for suite in suites:
             expected = []
             output_suite = suite if evaluation_level is None else f"{suite}_{evaluation_level}"
-            if pairing != "default":
+            if pairing not in {None, "default"}:
                 output_suite = f"{output_suite}_{pairing}"
             try:
                 for name, figure in _figures(config, suite, inputs, reports, comparisons):
-                    getattr(figure, "_sarb_plot_metadata")["pairing"] = pairing
-                    if pairing != "default":
+                    figure_pairing = "default"
+                    if suite == "aeronet_regional_timeseries":
+                        figure_pairing = "daily"
+                    elif name.startswith("grid_"):
+                        figure_pairing = level_pairings["grid"]
+                    elif name.startswith("l2_"):
+                        figure_pairing = level_pairings["l2"]
+                    getattr(figure, "_sarb_plot_metadata")["pairing"] = figure_pairing
+                    if pairing not in {None, "default"}:
                         name = f"{pairing}_{name}"
+                    elif pairing is None and name.startswith("grid_") and figure_pairing == "daily":
+                        name = f"daily_{name}"
                     key = f"{name}.{config.period.start:%Y%m%d}-{config.period.end:%Y%m%d}"
                     if key in expected:
                         plt.close(figure)

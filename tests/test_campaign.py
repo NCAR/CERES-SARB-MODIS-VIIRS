@@ -178,6 +178,152 @@ def test_full_precision_table_must_agree_with_recorded_gate(campaign):
         verified_tables(config, "grid")
 
 
+@pytest.fixture
+def daily_campaign(campaign):
+    config, historical_path, _ = campaign
+    historical_bytes = historical_path.read_bytes()
+    config = config.model_copy(
+        update={"period": Period(start=date(2008, 7, 1), end=date(2008, 7, 3))}
+    )
+    # Large opposite site biases cancel in each displayed daily regional mean.
+    # A collector that substitutes pooled site-days therefore chooses a
+    # different RMSE gate and a different sample count.
+    frame = pd.DataFrame(
+        {
+            "x": [1.0, 3.0, 2.0, 4.0, 3.0, 5.0],
+            "y": [2.0, 2.0, 3.0, 3.0, 4.0, 4.0],
+            "sigma_x": [0.01] * 6,
+            "sigma_y": [0.02] * 6,
+            "time": pd.date_range("2008-07-01", periods=3, freq="D", tz="UTC").repeat(2),
+            "latitude": [-50.0] * 6,
+            "longitude": [0.0, 1.0] * 3,
+            "site": ["A", "B"] * 3,
+            "sensor": ["MODIS"] * 6,
+            "stream": ["terra_dt"] * 6,
+            "collection": ["6.1"] * 6,
+            "surface": ["ocean"] * 6,
+            "algorithm": ["dt"] * 6,
+        }
+    )
+    directory = evaluation_directory(config)
+    path = write_matchups(
+        directory / "matchups_grid_daily_20080701_20080703.nc",
+        frame,
+        attributes={
+            "config": config.model_dump(mode="json"),
+            "level": "grid",
+            "pairing": "daily",
+            "processing_sha256": processing_sha256(config),
+        },
+    )
+    result = build_report(
+        frame,
+        config,
+        level="grid",
+        pairing="daily",
+        provenance={
+            "matchup_file": str(path),
+            "matchup_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "processing_sha256": processing_sha256(config),
+        },
+    )
+    write_report(result, directory, stem="test_campaign_grid_daily_20080701_20080703")
+    assert historical_path.read_bytes() == historical_bytes
+    return config, path, result
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_daily_campaign_uses_daily_gate_and_preserves_pooled_diagnostics(daily_campaign, legacy):
+    config, _, _ = daily_campaign
+    path = report_path(config, "grid", pairing="daily")
+    if legacy:
+        document = json.loads(path.read_text())
+        del document["tables_unrounded"]
+        path.write_text(json.dumps(document))
+    actual = verified_tables(config, "grid", pairing="daily")
+    assert actual["tables"]["summary"][0]["N"] == 6
+    assert actual["tables"]["summary"][0]["RMSE"] == pytest.approx(1)
+    assert actual["tables"]["acceptance_summary"][0]["N"] == 3
+    assert actual["gates"]["checks"]["RMSE"]["value_unrounded"] == pytest.approx(0)
+    rows = scope_rows(actual["tables"], pairing="daily")
+    assert [row["N"] for row in rows] == [3, 3, 0]
+    assert rows[0]["gates_passed"]
+    assert rows[1]["gates_passed"]
+    assert rows[2]["gate_R"] == "insufficient_data"
+
+
+def test_daily_campaign_rejects_corrupted_daily_gate_table(daily_campaign):
+    config, _, _ = daily_campaign
+    path = report_path(config, "grid", pairing="daily")
+    document = json.loads(path.read_text())
+    document["tables_unrounded"]["acceptance_summary"][0]["RMSE"] = 1.0
+    path.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match="recorded gate"):
+        verified_tables(config, "grid", pairing="daily")
+
+
+def test_daily_campaign_does_not_substitute_default_archive(campaign):
+    config, _, _ = campaign
+    with pytest.raises(FileNotFoundError):
+        verified_tables(config, "grid", pairing="daily")
+
+
+def test_daily_campaign_expected_inventory_retains_all_grid_controls():
+    from scripts.collect_daily_evaluation_campaign import expected_daily_campaign
+
+    entries = list(expected_daily_campaign())
+    assert len(entries) == len(set(entries)) == 24
+    assert "modis_l2_200807_cam7_v2" in entries
+    assert "mixed_db21_l2_202009_gls_rho05" in entries
+    assert "mixed_l2_202009_gls_rho1" in entries
+
+
+def test_daily_collector_separates_acceptance_and_site_day_diagnostics(
+    daily_campaign, tmp_path, monkeypatch
+):
+    from scripts import collect_daily_evaluation_campaign as collector
+
+    config, _, _ = daily_campaign
+    directory = tmp_path / "daily_configs"
+    directory.mkdir()
+    (directory / "test_campaign.yaml").write_text(config.model_dump_json())
+    monkeypatch.setattr(collector, "expected_daily_campaign", lambda: iter(["test_campaign"]))
+    result = collector.collect(directory)
+    assert result["complete"] and result["verified_reports"] == 1
+    assert result["metrics"][0]["N"] == 3
+    assert result["metrics"][0]["RMSE"] == pytest.approx(0)
+    assert result["pooled_site_day_diagnostics"][0]["N"] == 6
+    assert result["pooled_site_day_diagnostics"][0]["RMSE"] == pytest.approx(1)
+    for key in ("report", "matchup"):
+        assert result["reports"][0][key].startswith("{data_root}/")
+
+
+def test_daily_collector_preserves_evaluation_paths_outside_data_root(
+    daily_campaign, tmp_path, monkeypatch
+):
+    from scripts import collect_daily_evaluation_campaign as collector
+
+    config, matchup, _ = daily_campaign
+    report = report_path(config, "grid", pairing="daily")
+    config = config.model_copy(
+        update={
+            "paths": config.paths.model_copy(
+                update={
+                    "data_root": tmp_path / "granules",
+                    "evaluation_dir": str(evaluation_directory(config)),
+                }
+            )
+        }
+    )
+    (tmp_path / "test_campaign.yaml").write_text(config.model_dump_json())
+    monkeypatch.setattr(collector, "expected_daily_campaign", lambda: iter(["test_campaign"]))
+    result = collector.collect(tmp_path)
+    assert result["complete"] and result["verified_reports"] == 1
+    assert result["reports"][0]["report"] == str(report)
+    assert result["reports"][0]["matchup"] == str(matchup)
+    assert result["metrics"][0]["N"] == 3
+
+
 def test_campaign_expected_inventory_is_unique_and_includes_controls():
     from scripts.collect_evaluation_campaign import expected_campaign
 

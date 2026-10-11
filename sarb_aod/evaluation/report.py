@@ -221,15 +221,22 @@ def build_report(
     config: RunConfig,
     *,
     level: Literal["l2", "grid"],
-    pairing: Literal["default", "cam7"] = "default",
+    pairing: Literal["default", "cam7", "daily"] = "default",
     provenance: Mapping[str, Any] | None = None,
 ) -> EvaluationReport:
     """Compute report tables without filesystem or plotting side effects."""
+    if pairing == "daily" and level != "grid":
+        raise ValueError("Daily pairing is defined only for gridded products")
     statistics = StatisticsConfig(
         min_samples=config.evaluation.min_samples, round_precision=config.evaluation.round_precision
     )
     calculator = StatisticsCalculator(statistics)
     candidates = _prepared(frame, config)
+    if pairing == "daily":
+        if "pairing" in candidates and not candidates["pairing"].eq("daily").all():
+            raise ValueError("Daily reports require independent daily-pairing rows")
+        if candidates.duplicated(["site", "day", "aeronet_level"]).any():
+            raise ValueError("Daily reports require one independent row per site and UTC day")
     prepared = candidates.loc[np.isfinite(candidates["x"]) & np.isfinite(candidates["y"])].copy()
     regions = _regional_rows(prepared)
     summary = _summarize(prepared, calculator)
@@ -258,6 +265,44 @@ def build_report(
     tables["regional_statistics"] = regional_statistics(
         regions, groupby=_CONTEXT, config=statistics
     )
+    gates = acceptance_gates(summary.iloc[0].to_dict())
+    gates.update(
+        basis="individual_matchups", purpose="diagnostic", sample_count=int(summary.N.iloc[0])
+    )
+    if pairing == "daily":
+        # A day contributes once to each applicable region, regardless of
+        # its active-site count. Regions overlap, so never pool their rows.
+        _, acceptance_days = regional_daily_series(regions)
+        regional_acceptance = []
+        for region in REGIONS:
+            daily = acceptance_days.loc[acceptance_days["region"] == region]
+            values = calculator.compute(daily).iloc[0].to_dict()
+            checks = acceptance_gates(values)
+            regional_acceptance.append(
+                {
+                    "region": region,
+                    **values,
+                    "N_region_days": len(daily),
+                    "N_site_days": int(daily["active_sites"].sum()),
+                    "N_pairs": int(daily["N_pairs"].sum()),
+                    "mean_active_sites": float(daily["active_sites"].mean()),
+                    **{f"gate_{name}": gate["status"] for name, gate in checks["checks"].items()},
+                    "gates_passed": checks["passed"],
+                }
+            )
+        tables["regional_acceptance"] = pd.DataFrame(regional_acceptance)
+        tables["acceptance_summary"] = (
+            tables["regional_acceptance"]
+            .loc[tables["regional_acceptance"]["region"] == "global"]
+            .reset_index(drop=True)
+        )
+        gates = acceptance_gates(tables["acceptance_summary"].iloc[0].to_dict())
+        gates.update(
+            basis="regional_daily",
+            region="global",
+            purpose="acceptance",
+            sample_count=int(tables["acceptance_summary"].N.iloc[0]),
+        )
     tables["sensitivity"] = _sensitivities(candidates, config, calculator)
     for flag in ("high_elevation", "multiple_sites", "coastal_site", "coastal_known"):
         if flag in prepared:
@@ -296,7 +341,24 @@ def build_report(
         "metric_names": {name: get_metric(name).long_name for name in STANDARD_METRICS},
         **dict(provenance or {}),
     }
-    return EvaluationReport(tables, acceptance_gates(summary.iloc[0].to_dict()), baseline, metadata)
+    metadata.update(
+        acceptance_basis=gates["basis"],
+        gate_purpose=gates["purpose"],
+        summary_scope=(
+            "pooled independent site-days" if pairing == "daily" else "pooled individual matchups"
+        ),
+    )
+    if pairing == "daily":
+        metadata.update(
+            global_aggregation="pooled site-days in summary; equal-site global day means in acceptance_summary; no overlapping-region duplication",
+            daily_pairing="independent UTC-day means joined by site and day after averaging",
+            satellite_daily_mean="pixel-count-weighted mean of all available three-hour grid fields at each site",
+            aeronet_daily_mean="mean of all eligible AERONET observations in the UTC day, independent of satellite observation times",
+            daily_satellite_uncertainty="unavailable: no temporal covariance model is assumed",
+            sensitivity_scope=metadata["sensitivity_scope"]
+            + "; pooled site-day diagnostics, not regional daily acceptance",
+        )
+    return EvaluationReport(tables, gates, baseline, metadata)
 
 
 def _json_value(value: Any) -> Any:
@@ -395,15 +457,22 @@ def matchup_signature(config: RunConfig) -> dict[str, Any]:
     }
 
 
-def load_matchups(config: RunConfig, level: Literal["grid", "l2"]) -> pd.DataFrame:
-    """Read current default-pairing matchups; plot-only config edits are safe."""
+def load_matchups(
+    config: RunConfig,
+    level: Literal["grid", "l2"],
+    *,
+    pairing: Literal["default", "cam7", "daily"] = "default",
+) -> pd.DataFrame:
+    """Read verified matchups for the requested pairing without altering archives."""
+    if pairing not in {"default", "cam7", "daily"} or (level == "l2" and pairing != "default"):
+        raise ValueError("Invalid matchup level or pairing")
     path = evaluation_directory(config) / (
-        f"matchups_{level}_default_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+        f"matchups_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
     )
     if not path.is_file():
         raise FileNotFoundError(f"Missing {level} matchups: {path}; run sarb-aod evaluate first")
     with xr.open_dataset(path) as dataset:
-        if dataset.attrs.get("level") != level or dataset.attrs.get("pairing") != "default":
+        if dataset.attrs.get("level") != level or dataset.attrs.get("pairing") != pairing:
             raise ValueError(f"Unexpected matchup level or pairing in {path}")
         stored = RunConfig.model_validate_json(dataset.attrs.get("config", "{}"))
         if matchup_signature(stored) != matchup_signature(config):
@@ -414,7 +483,7 @@ def load_matchups(config: RunConfig, level: Literal["grid", "l2"]) -> pd.DataFra
             # accept that evidence only when the report's file checksum matches.
             report_path = (
                 evaluation_directory(config)
-                / f"{config.name}_{level}_default_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}_report.json"
+                / f"{config.name}_{level}_{pairing}_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}_report.json"
             )
             if report_path.is_file():
                 provenance = json.loads(report_path.read_text()).get("provenance", {})
@@ -442,6 +511,7 @@ def load_matchups(config: RunConfig, level: Literal["grid", "l2"]) -> pd.DataFra
         "lat_index",
         "lon_index",
         "n_satellite",
+        "n_satellite_windows",
         "n_aod500",
         "n_angstrom",
         "aeronet_extrapolated_count",
@@ -472,7 +542,7 @@ def evaluate(
     config: RunConfig,
     *,
     level: Literal["l2", "grid"],
-    pairing: Literal["default", "cam7"] = "default",
+    pairing: Literal["default", "cam7", "daily"] = "default",
     coastal_sites: Mapping[str, bool] | None = None,
     reuse_l2_from: RunConfig | None = None,
 ) -> EvaluationReport:
@@ -540,6 +610,27 @@ def evaluate(
     selected = [suite for suite in config.plots.suites if suite in AERONET_SUITES]
     if selected:
         try:
+            if "aeronet_regional_timeseries" in selected and pairing != "daily":
+                # Regional figures always use independent daily means, even
+                # when the requested diagnostic is L2 or a three-hour grid.
+                # Build that additional comparison once when its archive or
+                # report is absent; stale existing evidence must fail clearly.
+                from sarb_aod.evaluation.campaign import verified_tables
+
+                daily_archive = output_dir / (
+                    f"matchups_grid_daily_{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+                )
+                if daily_archive.exists():
+                    load_matchups(config, "grid", pairing="daily")
+                try:
+                    verified_tables(config, "grid", pairing="daily")
+                except FileNotFoundError:
+                    daily_config = config.model_copy(
+                        update={"plots": config.plots.model_copy(update={"suites": ["aod_maps"]})}
+                    )
+                    evaluate(
+                        daily_config, level="grid", pairing="daily", coastal_sites=coastal_sites
+                    )
             artifacts = render_aeronet_suites(
                 config,
                 levels=(level,),

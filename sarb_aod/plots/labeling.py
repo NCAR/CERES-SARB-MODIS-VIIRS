@@ -382,14 +382,32 @@ def map_subtitle(
     return " | ".join(part for part in parts if part)
 
 
-def active_sites_subtitle(start: Any, end: Any, minimum: int, maximum: int) -> str:
-    """Dates and the range of active matched sites in a regional series."""
+def active_sites_subtitle(
+    start: Any,
+    end: Any,
+    minimum: int,
+    maximum: int,
+    *,
+    extent: tuple[float, float, float, float] | None = None,
+) -> str:
+    """Region latitude/longitude bounds, dates and active matched sites."""
     if minimum < 0 or maximum < minimum:
         raise ValueError("active site counts must be nonnegative and ordered")
     counts = str(minimum) if minimum == maximum else f"{minimum}–{maximum}"
-    return " | ".join(
+    detail = " | ".join(
         part for part in (subtitle_text(start, end), f"Active Sites: {counts}") if part
     )
+    if extent is None:
+        return detail
+
+    def coordinate(value: float, negative: str, positive: str) -> str:
+        hemisphere = negative if value < 0 else positive if value > 0 else ""
+        return f"{abs(value):g}°{hemisphere}"
+
+    west, east, south, north = extent
+    latitude = f"{coordinate(south, 'S', 'N')}–{coordinate(north, 'S', 'N')}"
+    longitude = f"{coordinate(west, 'W', 'E')}–{coordinate(east, 'W', 'E')}"
+    return f"{latitude} {longitude} | {detail}"
 
 
 def regression_label(method: str, slope: float, intercept: float, *, decimals: int = 2) -> str:
@@ -412,7 +430,7 @@ def reference_label(kind: str) -> str:
         "window_means": "Window Means",
         "grid": "Grid",
         "overpasses": "Overpass Means",
-        "no_data": "No finite pairs",
+        "no_data": "No Finite Pairs",
         "matched_sites": "Matched Sites",
         "full_region": "Full Region",
     }[kind]
@@ -452,6 +470,27 @@ def statistics_text(values: dict[str, float]) -> str:
     )
 
 
+def regional_statistics_text(values: dict[str, float]) -> str:
+    """Statistics for the matched daily regional means actually plotted."""
+    return " | ".join(
+        (
+            f"Daily Means: {number_label(values['N'], count=True)} Days",
+            f"Bias: {number_label(values['MB'])}",
+            f"RMSE: {number_label(values['RMSE'])}",
+            f"R: {number_label(values['R'])}",
+            f"Absolute Error: {number_label(values['NME'], decimals=1)}%",
+        )
+    )
+
+
+def regional_spread_note() -> str:
+    """Define site variability separately from uncertainty or error bars."""
+    return (
+        "Lines: Equal-Site Daily Means | Bands: Middle 50% of Sites | "
+        "Absolute Error: Mean Absolute Difference / Mean AERONET × 100"
+    )
+
+
 def region_label(region: str) -> str:
     from sarb_aod.evaluation.regions import get_region
 
@@ -482,5 +521,7 @@ __all__ = [
     "metric_label",
     "number_label",
     "statistics_text",
+    "regional_statistics_text",
+    "regional_spread_note",
     "region_label",
 ]

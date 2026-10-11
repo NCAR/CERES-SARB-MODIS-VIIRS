@@ -258,12 +258,13 @@ def _text_failures(figure: Figure, metadata: dict[str, Any]) -> list[str]:
         if re.search(r"\b[xy]\b", value, re.IGNORECASE):
             failures.append(f"text exposes pairing-axis placeholders: {value!r}")
     for axis in metadata.get("date_axes", []):
+        rotation = 20 if metadata.get("kind") == "regional_time_series" else 45
         if any(
-            not np.isclose(tick.get_rotation(), 45)
+            not np.isclose(tick.get_rotation(), rotation)
             for tick in axis.get_xticklabels()
             if _visible(tick)
         ):
-            failures.append("date tick labels must rotate 45 degrees")
+            failures.append(f"date tick labels must rotate {rotation} degrees")
     return list(dict.fromkeys(failures))
 
 

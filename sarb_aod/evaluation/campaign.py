@@ -27,6 +27,7 @@ from sarb_aod.pipeline import processing_sha256, require_processing_provenance
 from sarb_aod.windows import window_bounds
 
 Level = Literal["l2", "grid"]
+Pairing = Literal["default", "daily", "cam7"]
 SCOPES = ("global", "southern_ocean", "labor_day_2020_smoke")
 METRICS = (
     "N",
@@ -66,21 +67,23 @@ def json_values(value: Any) -> Any:
     return value
 
 
-def report_path(config: RunConfig, level: Level) -> Path:
+def report_path(config: RunConfig, level: Level, *, pairing: Pairing = "default") -> Path:
     return evaluation_directory(config) / (
-        f"{config.name}_{level}_default_"
+        f"{config.name}_{level}_{pairing}_"
         f"{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}_report.json"
     )
 
 
-def verified_tables(config: RunConfig, level: Level) -> dict[str, Any]:
+def verified_tables(
+    config: RunConfig, level: Level, *, pairing: Pairing = "default"
+) -> dict[str, Any]:
     """Validate report, configuration and matchup checksum before exposing metrics.
 
     Older reports rounded their tables. Recompute those tables from their verified
     matchup file, checking agreement with the original unrounded acceptance gates.
     A NetCDF without its report is incomplete, even when its data look usable.
     """
-    path = report_path(config, level)
+    path = report_path(config, level, pairing=pairing)
     # Evaluation can append plot metadata while collection runs. Bind parsing
     # and provenance to the same complete report snapshot.
     report_bytes = path.read_bytes()
@@ -88,7 +91,7 @@ def verified_tables(config: RunConfig, level: Level) -> dict[str, Any]:
     provenance = document["provenance"]
     if any(
         provenance.get(key) != value
-        for key, value in (("run", config.name), ("level", level), ("pairing", "default"))
+        for key, value in (("run", config.name), ("level", level), ("pairing", pairing))
     ):
         raise ValueError("Report run, level or pairing does not match the campaign")
     stored = RunConfig.model_validate(provenance["config"])
@@ -97,7 +100,7 @@ def verified_tables(config: RunConfig, level: Level) -> dict[str, Any]:
     if provenance.get("processing_sha256") != processing_sha256(config):
         raise ValueError("Report resolved processing configuration is stale")
     matchups = evaluation_directory(config) / (
-        f"matchups_{level}_default_" f"{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
+        f"matchups_{level}_{pairing}_" f"{config.period.start:%Y%m%d}_{config.period.end:%Y%m%d}.nc"
     )
     if Path(provenance["matchup_file"]).resolve() != matchups.resolve():
         raise ValueError("Report points to an unexpected matchup file")
@@ -106,22 +109,34 @@ def verified_tables(config: RunConfig, level: Level) -> dict[str, Any]:
         raise ValueError("Report matchup checksum does not match")
     # Also verify NetCDF attributes, including resolved recipes. This check is
     # required even for reports that already contain unrounded tables.
-    frame = load_matchups(config, level)
+    frame = (
+        load_matchups(config, level)
+        if pairing == "default"
+        else load_matchups(config, level, pairing=pairing)
+    )
     if sha256(matchups) != digest:
         raise ValueError("Matchup archive changed while loading; retry collection")
     if "tables_unrounded" in document:
         tables = document["tables_unrounded"]
         source = "tables_unrounded"
     else:
-        rebuilt = build_report(frame, config, level=level)
+        rebuilt = build_report(frame, config, level=level, pairing=pairing)
         tables = {name: table.to_dict("records") for name, table in rebuilt.tables.items()}
         source = "verified_matchup_recalculation"
     summary = tables["summary"][0]
     if summary["N"] != document["tables"]["summary"][0]["N"]:
         raise ValueError("Unrounded table sample count disagrees with the report")
+    gate_summary = tables["acceptance_summary"][0] if pairing == "daily" else summary
+    if pairing == "daily" and (
+        document["gates"].get("basis") != "regional_daily"
+        or document["gates"].get("purpose") != "acceptance"
+    ):
+        raise ValueError("Daily report gate aggregation is not regional daily acceptance")
+    if pairing == "daily" and gate_summary["N"] != document["tables"]["acceptance_summary"][0]["N"]:
+        raise ValueError("Unrounded acceptance sample count disagrees with the report")
     for metric in ("MB", "RMSE", "R"):
         recorded = document["gates"]["checks"][metric]["value_unrounded"]
-        actual = summary[metric]
+        actual = gate_summary[metric]
         if not np.isclose(
             np.nan if actual is None else actual,
             np.nan if recorded is None else recorded,
@@ -137,16 +152,24 @@ def verified_tables(config: RunConfig, level: Level) -> dict[str, Any]:
             "matchup": str(matchups),
             "matchup_sha256": digest,
             "processing_sha256": provenance["processing_sha256"],
+            "pairing": pairing,
             "metric_source": source,
             "gates": document["gates"],
             "tables": tables,
-            "scope_sensitivities": scope_sensitivities(frame, config, level, tables),
+            "scope_sensitivities": scope_sensitivities(
+                frame, config, level, tables, pairing=pairing
+            ),
         }
     )
 
 
 def scope_sensitivities(
-    frame: pd.DataFrame, config: RunConfig, level: Level, tables: dict[str, Any]
+    frame: pd.DataFrame,
+    config: RunConfig,
+    level: Level,
+    tables: dict[str, Any],
+    *,
+    pairing: Pairing = "default",
 ) -> list[dict[str, Any]]:
     """Use archived candidate matchups for spectral and instrument sensitivities.
 
@@ -165,7 +188,7 @@ def scope_sensitivities(
                 times=pd.to_datetime(frame.time, utc=True).dt.tz_convert(None).to_numpy(),
             )
             sensitivities = (
-                build_report(frame.loc[mask], config, level=level)
+                build_report(frame.loc[mask], config, level=level, pairing=pairing)
                 .tables["sensitivity"]
                 .to_dict("records")
             )
@@ -185,24 +208,36 @@ def scope_sensitivities(
                         for name in ("MB", "RMSE", "R")
                     },
                     "gates_passed": gates["passed"],
+                    **(
+                        {"acceptance_role": "diagnostic pooled site-days"}
+                        if pairing == "daily"
+                        else {}
+                    ),
                 }
             )
     return json_values(rows)
 
 
-def scope_rows(tables: dict[str, Any]) -> list[dict[str, Any]]:
+def scope_rows(tables: dict[str, Any], *, pairing: Pairing = "default") -> list[dict[str, Any]]:
     """Return explicit rows for all three scopes, including absent smoke samples."""
     rows = []
     for scope in SCOPES:
-        candidates = (
-            tables["summary"]
-            if scope == "global"
-            else (
-                tables["southern_ocean"]
-                if scope == "southern_ocean"
-                else [row for row in tables["pooled_regions"] if row.get("region") == scope]
+        if pairing == "daily":
+            candidates = (
+                tables["acceptance_summary"]
+                if scope == "global"
+                else [row for row in tables["regional_acceptance"] if row.get("region") == scope]
             )
-        )
+        else:
+            candidates = (
+                tables["summary"]
+                if scope == "global"
+                else (
+                    tables["southern_ocean"]
+                    if scope == "southern_ocean"
+                    else [row for row in tables["pooled_regions"] if row.get("region") == scope]
+                )
+            )
         metric = candidates[0] if candidates else {"N": 0, "N_z": 0, "N_EE": 0}
         gates = acceptance_gates(
             {key: np.nan if metric.get(key) is None else metric[key] for key in ("MB", "RMSE", "R")}

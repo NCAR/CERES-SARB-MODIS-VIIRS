@@ -465,7 +465,7 @@ def collocate_grid(
     aeronet: pd.DataFrame,
     *,
     start: datetime | pd.Timestamp,
-    pairing: Literal["default", "cam7"] = "default",
+    pairing: Literal["default", "cam7", "daily"] = "default",
     options: CollocationOptions | None = None,
     run: str = "run",
     spectral: SpectralMethod = "quadratic_loglog",
@@ -475,14 +475,20 @@ def collocate_grid(
     coastal_sites: Mapping[str, bool] | None = None,
     retain_sensitivity_candidates: bool = False,
 ) -> pd.DataFrame:
-    """Pair a three-hour field with containing-cell sites, using half-open times."""
-    if pairing not in {"default", "cam7"}:
-        raise ValueError("pairing must be default or cam7")
+    """Pair a field with site observations in its half-open UTC interval.
+
+    Daily fields are prepared by :func:`collocate_grid_daily`; the other
+    modes take one three-hour contract field.
+    """
+    if pairing not in {"default", "cam7", "daily"}:
+        raise ValueError("pairing must be default, cam7 or daily")
     opts = options or CollocationOptions()
     begin = _utc(start)
-    if begin != begin.floor("3h"):
-        raise ValueError("Grid start must be a UTC three-hour boundary")
-    end = begin + pd.Timedelta(hours=3)
+    interval = "D" if pairing == "daily" else "3h"
+    if begin != begin.floor(interval):
+        raise ValueError(f"Grid start must be a UTC {interval} boundary")
+    hours = 24 if pairing == "daily" else 3
+    end = begin + pd.Timedelta(hours=hours)
     frame = _prepare(aeronet, spectral)
     frame = frame.loc[(frame["time"] >= begin) & (frame["time"] < end)]
     grid = GridSpec(
@@ -503,7 +509,7 @@ def collocate_grid(
         groups = (
             observations.groupby(observations["time"].dt.floor("h"))
             if pairing == "cam7"
-            else [(begin + pd.Timedelta(hours=1.5), observations)]
+            else [(begin + pd.Timedelta(hours=hours / 2), observations)]
         )
         for timestamp, rows in groups:
             metadata = _site_metadata(observations, timestamp, grid)
@@ -555,12 +561,69 @@ def collocate_grid(
             for name, values in fields.items():
                 if name.startswith("aod_count_"):
                     row[name] = int(values[ilat, ilon]) if np.isfinite(values[ilat, ilon]) else 0
+            if pairing == "daily":
+                row["n_satellite_windows"] = int(fields["aod_window_count"][ilat, ilon])
             _errors(row)
             output.append(row)
     result = pd.DataFrame(output) if output else pd.DataFrame(columns=_BASE_COLUMNS)
     return flag_representativeness(
         result, high_elevation_m=opts.high_elevation_m, coastal_sites=coastal_sites
     )
+
+
+def collocate_grid_daily(
+    datasets: Sequence[xr.Dataset],
+    aeronet: pd.DataFrame,
+    *,
+    start: datetime | pd.Timestamp,
+    **kwargs: Any,
+) -> pd.DataFrame:
+    """Compare independent daily means, joining only after temporal averaging.
+
+    Satellite means use pixel counts across all eight available contract
+    windows at each cell, including windows without AERONET observations.
+    AERONET means use every eligible observation in the UTC day, including
+    times without satellite coverage. Daily satellite uncertainty is not
+    inferred from window uncertainties without a temporal covariance model.
+    """
+    if len(datasets) != 8:
+        raise ValueError("Daily grid pairing requires all eight contract windows")
+    reference = datasets[0]
+    shape = (reference.sizes["lat"], reference.sizes["lon"])
+    numerator = np.zeros(shape)
+    denominator = np.zeros(shape)
+    windows = np.zeros(shape, dtype=np.int64)
+    stream_counts: dict[str, np.ndarray] = {}
+    for dataset in datasets:
+        if any(
+            not np.array_equal(dataset[coordinate].values, reference[coordinate].values)
+            for coordinate in ("lat", "lon")
+        ):
+            raise ValueError("Daily grid windows must share identical coordinates")
+        values = np.asarray(dataset["aod_weighted_mean"].transpose("lat", "lon"), dtype=float)
+        counts = np.asarray(dataset["aod_count"].transpose("lat", "lon"), dtype=float)
+        usable = np.isfinite(values) & (values > -900) & np.isfinite(counts) & (counts > 0)
+        numerator += np.where(usable, values * counts, 0)
+        denominator += np.where(usable, counts, 0)
+        windows += usable
+        for name in dataset.data_vars:
+            if str(name).startswith("aod_count_"):
+                count = np.asarray(dataset[name].transpose("lat", "lon"), dtype=float)
+                stream_counts.setdefault(str(name), np.zeros(shape))[:] += np.where(
+                    usable & np.isfinite(count) & (count > 0), count, 0
+                )
+    mean = np.divide(numerator, denominator, out=np.full(shape, np.nan), where=denominator > 0)
+    daily = xr.Dataset(
+        {
+            "aod_weighted_mean": (("lat", "lon"), mean),
+            "aod_count": (("lat", "lon"), denominator),
+            "aod_window_count": (("lat", "lon"), windows),
+            "aod_uncertainty": (("lat", "lon"), np.full(shape, np.nan)),
+            **{name: (("lat", "lon"), count) for name, count in stream_counts.items()},
+        },
+        coords={"lat": reference["lat"], "lon": reference["lon"]},
+    )
+    return collocate_grid(daily, aeronet, start=start, pairing="daily", **kwargs)
 
 
 def load_aeronet_neighbors(
@@ -645,15 +708,15 @@ def build_matchups(
     *,
     level: Literal["l2", "grid"],
     output_dir: Path,
-    pairing: Literal["default", "cam7"] = "default",
+    pairing: Literal["default", "cam7", "daily"] = "default",
     options: CollocationOptions | None = None,
     coastal_sites: Mapping[str, bool] | None = None,
 ) -> MatchupResult:
     """Read configured inputs, collocate the period, and write its NetCDF table."""
-    if level not in {"l2", "grid"} or pairing not in {"default", "cam7"}:
+    if level not in {"l2", "grid"} or pairing not in {"default", "cam7", "daily"}:
         raise ValueError("Unknown collocation level or pairing mode")
-    if level == "l2" and pairing == "cam7":
-        raise ValueError("CAM7 pairing is defined only for gridded products")
+    if level == "l2" and pairing != "default":
+        raise ValueError("CAM7 and daily pairing are defined only for gridded products")
     if config.aeronet.avg != "all_points":
         raise ValueError("Evaluation requires AERONET all_points caches")
     opts = options or CollocationOptions()
@@ -706,6 +769,8 @@ def build_matchups(
         tables = []
         for day in config.period.days():
             observations = cached[day]
+            daily_fields = []
+            daily_paths = []
             for index in range(8):
                 start = window_bounds(day, index)[0]
                 path = output_path(config, start)
@@ -715,6 +780,16 @@ def build_matchups(
                 sources.add(str(path))
                 with xr.open_dataset(path, decode_times=False) as dataset:
                     require_processing_provenance(dataset, config, window_start=start)
+                    if pairing == "daily":
+                        names = [
+                            name
+                            for name in dataset.data_vars
+                            if str(name) in {"aod_weighted_mean", "aod_count"}
+                            or str(name).startswith("aod_count_")
+                        ]
+                        daily_fields.append(dataset[names].load())
+                        daily_paths.append(str(path))
+                        continue
                     matched = collocate_grid(
                         dataset,
                         observations,
@@ -724,6 +799,16 @@ def build_matchups(
                         **common,
                     )
                 matched["grid_file"] = str(path)
+                tables.append(matched)
+            if pairing == "daily":
+                matched = collocate_grid_daily(
+                    daily_fields,
+                    observations,
+                    start=pd.Timestamp(day),
+                    coastal_sites=coastal_sites,
+                    **common,
+                )
+                matched["grid_files"] = json.dumps(daily_paths)
                 tables.append(matched)
         table = pd.concat(tables, ignore_index=True)
     if not table.empty:
