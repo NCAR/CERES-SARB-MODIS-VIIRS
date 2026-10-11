@@ -1,0 +1,36 @@
+# Production test: use --day 2008-07-01 for a smoke test of this same definition.
+profile: ami-modis-c7
+period:
+  start: 2008-07-01
+  end: 2008-07-31
+stage:
+  products:
+    MOD04_L2: ["7"]
+    MYD04_L2: ["7"]
+grid:
+  source: f09
+  times_per_day: 8
+  edge_granules: false
+  streams:
+    terra_dt: {product: MOD04_L2, collection: "7"}
+    terra_db: {product: MOD04_L2, collection: "7"}
+    aqua_dt: {product: MYD04_L2, collection: "7"}
+    aqua_db: {product: MYD04_L2, collection: "7"}
+qc:
+  preset: retrieval_team
+time:
+  leap_seconds: apply
+weighting:
+  method: gls
+  rho: 0.5
+  birge: true
+  min_pixels: 1
+  single_pixel_sigma: floor
+combined_product:
+  enabled: true
+  qa_min: 0
+  aod_min: -0.1
+  aod_max: 5.0
+output:
+  stem: MODIS_VIIRS_AOD_3hr_f09
+  clip_negative_mean: true

@@ -1,42 +1,67 @@
-# Portable monthly production driver
+# AMI production and portable monthly driver
 
-The portable Phase 5.1 implementation is available as `sarb-aod grid-months`.
-AMI deployment remains pending confirmation of the archive layout, writable
-output paths, scheduler, Python/conda availability, and LAADS/AERONET network
-access. No AMI host, scheduler, queue, allocation, or filesystem layout is
-assumed here.
+## July 2008 C7 deployment
 
-## Environment and configuration
+The production root is `/CERES/sarb/dfillmor/MODIS_VIIRS`. The tracked
+`config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05.yaml` selects Terra/Aqua C7,
+GLS rho 0.5, and supplied combined-product diagnostics. Its default
+`ami-modis-c7` profile reads `/ASDC_archive/MODIS/{platform}/C7/{year}/{doy}`
+with an aerosol-product filename filter. See [configuration naming](../config/README.md)
+and [C7 interpretation](MODIS_C7.md). Archive staging is disabled; no Earthdata
+credentials or network downloads are required for this test.
 
-Use `environment.yml` and install this repository in the resulting environment
-with its Python executable: `python -m pip install --no-deps -e .`. Invoke that
-environment's binaries directly; activation is unnecessary. The actual
-installation location must be supplied by the site operator.
-
-`config/profiles/ami.yaml` obtains the data root from `SARB_AOD_DATA_ROOT`.
-Confirm its `granule_dir` and `manifest` templates against the existing AMI
-archive before running. Configure `paths.output`, `paths.summary`,
-`paths.evaluation_dir`, `paths.plot`, and `paths.cartopy_data_dir` if their
-locations differ from the defaults. Prefetch coastlines on an approved
-network-enabled system before plotting. Credentials remain in the configured
-Earthdata authentication mechanism; do not put them in run YAML or logs.
-
-The following shell variables are operator-supplied placeholders for confirmed
-site paths and a multi-year run YAML:
+Develop/test/review on the Mac, commit and push `main`, then pull on AMI:
 
 ```bash
-export SARB_AOD_DATA_ROOT="${AMI_DATA_ROOT:?set the approved AMI data root}"
-export MPLCONFIGDIR="$PWD/.cache/matplotlib"
-SARB_BATCH_BIN="${AMI_ENV_BIN:?set the sarb-aod environment bin directory}"
-SARB_BATCH_CONFIG="${AMI_RUN_CONFIG:?set the run YAML path}"
-"$SARB_BATCH_BIN/sarb-aod" show-config -p ami -c "$SARB_BATCH_CONFIG"
-"$SARB_BATCH_BIN/sarb-aod" audit -p ami -c "$SARB_BATCH_CONFIG"
-"$SARB_BATCH_BIN/sarb-aod" grid-months -p ami -c "$SARB_BATCH_CONFIG" --workers 2
+cd "$HOME/CERES-SARB-MODIS-VIIRS"
+git pull --ff-only origin main
+"$HOME/miniforge3/envs/sarb-aod/bin/python" -m pip install --no-deps --no-build-isolation -e .
 ```
 
-Choose the worker count after measuring memory and I/O on AMI. Submit this
-same command through the confirmed site scheduler; no deployment or scheduler
-submission has been performed. Acquisition remains a separate `stage` command.
+Remote commands and jobs must use Bash; the account's default shell is tcsh.
+The separate `sarb-aod` conda environment was cloned offline from the existing
+`davinci` environment (Python 3.13.14, numpy 2.4.6, numba 0.65.1, netCDF4
+1.7.4). Its scientific package pins match `environment.yml`; DAVINCI's
+original environment is not changed. A fresh installation elsewhere can use
+`conda env create -f environment.yml`. Invoke environment binaries directly.
+
+Run `show-config` before submission. The job script uses one worker and limits
+threaded numerical libraries to one thread, matching a serial Grid Engine slot:
+
+```bash
+source /SPG_ops/utils/altair/current/default/common/settings.sh
+SARB_RUN=config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05.yaml
+SARB_LOG=/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200807_f09_3hr_gls_rho05
+mkdir -p "$SARB_LOG"
+"$HOME/miniforge3/envs/sarb-aod/bin/sarb-aod" show-config -c "$SARB_RUN"
+qsub -N sarb_c7_smoke -o "$SARB_LOG" scripts/ami_grid.sh "$SARB_RUN" 2008-07-01
+```
+
+After checking the smoke job's exit status and eight validated files, choose
+one monthly submission. A serial monthly job writes the numeric summary and
+metrics directly:
+
+```bash
+qsub -N sarb_c7_july -o "$SARB_LOG" scripts/ami_grid.sh "$SARB_RUN"
+```
+
+Alternatively, a day array runs at most four serial tasks concurrently; each
+task occupies one scheduler slot on its assigned host. This avoids assuming
+that the site's round-robin `make` parallel environment provides colocated
+cores. Array indices map to the inclusive configured period; July has 31 days:
+
+```bash
+qsub -N sarb_c7_july -t 1-31 -tc 4 -o "$SARB_LOG" scripts/ami_grid.sh "$SARB_RUN"
+```
+
+When every array task has succeeded, submit the serial monthly command to
+validate/resume the existing days and generate the monthly summary and metrics.
+Its resume-only timing is not fresh processing throughput. Record the IDs
+returned by `qsub`, inspect `qstat -u dfillmor`, and check `qacct -j <job_id>`
+plus logs. A submitted or disappeared job is not proof of success. The script
+uses `scf.q` and an explicit two-hour walltime per job/task; interrupted work is
+resumable. Multi-year production, external acquisition, AERONET validation, and
+plot deployment remain separate work.
 
 ## Monthly behavior and recovery
 

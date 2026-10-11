@@ -91,9 +91,9 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.6 | Full plot runs | 3.7 | Plots accepted; science/SP1 acceptance open | 761c2da |
 | 4.7 | Mean AOD comparison layout | 4.6 | Done | 35c6041 |
 | 4.8 | Daily-mean validation and regional time-series comparisons | 3.6, 4.5b, 4.7 | Done | Task 4.8 (this commit) |
-| 2.5 | MODIS C7 activation and supplied combined-product diagnostics | AMI C7 samples | Done; C7 science acceptance separate | Task 2.5 (this commit) |
+| 2.5 | MODIS C7 activation and supplied combined-product diagnostics | AMI C7 samples | Done; C7 science acceptance separate | 579b5d0 |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
-| 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | In progress | |
+| 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | Done | Task 5.2 (this commit) |
 | 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | In progress | |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
@@ -1522,3 +1522,13 @@ semantics, and limits of operational acceptance.
   The review sandbox could not bind the HTTP fixture, but the full task gate
   passed in the primary environment. July/September scientific validation and
   C7 DT uncertainty calibration remain Task 2.6.
+
+- Task 5.2: tracked `ami-modis-c7` archive profile and
+  `modis_c7_l2_200807_f09_3hr_gls_rho05` run; documented config naming and
+  local-commit/push/remote-pull workflow. `scripts/ami_grid.sh` uses Bash,
+  explicit environment binaries, one scheduler slot/thread, and either a
+  requested day, bounded day array, or resumable monthly driver. Read-only
+  archive inputs are separated from writable grids/summaries/evaluation/plots.
+  `show-config` resolves CAM namelist paths, `bash -n` passes, and the configs
+  were included in the Task 2.5 review and 933-test gate. Deployment and measured
+  July execution are Task 5.3; no multi-year production is implied.
