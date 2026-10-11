@@ -96,6 +96,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | Done | d69d688 |
 | 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | Done; operational acceptance | Task 5.3 (this commit) |
 | 4.9 | AMI July C7 monthly map and regional daily PDFs | 4.8, 5.3 | Done; plots accepted, science gate open | Task 4.9 (this commit) |
+| 4.10 | Collection titles and provenance panel in period-mean maps | 4.7, 4.9 | Done | Task 4.10 (this commit) |
+| 4.11 | Refresh July C6.1/C7 monthly PDFs and deliver to Desktop | 4.10 | In progress | |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1460,6 +1462,21 @@ network access to LAADS and AERONET.
   its localhost fixture was blocked by its nested sandbox, while all 885 tests
   pass in the task environment. Numeric inputs and science gates are unchanged.
 
+- Task 4.10: MODIS period-mean titles identify C6.1/C7 (including multiple
+  collections when configured). The aggregate map occupies the top-left cell;
+  provenance uses the next left-column cell. Grid creation times and code
+  revisions are collected from every verified NetCDF input, independently of
+  plotting time/code. Configured L2 directory templates, actual grid files,
+  and canonical PDF destinations are recorded without claiming an individual
+  L2 filename audit. Full values are embedded in PDF Keywords; literal paths
+  have a narrow raw-key protocol exception while layout and vector checks
+  still apply. The C6.1 preview passed protocol and visual inspection. All
+  offline tests, mypy, Black and isort pass. Review caught a QA-override
+  provenance omission: the panel now marks overrides and PDF metadata keeps
+  the full QC configuration and processing hash; a regression verifies it.
+  Final regeneration with the
+  committed plotting revision and Desktop delivery is Task 4.11.
+
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.
   All 24 campaign reports are verified; 18 pass the global criteria, including
@@ -1485,7 +1502,7 @@ network access to LAADS and AERONET.
 
 | Item | Plan |
 |---|---|
-| Mean-map presentation | Task 4.7 removes duplicate single-sensor Product panels and global quantity headings, and aligns platform rows within algorithm columns. Existing scientific acceptance items remain independent of this presentation change. |
+| Mean-map presentation | Task 4.10 aligns the aggregate map with the top platform row and adds the MODIS collection to its title. A lower-left provenance panel separates recorded grid dates/revisions from plot dates/revisions and configured L2 source paths; full provenance is embedded in PDF Keywords. Scientific acceptance remains independent of presentation. |
 | Daily validation and regional presentation | Task 4.8 uses independent UTC daily means and equal-site regional daily averages for acceptance and plotting. The numeric limits remain absolute bias ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8; the sampling basis replaces the former three-hour gate. Middle-50% site bands, daily statistics and a region/site inset describe the same cohort. Site spread is distinct from uncertainty in the regional mean. |
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
 | July VP1 acceptance | Task 1.10 measured written p99.9 > 3 for all four runs and coverage above the approximate 1–10% range. Monthly means pass; upper-tail evidence is in `docs/validation/july2008_verification.md`. Scientific disposition of these provisional gates remains open. |

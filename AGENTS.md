@@ -257,7 +257,12 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
   - Site and region figures are titled `AOD - <Name>`.
   - Global map panels use source-specific titles without a redundant figure-wide `AOD`
     heading. Period mean maps omit the duplicate Product panel for single-sensor runs;
-    the sensor aggregate sits at left, with platform rows and Dark Target / Deep Blue columns.
+    the sensor aggregate sits at the upper left, with platform rows and Dark Target / Deep
+    Blue columns. MODIS aggregate titles include the collection (C6.1 or C7). The lower-left
+    cell holds provenance: recorded grid creation dates and processing revisions, plot date
+    and revision, weighting/QA, configured L2 path templates, grid paths and PDF destination.
+    Keep full timestamps and file paths in PDF metadata. Literal paths in this registered
+    provenance panel are exempt from raw-key text checks, but retain layout/vector checks.
   - Regional time series show independently calculated AERONET and satellite daily means
     paired by site-day, then averaged equally across sites, with
     overlapping 25th–75th percentile bands across those sites (user choice, 2026-10-11).

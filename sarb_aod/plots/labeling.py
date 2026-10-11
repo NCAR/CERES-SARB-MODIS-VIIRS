@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import math
 import re
+import textwrap
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from sarb_aod.plots.labels import (
@@ -123,6 +125,47 @@ def source_display_name(source_label: str | None, *, rho: float | None = None) -
         else:
             out.append(tok.capitalize())
     return " ".join(out)
+
+
+def collection_source_name(source: str, collections: Sequence[str]) -> str:
+    """Identify MODIS collections without changing the underlying panel keys."""
+    name = source_display_name(source)
+    if source != "modis":
+        return name
+    return f"{name} {' / '.join('C' + value for value in sorted(set(collections)))}"
+
+
+def provenance_panel_text(provenance: Mapping[str, Any], *, width: int = 66) -> str:
+    """Compact provenance labels; preserve literal path and revision spelling."""
+    dates = sorted({value[:10] for value in provenance["grid_created_utc"]})
+    processed = " – ".join(dict.fromkeys([dates[0], dates[-1]])) if dates else "Unknown"
+    method = source_display_name(provenance["weighting"], rho=provenance["rho"])
+    if provenance["weighting"] == "gls":
+        method += f" | Birge: {'On' if provenance['birge'] else 'Off'}"
+    qa = source_display_name(provenance["qc"])
+    if provenance["qc_config"]["overrides"]:
+        qa += " + Overrides"
+    lines = [
+        "Provenance",
+        f"Grids Created (UTC): {processed}",
+        f"Plot Created (UTC): {provenance['plot_created_utc']}",
+        f"Weighting: {method}",
+        f"QA Preset: {qa} | Mean: Count-Weighted",
+        f"Grid: {provenance['grid']} | Windows: {provenance['windows']}",
+        "Processing Code: " + ", ".join(value[:12] for value in provenance["processing_commits"]),
+        f"Plot Code: {provenance['plot_git_commit'][:12]}",
+    ]
+    for label, paths in (
+        ("L2 Inputs (Configured)", provenance["l2_input_templates"]),
+        ("Grid Outputs (Read)", [provenance["grid_output_template"]]),
+        ("PDF Output", [provenance["pdf_output"]]),
+    ):
+        lines.append(label + ":")
+        for path in paths:
+            lines.extend(
+                textwrap.wrap(path, width=width, break_on_hyphens=False, subsequent_indent="  ")
+            )
+    return "\n".join(lines)
 
 
 def _normalize_quantity_label(raw: str) -> str:

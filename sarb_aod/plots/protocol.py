@@ -249,8 +249,13 @@ def _text_failures(figure: Figure, metadata: dict[str, Any]) -> list[str]:
     raw = re.compile(
         r"\b[A-Za-z][A-Za-z0-9]*_[A-Za-z0-9_]+\b|\b(?:noaa20|modis|viirs|aeronet|snpp)\b"
     )
+    # Literal paths/revisions belong in the explicitly registered provenance
+    # panel. They still undergo vector, clipping and overlap checks.
+    provenance_text = {id(text) for text in metadata.get("provenance_text", [])}
     for text in figure.findobj(match=Text):
         if not _visible(text):
+            continue
+        if id(text) in provenance_text:
             continue
         value = text.get_text()
         if raw.search(value):

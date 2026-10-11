@@ -1,6 +1,8 @@
 """Configured suite expansion, CAM7 aggregation, and offline publication gates."""
 
 import json
+import re
+from dataclasses import replace
 from datetime import date
 from pathlib import Path
 
@@ -262,10 +264,12 @@ def test_complete_offline_suite_passes_protocol_and_writes_pdf_png(inputs: RunCo
         assert len(report["figures"]) == expected
         assert all(check["passed"] for check in report["checks"].values())
     pdf = artifacts[0].pdf.read_bytes()
+    info_id = re.search(rb"/Info (\d+) 0 R", pdf).group(1)
+    info = re.search(rb"\b" + info_id + rb" 0 obj\s*<<(.*?)>>", pdf, re.S).group(1)
     for key in (b"/Title", b"/Subject", b"/Keywords", b"/Creator"):
-        assert key in pdf
+        assert key in info
     for custom in (b"/config_sha256", b"/rho", b"/git_commit"):
-        assert custom not in pdf
+        assert custom not in info
 
 
 def test_protocol_failure_prevents_publication_and_records_failure(inputs: RunConfig) -> None:
@@ -408,3 +412,69 @@ def test_single_sensor_global_maps_identify_source(
     spec = next(spec for spec in suites.map_figure_specs(single) if spec.field == field)
     figure = suites.render_map_figure(single, data, spec)
     assert figure.axes[0].get_title() == f"{source} {quantity}"
+
+
+@pytest.mark.parametrize("collection", ["6.1", "7"])
+def test_monthly_collection_title_layout_and_recorded_provenance(
+    inputs: RunConfig, collection: str
+) -> None:
+    for index in range(8):
+        path = output_path(inputs, window_bounds(inputs.period.start, index)[0])
+        with Dataset(path, "r+") as dataset:
+            dataset.date_created = f"2021-01-0{1 + index % 2}T12:00:00Z"
+            dataset.git_commit = "a" * 40
+    data = suites.aggregate_maps(inputs)
+    streams = {
+        stream: inputs.grid.streams["terra_dt"].model_copy(
+            update={"product": product, "collection": collection}
+        )
+        for stream, product in (
+            ("terra_dt", "MOD04_L2"),
+            ("terra_db", "MOD04_L2"),
+            ("aqua_dt", "MYD04_L2"),
+            ("aqua_db", "MYD04_L2"),
+        )
+    }
+    config = inputs.model_copy(update={"grid": inputs.grid.model_copy(update={"streams": streams})})
+    data = replace(data, means={**data.means, **{key: data.means["terra_dt"] for key in streams}})
+    spec = suites.map_figure_specs(config)[0]
+    figure = suites.render_map_figure(config, data, spec)
+    metadata = getattr(figure, "_sarb_plot_metadata")
+    assert metadata["titles"][0].get_text() == f"MODIS C{collection} AOD"
+    assert metadata["titles"][1].get_text() == "Terra Dark Target AOD"
+    axes = metadata["data_axes"]
+    assert len(axes) == 5
+    assert list(axes[0].get_subplotspec().rowspan) == [0]
+    panel = metadata["provenance_text"][0]
+    assert list(panel.axes.get_subplotspec().rowspan) == [1]
+    assert suites.validate_rendered_figures({spec.key: figure})["passed"]
+    np.testing.assert_allclose(axes[0].get_position().bounds[1:], axes[1].get_position().bounds[1:])
+    provenance = json.loads(suites.pdf_metadata(config, figure)["Keywords"])["provenance"]
+    assert provenance["grid_created_utc"] == ["2021-01-01T12:00:00Z", "2021-01-02T12:00:00Z"]
+    assert provenance["processing_commits"] == ["a" * 40]
+    assert len(provenance["grid_files"]) == 8
+    assert provenance["pdf_output"] == str(
+        plot_path(config, spec.suite, spec.name, spec.start, spec.end)
+    )
+    assert "L2 Inputs (Configured)" in panel.get_text()
+    # The exception for literal provenance must not exempt ordinary plot text.
+    axes[0].text(0.5, 0.5, "raw_internal_key", transform=axes[0].transAxes)
+    report = suites.validate_rendered_figures({spec.key: figure}, raise_on_failure=False)
+    assert any("text exposes a raw key" in failure for failure in report["failures"])
+
+
+def test_provenance_identifies_qc_overrides(inputs: RunConfig) -> None:
+    from sarb_aod.config.schema import QAOverride
+    from sarb_aod.plots.labeling import provenance_panel_text
+
+    config = inputs.model_copy(
+        update={
+            "qc": inputs.qc.model_copy(
+                update={"overrides": {"modis_dt": {"ocean": QAOverride(qa_min=3)}}}
+            )
+        }
+    )
+    spec = suites.map_figure_specs(config)[0]
+    provenance = suites._map_provenance(config, suites.aggregate_maps(inputs), spec)
+    assert provenance["qc_config"]["overrides"]["modis_dt"]["ocean"]["qa_min"] == 3
+    assert "QA Preset: Retrieval-Team QC + Overrides" in provenance_panel_text(provenance)

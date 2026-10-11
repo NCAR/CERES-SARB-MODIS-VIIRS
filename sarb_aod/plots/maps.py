@@ -9,7 +9,7 @@ to the explicit prefetch command in ``style.py``.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from math import ceil
 from pathlib import Path
@@ -517,6 +517,8 @@ def map_panels(
     region: str | Region | None = None,
     columns: int = 2,
     layout: Sequence[Sequence[str]] | None = None,
+    source_labels: Mapping[str, str] | None = None,
+    provenance: dict[str, Any] | None = None,
     plot_type: Literal["pcolormesh", "contourf"] = "pcolormesh",
     aod_levels: ArrayLike | None = None,
     cartopy_data_dir: str | Path | None = None,
@@ -536,9 +538,12 @@ def map_panels(
             or not mosaic[0]
             or any(len(row) != len(mosaic[0]) for row in mosaic)
             or len(set(sources)) != len(sources)
-            or {name for row in mosaic for name in row if name != "."} != set(sources)
+            or {name for row in mosaic for name in row if name != "."}
+            != set(sources) | ({"provenance"} if provenance is not None else set())
         ):
             raise ValueError("panel layout must be rectangular and contain exactly the sources")
+    elif provenance is not None:
+        raise ValueError("provenance requires an explicit panel layout")
     if cartopy_data_dir is not None:
         configure_cartopy(cartopy_data_dir)
     spec = grid if grid is not None else load_grid()
@@ -555,7 +560,7 @@ def map_panels(
     arranged = (
         figure.subplot_mosaic(
             cast(list[HashableList[str]], mosaic),
-            subplot_kw={"projection": _projection(subset)},
+            per_subplot_kw={source: {"projection": _projection(subset)} for source in sources},
         )
         if layout is not None
         else None
@@ -581,7 +586,7 @@ def map_panels(
         )
         heading, subtitle = _title(
             ax,
-            labeling.sourced_title(source, quantity_text),
+            labeling.sourced_title((source_labels or {}).get(source, source), quantity_text),
             labeling.map_subtitle(
                 start, end, mean=area_mean(field, spec.lat, spec.lon, subset), decimals=3
             ),
@@ -612,6 +617,33 @@ def map_panels(
         region=subset,
         plot_type=plot_type,
     )
+    if provenance is not None and arranged is not None:
+        panel = arranged["provenance"]
+        panel.set_axis_off()
+        text = panel.text(
+            0,
+            1,
+            labeling.provenance_panel_text(provenance),
+            transform=panel.transAxes,
+            ha="left",
+            va="top",
+            fontsize=8,
+            fontfamily="monospace",
+            linespacing=1.15,
+            parse_math=False,
+        )
+        # Paths can be longer on other machines. Fit within the reserved cell
+        # without allowing the annotation to change the map-column geometry.
+        text.set_in_layout(False)
+        figure.canvas.draw()
+        renderer = figure.canvas.get_renderer()  # type: ignore[attr-defined]
+        box = text.get_window_extent(renderer)
+        available = panel.get_window_extent(renderer)
+        text.set_fontsize(
+            8 * min(1, 0.98 * available.width / box.width, 0.98 * available.height / box.height)
+        )
+        metadata = getattr(figure, "_sarb_plot_metadata")
+        metadata.update(provenance=provenance, provenance_text=[text])
     return figure
 
 

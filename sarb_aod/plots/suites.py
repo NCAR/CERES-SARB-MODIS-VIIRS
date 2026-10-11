@@ -13,7 +13,7 @@ import os
 import tempfile
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +27,7 @@ from sarb_aod.contract import git_commit, validate_contract_file
 from sarb_aod.evaluation.regions import REGIONS
 from sarb_aod.grid.spec import GridSpec, load_grid
 from sarb_aod.paths import cartopy_data_dir, output_path, plot_path
-from sarb_aod.pipeline import config_sha256, require_processing_provenance
+from sarb_aod.pipeline import config_sha256, processing_sha256, require_processing_provenance
 from sarb_aod.plots import labeling, maps
 from sarb_aod.plots.protocol import PROTOCOL, PlotProtocolError, validate_rendered_figures
 from sarb_aod.plots.style import geosit_aod_levels, ncar_style
@@ -55,6 +55,7 @@ class MapAggregate:
     negative_fraction: np.ndarray
     daily_means: dict[date, np.ndarray]
     windows: int
+    provenance: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -132,6 +133,7 @@ def aggregate_maps(config: RunConfig) -> MapAggregate:
     negative, accepted = np.zeros(grid.shape), np.zeros(grid.shape)
     daily_means = {}
     windows = 0
+    created, revisions, grid_files = set(), set(), []
     for day in config.period.days():
         daily = _WeightedMean(grid.shape)
         for index in range(TIMES_PER_DAY):
@@ -142,6 +144,9 @@ def aggregate_maps(config: RunConfig) -> MapAggregate:
                 raise ValueError(f"Invalid map input {path}: {'; '.join(errors)}")
             with Dataset(path) as dataset:
                 require_processing_provenance(dataset, config, start)
+                created.add(str(dataset.date_created))
+                revisions.add(str(dataset.git_commit))
+                grid_files.append(str(path))
                 dataset.set_auto_mask(False)
 
                 def read(name: str) -> np.ndarray:
@@ -193,6 +198,11 @@ def aggregate_maps(config: RunConfig) -> MapAggregate:
         _ratio(negative, accepted),
         daily_means,
         windows,
+        {
+            "grid_created_utc": sorted(created),
+            "processing_commits": sorted(revisions),
+            "grid_files": grid_files,
+        },
     )
 
 
@@ -294,12 +304,15 @@ def pdf_metadata(config: RunConfig, figure: Figure) -> dict[str, str]:
             name: selection.collection for name, selection in config.grid.streams.items()
         },
         "config_sha256": config_sha256(config),
+        "processing_sha256": processing_sha256(config),
         "git_commit": git_commit(),
     }
     if metadata.get("comparison_provenance"):
         keywords["comparison"] = metadata["comparison_provenance"]
     if metadata.get("pairing"):
         keywords["pairing"] = metadata["pairing"]
+    if metadata.get("provenance"):
+        keywords["provenance"] = metadata["provenance"]
     return {
         "Title": " | ".join(titles),
         "Subject": "550 nm aerosol optical depth",
@@ -460,19 +473,69 @@ def _mean_aod_layout(config: RunConfig) -> list[list[str]]:
         {stream.rsplit("_", 1)[0] for stream in config.grid.streams},
         key=lambda name: (platform_order.get(name, len(platform_order)), name),
     )
-    layout = [[".", ".", "."] for _ in range(max(len(platforms), len(summaries)))]
+    layout = [[".", ".", "."] for _ in range(max(len(platforms), len(summaries) + 1))]
     for row, platform in enumerate(platforms):
         for column, algorithm in enumerate(("dt", "db"), start=1):
             stream = f"{platform}_{algorithm}"
             if stream in config.grid.streams:
                 layout[row][column] = stream
-    if len(summaries) == 1:
-        for cells in layout:
-            cells[0] = summaries[0]
-    else:
-        for row, source in enumerate(summaries):
-            layout[row][0] = source
+    for row, source in enumerate(summaries):
+        layout[row][0] = source
+    layout[len(summaries)][0] = "provenance"
     return layout
+
+
+def _map_provenance(
+    config: RunConfig, aggregate: MapAggregate, spec: MapFigureSpec
+) -> dict[str, Any]:
+    """Separate recorded grid history from configured L2 source locations."""
+    catalog = config.load_catalog()
+    static = {
+        "data_root": str(config.paths.data_root),
+        "run": config.name,
+        "stem": config.output.stem,
+    }
+
+    def resolve(template: str, values: dict[str, str]) -> str:
+        for key, value in values.items():
+            template = template.replace("{" + key + "}", value)
+        return template
+
+    inputs = []
+    patterns = []
+    for selection in config.grid.streams.values():
+        product = catalog.product(selection.product)
+        collection = catalog.collection(selection.product, selection.collection)
+        values = dict(
+            static,
+            platform=product.platform,
+            instrument=product.instrument,
+            short_name=selection.product,
+            collection=selection.collection,
+            cmr_version=collection.cmr_version,
+            file_token=collection.file_token,
+        )
+        inputs.append(resolve(config.paths.granule_dir, values))
+        patterns.append(resolve(config.paths.granule_pattern, values))
+    return {
+        **aggregate.provenance,
+        "grid_created_utc": aggregate.provenance.get("grid_created_utc", []),
+        "processing_commits": aggregate.provenance.get("processing_commits", ["unknown"]),
+        "plot_created_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        "plot_git_commit": git_commit(),
+        "weighting": config.weighting.method,
+        "rho": config.weighting.rho,
+        "birge": config.weighting.birge,
+        "qc": config.qc.preset,
+        "qc_config": config.qc.model_dump(mode="json"),
+        "grid": f"{config.grid.source} ({aggregate.grid.shape[0]} × {aggregate.grid.shape[1]})",
+        "windows": aggregate.windows,
+        "period_mean_weighting": "observation_count",
+        "l2_input_templates": list(dict.fromkeys(inputs)),
+        "l2_filename_patterns": list(dict.fromkeys(patterns)),
+        "grid_output_template": resolve(config.paths.output, static),
+        "pdf_output": str(plot_path(config, spec.suite, spec.name, spec.start, spec.end)),
+    }
 
 
 def render_map_figure(
@@ -495,12 +558,22 @@ def render_map_figure(
     }
     if spec.field == "mean_aod":
         layout = _mean_aod_layout(config)
-        panel_sources = list(dict.fromkeys(name for row in layout for name in row if name != "."))
+        panel_sources = list(
+            dict.fromkeys(name for row in layout for name in row if name not in {".", "provenance"})
+        )
+        labels = {
+            sensor: labeling.collection_source_name(
+                sensor, [config.grid.streams[stream].collection for stream in streams]
+            )
+            for sensor, streams in _sensor_streams(config).items()
+        }
         return maps.map_panels(
             [aggregate.means[source] for source in panel_sources],
             panel_sources,
             aod_levels=geosit_aod_levels([1]),
             layout=layout,
+            source_labels=labels,
+            provenance=_map_provenance(config, aggregate, spec),
             **kwargs,
         )
     if spec.field == "daily_mean_aod":
