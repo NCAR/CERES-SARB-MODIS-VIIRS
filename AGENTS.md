@@ -71,6 +71,16 @@ At session start, also check the repo root for cross-model handoff files (`HANDO
   in that scan. Keep values ≥ −0.05 in averages and clip the final cell mean at 0 for CAM.
 - **Time:** TAI93 → UTC subtracts leap seconds (6 s in 2008, 10 s from 2017). VIIRS DT has no
   per-pixel time; it is derived from the `time_coverage_*` attributes.
+- **Per-source AOD correction** (user request, 2026-10-11): `aod_correction` maps
+  selected `grid.streams` keys (e.g. `terra_dt`) to finite `scale`/`offset` pairs.
+  Omitted sources/coefficients default to 1/0. Each pair applies across the full
+  analysis period after retrieval QC/uncertainty estimation and before gridding;
+  per-pixel sigma stays unchanged. L2 satellite matchups use the same corrections;
+  AERONET and C7's separate native combined diagnostic remain unchanged. Do not
+  clip corrected pixels before averaging; existing final CAM clipping remains.
+  Nonidentity coefficients enter processing provenance and matchup reuse checks;
+  identity preserves earlier grid hashes. This manual adjustment does not implement
+  the deferred AERONET-fitted bias correction.
 - **AERONET:** fetched directly from Web Service v3 (rules re-implemented from what DAVINCI's
   `AERONETReader` delegates to monetio). A UTC day D is requested with
   `day2 = D+1, hour2 = 0`; `hour2 = 23` loses data. The validation suite ports DAVINCI's

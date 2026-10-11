@@ -96,6 +96,41 @@ range, MODIS Ocean selection and scaling. The full
 selects legacy time and count weighting to reproduce CAM7's diagnostic four-stream
 product; the QC preset alone does not change those settings.
 
+Optional source-specific observation corrections apply `AOD_corrected = scale * AOD + offset`:
+
+```yaml
+aod_correction:
+  terra_dt: {scale: 1.0, offset: 0.0}
+  terra_db: {scale: 1.0, offset: 0.0}
+```
+
+Keys must match selected `grid.streams`: `terra_dt`, `terra_db`, `aqua_dt`,
+`aqua_db`, `snpp_dt`, `snpp_db`, `noaa20_dt`, or `noaa20_db`. Each finite pair
+applies to that satellite/algorithm for the entire analysis period. Omitted
+streams or coefficients default to scale 1 and offset 0, preserving existing results.
+Corrections apply after retrieval QC and uncertainty estimation, before gridding.
+Per-pixel uncertainties and QA selection stay unchanged; corrected pixels are not
+clipped or screened again. Existing final nonnegative CAM mean clipping still
+applies. Negative-pixel counts describe corrected AOD. L2 satellite matchups use
+the same source corrections; AERONET observations are unchanged. Gridded uncertainty
+can still change through the existing spread/Birge calculations.
+
+C7's separate producer-combined AOD diagnostic retains its native values: mixed
+DT/DB pixels do not have a single source-specific correction. The standalone
+September verification script's original-retrieval QC audit also remains native,
+so it can check the retrieval AOD cap and rejection counts.
+
+NetCDF metadata records the effective source-to-coefficient mapping as JSON in
+`aod_correction`, its formula and uncertainty policy, plus the full config.
+Changing a source's coefficients invalidates gridding resume; omitted or explicit
+identity settings retain existing uncorrected processing hashes. Use a distinct
+run-config name to retain corrected and uncorrected outputs. This is a manually
+supplied correction, with no fitting or calibration step. Cached L2 matchups can
+only be reused when correction settings agree for the retained sources.
+Corrections that produce nonfinite AOD, exceed float32 output capacity, or
+collide with CAM's missing-data range (AOD ≤ -900 after float32 rounding) fail
+before writing grids for that day.
+
 The working value `rho: 0.5` remains provisional. The July 2008 and September 2020
 [historical evaluation campaign](docs/validation/evaluation_campaign.md) found that no tested
 rho calibrated uncertainty in the three-hour diagnostics. Acceptance now uses

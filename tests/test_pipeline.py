@@ -12,7 +12,7 @@ from pydantic import ValidationError
 from test_readers import hdf_granule
 
 from sarb_aod.config.loader import load_config
-from sarb_aod.config.schema import RunConfig, WeightingConfig
+from sarb_aod.config.schema import AODCorrectionConfig, RunConfig, WeightingConfig
 from sarb_aod.contract import validate_contract_file
 from sarb_aod.paths import granule_dir
 from sarb_aod.pipeline import config_sha256, grid_day, grid_period
@@ -81,6 +81,83 @@ def test_changed_configuration_recomputes(pipeline_config):
         assert dataset.weighting_method == "count"
 
 
+@pytest.mark.parametrize("method", ["count", "gls"])
+@pytest.mark.parametrize("scale,offset", [(2.0, 0.2), (0.0, 0.3), (-1.0, 0.1)])
+def test_correction_before_gridding_clipping_and_resume(pipeline_config, method, scale, offset):
+    config, _ = pipeline_config
+    config = config.model_copy(
+        update={
+            "weighting": WeightingConfig(method=method),
+            "output": config.output.model_copy(update={"clip_negative_mean": False}),
+        }
+    )
+    baseline = grid_day(config, date(2008, 7, 1))
+    names = [
+        "aod_weighted_mean",
+        "aod_weighted_mean_modis",
+        "aod_weighted_mean_viirs",
+        "aod_mean_terra_dt",
+        "aod_mean_terra_db",
+    ]
+    with netCDF4.Dataset(baseline.files[0]) as ds:
+        ds.set_auto_mask(False)
+        original = {name: ds[name][:] for name in names}
+        counts = ds["aod_count"][:]
+    corrected = config.model_copy(
+        update={
+            "aod_correction": {
+                stream: AODCorrectionConfig(scale=scale, offset=offset)
+                for stream in config.grid.streams
+            },
+            "output": config.output.model_copy(update={"clip_negative_mean": True}),
+        }
+    )
+    result = grid_day(corrected, date(2008, 7, 1))
+    assert not result.skipped
+    with netCDF4.Dataset(result.files[0]) as ds:
+        ds.set_auto_mask(False)
+        for name, raw in original.items():
+            valid = raw > -900
+            expected = scale * raw[valid] + offset
+            if name.startswith("aod_weighted_mean"):
+                expected = np.maximum(expected, 0)
+            np.testing.assert_allclose(ds[name][:][valid], expected, atol=1e-6)
+            np.testing.assert_array_equal(ds[name][:][~valid], raw[~valid])
+        np.testing.assert_array_equal(ds["aod_count"][:], counts)
+        expected_settings = {
+            stream: {"scale": scale, "offset": offset} for stream in config.grid.streams
+        }
+        assert json.loads(ds.aod_correction) == expected_settings
+        assert ds.bias_correction_method == "per-source affine AOD"
+        assert json.loads(ds.config)["aod_correction"] == expected_settings
+    assert grid_day(corrected, date(2008, 7, 1)).skipped
+
+
+@pytest.mark.parametrize("method", ["count", "gls"])
+def test_distinct_source_corrections_precede_source_combination(pipeline_config, method):
+    config, _ = pipeline_config
+    config = config.model_copy(
+        update={
+            "weighting": WeightingConfig(method=method),
+            "aod_correction": {
+                "terra_dt": AODCorrectionConfig(scale=2, offset=0.2),
+                "terra_db": AODCorrectionConfig(scale=0.5),
+            },
+        }
+    )
+    result = grid_day(config, date(2008, 7, 1))
+    with netCDF4.Dataset(result.files[0]) as ds:
+        ds.set_auto_mask(False)
+        # Raw DT=5, sigma=0.8 and DB=0.2, sigma=0.1 occupy this shared cell.
+        shared = np.isclose(ds["aod_mean_terra_db"][:], 0.1)
+        assert shared.sum() == 1
+        assert ds["aod_mean_terra_dt"][:][shared] == pytest.approx([10.2])
+        expected = (10.2 + 0.1) / 2
+        if method == "gls":
+            expected = (10.2 / 0.8**2 + 0.1 / 0.1**2) / (1 / 0.8**2 + 1 / 0.1**2)
+        assert ds["aod_weighted_mean"][:][shared] == pytest.approx([expected])
+
+
 @pytest.mark.parametrize("workers", [1, 2])
 def test_failed_day_preserves_successes(pipeline_config, workers):
     config, _ = pipeline_config
@@ -88,6 +165,20 @@ def test_failed_day_preserves_successes(pipeline_config, workers):
     assert len(results) == 2
     assert results[0].error is None and len(results[0].files) == 8
     assert results[1].error and "no primary granules" in results[1].error
+
+
+@pytest.mark.parametrize(
+    "offset",
+    [1e40, 1e200, float(np.finfo(np.float32).max) * (1 + 1e-8), -900.0, -1000.0, -899.999999],
+)
+def test_unrepresentable_correction_fails_before_publishing_grids(pipeline_config, offset):
+    config, _ = pipeline_config
+    config = config.model_copy(
+        update={"aod_correction": {"terra_dt": AODCorrectionConfig(scale=0, offset=offset)}}
+    )
+    with pytest.raises(ValueError, match="CAM/float32 output range"):
+        grid_day(config, date(2008, 7, 1))
+    assert not list(config.paths.data_root.rglob("*.nc"))
 
 
 def test_missing_edge_directory_recorded(pipeline_config):
@@ -189,6 +280,22 @@ def test_catalog_recipe_changes_invalidate_resume(pipeline_config, tmp_path):
     ]["name"] = "Effective_Optical_Depth_Best_Ocean"
     path.write_text(yaml.safe_dump(catalog))
     assert not grid_day(config, date(2008, 7, 1)).skipped
+
+
+@pytest.mark.parametrize("scale,offset", [(1.0, 0.0), (2.0, 0.2)])
+def test_verification_scan_keeps_original_retrieval_qc_diagnostics(pipeline_config, scale, offset):
+    from scripts.verify_september2020 import retrieval_summary
+
+    config, _ = pipeline_config
+    config = config.model_copy(
+        update={"aod_correction": {"terra_dt": AODCorrectionConfig(scale=scale, offset=offset)}}
+    )
+    day = date(2008, 7, 1)
+    rows = retrieval_summary([config], day, day, [-180, 180, -90, 90])
+    dt = next(row for row in rows if row["stream"] == "terra_dt")
+    assert dt["n_qc_passed"] == 4
+    assert dt["maximum"] == 5
+    assert dt["n_at_or_above_max"] == 2
 
 
 def test_summary_rejects_stale_processing_definition(pipeline_config):

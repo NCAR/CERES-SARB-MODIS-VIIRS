@@ -22,6 +22,7 @@ import xarray as xr
 from sarb_aod.config.loader import configuration_metadata
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import code_provenance
+from sarb_aod.correction import active_corrections
 from sarb_aod.evaluation.calculator import (
     DEFAULT_AOD_BINS,
     MONTH_TO_METEOROLOGICAL_SEASON,
@@ -442,6 +443,7 @@ def matchup_signature(config: RunConfig) -> dict[str, Any]:
         key: getattr(config, key).model_dump(mode="json")
         for key in ("grid", "qc", "uncertainty", "weighting", "time", "output")
     }
+    processing["aod_correction"] = active_corrections(config.aod_correction)
     processing["recipes"] = {
         recipe.stream_id: {
             "product": recipe.product,
@@ -678,7 +680,7 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
 
     This avoids rereading the same granules for GLS rho and count comparisons.
     Target streams may be an exact subset of the source recipes. QC, pixel
-    uncertainty, time, period and AERONET/matching settings must agree exactly.
+    uncertainty, AOD correction, time, period and AERONET/matching settings must agree exactly.
     A changed CAM7 preset requires fresh pairing. Subsets recompute the site
     representativeness flags from their retained streams.
     """
@@ -687,6 +689,12 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
     target_definition = matchup_signature(adjusted)["processing"]
     source_recipes = source_definition.pop("recipes")
     target_recipes = target_definition.pop("recipes")
+    # Corrections for excluded source streams do not affect a valid subset reuse.
+    source_definition["aod_correction"] = {
+        name: correction
+        for name, correction in source_definition["aod_correction"].items()
+        if name in target_recipes
+    }
     source_definition["grid"].pop("streams")
     target_definition["grid"].pop("streams")
     subset = bool(target_recipes) and set(target_recipes) <= set(source_recipes)
@@ -702,7 +710,8 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
         )
     ):
         raise ValueError(
-            "L2 reuse requires identical recipes, QC, time, uncertainty and AERONET matching settings"
+            "L2 reuse requires identical recipes, QC, time, uncertainty, AOD correction "
+            "and AERONET matching settings"
         )
     values = load_matchups(source, "l2")
     values = values.loc[values["stream"].isin(target_recipes)].copy()

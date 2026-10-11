@@ -80,6 +80,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.4 | Plot protocol | 4.2, 4.3 | Done | 7af6d67 |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
 | 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | fa0aad0 |
+| 1.11 | Per-source affine AOD observation correction before gridding | 1.9, 2.5 | Done | Task 1.11 (this commit) |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | Done | b06bb1f |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Done | 12a1ac9 |
@@ -580,6 +581,45 @@ placeholder, existing run configs still load, two collections of one product rej
 4. **Maps** from the Task 4.5a suites for the four runs.
 
 ---
+
+### Task 1.11: Per-source affine observation correction
+
+User request (2026-10-11): `aod_correction` maps selected satellite/algorithm
+stream keys to finite `scale`/`offset` pairs (defaults 1/0). Each pair is constant
+throughout the analysis period; omitted streams keep identity correction. Reject
+unknown or unselected stream keys. Apply `scale * AOD + offset` after retrieval
+QC and per-pixel uncertainty estimation, before gridding. Pixel sigma remains
+unchanged. Corrected pixels are not screened or clipped again; final CAM mean
+clipping is unchanged. L2 satellite matchups use the same source corrections.
+AERONET and source files are unchanged. Negative-pixel counts refer to corrected values.
+
+C7's separate producer-combined diagnostic remains native because its mixed
+DT/DB pixels have no single source-specific correction. The standalone September
+verification scan also audits original retrieval QC (native cap/rejection counts);
+its grid checks use the configured processing definition.
+
+Record effective coefficients for every selected stream as NetCDF JSON, alongside
+the formula, uncertainty policy and full config. Nonidentity corrections enter
+the processing hash and force recomputation; omitted/explicit identity settings
+preserve previous numerical results and grid hashes. L2 cache compatibility compares
+corrections for retained sources, permitting exact subsets with corrections on
+excluded sources. No fitting or per-region/date overrides are introduced.
+
+Regression checks cover YAML parsing/defaults and invalid stream keys, finite
+coefficients, overflow and float32/CAM range errors (including rounding to the
+missing-data threshold), the recorded pre-feature NOAA-20 processing hash,
+HDF4/NetCDF QA and missing-data retention, unchanged pixel sigma, satellite/algorithm
+isolation, count/GLS gridding (including zero/negative scales), distinct corrections
+before source combination, clipping, resume, NetCDF metadata, native C7 means/category
+counts, L2 forwarding and reuse, and the original-retrieval verification scan.
+
+Validation: **986 offline tests passed**, one network test deselected; mypy,
+Black, isort and whitespace checks passed. `codex review --uncommitted` completed;
+its upper-bound finding is fixed by checking unrounded AOD against the NetCDF
+writer's float32 limit as well as checking encoded values against CAM's missing
+range. The regression verifies failure before publishing grids. No review findings
+remain open. The review sandbox could not bind the local HTTP test server;
+that test passed in the complete primary test run.
 
 ## Phase 2: VIIRS, mixing, and C7 (Sept 2020)
 
@@ -1616,6 +1656,7 @@ network access to LAADS and AERONET.
 
 | Item | Plan |
 |---|---|
+| Per-source affine AOD correction | Task 1.11 adds finite scale/offset pairs keyed by selected satellite/algorithm stream, constant over the full analysis period (omitted sources/coefficients default 1/0). Apply after retrieval QC with original pixel uncertainty, before gridding and in L2 satellite evaluation. Native C7 combined diagnostics and original-retrieval QC audits remain unchanged. No pixel clipping; existing final CAM clipping remains. NetCDF records effective source coefficients, corrected negative counts and full config. Nonidentity settings invalidate resume; identity retains legacy hashes. L2 reuse checks retained-source corrections. Fitted VIIRS-to-MODIS calibration remains deferred. |
 | Mean-map presentation | Task 4.10 aligns the aggregate map with the top platform row and adds the MODIS collection to its title. A lower-left provenance panel separates recorded grid dates/revisions from plot dates/revisions and configured L2 source paths; full provenance is embedded in PDF Keywords. Scientific acceptance remains independent of presentation. |
 | Daily validation and regional presentation | Task 4.8 uses independent UTC daily means and equal-site regional daily averages for acceptance and plotting. The numeric limits remain absolute bias ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8; the sampling basis replaces the former three-hour gate. Middle-50% site bands, daily statistics and a region/site inset describe the same cohort. Site spread is distinct from uncertainty in the regional mean. |
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |

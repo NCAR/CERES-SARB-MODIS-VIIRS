@@ -765,6 +765,7 @@ def build_matchups(
                         qc=config.qc,
                         time=config.time,
                         uncertainty=config.uncertainty,
+                        corrections=config.aod_correction,
                     ).values():
                         yield str(path), batch
 

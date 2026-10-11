@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from sarb_aod.combined_product import AOD_NAME, COUNT_NAMES, FLAG_NAME, TOTAL_NAME
-from sarb_aod.config.schema import QCConfig, RunConfig
+from sarb_aod.config.schema import AODCorrectionConfig, QCConfig, RunConfig
 from sarb_aod.contract import validate_contract_file
 from sarb_aod.paths import granule_dir
 from sarb_aod.pipeline import discover_granules, grid_day, processing_sha256, stream_recipes
@@ -126,6 +126,29 @@ def test_missing_algorithm_flags_fail_and_archive_is_read_only(c7_config):
         ds[f"geophysical_data_Dark_Target_Deep_Blue_Combined/{FLAG_NAME}"][0, 0] = -999
     with pytest.raises(ValueError, match="algorithm flag"):
         grid_day(cfg, DAY)
+
+
+def test_source_corrections_preserve_native_combined_diagnostic(c7_config):
+    cfg, _ = c7_config
+    cfg = cfg.model_copy(
+        update={
+            "aod_correction": {
+                "terra_dt": AODCorrectionConfig(scale=2, offset=0.2),
+                "terra_db": AODCorrectionConfig(scale=0.5, offset=0.05),
+            }
+        }
+    )
+    result = grid_day(cfg, DAY)
+    with nc.Dataset(result.files[0]) as ds:
+        ds.set_auto_mask(False)
+        total, mean = ds[TOTAL_NAME][:], ds[AOD_NAME][:]
+        assert total.sum() == 4
+        assert mean[total == 3] == pytest.approx([0.3])
+        assert mean[total == 1] == pytest.approx([-0.05])  # Native and unclipped.
+        assert [ds[n][:].sum() for n in COUNT_NAMES] == [1, 1, 2]
+        for stream, expected in (("terra_dt", 0.4), ("terra_db", 0.1)):
+            values = ds[f"aod_mean_{stream}"][:]
+            assert values[values > -900] == pytest.approx([expected] * 3)
 
 
 def test_float32_native_lower_endpoint_is_retained(c7_config):

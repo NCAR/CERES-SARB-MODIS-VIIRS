@@ -355,6 +355,17 @@ class TimeConfig(StrictModel):
     leap_seconds: Literal["apply", "ignore"] = "apply"
 
 
+class AODCorrectionConfig(StrictModel):
+    """One affine AOD correction for a satellite/algorithm stream."""
+
+    scale: float = Field(default=1.0, allow_inf_nan=False)
+    offset: float = Field(default=0.0, allow_inf_nan=False)
+
+    @property
+    def is_identity(self) -> bool:
+        return self.scale == 1.0 and self.offset == 0.0
+
+
 class QAOverride(StrictModel):
     qa_min: int = Field(ge=1, le=3, strict=True)
 
@@ -607,6 +618,7 @@ class RunConfig(StrictModel):
     stage: StageConfig
     grid: GridConfig = Field(default_factory=GridConfig)
     time: TimeConfig = Field(default_factory=TimeConfig)
+    aod_correction: dict[str, AODCorrectionConfig] = Field(default_factory=dict)
     uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
     qc: QCConfig = Field(default_factory=QCConfig)
     weighting: WeightingConfig = Field(default_factory=WeightingConfig)
@@ -640,6 +652,11 @@ class RunConfig(StrictModel):
             previous = selected_collections.setdefault(selection.product, selection.collection)
             if previous != selection.collection:
                 raise ValueError(f"all streams of {selection.product} must use the same collection")
+        unknown = self.aod_correction.keys() - self.grid.streams.keys()
+        if unknown:
+            raise ValueError(
+                f"aod_correction keys must name selected grid.streams: {sorted(unknown)}"
+            )
         return self
 
     def load_catalog(self) -> Catalog:

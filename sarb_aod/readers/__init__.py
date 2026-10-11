@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from datetime import date
 from pathlib import Path
 
-from sarb_aod.config.schema import QCConfig, TimeConfig, UncertaintyConfig
+from sarb_aod.config.schema import AODCorrectionConfig, QCConfig, TimeConfig, UncertaintyConfig
 from sarb_aod.readers.base import LAND, OCEAN, PixelBatch, PixelCoordinates, assemble_batch
 from sarb_aod.readers.modis_hdf4 import HDF4Source
 from sarb_aod.readers.netcdf import NetCDFSource
@@ -22,6 +22,7 @@ def read_granule(
     qc: QCConfig | None = None,
     uncertainty: UncertaintyConfig | None = None,
     time: TimeConfig | None = None,
+    corrections: Mapping[str, AODCorrectionConfig] | None = None,
     day: date | None = None,
 ) -> dict[str, PixelBatch]:
     """Read shared geolocation/QA once and return a batch for each selected stream.
@@ -29,6 +30,9 @@ def read_granule(
     All recipes must name the same product and collection. Resolve them with
     the same QC preset passed here so alternate AOD fields match the QA rules.
     Pixels outside ``day`` are dropped when a UTC day is supplied.
+    The optional affine correction affects accepted AOD only, after retrieval QC
+    and uncertainty estimation. Settings are keyed by stream id; omitted streams
+    use identity correction.
     """
     if not recipes:
         return {}
@@ -40,11 +44,18 @@ def read_granule(
     qc = qc if qc is not None else QCConfig()
     uncertainty = uncertainty if uncertainty is not None else UncertaintyConfig()
     time = time if time is not None else TimeConfig()
+    corrections = corrections if corrections is not None else {}
     source_type = HDF4Source if recipes[0].file_format == "hdf4" else NetCDFSource
     with source_type(path, qc) as source:
         return {
             recipe.stream_id: assemble_batch(
-                source, recipe, qc=qc, uncertainty=uncertainty, time=time, day=day
+                source,
+                recipe,
+                qc=qc,
+                uncertainty=uncertainty,
+                time=time,
+                correction=corrections.get(recipe.stream_id),
+                day=day,
             )
             for recipe in recipes
         }

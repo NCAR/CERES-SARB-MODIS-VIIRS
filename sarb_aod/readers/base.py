@@ -9,7 +9,14 @@ from typing import Protocol
 import numpy as np
 from numpy.typing import NDArray
 
-from sarb_aod.config.schema import QCConfig, TimeConfig, UncertaintyConfig, VarRef
+from sarb_aod.config.schema import (
+    AODCorrectionConfig,
+    QCConfig,
+    TimeConfig,
+    UncertaintyConfig,
+    VarRef,
+)
+from sarb_aod.correction import correct_aod
 from sarb_aod.qc import quality_masks
 from sarb_aod.streams import StreamRecipe
 from sarb_aod.timeconv import tai93_to_unix_seconds
@@ -116,9 +123,11 @@ def assemble_batch(
     qc: QCConfig,
     uncertainty: UncertaintyConfig,
     time: TimeConfig,
+    correction: AODCorrectionConfig | None = None,
     day: date | None = None,
 ) -> PixelBatch:
-    """QC each surface first, then keep land when both surfaces pass QC."""
+    """QC surfaces, prefer accepted land, then correct AOD with original sigma."""
+    correction = correction if correction is not None else AODCorrectionConfig()
     t, lat, lon = _geolocation(source, recipe, time)
     located = np.isfinite(t) & np.isfinite(lat) & np.isfinite(lon)
     if day is not None:
@@ -157,6 +166,7 @@ def assemble_batch(
         output_sigma[usable] = sigma
         output_surface[usable] = code
         counts[f"n_{surface}"] = int(np.count_nonzero(usable))
+    output_aod[selected] = correct_aod(output_aod[selected], correction)
     counts.update(
         n_qa_passed=int(np.count_nonzero(qa_passed)),
         n_accepted=int(np.count_nonzero(selected)),

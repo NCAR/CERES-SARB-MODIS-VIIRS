@@ -10,7 +10,7 @@ import yaml
 from typer.testing import CliRunner
 
 from sarb_aod.cli import app
-from sarb_aod.config.schema import EvaluationConfig, PathsConfig, RunConfig
+from sarb_aod.config.schema import AODCorrectionConfig, EvaluationConfig, PathsConfig, RunConfig
 from sarb_aod.evaluation import report
 from sarb_aod.evaluation.collocate import MatchupResult, write_matchups
 from sarb_aod.evaluation.report import (
@@ -535,6 +535,12 @@ def test_l2_reuse_ignores_grid_weights_but_rejects_changed_retrieval(tmp_path):
     changed = target.model_copy(update={"qc": target.qc.model_copy(update={"preset": "cam7_v2"})})
     with pytest.raises(ValueError, match="identical recipes"):
         reuse_l2_matchups(source, changed)
+    for coefficients in ({"scale": 2.0}, {"offset": 0.1}):
+        changed = target.model_copy(
+            update={"aod_correction": {"terra_dt": AODCorrectionConfig(**coefficients)}}
+        )
+        with pytest.raises(ValueError, match="AOD correction"):
+            reuse_l2_matchups(source, changed)
     with pytest.raises(ValueError, match="distinct source"):
         reuse_l2_matchups(source, source)
 
@@ -592,11 +598,16 @@ def test_sorted_json_metadata_preserves_order_independent_matchup_compatibility(
     assert len(load_matchups(cfg, "l2")) == 3
 
 
-def test_l2_reuse_exact_stream_subset_recomputes_site_representativeness(tmp_path):
+@pytest.mark.parametrize("excluded_correction", [False, True])
+def test_l2_reuse_exact_stream_subset_recomputes_site_representativeness(
+    tmp_path, excluded_correction
+):
     from sarb_aod.evaluation.collocate import flag_representativeness
 
     raw = config(tmp_path).model_dump(mode="json")
     raw["grid"]["streams"]["terra_db"] = {"product": "MOD04_L2", "collection": "6.1"}
+    if excluded_correction:
+        raw["aod_correction"] = {"terra_db": {"scale": 2, "offset": 0.1}}
     source = RunConfig.model_validate(raw)
     values = frame(x=[0.1, 0.2, 0.3, 0.4]).assign(
         run=source.name,
@@ -626,6 +637,7 @@ def test_l2_reuse_exact_stream_subset_recomputes_site_representativeness(tmp_pat
     target = source.model_copy(
         update={
             "name": "dt_only",
+            "aod_correction": {"terra_dt": AODCorrectionConfig()},
             "grid": source.grid.model_copy(
                 update={"streams": {"terra_dt": source.grid.streams["terra_dt"]}}
             ),

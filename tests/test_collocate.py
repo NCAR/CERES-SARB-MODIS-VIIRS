@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 import xarray as xr
 
-from sarb_aod.config.schema import RunConfig
+from sarb_aod.config.schema import AODCorrectionConfig, RunConfig
 from sarb_aod.contract import write_contract_file
 from sarb_aod.evaluation import collocate
 from sarb_aod.evaluation.collocate import (
@@ -412,6 +412,9 @@ def make_config(tmp_path: Path) -> RunConfig:
 
 def test_l2_driver_deduplicates_edge_granules_and_records_provenance(tmp_path, monkeypatch):
     cfg = make_config(tmp_path)
+    cfg = cfg.model_copy(
+        update={"aod_correction": {"terra_dt": AODCorrectionConfig(scale=1.2, offset=0.1)}}
+    )
     calls = []
     reference = aero(["2008-07-01T00:00Z", "2008-07-01T00:01Z"], [0.1, 0.3])
 
@@ -428,6 +431,7 @@ def test_l2_driver_deduplicates_edge_granules_and_records_provenance(tmp_path, m
 
     def read(path, recipes, **kwargs):
         reads.append(path)
+        assert kwargs["corrections"] == cfg.aod_correction
         return {"terra_dt": batch([0.2] * 3)}
 
     monkeypatch.setattr(collocate, "read_granule", read)

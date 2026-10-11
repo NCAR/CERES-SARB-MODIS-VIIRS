@@ -121,6 +121,11 @@ def load_retrieval_cache(path, definition):
 
 
 def retrieval_summary(configs, start, end, bounds):
+    """Audit original retrieval QC; affine correction is only in the grid checks.
+
+    The L2 cap/rejection diagnostics intentionally use identity correction so
+    they test the original retrievals against the configured QC maximum.
+    """
     retrieval_definition(configs, start, end, bounds)
     base = configs[0]
     recipes = {}

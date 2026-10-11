@@ -8,7 +8,14 @@ import pytest
 from netCDF4 import Dataset
 
 from sarb_aod.config.loader import load_config
-from sarb_aod.config.schema import AlgorithmSpec, Geolocation, QCConfig, TimeConfig, VarRef
+from sarb_aod.config.schema import (
+    AlgorithmSpec,
+    AODCorrectionConfig,
+    Geolocation,
+    QCConfig,
+    TimeConfig,
+    VarRef,
+)
 from sarb_aod.paths import granule_dir
 from sarb_aod.readers import LAND, OCEAN, read_granule
 from sarb_aod.readers.modis_hdf4 import HDF4Source
@@ -141,6 +148,44 @@ def test_hdf_legacy_scale_and_ocean_alternate(hdf_granule):
     np.testing.assert_allclose(batch.aod, np.array([300, 500, 2100]) * float(np.float32(0.001)))
     np.testing.assert_array_equal(batch.t, np.full(3, DAY_START + 7))
     assert len(batch.rejected_high) == 1  # The unrounded packed 5000 land pixel is >5.
+
+
+@pytest.mark.parametrize("source", ["hdf", "netcdf"])
+def test_aod_correction_after_qc_preserves_pixels_and_uncertainties(source, hdf_granule, netcdf_dt):
+    if source == "hdf":
+        path, day = hdf_granule, DAY
+        recipes = [resolve_stream("MOD04_L2", "6.1", a) for a in ("dt", "db")]
+    else:
+        path, day, recipes = netcdf_dt, date(2020, 9, 8), [_netcdf_recipe()]
+    baseline = read_granule(path, recipes, day=day)
+    corrected = read_granule(
+        path,
+        recipes,
+        day=day,
+        corrections={r.stream_id: AODCorrectionConfig(scale=2, offset=0.2) for r in recipes},
+    )
+    for stream, original in baseline.items():
+        actual = corrected[stream]
+        np.testing.assert_allclose(actual.aod, 2 * original.aod + 0.2)
+        np.testing.assert_array_equal(actual.sigma, original.sigma)
+        np.testing.assert_array_equal(actual.lat, original.lat)
+        np.testing.assert_array_equal(actual.t, original.t)
+        np.testing.assert_array_equal(actual.rejected_high.lat, original.rejected_high.lat)
+        assert actual.counts["n_accepted"] == original.counts["n_accepted"]
+        assert actual.counts["n_sigma_missing"] == original.counts["n_sigma_missing"]
+        assert actual.counts["n_negative"] == 0
+
+
+def test_correction_is_isolated_by_satellite_and_algorithm(hdf_granule):
+    corrections = {"terra_dt": AODCorrectionConfig(scale=2, offset=0.2)}
+    for product in ("MOD04_L2", "MYD04_L2"):
+        recipes = [resolve_stream(product, "6.1", a) for a in ("dt", "db")]
+        baseline = read_granule(hdf_granule, recipes, day=DAY)
+        corrected = read_granule(hdf_granule, recipes, day=DAY, corrections=corrections)
+        for stream, original in baseline.items():
+            expected = 2 * original.aod + 0.2 if stream == "terra_dt" else original.aod
+            np.testing.assert_array_equal(corrected[stream].aod, expected)
+            np.testing.assert_array_equal(corrected[stream].sigma, original.sigma)
 
 
 def test_high_aod_coordinates_require_qa_and_day(hdf_granule):

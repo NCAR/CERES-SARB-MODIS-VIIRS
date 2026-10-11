@@ -16,8 +16,9 @@ import numpy as np
 
 from sarb_aod.combined_product import accumulate_product, product_window
 from sarb_aod.config.loader import configuration_metadata
-from sarb_aod.config.schema import RunConfig
+from sarb_aod.config.schema import AODCorrectionConfig, RunConfig
 from sarb_aod.contract import validate_contract_file, write_contract_file
+from sarb_aod.correction import active_corrections
 from sarb_aod.grid.combine import CombinedGrid, combine
 from sarb_aod.grid.kernels import Accumulators, accumulate, count_pixels
 from sarb_aod.grid.spec import load_grid, normalize_longitude
@@ -54,6 +55,10 @@ def processing_sha256(config: RunConfig) -> str:
         key: getattr(config, key).model_dump(mode="json")
         for key in ("grid", "qc", "uncertainty", "weighting", "time", "output")
     }
+    # Identity defaults preserve resume compatibility with pre-correction runs.
+    corrections = active_corrections(config.aod_correction)
+    if corrections:
+        definition["aod_correction"] = corrections
     definition["recipes"] = [
         {
             "stream": recipe.stream_id,
@@ -185,6 +190,21 @@ def _provenance(
         "weighting_method": config.weighting.method,
         "weighting_rho": config.weighting.rho,
         "qc_preset": config.qc.preset,
+        "aod_correction": json.dumps(
+            {
+                r.stream_id: config.aod_correction.get(
+                    r.stream_id, AODCorrectionConfig()
+                ).model_dump()
+                for r in recipes
+            },
+            sort_keys=True,
+        ),
+        "aod_correction_formula": "AOD_corrected = scale * AOD + offset; per source, after retrieval QC, before gridding",
+        "aod_correction_uncertainty": "per-pixel uncertainties unchanged",
+        "bias_correction_method": (
+            "per-source affine AOD" if active_corrections(config.aod_correction) else "none"
+        ),
+        "bias_correction_version": "1" if active_corrections(config.aod_correction) else "none",
         "streams": ",".join(r.stream_id for r in recipes),
         "product_collections": json.dumps(
             {r.product: r.collection for r in recipes}, sort_keys=True
@@ -232,7 +252,13 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
         if native is not None:
             accumulate_product(native, path, selected[0], config, day)
         batches = read_granule(
-            path, selected, qc=config.qc, uncertainty=config.uncertainty, time=config.time, day=day
+            path,
+            selected,
+            qc=config.qc,
+            uncertainty=config.uncertainty,
+            time=config.time,
+            corrections=config.aod_correction,
+            day=day,
         )
         for stream, batch in batches.items():
             idx = indices[stream]
