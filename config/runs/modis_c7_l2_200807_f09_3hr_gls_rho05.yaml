@@ -34,3 +34,8 @@ combined_product:
 output:
   stem: MODIS_VIIRS_AOD_3hr_f09
   clip_negative_mean: true
+plots:
+  # Daily AERONET comparisons; the single monthly map recipe is documented in
+  # docs/validation/ami_c7_200807_plots.md (the full map suite also emits daily maps).
+  suites: [aeronet_regional_timeseries]
+  regions: all

@@ -95,6 +95,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
 | 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | Done | d69d688 |
 | 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | Done; operational acceptance | Task 5.3 (this commit) |
+| 4.9 | AMI July C7 monthly map and regional daily PDFs | 4.8, 5.3 | Done; plots accepted, science gate open | Task 4.9 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1500,7 +1501,7 @@ network access to LAADS and AERONET.
 | AERONET service limits | ≤ 10 requests/min, one request per day for all sites, raw CSV cached |
 | Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
-| AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 complete: 248 C7 July files validated. External acquisition, plotting setup, multi-year production and C7 science acceptance remain separate. |
+| AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 complete: 248 C7 July files validated. Task 4.9 generated and delivered 15 PDF plots with passing protocol and visual checks. July daily bias/RMSE pass, but R = 0.7920 misses 0.8; C7 science acceptance, external acquisition and multi-year production remain open. See `docs/validation/ami_c7_200807_plots.md`. |
 | Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
 
 ## AMI C7 implementation revision (2026-10-11)
