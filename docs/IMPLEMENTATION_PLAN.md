@@ -117,8 +117,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; all 30 tasks succeeded, 240 files validated | `90e4bab`; completion recorded in Task 5.7 |
 | 5.7 | Verify September NOAA-20 completion and deliver AMI spatial/regional PDFs | 5.6, 4.22 | Done; 240 grids validated, 16 plots accepted and two Desktop PDFs delivered; science bias gate fails | Task 5.7 (this commit) |
-| 5.8 | Explicit gap outputs and 22 tracked April–March MODIS C7 configs | 5.3, 5.7 | Done; 1,071 offline tests pass, review findings fixed | Task 5.8 (this commit) |
-| 5.9 | Deploy and queue 22 yearly MODIS C7 AMI tasks | 5.8 | Pending deployment | |
+| 5.8 | Explicit gap outputs and 22 tracked April–March MODIS C7 configs | 5.3, 5.7 | Done; 1,071 offline tests pass, review findings fixed | `1ebdaf4` |
+| 5.9 | Deploy and queue 22 yearly MODIS C7 AMI tasks | 5.8 | Done; 22 yearly tasks queued as array 5034008, smoke checks pass | Task 5.9 (this commit) |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
@@ -1878,3 +1878,20 @@ propagate rather than becoming gaps. The optional HDF4 test import was moved
 inside its test: all nine gap tests pass with HDF4, and simulated absence gives
 one C7 pass/eight skips without breaking collection. No review findings remain.
 The July C7 and September NOAA-20 legacy processing hashes are unchanged.
+
+Task 5.9 deployed `1ebdaf4` on AMI and verified all 22 resolved configs. Smoke
+jobs 5034006 (Terra-only 2000-04-01, 38.823 s) and 5034007 (all-missing 2000-08-06,
+11.027 s) exited successfully. All 16 output files pass independent contract,
+provenance, missing-field and disabled-despeckling checks. Array 5034008 has
+22 annual tasks, one serial slot each, concurrency four, `scf.q`, 12-hour limit.
+It is initially held while the tracked submission record is synchronized, then
+released using `qrls`; runtime evidence is retained in the campaign log directory.
+Annual processing completion remains to be checked from monthly metrics and
+`qacct`. See `docs/AMI_MODIS_C7_CAMPAIGN.md` and the linked submission JSON.
+The actual smoke-file sizes refine the whole-campaign storage estimate to
+333.2 GiB (allow 340 GiB), against the earlier July-based estimate of 327.1 GiB.
+
+Task 5.9 validation: the final offline suite passes 1,071 tests (one network
+test deselected); mypy, Black, isort and whitespace checks pass. Required review
+found no actionable defects in the deployment record and independently passed
+all seven campaign/config/dispatch tests.

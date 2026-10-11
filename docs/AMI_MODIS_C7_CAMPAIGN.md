@@ -83,9 +83,11 @@ queue wait and archive stalls. Each task runs the existing resumable monthly
 driver with `--workers 1`; a retry validates completed days and processes only
 missing/stale output. Monthly summaries and metrics are the progress record.
 
-July's 1,355,006,280 bytes over 31 days project to **327.1 GiB** for the whole
-campaign, approximately 14.9 GiB per full year. Allow about **330 GiB**, plus logs
-and metadata variation. The checked project filesystem had 1,027.4 GiB available;
+July's 1,355,006,280 bytes over 31 days initially projected to 327.1 GiB for the
+campaign. The deployed annual config's two smoke days each produced 44,529,472
+bytes, updating the projection to **333.2 GiB**, approximately 15.1 GiB per full
+year. Allow about **340 GiB**, plus logs and metadata variation.
+The checked project filesystem had 1,027.4 GiB available;
 this is shared free space, not a reservation. Timing evidence is in
 [the July operational record](validation/ami_c7_200807.md).
 
@@ -125,3 +127,50 @@ nine focused gap tests pass; without HDF4, the C7 test passes and the eight
 HDF4-dependent cases skip. Baseline processing hashes are unchanged. The annual
 configs share processing SHA-256
 `1524d4597c06aec55ea61104ad14057e5713b1b331192b28c09bf887f1972e10`.
+
+## Deployment and submission
+
+Task 5.8 was committed and pushed as
+`1ebdaf499e0c1593244e3224f39fd8965450d1ad`, then fast-forward pulled on AMI.
+All 22 configs loaded there with four C7 MODIS streams, disabled despeckling,
+identity AOD corrections and the expected processing hash. Resolved config
+snapshots and the indexed annual manifest are saved in the campaign log directory.
+
+Two serial `scf.q` smoke jobs used the first annual config and wrote directly
+into the campaign tree, so the annual task can resume those days:
+
+| Job | Day | Inputs | Output check | Wallclock |
+|---|---|---|---|---:|
+| 5034006 | 2000-04-01 | Terra present, Aqua absent | Eight valid files, nonzero AOD counts; Aqua and VIIRS fields missing | 38.823 s |
+| 5034007 | 2000-08-06 | Both absent | Eight valid files; AOD and native combined fields missing, all counts zero | 11.027 s |
+
+Both have scheduler `failed=0` and `exit_status=0`. All 16 files passed the CAM7
+contract and processing-provenance checks; all explicitly record disabled
+despeckling and the correct missing-product lists.
+
+**Array 5034008, tasks 1–22**, was accepted with a concurrency limit of four,
+one slot/task, `scf.q`, and `h_rt=12:00:00`. It was submitted held so this
+submission record can be committed/pushed and AMI synchronized before processing
+begins. After that fast-forward pull, release with `qrls 5034008` and verify
+`qstat -u dfillmor`. Keep the executable source/configs fixed while it runs.
+This is a queue-submission record, not evidence of completed annual processing.
+
+[The submission evidence](validation/ami_modis_c7_200004_202203_submission.json)
+retains the exact `qsub` arguments, array ID, source revision, hash, expected
+file count and smoke-job accounting/validation. Runtime submission and release
+records belong under:
+
+```text
+/CERES/sarb/dfillmor/MODIS_VIIRS/logs/
+  modis_c7_l2_200004_202203_f09_3hr_gls_rho05/
+    submission.json
+    release.json
+```
+
+Task 5.9 uses the same tested implementation. The separate documentation commit
+records the deployment; no production code was edited on AMI.
+
+Task 5.9 validation: the final offline suite passes 1,071 tests (one network
+test deselected); mypy, Black, isort and whitespace checks pass. Required review
+found no actionable defects in the deployment record and independently passed
+all seven campaign/config/dispatch tests.

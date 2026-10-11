@@ -1,0 +1,90 @@
+{
+  "submitted_utc": "2026-10-11T23:34:19.806736+00:00",
+  "job_id": 5034008,
+  "qsub_response": "5034008.1-22:1",
+  "submission_command": [
+    "qsub",
+    "-terse",
+    "-h",
+    "-q",
+    "scf.q",
+    "-l",
+    "h_rt=12:00:00",
+    "-t",
+    "1-22",
+    "-tc",
+    "4",
+    "-N",
+    "modis_c7_years",
+    "-o",
+    "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200004_202203_f09_3hr_gls_rho05",
+    "scripts/ami_grid_years.sh",
+    "config/campaigns/modis_c7_200004_202203.txt"
+  ],
+  "initial_state": "user-held pending final documentation sync and qrls",
+  "implementation_revision": "1ebdaf499e0c1593244e3224f39fd8965450d1ad",
+  "processing_sha256": "1524d4597c06aec55ea61104ad14057e5713b1b331192b28c09bf887f1972e10",
+  "manifest": "config/campaigns/modis_c7_200004_202203.txt",
+  "tasks": 22,
+  "concurrency": 4,
+  "queue": "scf.q",
+  "walltime": "12:00:00",
+  "despeckle": false,
+  "expected_files": 64280,
+  "log_dir": "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200004_202203_f09_3hr_gls_rho05",
+  "smoke_checks": [
+    {
+      "job_id": 5034006,
+      "day": "2000-04-01",
+      "files": 8,
+      "bytes": 44529472,
+      "missing_products": [
+        "MYD04_L2"
+      ],
+      "total_aod_count": 1113619,
+      "source_granule_counts": [
+        160
+      ],
+      "git_commits": [
+        "1ebdaf499e0c1593244e3224f39fd8965450d1ad"
+      ],
+      "accounting": {
+        "hostname": "la2520-cn-grid-ami02-pi.cluster.net",
+        "jobnumber": "5034006",
+        "start_time": "10/11/2026 19:32:56.505",
+        "end_time": "10/11/2026 19:33:35.328",
+        "failed": "0",
+        "exit_status": "0",
+        "ru_wallclock": "38.823",
+        "maxvmem": "1.217G"
+      }
+    },
+    {
+      "job_id": 5034007,
+      "day": "2000-08-06",
+      "files": 8,
+      "bytes": 44529472,
+      "missing_products": [
+        "MOD04_L2",
+        "MYD04_L2"
+      ],
+      "total_aod_count": 0,
+      "source_granule_counts": [
+        0
+      ],
+      "git_commits": [
+        "1ebdaf499e0c1593244e3224f39fd8965450d1ad"
+      ],
+      "accounting": {
+        "hostname": "la2520-cn-grid-ami05-pi.cluster.net",
+        "jobnumber": "5034007",
+        "start_time": "10/11/2026 19:32:56.553",
+        "end_time": "10/11/2026 19:33:07.580",
+        "failed": "0",
+        "exit_status": "0",
+        "ru_wallclock": "11.027",
+        "maxvmem": "1.169G"
+      }
+    }
+  ]
+}
