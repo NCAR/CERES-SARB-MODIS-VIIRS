@@ -87,7 +87,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 2.3 | Streams name their collection; mixing | 1.9, 2.1, 2.2 | Done | 64b71ab |
 | 2.4 | Sept 2020 verification | 2.3, Sept 2020 staging | Verified; rejection-gate acceptance open | a733ece |
 | 3.7 | Evaluation campaign, default selection | 3.6, 2.4 | Campaign complete; calibration open | 9b496b2 |
-| 4.6 | Full plot runs | 3.7 | Plots accepted; science/SP1 acceptance open | Task 4.6 (this commit) |
+| 4.6 | Full plot runs | 3.7 | Plots accepted; science/SP1 acceptance open | 761c2da |
+| 4.7 | Mean AOD comparison layout | 4.6 | Done | Task 4.7 (this commit) |
 | 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
 | 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
@@ -1102,7 +1103,7 @@ plots:
 
 | Suite | Figures |
 |---|---|
-| **`aod_maps`** (spatial patterns) | **Period maps** (one figure each per run): Mean AOD (count-weighted over windows, CAM7's monthly definition) for the product, each sensor (MODIS, VIIRS, MODIS + VIIRS) and each stream as small multiples sharing one GEOSIT scale; Uncertainty (count-weighted mean of window `aod_uncertainty`); Observation Count (sum of `aod_count`); Observation Fraction (fraction of windows with data); Stream Disagreement (count-weighted mean of `aod_chi2_per_dof`); Negative AOD Fraction. **Daily maps:** product Mean AOD only (count-weighted over the 8 windows; cells without observations left blank), one figure per day. Global by default; per-region panels when `regions` is set. |
+| **`aod_maps`** (spatial patterns) | **Period maps** (one figure each per run): Mean AOD (count-weighted over windows, CAM7's monthly definition) for each sensor and stream, plus the combined product only for mixed-sensor runs. Aggregates sit at left; platform rows align vertically within Dark Target and Deep Blue columns, sharing one GEOSIT scale. Global figures use panel titles without a redundant quantity heading; regional figures retain their region heading. Uncertainty (count-weighted mean of window `aod_uncertainty`); Observation Count (sum of `aod_count`); Observation Fraction (fraction of windows with data); Stream Disagreement (count-weighted mean of `aod_chi2_per_dof`); Negative AOD Fraction. **Daily maps:** product Mean AOD only (count-weighted over the 8 windows; cells without observations left blank), one figure per day. Global by default; per-region panels when `regions` is set. |
 | **`aod_differences`** | Run and product differences: `gls` − `count`, `retrieval_team` − `cam7_v2`, ρ variants, C7 − C6.1, NOAA-20 DB v2.1 − v2, VIIRS − MODIS. Diverging, symmetric robust limits, `bias_label` colorbars with display names. |
 
 **Tests:** suite expansion to its logical product list; an end-to-end render on synthetic CAM7
@@ -1394,10 +1395,26 @@ network access to LAADS and AERONET.
   Publication acceptance does not close the failed numerical science gates
   or establish comparison with the unavailable external SP1 archive.
 
+- Task 4.7: removed the duplicate Product AOD panel from single-sensor mean
+  figures and the redundant global AOD heading. The sensor aggregate is
+  centered at left, with Terra above Aqua (and SNPP above NOAA-20) in fixed
+  Dark Target and Deep Blue columns. Sparse streams keep their column slots;
+  mixed products retain their distinct combined field and regional figures
+  retain their region heading. All 18 affected mean figures were regenerated,
+  passed protocols and were visually inspected. The other 396 maps retain
+  their artifact hashes, and all 414 map inventories / 31 suite reports were
+  audited. The 885-test offline gate, mypy, Black and isort pass; independent
+  review found no remaining issue. The review's custom-catalog prefix finding
+  was fixed and verified: canonical platform names affect ordering, never
+  which configured streams are shown. `codex review --uncommitted` is clean;
+  its localhost fixture was blocked by its nested sandbox, while all 885 tests
+  pass in the task environment. Numeric inputs and science gates are unchanged.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
+| Mean-map presentation | Task 4.7 removes duplicate single-sensor Product panels and global quantity headings, and aligns platform rows within algorithm columns. Existing scientific acceptance items remain independent of this presentation change. |
 | Longitude final-edge exception | Task 1.6 explicitly requires input 359.375° in column 287. Normalization preserves that exact input; other longitudes use the wrapped formula. |
 | July VP1 acceptance | Task 1.10 measured written p99.9 > 3 for all four runs and coverage above the approximate 1–10% range. Monthly means pass; upper-tail evidence is in `docs/validation/july2008_verification.md`. Scientific disposition of these provisional gates remains open. |
 | September rejection gate | Task 2.4 passes three of four science gates; native valid ranges and QC both cap AOD at 5, making a strictly-above-5 rejection impossible. Endpoint counts remain separate. The original gate needs scientific disposition; it was not silently changed. |

@@ -19,6 +19,17 @@ configuration's `paths.plot` template. Southern Ocean files use dedicated
 `aod_maps_southern_ocean` and `aod_differences_southern_ocean` suite directories,
 so their reports do not replace the global reports for the same dates.
 
+The 18 period mean figures were refreshed for Task 4.7: single-sensor figures
+omit the duplicate Product AOD panel, the sensor aggregate sits at left, and
+platform rows align within Dark Target and Deep Blue columns. Global figures
+no longer repeat a figure-wide AOD heading above their source-specific titles;
+regional figures retain the heading that identifies their region. The mixed
+MODIS/VIIRS product remains a distinct panel. This changes presentation only;
+the count-weighted means and shared color scale are unchanged. Updated hashes
+and protocol reports are recorded in the three inventories above. All 18
+refreshed previews passed protocols and visual inspection; the other 396 maps
+retain their previous hashes.
+
 All period fields and comparison maps were inspected, together with every daily
 map for July 1–31 and September 1–30. Smoke-box inspection covers every day from
 September 8–14 in each of the four configurations. After the initial 182-preview

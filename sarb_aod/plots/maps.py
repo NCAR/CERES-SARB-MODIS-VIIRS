@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from math import ceil
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import cartopy
 import cartopy.crs as ccrs
@@ -25,6 +25,7 @@ from cartopy.util import add_cyclic_point
 from matplotlib.colors import BoundaryNorm, Colormap, Normalize, TwoSlopeNorm
 from matplotlib.figure import Figure
 from matplotlib.transforms import ScaledTranslation
+from matplotlib.typing import HashableList
 from numpy.typing import ArrayLike
 
 from sarb_aod.evaluation.regions import Region, get_region, spatial_mask
@@ -515,14 +516,29 @@ def map_panels(
     end: Any = None,
     region: str | Region | None = None,
     columns: int = 2,
+    layout: Sequence[Sequence[str]] | None = None,
     plot_type: Literal["pcolormesh", "contourf"] = "pcolormesh",
     aod_levels: ArrayLike | None = None,
     cartopy_data_dir: str | Path | None = None,
     coastline_resolution: str | None = None,
 ) -> Figure:
-    """Shared-scale panels, with a single horizontal vector colorbar."""
+    """Shared-scale panels, with a single horizontal vector colorbar.
+
+    An optional source-name mosaic overrides ``columns``. Repeated names span
+    adjacent cells; ``.`` reserves an empty cell without creating a map axis.
+    """
     if not fields or len(fields) != len(sources) or columns < 1:
         raise ValueError("panels require matching nonempty fields/sources and positive columns")
+    if layout is not None:
+        mosaic = [list(row) for row in layout]
+        if (
+            not mosaic
+            or not mosaic[0]
+            or any(len(row) != len(mosaic[0]) for row in mosaic)
+            or len(set(sources)) != len(sources)
+            or {name for row in mosaic for name in row if name != "."} != set(sources)
+        ):
+            raise ValueError("panel layout must be rectangular and contain exactly the sources")
     if cartopy_data_dir is not None:
         configure_cartopy(cartopy_data_dir)
     spec = grid if grid is not None else load_grid()
@@ -530,13 +546,28 @@ def map_panels(
     scale = field_scale(
         np.concatenate([_values(field).ravel() for field in fields]), kind, aod_levels=aod_levels
     )
-    columns = min(columns, len(fields))
-    rows = ceil(len(fields) / columns)
+    if layout is None:
+        columns = min(columns, len(fields))
+        rows = ceil(len(fields) / columns)
+    else:
+        rows, columns = len(mosaic), len(mosaic[0])
     figure = plt.figure(figsize=(5.4 * columns, 3.6 * rows + 0.9), constrained_layout=True)
+    arranged = (
+        figure.subplot_mosaic(
+            cast(list[HashableList[str]], mosaic),
+            subplot_kw={"projection": _projection(subset)},
+        )
+        if layout is not None
+        else None
+    )
     axes, artists, titles, subtitles, gridliners = [], [], [], [], []
     quantity_text = _quantity(kind, quantity)
     for index, (field, source) in enumerate(zip(fields, sources, strict=True)):
-        ax = figure.add_subplot(rows, columns, index + 1, projection=_projection(subset))
+        ax = (
+            arranged[source]
+            if arranged is not None
+            else figure.add_subplot(rows, columns, index + 1, projection=_projection(subset))
+        )
         _, gridliner = _map_context(ax, subset, coastline_resolution)
         artist = draw_spatial_field(
             ax,
@@ -561,13 +592,13 @@ def map_panels(
         subtitles.append(subtitle)
         gridliners.append(gridliner)
     colorbar = _colorbar(figure, artists[0], axes, scale, units)
-    overall = (
-        labeling.title_for_labeled_subset(quantity_text, subset.key)[0]
-        if subset and subset.key != "global"
-        else quantity_text
-    )
-    labeling.validate_title(overall)
-    titles.insert(0, figure.suptitle(overall))
+    for ax in axes:
+        position = ax.get_subplotspec()
+        if position is not None and len(position.rowspan) > 1:
+            ax.set_anchor("C")
+    if subset and subset.key != "global":
+        overall = labeling.title_for_labeled_subset(quantity_text, subset.key)[0]
+        titles.insert(0, figure.suptitle(overall))
     _metadata(
         figure,
         kind="map_panels",

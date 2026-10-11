@@ -232,6 +232,9 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     (`AOD Bias`, `AOD Difference`). Scatter, time-series and histogram titles get no
     plot-type word. Single-source titles put the source first (`MODIS AOD`).
   - Site and region figures are titled `AOD - <Name>`.
+  - Global map panels use source-specific titles without a redundant figure-wide `AOD`
+    heading. Period mean maps omit the duplicate Product panel for single-sensor runs;
+    the sensor aggregate sits at left, with platform rows and Dark Target / Deep Blue columns.
   - Never put dates, years, statistics, `vs <source>`, raw keys, internal labels or `x`/`y` in
     titles. Dates go in the subtitle; maps add ` | Mean: <value>`.
 - **Absolute AOD maps:**

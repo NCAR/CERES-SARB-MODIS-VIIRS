@@ -448,6 +448,33 @@ def _comparison_sources(config: RunConfig, other: RunConfig) -> tuple[str, str]:
     return config.name, other.name
 
 
+def _mean_aod_layout(config: RunConfig) -> list[list[str]]:
+    """Keep platform rows aligned within Dark Target and Deep Blue columns."""
+    sensors = _sensor_streams(config)
+    sensor_order = {name: index for index, name in enumerate(("modis", "viirs"))}
+    summaries = (["product"] if len(sensors) > 1 else []) + sorted(
+        sensors, key=lambda name: (sensor_order.get(name, len(sensor_order)), name)
+    )
+    platform_order = {name: index for index, name in enumerate(("terra", "aqua", "snpp", "noaa20"))}
+    platforms = sorted(
+        {stream.rsplit("_", 1)[0] for stream in config.grid.streams},
+        key=lambda name: (platform_order.get(name, len(platform_order)), name),
+    )
+    layout = [[".", ".", "."] for _ in range(max(len(platforms), len(summaries)))]
+    for row, platform in enumerate(platforms):
+        for column, algorithm in enumerate(("dt", "db"), start=1):
+            stream = f"{platform}_{algorithm}"
+            if stream in config.grid.streams:
+                layout[row][column] = stream
+    if len(summaries) == 1:
+        for cells in layout:
+            cells[0] = summaries[0]
+    else:
+        for row, source in enumerate(summaries):
+            layout[row][0] = source
+    return layout
+
+
 def render_map_figure(
     config: RunConfig,
     aggregate: MapAggregate,
@@ -467,11 +494,13 @@ def render_map_figure(
         "coastline_resolution": config.plots.coastline_resolution,
     }
     if spec.field == "mean_aod":
+        layout = _mean_aod_layout(config)
+        panel_sources = list(dict.fromkeys(name for row in layout for name in row if name != "."))
         return maps.map_panels(
-            list(aggregate.means.values()),
-            list(aggregate.means),
+            [aggregate.means[source] for source in panel_sources],
+            panel_sources,
             aod_levels=geosit_aod_levels([1]),
-            columns=3,
+            layout=layout,
             **kwargs,
         )
     if spec.field == "daily_mean_aod":
