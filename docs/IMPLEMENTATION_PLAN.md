@@ -102,8 +102,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.13 | Deploy provenance changes and refresh July Desktop PDFs | 4.12 | Done; metadata, protocol, visual and transfer checks pass | Task 4.13 (this commit) |
 | 4.14 | Align provenance with map titles and add DAVINCI attribution | 4.13 | Done | `131cb29` |
 | 4.15 | Refresh monthly Desktop PDFs with alignment and attribution | 4.14 | Done; protocols, previews and transfer hashes verified | Task 4.15 (this commit) |
-| 4.16 | Combined regional time series, context map, scatter and provenance; July C6.1 laptop iteration | 4.8, 4.15 | Done | Task 4.16 (this commit) |
-| 4.17 | Render and deliver reviewed July C6.1 regional summaries on the laptop | 4.16 | Pending code commit | — |
+| 4.16 | Combined regional time series, context map, scatter and provenance; July C6.1 laptop iteration | 4.8, 4.15 | Done | `455816c` |
+| 4.17 | Render and deliver reviewed July C6.1 regional summaries on the laptop | 4.16 | Done; 14 PDFs, protocol and visual checks pass, Desktop copies match | Task 4.17 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1546,6 +1546,12 @@ network access to LAADS and AERONET.
   See `docs/REGIONAL_SUMMARY_PLOTS.md` for the layout and reproducible command.
   The final full gate after the review fix passes all 951 offline tests;
   mypy, Black and isort pass. No review findings remain open.
+  Task 4.17 rendered all 14 C6.1 summaries locally with clean revision
+  `455816c`, verified their embedded revision and input checksum, passed
+  all protocols, and checked the previews. Identical PDFs are in Desktop
+  `MODIS_C6.1_Regional_2008-07/`. The delivery inventory is
+  `docs/validation/modis_c61_200807_regional_summary.tsv`; its companion
+  Markdown record preserves configuration/input hashes and reproduction.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.
