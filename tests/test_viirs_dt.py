@@ -8,7 +8,9 @@ import pytest
 from netCDF4 import Dataset
 
 from sarb_aod.config.loader import load_config
+from sarb_aod.config.schema import load_catalog
 from sarb_aod.paths import granule_dir
+from sarb_aod.pipeline import discover_granules, stream_recipes
 from sarb_aod.readers import LAND, OCEAN, read_granule
 from sarb_aod.readers.base import coverage_times
 from sarb_aod.readers.netcdf import NetCDFSource
@@ -18,6 +20,49 @@ from sarb_aod.windows import day_time_edges_seconds
 
 DAY = date(2020, 9, 8)
 PRODUCTS = ("AERDT_L2_VIIRS_SNPP", "AERDT_L2_VIIRS_NOAA20")
+
+
+def test_noaa20_collection2_has_verified_maps_and_distinct_version():
+    catalog = load_catalog()
+    product = PRODUCTS[1]
+    old = resolve_stream(product, "2", "dt", catalog=catalog)
+    baseline = resolve_stream(product, "2.1", "dt", catalog=catalog)
+    assert old.collection == "2"
+    assert catalog.collection(product, "2").file_token == "002"
+    assert catalog.collection(product, "2").cmr_version == "2"
+    assert catalog.collection(product, "2.1").file_token == "021"
+    assert old.geolocation == baseline.geolocation
+    assert old.algorithm_spec == baseline.algorithm_spec
+
+
+def test_ami_noaa20_run_excludes_other_products_and_collections(tmp_path):
+    repo = Path(__file__).resolve().parents[1]
+    config = load_config(repo / "config/runs/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05.yaml")
+    recipes = stream_recipes(config)
+    assert {r.stream_id for r in recipes} == {"noaa20_dt", "noaa20_db"}
+    assert {r.collection for r in recipes} == {"2"}
+    assert len(list(config.period.days())) == 30
+    assert config.paths.archive_read_only
+    catalog = config.load_catalog()
+    assert granule_dir(config.paths, catalog, PRODUCTS[1], "2", DAY) == Path(
+        "/ASDC_archive/VIIRS/J1/002/2020/252"
+    )
+    config = config.model_copy(
+        update={"paths": config.paths.model_copy(update={"granule_dir": str(tmp_path)})}
+    )
+    wanted = {f"{r.product}.A2020252.1936.002.2023213193603.nc" for r in recipes}
+    unwanted = {
+        "AERDT_L2_VIIRS_SNPP.A2020252.1936.002.2023213193603.nc",
+        "AERDT_L2_VIIRS_NOAA20.A2020252.1936.021.2023213193603.nc",
+        "AERDB_L2_VIIRS_NOAA20.A2020251.1936.002.2023213193603.nc",
+        "VJ10203IMD_SS.A2020252.1936.002.2023213193603.nc",
+    }
+    for name in wanted | unwanted:
+        (tmp_path / name).touch()
+    inputs, missing, primary_count = discover_granules(config, DAY, recipes)
+    assert {path.name for path, _ in inputs} == wanted
+    assert primary_count == 2
+    assert missing == []
 
 
 def test_dt_platforms_share_maps_and_cam7_keeps_average_ocean():

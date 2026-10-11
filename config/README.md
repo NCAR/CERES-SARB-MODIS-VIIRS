@@ -6,6 +6,7 @@ Run filenames describe processing, not the machine:
 ```text
 <sensors>_<collections>_l2_<YYYYMM>_<grid>_<cadence>_<weighting>.yaml
 modis_c7_l2_200807_f09_3hr_gls_rho05.yaml
+viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05.yaml
 ```
 
 The filename stem is the run ID and output-directory name. A smoke test uses
@@ -33,6 +34,12 @@ can define their own contracts. Source archive files are not copied into this
 tree or changed. `stage` is disabled by `archive_read_only: true`; `grid`
 discovers archive inputs directly using the configured basename filter. Staging
 `audit` checks download manifests and is not an inventory of the AMI archive.
+
+The NOAA-20-only `ami-viirs-noaa20` profile maps that platform to the archive's
+`J1/{file_token}/{year}/{doy}` directories. Its September run explicitly uses
+Collection 002 for both DT (product v2.0.1) and DB (v2.0.0). Do not use this
+profile for SNPP or MODIS. September Collection 021 aerosol files were absent
+from AMI at the 2026-10-11 inventory; the laptop baseline still uses DT 021.
 
 Use `-p mac` to override machine paths for local C7 development data. The generic
 `ami` profile remains suitable for a separately staged tree with an explicitly

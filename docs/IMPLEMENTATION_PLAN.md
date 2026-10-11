@@ -109,6 +109,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | `56a7642` |
 | 4.21 | Refresh Desktop regional and spatial PDFs with integrated attribution and 550 nm labels | 4.20 | Done; protocols, previews, embedded revisions and copy checks pass | Task 4.21 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
+| 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | Task 5.5 (this commit) |
+| 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Pending deployment | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
@@ -1631,6 +1633,7 @@ network access to LAADS and AERONET.
 | Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
 | AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 complete: 248 C7 July files validated. Task 4.9 generated and delivered 15 PDF plots with passing protocol and visual checks. July daily bias/RMSE pass, but R = 0.7920 misses 0.8; C7 science acceptance, external acquisition and multi-year production remain open. See `docs/validation/ami_c7_200807_plots.md`. |
+| NOAA-20 September AMI run | Task 5.5 completes an explicit Collection 002 DT/DB run definition using 8,240 local archive files. DT product v2.0.1 differs from the laptop baseline's Collection 021. All 954 offline tests, mypy, Black and isort pass; review found no remaining defects after correcting the empty plot-suite setting and catalog inventory expectation. Existing July C7 and September mixed-baseline processing hashes are unchanged. Task 5.6 will deploy and queue gridding only; plots and scientific validation are deferred by user direction. See `docs/AMI_PRODUCTION.md`. |
 | Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
 
 ## AMI C7 implementation revision (2026-10-11)

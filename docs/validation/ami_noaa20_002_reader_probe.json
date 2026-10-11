@@ -1,0 +1,185 @@
+[
+  {
+    "path": "/ASDC_archive/VIIRS/J1/002/2020/245/AERDT_L2_VIIRS_NOAA20.A2020245.1248.002.2023213193452.nc",
+    "stream": "noaa20_dt",
+    "retained": 537,
+    "land": 0,
+    "ocean": 537,
+    "aod_min": 0.0,
+    "aod_max": 0.509,
+    "sigma_finite": 537,
+    "product_version": "2.0.1",
+    "fields": {
+      "land": {
+        "aod": "geophysical_data/Corrected_Optical_Depth_Land",
+        "dimensions": [
+          "number_of_lines_8x8",
+          "number_of_pixels_8x8",
+          "Wavelength_Used_Land_2"
+        ],
+        "qa": "geophysical_data/Land_Ocean_Quality_Flag"
+      },
+      "ocean": {
+        "aod": "geophysical_data/Effective_Optical_Depth_Average_Ocean",
+        "dimensions": [
+          "number_of_lines_8x8",
+          "number_of_pixels_8x8",
+          "Wavelength_Used_ALL"
+        ],
+        "qa": "geophysical_data/Land_Ocean_Quality_Flag"
+      }
+    },
+    "combined_field_identity": "passed"
+  },
+  {
+    "path": "/ASDC_archive/VIIRS/J1/002/2020/245/AERDB_L2_VIIRS_NOAA20.A2020245.1154.002.2023081040753.nc",
+    "stream": "noaa20_db",
+    "retained": 1152,
+    "land": 0,
+    "ocean": 1152,
+    "aod_min": 0.004839428700506687,
+    "aod_max": 0.06440914422273636,
+    "sigma_finite": 1152,
+    "product_version": "2.0.0",
+    "fields": {
+      "land": {
+        "aod": "Aerosol_Optical_Thickness_550_Land",
+        "dimensions": [
+          "Idx_Atrack",
+          "Idx_Xtrack"
+        ],
+        "qa": "Aerosol_Optical_Thickness_QA_Flag_Land"
+      },
+      "ocean": {
+        "aod": "Aerosol_Optical_Thickness_550_Ocean",
+        "dimensions": [
+          "Idx_Atrack",
+          "Idx_Xtrack"
+        ],
+        "qa": "Aerosol_Optical_Thickness_QA_Flag_Ocean"
+      }
+    }
+  },
+  {
+    "path": "/ASDC_archive/VIIRS/J1/002/2020/252/AERDT_L2_VIIRS_NOAA20.A2020252.1124.002.2023213193603.nc",
+    "stream": "noaa20_dt",
+    "retained": 0,
+    "land": 0,
+    "ocean": 0,
+    "aod_min": null,
+    "aod_max": null,
+    "sigma_finite": 0,
+    "product_version": "2.0.1",
+    "fields": {
+      "land": {
+        "aod": "geophysical_data/Corrected_Optical_Depth_Land",
+        "dimensions": [
+          "number_of_lines_8x8",
+          "number_of_pixels_8x8",
+          "Wavelength_Used_Land_2"
+        ],
+        "qa": "geophysical_data/Land_Ocean_Quality_Flag"
+      },
+      "ocean": {
+        "aod": "geophysical_data/Effective_Optical_Depth_Average_Ocean",
+        "dimensions": [
+          "number_of_lines_8x8",
+          "number_of_pixels_8x8",
+          "Wavelength_Used_ALL"
+        ],
+        "qa": "geophysical_data/Land_Ocean_Quality_Flag"
+      }
+    },
+    "combined_field_identity": "passed"
+  },
+  {
+    "path": "/ASDC_archive/VIIRS/J1/002/2020/252/AERDB_L2_VIIRS_NOAA20.A2020252.1212.002.2023081040134.nc",
+    "stream": "noaa20_db",
+    "retained": 0,
+    "land": 0,
+    "ocean": 0,
+    "aod_min": null,
+    "aod_max": null,
+    "sigma_finite": 0,
+    "product_version": "2.0.0",
+    "fields": {
+      "land": {
+        "aod": "Aerosol_Optical_Thickness_550_Land",
+        "dimensions": [
+          "Idx_Atrack",
+          "Idx_Xtrack"
+        ],
+        "qa": "Aerosol_Optical_Thickness_QA_Flag_Land"
+      },
+      "ocean": {
+        "aod": "Aerosol_Optical_Thickness_550_Ocean",
+        "dimensions": [
+          "Idx_Atrack",
+          "Idx_Xtrack"
+        ],
+        "qa": "Aerosol_Optical_Thickness_QA_Flag_Ocean"
+      }
+    }
+  },
+  {
+    "path": "/ASDC_archive/VIIRS/J1/002/2020/274/AERDT_L2_VIIRS_NOAA20.A2020274.1212.002.2023213194009.nc",
+    "stream": "noaa20_dt",
+    "retained": 32005,
+    "land": 1254,
+    "ocean": 30751,
+    "aod_min": -0.05,
+    "aod_max": 1.963,
+    "sigma_finite": 32005,
+    "product_version": "2.0.1",
+    "fields": {
+      "land": {
+        "aod": "geophysical_data/Corrected_Optical_Depth_Land",
+        "dimensions": [
+          "number_of_lines_8x8",
+          "number_of_pixels_8x8",
+          "Wavelength_Used_Land_2"
+        ],
+        "qa": "geophysical_data/Land_Ocean_Quality_Flag"
+      },
+      "ocean": {
+        "aod": "geophysical_data/Effective_Optical_Depth_Average_Ocean",
+        "dimensions": [
+          "number_of_lines_8x8",
+          "number_of_pixels_8x8",
+          "Wavelength_Used_ALL"
+        ],
+        "qa": "geophysical_data/Land_Ocean_Quality_Flag"
+      }
+    },
+    "combined_field_identity": "passed"
+  },
+  {
+    "path": "/ASDC_archive/VIIRS/J1/002/2020/274/AERDB_L2_VIIRS_NOAA20.A2020274.1154.002.2023081034335.nc",
+    "stream": "noaa20_db",
+    "retained": 0,
+    "land": 0,
+    "ocean": 0,
+    "aod_min": null,
+    "aod_max": null,
+    "sigma_finite": 0,
+    "product_version": "2.0.0",
+    "fields": {
+      "land": {
+        "aod": "Aerosol_Optical_Thickness_550_Land",
+        "dimensions": [
+          "Idx_Atrack",
+          "Idx_Xtrack"
+        ],
+        "qa": "Aerosol_Optical_Thickness_QA_Flag_Land"
+      },
+      "ocean": {
+        "aod": "Aerosol_Optical_Thickness_550_Ocean",
+        "dimensions": [
+          "Idx_Atrack",
+          "Idx_Xtrack"
+        ],
+        "qa": "Aerosol_Optical_Thickness_QA_Flag_Ocean"
+      }
+    }
+  }
+]

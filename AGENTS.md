@@ -192,7 +192,10 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
     AMI C7 aerosol samples are available and reader activation is independent of CMR.
     See `docs/MODIS_C7.md` for C7 DB ocean, provisional DT uncertainty, and the
     separately gridded supplied combined AOD/algorithm categories.
-  - VIIRS AERDB: v2 `002`, v2.1 `021` (SNPP v2.1 only from 2026-06). VIIRS AERDT: v2.1 `021`.
+  - VIIRS AERDB: v2 `002`, v2.1 `021` (SNPP v2.1 only from 2026-06). VIIRS AERDT: v2.1 `021`
+    baseline; NOAA-20 Collection 002 (DT product v2.0.1) also verified on AMI samples.
+    The September NOAA-20-only AMI config uses DT/DB `002`, because its local archive
+    has no September aerosol `021` files. Keep that version choice explicit.
     All VIIRS files are NetCDF4.
 - **Variable facts** (verified; details in plan Tasks 1.1, 2.1, 2.2):
   - MODIS 0.55 µm is index 1 on the leading wavelength dimension; VIIRS DT has the wavelength

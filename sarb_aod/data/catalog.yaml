@@ -13,7 +13,8 @@
 #   independently of public CMR availability; see docs/MODIS_C7.md.
 # - VIIRS Deep Blue v2.1 (token "021"): NOAA-20 reprocessed back to 2018; SNPP v2.1
 #   covers only 2026-06 onward, so SNPP history needs v2 (token "002").
-# - VIIRS Dark Target: v2.1 only.
+# - VIIRS Dark Target: v2.1 baseline. NOAA-20 Collection 002 (product v2.0.1)
+#   maps also verified on AMI samples, 2026-10-11; see docs/AMI_PRODUCTION.md.
 
 products:
   MOD04_L2:
@@ -150,12 +151,12 @@ products:
         cmr_version: "2.1"
         file_token: "021"
         file_format: netcdf4
-        geolocation:
+        geolocation: &viirs_dt_geo
           lat: geolocation_data/latitude
           lon: geolocation_data/longitude
           time: null
           time_kind: coverage_attrs
-        algorithms:
+        algorithms: &viirs_dt_algorithms
           dt:
             family: viirs_dt
             surfaces:
@@ -175,4 +176,10 @@ products:
     provider: LAADS
     stream_prefix: noaa20
     collections:
+      "2":
+        cmr_version: "2"
+        file_token: "002"
+        file_format: netcdf4
+        geolocation: *viirs_dt_geo
+        algorithms: *viirs_dt_algorithms
       "2.1": *viirs_dt_v21

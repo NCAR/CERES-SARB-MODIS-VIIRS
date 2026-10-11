@@ -1,0 +1,13 @@
+# NOAA-20 is J1 in the AMI archive. This profile is for NOAA-20-only runs.
+# Read existing aerosol products; never stage into the shared archive.
+paths:
+  data_root: /CERES/sarb/dfillmor/MODIS_VIIRS
+  granule_dir: "/ASDC_archive/VIIRS/J1/{file_token}/{year}/{doy}"
+  granule_pattern: "{short_name}.A{year}{doy}.*.{file_token}.*.nc"
+  archive_read_only: true
+  manifest: "{data_root}/manifests/{short_name}.{file_token}/manifest_{start}_{end}.tsv"
+  output: "{data_root}/grids/{run}/{year}/{month}/{day}/{stem}.{yyyymmdd}.{sssss}.nc"
+  summary: "{data_root}/summaries/{run}/summary_{start}_{end}.tsv"
+  evaluation_dir: "{data_root}/evaluation/{run}"
+  plot: "{data_root}/plots/{run}/{suite}/{name}.{start}-{end}.pdf"
+  cartopy_data_dir: "{data_root}/cartopy"

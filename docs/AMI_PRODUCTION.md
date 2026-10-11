@@ -75,6 +75,58 @@ and summary pass also succeeded. These C7 files include additional native
 combined-product diagnostics and are larger than the earlier C6.1 files below.
 Scientific C7 validation and multi-year production remain separate tasks.
 
+## September 2020 NOAA-20-only gridding
+
+`config/runs/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05.yaml` selects only
+NOAA-20 DT and DB, both Collection 002. The `ami-viirs-noaa20` profile reads
+`/ASDC_archive/VIIRS/J1/002/2020/{doy}` with exact aerosol-product and collection
+filters. This profile is specific to NOAA-20. It does not stage or modify inputs.
+
+A bounded inventory on 2026-10-11 found 3,981 DT and 4,259 DB granules across
+all 30 September dates, totaling 80,122,985,210 bytes. No duplicate acquisition
+keys were found. Collection 021 directories contained other products but no
+September NOAA-20 aerosol files. This is an archive inventory, not an independent
+CMR completeness audit. See [daily counts](validation/ami_noaa20_202009_inventory.tsv).
+
+AMI DT headers report product v2.0.1 (filename token `002`); DB reports v2.0.0.
+This run is intentionally distinct from the laptop mixed-sensor baseline's DT
+Collection 021. Three DT and three DB samples from September 1, 8 and 30 were
+read successfully using the catalog fields. DT QA-selected land/ocean AOD
+matched the native `Optical_Depth_Land_And_Ocean`; named wavelength dimensions,
+coverage-attribute times and expected-error uncertainties use the existing
+VIIRS reader. Shared field maps do not imply equal scientific retrievals across
+versions. [Sample evidence](validation/ami_noaa20_002_reader_probe.json) records
+the inspected paths, versions, dimensions and retained counts.
+
+An additional September 8 19:36 UTC overpass read retained 29,965 DT pixels
+(27,567 land, 2,398 ocean; AOD -0.05 to 4.828) and 34,110 DB pixels (32,435
+land, 1,675 ocean; AOD 0.00625 to 3.93706), with finite uncertainties throughout.
+This checks land, ocean and high-AOD data; it is not a scientific validation.
+
+The run keeps retrieval-team QA, UTC leap-second handling, f09, eight three-hour
+windows/day, GLS rho 0.5, Birge inflation, minimum one pixel and final nonnegative
+cell means. Edge granules are disabled, matching the existing baseline. Expected
+output is 240 CAM7 files under
+`/CERES/sarb/dfillmor/MODIS_VIIRS/grids/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05`.
+Full config, source collections, code revision and runtime environment are
+recorded in NetCDF metadata. Only the `grid` command is submitted; evaluation
+and plots are deferred.
+
+After committing/pushing on the Mac and pulling on AMI, use the existing Bash
+wrapper. Each array task grids one day with one CPU slot; at most four run together:
+
+```bash
+source /SPG_ops/utils/altair/current/default/common/settings.sh
+SARB_RUN=config/runs/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05.yaml
+SARB_LOG=/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05
+mkdir -p "$SARB_LOG"
+"$HOME/miniforge3/envs/sarb-aod/bin/sarb-aod" show-config -c "$SARB_RUN"
+qsub -q scf.q -N noaa20_c2_202009 -t 1-30 -tc 4 -o "$SARB_LOG" scripts/ami_grid.sh "$SARB_RUN"
+```
+
+The wrapper requests a two-hour limit per task. Array execution only grids and
+validates its daily files; it does not run plots or AERONET evaluation.
+
 ## Monthly behavior and recovery
 
 The driver splits the inclusive run period at calendar-month boundaries,
