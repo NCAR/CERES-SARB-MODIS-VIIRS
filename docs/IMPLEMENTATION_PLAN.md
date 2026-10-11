@@ -104,7 +104,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.15 | Refresh monthly Desktop PDFs with alignment and attribution | 4.14 | Done; protocols, previews and transfer hashes verified | Task 4.15 (this commit) |
 | 4.16 | Combined regional time series, context map, scatter and provenance; July C6.1 laptop iteration | 4.8, 4.15 | Done | `455816c` |
 | 4.17 | Render and deliver reviewed July C6.1 regional summaries on the laptop | 4.16 | Done; 14 PDFs, protocol and visual checks pass, Desktop copies match | Task 4.17 (this commit) |
-| 4.18 | Compact regional layout, provenance explanations, grey cities and DAVINCI footer | 4.17 | Done; 951 offline tests and all plot protocols pass; reviewed | Task 4.18 (this commit) |
+| 4.18 | Compact regional layout, provenance explanations, grey cities and DAVINCI footer | 4.17 | Done; 951 offline tests and all plot protocols pass; reviewed | `957622c` |
+| 4.19 | Refresh compact July C6.1 regional PDFs on Desktop | 4.18 | Done; 14 protocols, inspected previews and Desktop checksums pass | Task 4.19 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1562,7 +1563,10 @@ network access to LAADS and AERONET.
   inspection and protocol checks. All 951 offline tests, mypy, Black and isort
   pass. Review found no actionable regressions after 230 targeted tests and
   independent protocol checks on all 14 regions. No new open items.
-  Final PDF regeneration follows the code commit to record its clean revision.
+  Task 4.19 regenerated all 14 summaries at clean revision `957622c`,
+  rechecked the Western US and global previews, verified embedded input/code
+  identities and all protocols, and replaced the Desktop PDFs byte for byte.
+  The delivery report and inventory record the new sizes and checksums.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.
