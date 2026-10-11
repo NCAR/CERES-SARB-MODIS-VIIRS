@@ -178,7 +178,12 @@ def test_matchup_provenance_accepts_plot_options_but_rejects_science(config, inp
     changed = config.model_copy(
         update={"plots": config.plots.model_copy(update={"regions": ["north_africa"]})}
     )
-    assert len(suites.load_matchups(changed, "grid")) == 8
+    loaded = suites.load_matchups(changed, "grid")
+    assert len(loaded) == 8
+    assert loaded.attrs["source_provenance"]["path"] == str(path.resolve())
+    assert (
+        loaded.attrs["source_provenance"]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+    )
     changed = config.model_copy(
         update={"aeronet": config.aeronet.model_copy(update={"instrument_sigma": 0.02})}
     )
@@ -322,6 +327,96 @@ def test_regional_figure_rejects_window_pairs_labeled_as_daily_input(config, inp
     supplied = suites.SuiteInputs({}, daily_grid=inputs.matchups["grid"].assign(pairing="default"))
     with pytest.raises(ValueError, match="require daily pairing"):
         suites.regional_figure(config, "global", supplied)
+
+
+@pytest.fixture
+def city_cache(config):
+    cache = Path(config.paths.data_root) / "cartopy/shapefiles/natural_earth/cultural"
+    cache.mkdir(parents=True)
+    with shapefile.Writer(
+        str(cache / "ne_110m_populated_places"), shapeType=shapefile.POINT
+    ) as writer:
+        writer.field("NAME", "C")
+        writer.field("POP_MAX", "N")
+        for name, longitude, latitude, population in (
+            ("Western City", -110, 35, 2_000_000),
+            ("Eastern City", 12, 3, 3_000_000),
+            ("Small Town", -115, 40, 500),
+        ):
+            writer.point(longitude, latitude)
+            writer.record(name, population)
+    return cache
+
+
+@pytest.mark.parametrize(
+    "region",
+    ["global", "western_us", "southern_ocean", "south_atlantic_ocean", "labor_day_2020_smoke"],
+)
+def test_regional_summary_preserves_daily_statistics_and_map_context(
+    config, inputs, city_cache, region
+):
+    from sarb_aod.evaluation.regions import get_region
+
+    legacy = suites.regional_figure(config, region, inputs)
+    cfg = config.model_copy(
+        update={"plots": config.plots.model_copy(update={"regional_layout": "summary"})}
+    )
+    figure = suites.regional_figure(cfg, region, inputs)
+    metadata = figure._sarb_plot_metadata
+    pd.testing.assert_frame_equal(
+        metadata["regional_daily"], legacy._sarb_plot_metadata["regional_daily"]
+    )
+    np.testing.assert_allclose(
+        list(metadata["metrics"].values()),
+        list(legacy._sarb_plot_metadata["metrics"].values()),
+        equal_nan=True,
+    )
+    paired = metadata["scatter_pairs"]
+    scatter_axis = metadata["regional_summary"]["scatter_axis"]
+    np.testing.assert_allclose(
+        scatter_axis.collections[0].get_offsets(), paired[["x", "y"]].to_numpy()
+    )
+    assert list(metadata["data_axes"][0].get_subplotspec().colspan) == [0, 1, 2]
+    assert "regional_inset" not in metadata
+    assert set(metadata["regional_map"]["cities"].name) <= {"Western City", "Eastern City"}
+    if region == "western_us":
+        assert list(metadata["regional_map"]["cities"].name) == ["Western City"]
+        assert (
+            metadata["regional_map"]["axis"].collections[-1].get_sizes()[0]
+            > metadata["regional_map"]["markers"].get_sizes()[0]
+        )
+    extent = metadata["regional_map"]["extent"]
+    west, east, south, north = get_region(region).extent
+    assert extent[0] <= west and extent[1] >= east
+    assert extent[2] <= south and extent[3] >= north
+    artifact = suites.save_figure(
+        cfg,
+        figure,
+        suite="aeronet_regional_summary",
+        name=f"region_{region}",
+        start=cfg.period.start,
+        end=cfg.period.end,
+    )
+    assert artifact.report["passed"]
+    assert metadata["provenance"]["pdf_output"] == str(artifact.pdf)
+    assert all(np.isfinite(text.get_window_extent().extents).all() for text in metadata["titles"])
+    assert all(not text.get_rasterized() for text in metadata["provenance_text"])
+
+
+def test_regional_summary_requires_cached_cities(config, inputs):
+    cfg = config.model_copy(
+        update={"plots": config.plots.model_copy(update={"regional_layout": "summary"})}
+    )
+    with pytest.raises(FileNotFoundError, match="Missing city map asset"):
+        suites.regional_figure(cfg, "global", inputs)
+
+
+def test_regional_context_is_compact_across_dateline():
+    from sarb_aod.evaluation.regions import Region
+    from sarb_aod.plots.regional_summary import context_extent
+
+    extent = context_extent(Region("pacific", "Pacific", (170, -170, -10, 10)), 0.25)
+    assert extent == (-15, 15, -15, 15)
 
 
 def test_regional_component_uses_its_own_finite_aeronet_sample(config, inputs):

@@ -38,7 +38,7 @@ from sarb_aod.evaluation.report import (
 from sarb_aod.grid.spec import load_grid
 from sarb_aod.paths import cartopy_data_dir, output_path
 from sarb_aod.pipeline import processing_sha256, require_processing_provenance
-from sarb_aod.plots import labeling, maps, scatter, series, summary
+from sarb_aod.plots import labeling, maps, regional_summary, scatter, series, summary
 from sarb_aod.plots.protocol import PlotProtocolError
 from sarb_aod.plots.regional_inset import add_regional_inset
 from sarb_aod.plots.series import TimedValues
@@ -364,7 +364,17 @@ def regional_figure(
     locator = mdates.AutoDateLocator(minticks=4, maxticks=8, interval_multiples=False)
     axis.xaxis.set_major_locator(locator)
     axis.xaxis.set_major_formatter(mdates.AutoDateFormatter(locator))
-    add_regional_inset(figure, pairs, region, cartopy_data_dir=cartopy_data_dir(config))
+    if config.plots.regional_layout == "summary":
+        regional_summary.compose(
+            figure,
+            config,
+            pairs,
+            region,
+            source=_source_label(config, source),
+            input_provenance=daily_grid.attrs.get("source_provenance", {}),
+        )
+    else:
+        add_regional_inset(figure, pairs, region, cartopy_data_dir=cartopy_data_dir(config))
     return figure
 
 
@@ -622,6 +632,10 @@ def render_aeronet_suites(
         for suite in suites:
             expected = []
             output_suite = suite if evaluation_level is None else f"{suite}_{evaluation_level}"
+            if suite == "aeronet_regional_timeseries" and config.plots.regional_layout == "summary":
+                output_suite = output_suite.replace(
+                    "aeronet_regional_timeseries", "aeronet_regional_summary"
+                )
             if pairing not in {None, "default"}:
                 output_suite = f"{output_suite}_{pairing}"
             try:

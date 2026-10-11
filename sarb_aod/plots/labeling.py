@@ -36,6 +36,40 @@ def davinci_tagline() -> str:
     return "DAVINCI - Data Analysis and Visual Intelligence for Climate & Chemistry"
 
 
+def city_label(name: str) -> str:
+    """Retain the geographic dataset's spelling and capitalization."""
+    return name
+
+
+def regional_provenance_sections(provenance: Mapping[str, Any]) -> list[tuple[str, str]]:
+    """Compact evidence for the input matchups and the current regional render."""
+    input_record = provenance["matchup_input"]
+    method = source_display_name(provenance["weighting"], rho=provenance["rho"])
+    qa = source_display_name(provenance["qc"])
+    if provenance["qc_overrides"]:
+        qa += " + Overrides"
+    sections = [
+        (provenance_repository_url(provenance), ""),
+        ("Provenance", ""),
+        ("Created (UTC):", f"  Plot: {provenance['plot_created_utc']}"),
+        ("Code (Git):", f"  Plot: {provenance['plot_git_commit'][:12]}"),
+        (
+            "Method:",
+            f"  {provenance['source']} | {method}\n  {qa}\n  Independent UTC Daily Means\n  Equal Weight per Active Site",
+        ),
+        (
+            "Daily Matchups (Read):",
+            "\n".join(_provenance_path_lines(input_record.get("path", "In-Memory Input"), 66)),
+        ),
+        (
+            "Config:",
+            "\n".join(_provenance_paths(provenance["config_files"], 66)) or "  Programmatic",
+        ),
+        ("PDF Output:", "\n".join(_provenance_path_lines(provenance["pdf_output"], 66))),
+    ]
+    return sections
+
+
 def format_units(units: str | None) -> str:
     """Rewrite a raw unit string to negative-exponent SI LaTeX (D3).
 

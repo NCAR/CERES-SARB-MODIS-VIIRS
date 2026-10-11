@@ -337,6 +337,10 @@ def save_figure(
     Figures remain open so callers may inspect them; suite runners close them.
     """
     path = plot_path(config, suite, name, start, end)
+    if getattr(figure, "_sarb_plot_metadata", {}).get("regional_summary"):
+        from sarb_aod.plots.regional_summary import set_output_provenance
+
+        set_output_provenance(figure, path)
     key = f"{name}.{start:%Y%m%d}-{end:%Y%m%d}"
     report = validate_rendered_figures(
         {key: figure}, report_path=path.with_suffix(".protocol.json")

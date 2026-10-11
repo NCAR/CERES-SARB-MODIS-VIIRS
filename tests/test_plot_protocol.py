@@ -79,6 +79,12 @@ def failures(fig):
     )
 
 
+def test_nonfinite_visible_annotation_is_rejected():
+    fig, axis, _ = basic()
+    axis.text(0.5, np.nan, "Missing Position", transform=axis.transAxes).set_in_layout(False)
+    assert "nonfinite text position" in failures(fig)
+
+
 def test_all_scientific_renderers_pass_and_report_is_json_safe(tmp_path):
     rng = np.random.default_rng(813)
     x = rng.gamma(2, 0.15, 1000)

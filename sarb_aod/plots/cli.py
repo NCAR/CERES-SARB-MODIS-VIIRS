@@ -11,7 +11,7 @@ from sarb_aod.config.loader import load_config
 from sarb_aod.errors import SarbAodError
 from sarb_aod.paths import cartopy_data_dir
 from sarb_aod.plots.aeronet_suites import render_aeronet_suites
-from sarb_aod.plots.style import prefetch_coastlines
+from sarb_aod.plots.style import prefetch_cities, prefetch_coastlines
 from sarb_aod.plots.suites import render_map_suites
 
 
@@ -30,7 +30,7 @@ def plot_command(
         help="Comparison run config (repeatable); plots current minus comparison",
     ),
     prefetch_maps: bool = typer.Option(
-        False, "--prefetch-maps", help="Download cached coastlines, then exit"
+        False, "--prefetch-maps", help="Download configured map assets, then exit"
     ),
 ) -> None:
     """Render protocol-checked CAM7 maps and AERONET evaluation figures."""
@@ -38,6 +38,9 @@ def plot_command(
         cfg = load_config(config, profile)
         if prefetch_maps:
             prefetch_coastlines(cartopy_data_dir(cfg))
+            if cfg.plots.regional_layout == "summary" and cfg.plots.regional_city_limit:
+                prefetch_cities(cartopy_data_dir(cfg))
+                typer.echo(f"Cities cached in {cartopy_data_dir(cfg)}")
             typer.echo(f"Coastlines cached in {cartopy_data_dir(cfg)}")
             return
         comparisons = [load_config(path, profile) for path in (compare or [])]

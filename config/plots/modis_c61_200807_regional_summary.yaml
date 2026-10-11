@@ -1,0 +1,66 @@
+# Plot-only configuration: reuse the verified July C6.1 run and daily matchups.
+name: modis_l2_200807_gls_rho05
+profile: mac
+provenance:
+  development_agents:
+    - tool: Codex
+      provider: OpenAI
+      model_name: unknown
+      model_version: unknown
+      reasoning_effort: unknown
+      notes: "Provenance/plot updates, 2026-10-11; exact model details unverified."
+    - tool: Codex CLI 0.162.1
+      provider: OpenAI
+      model_name: gpt-6-astra
+      model_version: unknown
+      reasoning_effort: xhigh
+      role: code_review
+      notes: "Task 4.12 review, 2026-10-11; alias and effort reported by the review command, exact snapshot unavailable."
+period:
+  start: 2008-07-01
+  end: 2008-07-31
+stage:
+  products:
+    MOD04_L2:
+    - '6.1'
+    MYD04_L2:
+    - '6.1'
+  auth_strategy: netrc
+  threads: 8
+grid:
+  source: f09
+  times_per_day: 8
+  edge_granules: false
+  streams:
+    terra_dt:
+      product: MOD04_L2
+      collection: '6.1'
+    terra_db:
+      product: MOD04_L2
+      collection: '6.1'
+    aqua_dt:
+      product: MYD04_L2
+      collection: '6.1'
+    aqua_db:
+      product: MYD04_L2
+      collection: '6.1'
+qc:
+  preset: retrieval_team
+time:
+  leap_seconds: apply
+weighting:
+  method: gls
+  rho: 0.5
+  birge: true
+  min_pixels: 1
+  single_pixel_sigma: floor
+output:
+  stem: MODIS_VIIRS_AOD_3hr_f09
+  clip_negative_mean: true
+
+plots:
+  suites: [aeronet_regional_timeseries]
+  regions: all
+  regional_layout: summary
+  regional_map_padding: 0.25
+  regional_city_limit: 6

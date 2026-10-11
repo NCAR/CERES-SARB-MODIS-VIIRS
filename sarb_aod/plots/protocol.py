@@ -95,7 +95,10 @@ def _layout_failures(figure: Figure, metadata: dict[str, Any]) -> list[str]:
             continue
         seen.add(id(artist))
         box = artist.get_window_extent(renderer)
-        if not np.isfinite(box.extents).all() or box.width <= 0 or box.height <= 0:
+        if not np.isfinite(box.extents).all():
+            failures.append(f"{role} has nonfinite text position")
+            continue
+        if box.width <= 0 or box.height <= 0:
             continue
         description = f"{role} {artist.get_text()!r}" if isinstance(artist, Text) else role
         boxes.append((description, box))

@@ -500,6 +500,14 @@ def load_matchups(
                 f"Missing or stale matchup processing provenance in {path}; rerun evaluate"
             )
         frame = dataset.to_dataframe().reset_index(drop=True)
+        frame.attrs["source_provenance"] = {
+            "path": str(path.resolve()),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "date_created": str(dataset.attrs.get("date_created", "unknown")),
+            "git_commit": str(dataset.attrs.get("git_commit", "unknown")),
+            "level": level,
+            "pairing": pairing,
+        }
     frame["time"] = pd.to_datetime(frame["time"], utc=True)
     # Older monthly concatenations retained object dtype after empty windows;
     # their writer emitted numeric values as strings. Preserve verified input

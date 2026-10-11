@@ -526,6 +526,9 @@ class PlotsConfig(StrictModel):
     regions: Literal["all"] | list[str] | None = None
     sites: PlotSiteSelection | list[str] = Field(default_factory=PlotSiteSelection)
     site_sources: Literal["product", "sensor", "stream"] = "product"
+    regional_layout: Literal["timeseries", "summary"] = "timeseries"
+    regional_map_padding: float = Field(default=0.25, ge=0.05, le=1, allow_inf_nan=False)
+    regional_city_limit: int = Field(default=6, ge=0, le=20, strict=True)
 
     @field_validator("regions")
     @classmethod

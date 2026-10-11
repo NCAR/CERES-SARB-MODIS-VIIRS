@@ -180,6 +180,23 @@ Each figure has a PDF, PNG preview and protocol report under `paths.plot`. Rende
 fails when the protocol detects invalid scales, rasterization, labels or layout.
 Use `sarb-aod plot -c <run.yaml> --prefetch-maps` once on a new machine to populate
 `paths.cartopy_data_dir`; ordinary rendering requires the cached coastlines.
+For `plots.regional_layout: summary`, that explicit prefetch also caches city
+locations. The combined layout places daily time series across the top and
+provenance, a context map and daily-mean scatter/statistics below. It uses the
+same daily values and acceptance statistics as the existing regional series.
+The July C6.1 laptop iteration has a dedicated tracked plot configuration:
+
+```bash
+sarb-aod plot -c config/plots/modis_c61_200807_regional_summary.yaml --prefetch-maps
+sarb-aod plot -c config/plots/modis_c61_200807_regional_summary.yaml
+```
+
+It reuses verified daily matchups from `modis_l2_200807_gls_rho05` and writes
+14 PDFs plus previews/protocols into that run's `aeronet_regional_summary/`
+directory. `regional_map_padding` controls surrounding geography;
+`regional_city_limit` controls the maximum number of labeled cities (zero
+disables cities). Defaults retain the original time-series/inset layout.
+See the [regional summary guide](docs/REGIONAL_SUMMARY_PLOTS.md).
 
 Campaign measurements, figure inventories and outstanding scientific acceptance
 checks are recorded in `docs/validation/`. Reproducing the CAM7 diagnostic four-stream

@@ -102,6 +102,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.13 | Deploy provenance changes and refresh July Desktop PDFs | 4.12 | Done; metadata, protocol, visual and transfer checks pass | Task 4.13 (this commit) |
 | 4.14 | Align provenance with map titles and add DAVINCI attribution | 4.13 | Done | `131cb29` |
 | 4.15 | Refresh monthly Desktop PDFs with alignment and attribution | 4.14 | Done; protocols, previews and transfer hashes verified | Task 4.15 (this commit) |
+| 4.16 | Combined regional time series, context map, scatter and provenance; July C6.1 laptop iteration | 4.8, 4.15 | Done | Task 4.16 (this commit) |
+| 4.17 | Render and deliver reviewed July C6.1 regional summaries on the laptop | 4.16 | Pending code commit | — |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1524,6 +1526,26 @@ network access to LAADS and AERONET.
   checked both previews and passing protocols, verified all 47 C7 artifacts
   against AMI, and replaced both Desktop PDFs. The 14 regional PDFs retain
   their prior hashes. Updated sizes/hashes are in the delivery record.
+
+- Task 4.16: the opt-in regional summary composes the existing daily time
+  series across the top, with provenance, a padded map and daily-mean scatter
+  below. Both data panels and their statistics share exactly the same daily
+  values. Map sites are finite paired sites in the displayed period; major
+  cities use a prefetched Natural Earth layer, black dots one size above site
+  markers, and labels fitted inside the map. The config keeps C6.1 on the
+  laptop for iteration; defaults and the C7 run retain the existing inset.
+  The initial 950-test offline gate and all 114 focused plot checks pass.
+  All 14 July previews were inspected and pass protocol. The provenance
+  panel keeps actual input/output paths while PDF metadata also retains
+  matchup and map-asset checksums. Statistics choose a quiet scatter corner.
+  Review found a date-limited-region crash in city ranking: city membership
+  now uses a spatial-only mask, with a Labor Day smoke regression. Review's
+  full run passed 949 tests but its sandbox could not bind the localhost
+  fixture; the task's full run passes that test. Protocol now rejects
+  nonfinite text positions, and the new map title uses explicit placement.
+  See `docs/REGIONAL_SUMMARY_PLOTS.md` for the layout and reproducible command.
+  The final full gate after the review fix passes all 951 offline tests;
+  mypy, Black and isort pass. No review findings remain open.
 
 - Task 4.8: independent UTC daily AERONET and satellite means are paired by
   site-day, then averaged equally across sites for regional daily acceptance.

@@ -106,6 +106,18 @@ def prefetch_coastlines(
         ]
 
 
+def prefetch_cities(data_dir: str | Path) -> Path:
+    """Explicitly cache the Natural Earth city layer used by regional summaries."""
+    import warnings
+
+    from cartopy.io import DownloadWarning, shapereader
+
+    configure_cartopy(data_dir)
+    with warnings.catch_warnings():
+        warnings.simplefilter("default", DownloadWarning)
+        return Path(shapereader.natural_earth("110m", "cultural", "populated_places"))
+
+
 # =============================================================================
 # Font Configuration
 # =============================================================================
