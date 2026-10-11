@@ -22,6 +22,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 from . import __version__
+from .combined_product import AOD_NAME, COUNT_NAMES, FLAG_NAME, TOTAL_NAME, CombinedWindow
 from .grid.spec import NLAT, NLON, f09_lat, f09_lat_bnds, f09_lon, f09_lon_bnds
 from .windows import TIME_CALENDAR, TIME_UNITS, WINDOW_LENGTH_SEC, cf_hours
 
@@ -147,6 +148,7 @@ def write_contract_file(
     aod_weighted_mean_viirs: ArrayLike | None = None,
     global_attrs: Mapping[str, Any] | None = None,
     extra_fields: Mapping[str, ArrayLike] | None = None,
+    combined_product: CombinedWindow | None = None,
     clip_negative_mean: bool = True,
 ) -> Path:
     """Write one complete f09 window to a temporary file, then rename it.
@@ -214,6 +216,8 @@ def write_contract_file(
                 variable.standard_name = standard
                 variable.bounds = f"{name}_bnds"
                 variable[:] = data
+            if combined_product is not None:
+                _write_combined(dataset, combined_product)
             dataset.createVariable("lat_bnds", "f8", ("lat", "nbnds"))[:] = f09_lat_bnds()
             dataset.createVariable("lon_bnds", "f8", ("lon", "nbnds"))[:] = f09_lon_bnds()
             time = dataset.createVariable("time", "f8", ())
@@ -254,6 +258,69 @@ def write_contract_file(
     return path
 
 
+def _write_combined(dataset: Any, product: CombinedWindow) -> None:
+    if product.category_counts.shape != (3, NLAT, NLON):
+        raise ValueError("combined category counts must have shape (3, 192, 288)")
+    counts = np.stack([_count_field(c, "combined count") for c in product.category_counts])
+    total = _count_field(counts.astype(np.int64).sum(axis=0), TOTAL_NAME)
+    mean = _float_field(product.mean, AOD_NAME)
+    if np.any((total > 0) & (mean <= -900)) or np.any((total == 0) & (mean != -999)):
+        raise ValueError("combined product means and counts disagree")
+    for name, values in [(TOTAL_NAME, total), *zip(COUNT_NAMES, counts, strict=True)]:
+        v = dataset.createVariable(name, "i4", ("lat", "lon"))
+        v.units = "1"
+        v.long_name = name.replace("_", " ")
+        v[:] = values
+    v = dataset.createVariable(AOD_NAME, "f4", ("lat", "lon"), fill_value=FILL_FLOAT)
+    v.units = "1"
+    v.long_name = "Arithmetic mean of the supplied MODIS DT/DB combined AOD at 550 nm"
+    v.cell_methods = "time: mean area: mean"
+    v.ancillary_variables = f"{TOTAL_NAME} {FLAG_NAME}"
+    v[:] = mean
+    flags = np.where(total > 0, np.argmax(counts, axis=0), -999).astype(np.int16)
+    flags[(counts > 0).sum(axis=0) > 1] = 3
+    flag = dataset.createVariable(FLAG_NAME, "i2", ("lat", "lon"), fill_value=np.int16(-999))
+    flag.units = "1"
+    flag.long_name = "Source algorithm categories contributing to the gridded combined AOD"
+    flag.flag_values = np.arange(4, dtype=np.int16)
+    flag.flag_meanings = "dark_target deep_blue native_mixed multiple_source_categories"
+    flag.comment = "0, 1, 2 retain source meanings when all contributing pixels share one category; 3 denotes multiple categories. Counts retain the full category distribution."
+    flag.ancillary_variables = " ".join(COUNT_NAMES)
+    flag[:] = flags
+
+
+def _validate_combined(dataset: Any, errors: list[str]) -> None:
+    names = (AOD_NAME, FLAG_NAME, TOTAL_NAME, *COUNT_NAMES)
+    if not any(name in dataset.variables for name in names) and not hasattr(
+        dataset, "combined_product_config"
+    ):
+        return
+    if any(name not in dataset.variables for name in names):
+        errors.append("incomplete supplied combined-product variables")
+        return
+    for name in names:
+        expected = "f4" if name == AOD_NAME else "i2" if name == FLAG_NAME else "i4"
+        if dataset[name].dimensions != ("lat", "lon") or dataset[name].dtype != np.dtype(expected):
+            errors.append(f"invalid supplied combined-product layout: {name}")
+            return
+    counts = np.stack([np.asarray(dataset[name][:]) for name in COUNT_NAMES])
+    total = np.asarray(dataset[TOTAL_NAME][:])
+    mean = np.asarray(dataset[AOD_NAME][:])
+    flag = np.asarray(dataset[FLAG_NAME][:])
+    expected_flags = np.where(total > 0, np.argmax(counts, axis=0), -999)
+    expected_flags[(counts > 0).sum(axis=0) > 1] = 3
+    if np.any(counts < 0) or not np.array_equal(total, counts.astype(np.int64).sum(axis=0)):
+        errors.append("combined-product category counts disagree with total")
+    if not np.array_equal(flag, expected_flags):
+        errors.append("combined-product flags disagree with category counts")
+    if (
+        not np.isfinite(mean).all()
+        or np.any((total == 0) & (mean != -999))
+        or np.any((total > 0) & (mean <= -900))
+    ):
+        errors.append("combined-product means disagree with counts")
+
+
 def validate_contract_file(path: str | Path) -> tuple[bool, list[str]]:
     """Check the CAM7/SP1 layout, f09 coordinates and UTC window semantics."""
     errors: list[str] = []
@@ -267,6 +334,7 @@ def validate_contract_file(path: str | Path) -> tuple[bool, list[str]]:
 
 
 def _validate_dataset(dataset: Any, errors: list[str]) -> None:
+    _validate_combined(dataset, errors)
     for name, length in (("lat", NLAT), ("lon", NLON), ("nbnds", NBNDS)):
         if name not in dataset.dimensions:
             errors.append(f"missing dim {name}")

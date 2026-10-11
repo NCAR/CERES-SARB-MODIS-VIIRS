@@ -47,10 +47,10 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 |---|---|---|
 | 0 | Package, config schema/profiles, catalog, `stage`/`audit`, env, tooling | **Done.** July 2008 audited 9,518/9,518; September 2020 audited 29,856/29,856 after resumable recovery of four DNS failures. |
 | 1 | MODIS C6.1 → CAM7 files (July 2008) | Implemented and verified; VP1 scientific acceptance open |
-| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 (Sept 2020) | Implemented and verified for available collections; rejection-gate acceptance open; C7 activation blocked |
+| 2 | VIIRS readers, MODIS+VIIRS mixing, C7 | C7 reader and native diagnostics implemented from AMI samples; monthly operational test and C7 science comparison tracked below |
 | 3 | AERONET validation suite; choose ρ and other defaults | Daily campaign: 24 verified, 18 global passes including both baselines; regional failures and daily uncertainty remain open |
 | 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
-| 5 | Production profile (AMI), multi-year runs | Portable monthly driver done; AMI deployment blocked on site details |
+| 5 | Production profile (AMI), multi-year runs | July C7 deployment in progress; multi-year production deferred |
 
 ### Tasks, dependencies and order
 
@@ -91,13 +91,17 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.6 | Full plot runs | 3.7 | Plots accepted; science/SP1 acceptance open | 761c2da |
 | 4.7 | Mean AOD comparison layout | 4.6 | Done | 35c6041 |
 | 4.8 | Daily-mean validation and regional time-series comparisons | 3.6, 4.5b, 4.7 | Done | Task 4.8 (this commit) |
-| 2.5 | MODIS C7 activation | blocked: C7 release | Blocked | |
+| 2.5 | MODIS C7 activation and supplied combined-product diagnostics | AMI C7 samples | Done; C7 science acceptance separate | Task 2.5 (this commit) |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
-| 5.2 | AMI profile deployment and multi-year production | blocked: AMI details | Blocked | |
+| 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | In progress | |
+| 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | In progress | |
+| 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
+| 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
 (SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, ~213 GiB). MODIS
-C7 aerosol isn't published; staging reports it "unavailable" until it is.
+C7 public acquisition was unavailable at the initial check; AMI has local July 2008
+C7 aerosol files, independently verified on 2026-10-11.
 
 ---
 
@@ -242,7 +246,7 @@ qc:
   overrides: {}              # e.g. {modis_dt: {ocean: {qa_min: 3}}} for the Phase 3 comparison
 ```
 
-| Preset | DT land | DT ocean | DB land | DB water (VIIRS only) | AOD range |
+| Preset | DT land | DT ocean | DB land | DB water (VIIRS and MODIS C7) | AOD range |
 |---|---|---|---|---|---|
 | `retrieval_team` (default) | QA = 3 | **QA ≥ 1** | QA ≥ 2 | QA ≥ 2 (water QA takes only 1 or 3, so = 3) | [−0.05, 5] |
 | `cam7_v2` | QA ≥ 1 | QA ≥ 1, `..._Best_Ocean` (MODIS only) | QA ≥ 1 | QA ≥ 1 | [0, 5], all streams |
@@ -652,12 +656,16 @@ QC-passed pixel count, p50/p90/max AOD, and the count at or above `aod_max`. Wri
 
 Also compare NOAA-20 DB v2 with v2.1 (Task 2.3).
 
-### Task 2.5: C7 activation (blocked until LAADS publishes MOD04/MYD04 C7)
+### Task 2.5: C7 activation from AMI archive samples
 
-When it is published (CMR version `7`, token `007`, NetCDF4):
-- fill in the C7 variable map, by dimension name;
-- stage July 2008 and Sept 2020 C7 and compare with C6.1;
-- if C7 carries Dark Target per-pixel uncertainty, use it for DT σ.
+Activate local AMI C7 (CMR version `7`, token `007`, NetCDF4) using inspected
+Terra/Aqua samples. Fill dimension-name variable maps, including DB ocean and
+retrieval uncertainties, and separately grid the supplied combined AOD and
+algorithm categories requested by Seiji. Preserve the CAM consumer contract.
+See [MODIS C7](MODIS_C7.md) for semantics and evidence. No per-pixel DT AOD
+uncertainty was found; the configured envelope remains provisional. Task 5.3
+runs July operationally; Task 2.6 retains July/September science comparisons
+and uncertainty assessment. Public acquisition does not gate local activation.
 
 ---
 
@@ -1482,7 +1490,7 @@ network access to LAADS and AERONET.
 | July VP1 acceptance | Task 1.10 measured written p99.9 > 3 for all four runs and coverage above the approximate 1–10% range. Monthly means pass; upper-tail evidence is in `docs/validation/july2008_verification.md`. Scientific disposition of these provisional gates remains open. |
 | September rejection gate | Task 2.4 passes three of four science gates; native valid ranges and QC both cap AOD at 5, making a strictly-above-5 rejection impossible. Endpoint counts remain separate. The original gate needs scientific disposition; it was not silently changed. |
 | Sept 2020 staging | Complete: 29,856/29,856 audited. Four files missed during a DNS failure were recovered by resumable staging; the recovery log is `.cache/stage_september_resume.log`. |
-| MODIS C7 aerosol not released | Catalog and staging ready; Task 2.5 fills the variable map |
+| MODIS C7 public acquisition and science acceptance | AMI C7 samples permit reader activation independently of CMR; July operational test, September comparison and uncertainty calibration tracked separately |
 | DT ocean QA source conflict | Keep QA ≥ 1: the two-month QA = 3 sensitivity loses coverage and worsens global grid RMSE. Small southern land/coastal samples do not establish open-ocean skill. Evidence: `docs/validation/evaluation_campaign.md`. |
 | ρ default and scientific acceptance | Keep 0.5 provisional. Historical three-hour diagnostics did not calibrate uncertainty for any tested ρ ∈ [0, 1]; these are not daily-product acceptance failures. Task 4.8 records new daily regional acceptance separately in `docs/validation/daily_acceptance_campaign.md`. Daily uncertainty calibration requires an explicit temporal covariance model. |
 | DT and DB retrieve the same scene (correlated across streams) | v1 treats streams as independent; Birge inflation partly covers it; a cross-stream ρ is a later option |
@@ -1492,5 +1500,25 @@ network access to LAADS and AERONET.
 | AERONET service limits | ≤ 10 requests/min, one request per day for all sites, raw CSV cached |
 | Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
-| AMI environment | Task 5.1 portable driver is complete; Task 5.2 needs AMI paths/archive layout, scheduler/allocation, Python environment, network access and the production date range. |
+| AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 track configs and July processing. External acquisition and plotting setup are outside this operational test. |
 | Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
+
+## AMI C7 implementation revision (2026-10-11)
+
+The user authorized July 2008 C7 processing on AMI, with output beneath
+`/CERES/sarb/dfillmor/MODIS_VIIRS`. Develop on the Mac, commit/push, then
+fast-forward pull `$HOME/CERES-SARB-MODIS-VIIRS` on AMI. Track run and machine
+configs; reconcile any site edits into the laptop source. See
+[MODIS C7](MODIS_C7.md) for the inspected fields, supplied combined-product
+semantics, and limits of operational acceptance.
+
+- Task 2.5: C7 Terra/Aqua reader maps, DB ocean QA/uncertainty, product-specific
+  archive discovery and read-only staging guard, independent supplied combined
+  AOD/category counts, atomic output and validation. Two real AMI samples agree
+  with producer DT/DB best estimates at default QA. Review findings fixed:
+  unfiltered DB fields preserve QA-1 overrides; source-precision bounds retain
+  native float32 -0.1. All 933 offline tests, mypy, Black and isort pass.
+  `codex review --uncommitted` completed; both findings have regression tests.
+  The review sandbox could not bind the HTTP fixture, but the full task gate
+  passed in the primary environment. July/September scientific validation and
+  C7 DT uncertainty calibration remain Task 2.6.

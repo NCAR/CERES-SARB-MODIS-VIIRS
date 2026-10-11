@@ -9,7 +9,8 @@
 #
 # Availability notes (CMR/LAADS, verified 2026-10-10):
 # - MODIS C7: CMR "7", token "007", NetCDF4. LAADS publishes only C7 L1B/geolocation
-#   (MOD02*/MOD03) so far; MOD04_L2/MYD04_L2 C7 return zero granules until released.
+#   (MOD02*/MOD03) at that check. AMI C7 aerosol samples verified 2026-10-11
+#   independently of public CMR availability; see docs/MODIS_C7.md.
 # - VIIRS Deep Blue v2.1 (token "021"): NOAA-20 reprocessed back to 2018; SNPP v2.1
 #   covers only 2026-06 onward, so SNPP history needs v2 (token "002").
 # - VIIRS Dark Target: v2.1 only.
@@ -54,7 +55,44 @@ products:
                 aod: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land}
                 qa: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag}
                 sigma: {name: Deep_Blue_Aerosol_Optical_Depth_550_Land_Estimated_Uncertainty}
-      "7": {cmr_version: "7", file_token: "007", file_format: netcdf4}
+      "7": &modis_c7
+        cmr_version: "7"
+        file_token: "007"
+        file_format: netcdf4
+        geolocation:
+          lat: geolocation_data/Latitude
+          lon: geolocation_data/Longitude
+          time: geophysical_data_Deep_Blue/Scan_Start_Time
+          time_kind: tai93
+        algorithms:
+          dt:
+            family: modis_dt
+            surfaces:
+              land:
+                aod:
+                  name: geophysical_data_Dark_Target/Corrected_Optical_Depth_Land
+                  select: {Wavelength_Used_Land_2: 1}
+                qa: {name: geophysical_data_Dark_Target/Land_Ocean_Quality_Flag}
+              ocean:
+                aod:
+                  name: geophysical_data_Dark_Target/Effective_Optical_Depth_Average_Ocean
+                  select: {Wavelength_Used_ALL: 1}
+                qa: {name: geophysical_data_Dark_Target/Land_Ocean_Quality_Flag}
+          db:
+            family: modis_db
+            surfaces:
+              land:
+                aod: {name: geophysical_data_Deep_Blue/Aerosol_Optical_Thickness_550_Land}
+                qa: {name: geophysical_data_Deep_Blue/Aerosol_Optical_Thickness_QA_Flag_Land}
+                sigma: {name: geophysical_data_Deep_Blue/Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land}
+              ocean:
+                aod: {name: geophysical_data_Deep_Blue/Aerosol_Optical_Thickness_550_Ocean}
+                qa: {name: geophysical_data_Deep_Blue/Aerosol_Optical_Thickness_QA_Flag_Ocean}
+                sigma: {name: geophysical_data_Deep_Blue/Aerosol_Optical_Thickness_550_Expected_Uncertainty_Ocean}
+        combined_product:
+          aod: {name: geophysical_data_Dark_Target_Deep_Blue_Combined/AOD_550_Dark_Target_Deep_Blue_Combined_Land_Ocean}
+          qa: {name: geophysical_data_Dark_Target_Deep_Blue_Combined/AOD_550_Dark_Target_Deep_Blue_Combined_QA_Flag_Land_Ocean}
+          algorithm_flag: {name: geophysical_data_Dark_Target_Deep_Blue_Combined/AOD_550_Dark_Target_Deep_Blue_Combined_Algorithm_Flag_Land_Ocean}
   MYD04_L2:
     platform: Aqua
     instrument: MODIS
@@ -63,7 +101,7 @@ products:
     collections:
       # Aqua C6.1 also uses the :mod04 dimension suffix (verified on staged granules).
       "6.1": *modis_c61
-      "7": {cmr_version: "7", file_token: "007", file_format: netcdf4}
+      "7": *modis_c7
   AERDB_L2_VIIRS_SNPP:
     platform: SNPP
     instrument: VIIRS

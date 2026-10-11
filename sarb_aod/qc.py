@@ -11,7 +11,7 @@ from sarb_aod.config.schema import AlgorithmFamily, QCConfig, Surface
 
 _RETRIEVAL_QA_MIN: dict[AlgorithmFamily, dict[Surface, int]] = {
     "modis_dt": {"land": 3, "ocean": 1},
-    "modis_db": {"land": 2},
+    "modis_db": {"land": 2, "ocean": 2},
     "viirs_dt": {"land": 3, "ocean": 1},
     "viirs_db": {"land": 2, "ocean": 2},
 }

@@ -112,6 +112,8 @@ def stage(
     log: LogFn = print,
 ) -> list[StageSummary]:
     """Acquire the configured granules; return one summary per product collection."""
+    if cfg.paths.archive_read_only:
+        raise ValueError("stage is disabled for a read-only archive profile; use grid directly")
     hooks = hooks or Hooks()
     catalog: Catalog = cfg.load_catalog()
     start, end = cfg.period.start, cfg.period.end

@@ -14,12 +14,13 @@ from typing import Any, Literal, cast
 import netCDF4
 import numpy as np
 
+from sarb_aod.combined_product import accumulate_product, product_window
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import validate_contract_file, write_contract_file
 from sarb_aod.grid.combine import CombinedGrid, combine
 from sarb_aod.grid.kernels import Accumulators, accumulate, count_pixels
 from sarb_aod.grid.spec import load_grid, normalize_longitude
-from sarb_aod.paths import granule_dir, output_path
+from sarb_aod.paths import granule_dir, granule_pattern, output_path
 from sarb_aod.qc import resolve_rule
 from sarb_aod.readers import read_granule
 from sarb_aod.streams import StreamRecipe, resolve_stream
@@ -63,6 +64,17 @@ def processing_sha256(config: RunConfig) -> str:
         }
         for recipe in stream_recipes(config)
     ]
+    if config.combined_product.enabled:
+        definition["combined_product"] = config.combined_product.model_dump(mode="json")
+        combined_recipes = {}
+        for r in stream_recipes(config):
+            spec = config.load_catalog().collection(r.product, r.collection).combined_product
+            if spec is None:
+                raise ValueError(f"no combined product defined for {r.product} {r.collection}")
+            combined_recipes[r.product] = spec.model_dump(mode="json")
+        definition["combined_recipes"] = combined_recipes
+    if config.paths.granule_pattern != "*":
+        definition["granule_pattern"] = config.paths.granule_pattern
     return hashlib.sha256(
         json.dumps(definition, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
@@ -97,12 +109,14 @@ def stream_recipes(config: RunConfig) -> list[StreamRecipe]:
     ]
 
 
-def _granules(directory: Path, file_format: str) -> list[Path]:
+def _granules(directory: Path, file_format: str, pattern: str = "*") -> list[Path]:
     suffixes = {".hdf"} if file_format == "hdf4" else {".nc", ".nc4", ".h5", ".hdf5"}
     if not directory.is_dir():
         return []
     return sorted(
-        path for path in directory.iterdir() if path.is_file() and path.suffix.lower() in suffixes
+        path
+        for path in directory.glob(pattern)
+        if path.is_file() and path.suffix.lower() in suffixes
     )
 
 
@@ -118,14 +132,26 @@ def discover_granules(
     primary_count = 0
     for (product, collection), selected in groups.items():
         directory = granule_dir(config.paths, catalog, product, collection, day)
-        files = _granules(directory, selected[0].file_format)
+        files = _granules(
+            directory,
+            selected[0].file_format,
+            granule_pattern(config.paths, catalog, product, collection, day),
+        )
+        if not files:
+            raise ValueError(f"no primary granules for {product} {collection} {day}: {directory}")
         primary_count += len(files)
         inputs.extend((path, selected) for path in files)
         if config.grid.edge_granules:
             previous = granule_dir(
                 config.paths, catalog, product, collection, day - timedelta(days=1)
             )
-            edges = _granules(previous, selected[0].file_format)
+            edges = _granules(
+                previous,
+                selected[0].file_format,
+                granule_pattern(
+                    config.paths, catalog, product, collection, day - timedelta(days=1)
+                ),
+            )
             if edges:
                 inputs.append((edges[-1], selected))
             else:
@@ -196,10 +222,13 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
     if not primary_count:
         raise ValueError(f"no primary granules for {day}")
     a = Accumulators.create(len(recipes))
+    native = Accumulators.create(3) if config.combined_product.enabled else None
     indices = {r.stream_id: i for i, r in enumerate(recipes)}
     counts: dict[str, dict[str, int]] = {r.stream_id: defaultdict(int) for r in recipes}
     edges = day_time_edges_seconds(day)
     for path, selected in inputs:
+        if native is not None:
+            accumulate_product(native, path, selected[0], config, day)
         batches = read_granule(
             path, selected, qc=config.qc, uncertainty=config.uncertainty, time=config.time, day=day
         )
@@ -242,6 +271,11 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
         for name in ["MODIS", "VIIRS"]
     }
     attrs = _provenance(config, recipes, len(inputs), missing)
+    if native is not None:
+        attrs["combined_product_config"] = config.combined_product.model_dump_json()
+        attrs["combined_product_aggregation"] = (
+            "arithmetic mean of native retrievals, Terra and Aqua pooled; independent of primary DT/DB merge"
+        )
     for i, path in enumerate(files):
         extra = {
             "aod_chi2_per_dof": merged.chi2_per_dof[i],
@@ -263,6 +297,7 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
             aod_weighted_mean_viirs=instruments["VIIRS"].mean[i],
             global_attrs=attrs,
             extra_fields=extra,
+            combined_product=product_window(native, i) if native is not None else None,
             clip_negative_mean=config.output.clip_negative_mean,
         )
         valid, errors = validate_contract_file(path)

@@ -172,16 +172,21 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
     `.cache/stage_september_resume.log`; the older `~/Data/logs/` log remains unchanged.
   - Long jobs run detached:
     `screen -dmS <name> zsh -c 'caffeinate -i <cmd> >> <log> 2>&1'`.
-- **Production (AMI)** paths are unknown: `config/profiles/ami.yaml` reads
-  `${SARB_AOD_DATA_ROOT}`. Never hard-code machine paths in code; add template fields or
-  profile keys instead.
+- **Production (AMI)** output root is `/CERES/sarb/dfillmor/MODIS_VIIRS`
+  (user direction, 2026-10-11); archive inputs remain read-only. Develop locally,
+  commit/push, then pull `$HOME/CERES-SARB-MODIS-VIIRS` on AMI. The generic
+  `config/profiles/ami.yaml` still reads `${SARB_AOD_DATA_ROOT}`. Never hard-code
+  machine paths in code; add template fields or profile keys instead.
 - **Run configs** choose collections per product for staging
   (`stage.products: {MOD04_L2: ["6.1", "7"], ...}`). Gridding names exactly one collection
   per stream (plan Task 1.9).
 - **Collections** (`sarb_aod/data/catalog.yaml`; keys are CMR VersionIds):
   - MODIS C6.1: token `061`, HDF4.
-  - MODIS C7: token `007`, NetCDF4. LAADS publishes C7 only for L1B and geolocation so far, so
-    MOD04/MYD04 C7 are reported "unavailable".
+  - MODIS C7: token `007`, NetCDF4. The initial public acquisition check found
+    only C7 L1B and geolocation products;
+    AMI C7 aerosol samples are available and reader activation is independent of CMR.
+    See `docs/MODIS_C7.md` for C7 DB ocean, provisional DT uncertainty, and the
+    separately gridded supplied combined AOD/algorithm categories.
   - VIIRS AERDB: v2 `002`, v2.1 `021` (SNPP v2.1 only from 2026-06). VIIRS AERDT: v2.1 `021`.
     All VIIRS files are NetCDF4.
 - **Variable facts** (verified; details in plan Tasks 1.1, 2.1, 2.2):

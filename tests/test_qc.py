@@ -50,7 +50,6 @@ def test_qa_override_and_explicit_aod_bounds():
     "data",
     [
         {"overrides": {"modis": {"land": {"qa_min": 3}}}},
-        {"overrides": {"modis_db": {"ocean": {"qa_min": 3}}}},
         {"overrides": {"modis_dt": {"water": {"qa_min": 3}}}},
         {"overrides": {"modis_dt": {"land": {"qa_min": 4}}}},
         {"overrides": {"modis_dt": {"land": {"qa_min": -1}}}},
@@ -158,7 +157,6 @@ def test_cam7_swaps_only_modis_dt_ocean_variables():
 
 
 def test_undefined_surface_and_shape_mismatch_are_errors():
-    with pytest.raises(ValueError, match="no QC rule"):
-        resolve_rule("modis_db", "ocean")
+    assert resolve_rule("modis_db", "ocean").qa_min == 2
     with pytest.raises(ValueError, match="identical shapes"):
         quality_masks([0.1, 0.2], [3], "modis_dt", "land")

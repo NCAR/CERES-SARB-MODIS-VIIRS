@@ -49,6 +49,20 @@ def manifest_path(
     return Path(paths.manifest.format(**fields))
 
 
+def granule_pattern(
+    paths: PathsConfig, catalog: Catalog, short_name: str, collection: str, day: date
+) -> str:
+    fields = _product_fields(paths, catalog, short_name, collection)
+    fields.update(
+        year=f"{day:%Y}",
+        month=f"{day:%m}",
+        day=f"{day:%d}",
+        doy=f"{day:%j}",
+        yyyymmdd=f"{day:%Y%m%d}",
+    )
+    return paths.granule_pattern.format(**fields)
+
+
 def aeronet_path(config: RunConfig, day: date) -> Path:
     """Daily all-site AERONET cache, partitioned by quality level and averaging."""
     return Path(

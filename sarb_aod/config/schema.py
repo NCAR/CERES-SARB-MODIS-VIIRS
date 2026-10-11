@@ -119,12 +119,21 @@ class Geolocation(StrictModel):
         return self
 
 
+class CombinedProductSpec(StrictModel):
+    """Producer's combined AOD, independent of the DT/DB merge."""
+
+    aod: VarRef
+    qa: VarRef
+    algorithm_flag: VarRef
+
+
 class CollectionSpec(StrictModel):
     cmr_version: str
     file_token: str
     file_format: Literal["hdf4", "netcdf4"]
     geolocation: Geolocation | None = None
     algorithms: dict[Algorithm, AlgorithmSpec] = Field(default_factory=dict)
+    combined_product: CombinedProductSpec | None = None
 
     @model_validator(mode="after")
     def _reader_metadata(self) -> "CollectionSpec":
@@ -195,10 +204,20 @@ class PathsConfig(StrictModel):
 
     data_root: Path
     granule_dir: str = DEFAULT_GRANULE_DIR
+    granule_pattern: str = "*"
+    archive_read_only: bool = False
     manifest: str = DEFAULT_MANIFEST
     output: str = DEFAULT_OUTPUT
     evaluation_dir: str = "{data_root}/evaluation/{run}"
     plot: str = "{data_root}/plots/{run}/{suite}/{name}.{start}-{end}.pdf"
+
+    @field_validator("granule_pattern")
+    @classmethod
+    def _granule_pattern(cls, value: str) -> str:
+        _check_template(value, GRANULE_FIELDS - {"data_root"}, "paths.granule_pattern")
+        if not value or "/" in value or "\\" in value or "**" in value:
+            raise ValueError("granule_pattern must be a nonempty, nonrecursive basename glob")
+        return value
 
     @field_validator("plot")
     @classmethod
@@ -361,8 +380,6 @@ class QCConfig(StrictModel):
             raise ValueError("qc.aod_min must not exceed qc.aod_max")
         if self.preset == "cam7_v2" and self.aod_min < 0:
             raise ValueError("cam7_v2 requires nonnegative qc.aod_min")
-        if "ocean" in self.overrides.get("modis_db", {}):
-            raise ValueError("modis_db has no ocean retrieval to override")
         return self
 
 
@@ -543,6 +560,21 @@ class PlotsConfig(StrictModel):
         return value
 
 
+class CombinedProductConfig(StrictModel):
+    """Grid the supplied product separately, preserving native valid retrievals."""
+
+    enabled: bool = False
+    qa_min: int = Field(default=0, ge=0, le=3)
+    aod_min: float = Field(default=-0.1, allow_inf_nan=False)
+    aod_max: float = Field(default=5.0, allow_inf_nan=False)
+
+    @model_validator(mode="after")
+    def _range(self) -> "CombinedProductConfig":
+        if self.aod_min >= self.aod_max:
+            raise ValueError("combined_product requires aod_min < aod_max")
+        return self
+
+
 class RunConfig(StrictModel):
     name: str = Field(default="run", pattern=r"^[A-Za-z0-9_.-]+$")
     profile: str | None = None
@@ -556,6 +588,7 @@ class RunConfig(StrictModel):
     qc: QCConfig = Field(default_factory=QCConfig)
     weighting: WeightingConfig = Field(default_factory=WeightingConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
+    combined_product: CombinedProductConfig = Field(default_factory=CombinedProductConfig)
     aeronet: AeronetConfig = Field(default_factory=AeronetConfig)
     evaluation: EvaluationConfig = Field(default_factory=EvaluationConfig)
     plots: PlotsConfig = Field(default_factory=PlotsConfig)
@@ -569,6 +602,10 @@ class RunConfig(StrictModel):
         for stream_id, selection in self.grid.streams.items():
             product = catalog.product(selection.product)
             collection_spec = catalog.collection(selection.product, selection.collection)
+            if self.combined_product.enabled and collection_spec.combined_product is None:
+                raise ValueError(
+                    f"no combined product defined for {selection.product} {selection.collection}"
+                )
             prefix, _, algorithm = stream_id.rpartition("_")
             if prefix != product.stream_prefix or algorithm not in collection_spec.algorithms:
                 raise ValueError(

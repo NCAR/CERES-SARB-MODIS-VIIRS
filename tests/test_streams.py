@@ -39,6 +39,10 @@ def test_every_catalog_collection_has_resolvable_or_explicitly_unsupported_reade
     assert [recipe.stream_id for recipe in available_streams(catalog=catalog)] == [
         "terra_dt",
         "terra_db",
+        "terra_dt",
+        "terra_db",
+        "aqua_dt",
+        "aqua_db",
         "aqua_dt",
         "aqua_db",
         "snpp_db",
