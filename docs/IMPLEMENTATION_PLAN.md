@@ -39,7 +39,9 @@ streams, retrieval-team QC, numba gridding, configurable weighting (GLS with an
 error-correlation model by default; plain count weighting as an option), and the CAM7 obs-file
 contract. MODIS-only, VIIRS-only, or mixed is a configuration choice.
 
-Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS bias correction.
+Spatial despeckling is now planned for a July 2008 C6.1 laptop comparison (Phase 6;
+user request 2026-10-11). Temporal smoothing and AERONET-fitted VIIRS→MODIS bias
+correction remain deferred.
 
 ## Status
 
@@ -51,6 +53,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 3 | AERONET validation suite; choose ρ and other defaults | Daily campaign: 24 verified, 18 global passes including both baselines; regional failures and daily uncertainty remain open |
 | 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
 | 5 | Production profile (AMI), multi-year runs | July C7 operational test complete: 31 days, 248 validated files; multi-year production deferred |
+| 6 | Spatial despeckling and paired-output July C6.1 laptop trial | Design recorded; implementation and experiment pending |
 
 ### Tasks, dependencies and order
 
@@ -80,7 +83,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.4 | Plot protocol | 4.2, 4.3 | Done | 7af6d67 |
 | 4.5a | Map suites (`aod_maps`, `aod_differences`) and `sarb-aod plot` | 4.4, 1.9 | Done | de7b22f |
 | 1.10 | July 2008 verification | 1.9, 4.5a | Verified; VP1 acceptance open | fa0aad0 |
-| 1.11 | Per-source affine AOD observation correction before gridding | 1.9, 2.5 | Done | Task 1.11 (this commit) |
+| 1.11 | Per-source affine AOD observation correction before gridding | 1.9, 2.5 | Done | `e57948e` |
 | 3.5 | Collocation (L2 and grid matchups) | 1.4, 1.9, 3.2, 3.4 | Done | 538ac0f |
 | 4.5b | AERONET suites | 4.5a, 3.5 | Done | b06bb1f |
 | 3.6 | Reports, `sarb-aod evaluate` | 3.3, 3.5, 4.5b | Done | 12a1ac9 |
@@ -113,6 +116,12 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; array 5034005 submitted, first four days successful; monthly completion pending | Task 5.6 (this commit) |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
+| 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | Task 6.0 (this commit) |
+| 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Planned | |
+| 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Planned | |
+| 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Planned | |
+| 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Planned | |
+| 6.5 | July 2008 C6.1 laptop trial and scientific assessment | 6.4 | Planned | |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
 (SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, ~213 GiB). MODIS
@@ -1243,8 +1252,8 @@ plots:
 2. **Sept 2020:** all suites, plus smoke-box maps and time series using the Task 2.4 extent,
    with MODIS-only, VIIRS-only and mixed side by side.
 3. **Southern Ocean focus:** maps and regional time series for `southern_ocean`, comparing DT
-   ocean QA ≥ 1 vs = 3 and the negative-AOD settings. This is the evidence base for the
-   deferred denoising work.
+   ocean QA ≥ 1 vs = 3 and the negative-AOD settings. This is the evidence base for
+   later southern-band tests under Phase 6.
 4. Pass the inspection gate. Record the accepted plot set in `docs/validation/`.
 
 ---
@@ -1652,10 +1661,31 @@ network access to LAADS and AERONET.
   same test passes in the full task gate. The reviewed external-output-path
   collector defect is fixed and covered by a regression test.
 
+## Phase 6: Spatial despeckling and July C6.1 laptop comparison
+
+The user requested a plan for latitude-band filtering of isolated high AOD and
+high spikes within otherwise low neighborhoods, and explicitly requires both
+unfiltered and filtered AOD in each output file when filtering is enabled.
+[DESPECKLE_PLAN.md](DESPECKLE_PLAN.md) defines Tasks 6.0–6.5, proposed config,
+geographic support/MAD detection, area-weighted replacement, source combination,
+paired NetCDF fields, uncertainty limitations, tests and the local experiment.
+
+The trial retains unfiltered `aod_weighted_mean` for CAM compatibility and writes
+explicit `_unfiltered`/`_filtered` fields, source action flags and provenance.
+It compares own-coverage means and common-sample differences on the laptop using
+Terra/Aqua MODIS C6.1 in July 2008. Thresholds are experimental; ordinary configs
+remain disabled. Implementation, data runs and scientific acceptance are pending.
+
+Task 6.0 validation: local documentation links, fenced blocks and whitespace checks
+pass; `codex review --uncommitted` found no actionable defects. All 986 offline
+tests pass (one network test deselected), as do mypy, Black and isort. This commit
+changes documentation only; no filtering or trial-data results are claimed.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
+| Spatial despeckle trial | Tasks 6.0–6.5 are specified in [DESPECKLE_PLAN.md](DESPECKLE_PLAN.md). Multiple latitude bands, source-wise isolation and robust spike detection, masking or supported neighbor-mean replacement. Same-file unfiltered/filtered fields and flags; preserve the CAM-read baseline during the laptop trial. Thresholds, replacement uncertainty and production adoption require assessment; no temporal smoothing. |
 | Per-source affine AOD correction | Task 1.11 adds finite scale/offset pairs keyed by selected satellite/algorithm stream, constant over the full analysis period (omitted sources/coefficients default 1/0). Apply after retrieval QC with original pixel uncertainty, before gridding and in L2 satellite evaluation. Native C7 combined diagnostics and original-retrieval QC audits remain unchanged. No pixel clipping; existing final CAM clipping remains. NetCDF records effective source coefficients, corrected negative counts and full config. Nonidentity settings invalidate resume; identity retains legacy hashes. L2 reuse checks retained-source corrections. Fitted VIIRS-to-MODIS calibration remains deferred. |
 | Mean-map presentation | Task 4.10 aligns the aggregate map with the top platform row and adds the MODIS collection to its title. A lower-left provenance panel separates recorded grid dates/revisions from plot dates/revisions and configured L2 source paths; full provenance is embedded in PDF Keywords. Scientific acceptance remains independent of presentation. |
 | Daily validation and regional presentation | Task 4.8 uses independent UTC daily means and equal-site regional daily averages for acceptance and plotting. The numeric limits remain absolute bias ≤ 0.03, RMSE ≤ 0.10 and R ≥ 0.8; the sampling basis replaces the former three-hour gate. Middle-50% site bands, daily statistics and a region/site inset describe the same cohort. Site spread is distinct from uncertainty in the regional mean. |
@@ -1675,7 +1705,7 @@ network access to LAADS and AERONET.
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
 | AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 complete: 248 C7 July files validated. Task 4.9 generated and delivered 15 PDF plots with passing protocol and visual checks. July daily bias/RMSE pass, but R = 0.7920 misses 0.8; C7 science acceptance, external acquisition and multi-year production remain open. See `docs/validation/ami_c7_200807_plots.md`. |
 | NOAA-20 September AMI run | Task 5.5 completes an explicit Collection 002 DT/DB run definition using 8,240 local archive files. DT product v2.0.1 differs from the laptop baseline's Collection 021. All 954 offline tests, mypy, Black and isort pass; review found no remaining defects after correcting the empty plot-suite setting and catalog inventory expectation. Existing July C7 and September mixed-baseline processing hashes are unchanged. Task 5.6 deployed `11cd141` and submitted array 5034005 (30 serial tasks, concurrency four); first four days exited successfully and a sampled NetCDF passed contract/provenance checks. Full monthly completion remains to be checked; plots and scientific validation are deferred by user direction. See `docs/AMI_PRODUCTION.md`. |
-| Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
+| Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Spatial despeckling is now planned in Phase 6, initially for northern July C6.1 cells; Southern Ocean adoption and temporal smoothing remain deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
 
 ## AMI C7 implementation revision (2026-10-11)
 

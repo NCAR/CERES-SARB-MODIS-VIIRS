@@ -18,8 +18,11 @@ Pipeline:
 4. **Write** CAM7 contract files (below).
 5. **Validate** against AERONET and **plot** in DAVINCI style.
 
-Deferred by user direction (2026-10-10): spatial/temporal denoising ("despeckle") and the
-AERONET-anchored VIIRS→MODIS bias correction.
+Spatial despeckling is now planned (user request, 2026-10-11) for a July 2008 C6.1
+laptop trial; see `docs/DESPECKLE_PLAN.md` and Phase 6 of the implementation plan.
+The plan requires same-file unfiltered/filtered AOD and diagnostic flags when enabled;
+the trial preserves unfiltered `aod_weighted_mean`. Implementation and data runs are
+pending. Temporal smoothing and AERONET-anchored VIIRS→MODIS bias correction remain deferred.
 
 Test periods:
 - **July 2008:** MODIS Terra + Aqua, Collections 6.1 and 7 (MODIS-only; predates VIIRS).
@@ -252,7 +255,8 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
   - `plots/*`: style, labeling, titles, `_stats.py`, spatial renderers, suites, and
     `renderers/aod_correction_science.py` (the protocol reference).
   - `CLAUDE.md` § Plot Label & Title Conventions and § Plot Protocol Enforcement.
-  - `analysis/projection_core.py::masked_boxcar_smooth`: a candidate for the deferred denoising.
+  - `analysis/projection_core.py::masked_boxcar_smooth`: a reference for future smoothing;
+    the planned despeckle filter preserves retained values.
 - **`../CERES-SARB-CAM7`** (branch `develop`; GitHub `NCAR/CERES-SARB-CAM7`).
   - `scripts/prepare_modis_era5_grid.py`: the four-stream count-weighted averaging; the oracle
     for the `cam7_v2` regression.

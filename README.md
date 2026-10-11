@@ -12,6 +12,9 @@ standalone: it ports what it needs rather than importing `davinci_monet`.
 
 Plan and status: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Agent notes: [`AGENTS.md`](AGENTS.md).
 
+Planned next: [spatial despeckling and a July 2008 C6.1 laptop comparison](docs/DESPECKLE_PLAN.md),
+with unfiltered and filtered AOD stored together. This is a design document; the feature is not implemented yet.
+
 ## Environment
 
 `environment.yml` is a minimal subset of the DAVINCI conda env (same pins; includes pandas,
