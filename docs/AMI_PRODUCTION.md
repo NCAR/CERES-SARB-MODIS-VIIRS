@@ -127,6 +127,33 @@ qsub -q scf.q -N noaa20_c2_202009 -t 1-30 -tc 4 -o "$SARB_LOG" scripts/ami_grid.
 The wrapper requests a two-hour limit per task. Array execution only grids and
 validates its daily files; it does not run plots or AERONET evaluation.
 
+### September submission record
+
+Submitted **2026-10-11 20:26:34 UTC**, array **5034005.1-30:1**,
+`noaa20_c2_202009`, `scf.q`, concurrency four, one slot per task and `h_rt=7200`.
+The deployed clean source revision is
+`11cd1410977114cac1b5ddef362f3fc77577bf2f`. Preflight discovery matched all
+30 daily inventory counts exactly (8,240 granules), and actual Collection 002
+catalog recipes read the September 8 19:36 DT/DB samples successfully.
+
+- Config SHA-256: `4b7e478acbfb2b22c5fa10d1bb62ed5c1cd0f34b285aaeb0db42b41779eae200`.
+- Processing SHA-256: `1dd872ae13a6698d73f14da8036f04f05b2c654428751af8e430d3388c97c3cf`.
+- At 20:26:52 UTC, tasks 1–4 were running on four compute nodes, with tasks
+  5–30 queued. Their logs recorded the expected clean revision and Python 3.13.14.
+- Logs are `logs/viirs_noaa20_c2_l2_202009_f09_3hr_gls_rho05/noaa20_c2_202009.o5034005.<task>`
+  beneath the production root.
+- First four tasks completed with `failed=0`, `exit_status=0`, and walltimes
+  47.0–48.4 seconds, producing 32 files; tasks 5–8 started next. The September 1
+  00:00 file (3,453,829 bytes) passed the CAM7 contract validator and explicit
+  checks for the two NOAA-20 streams, Collection 002, processing hash, clean
+  source revision, full config/source YAML, development-agent and runtime metadata.
+
+This records successful submission and initial processing, not completed monthly processing.
+Confirm task exit statuses with `qacct -j 5034005` and validate all 240 files
+before reporting the month complete. Leave the remote source checkout at the
+processing revision while array tasks are pending/running; later documentation
+commits do not need to be pulled during the job.
+
 ## Monthly behavior and recovery
 
 The driver splits the inclusive run period at calendar-month boundaries,
