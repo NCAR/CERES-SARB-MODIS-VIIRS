@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from sarb_aod.combined_product import AOD_NAME, COUNT_NAMES, FLAG_NAME, TOTAL_NAME
-from sarb_aod.config.schema import AODCorrectionConfig, QCConfig, RunConfig
+from sarb_aod.config.schema import AODCorrectionConfig, DespeckleConfig, QCConfig, RunConfig
 from sarb_aod.contract import validate_contract_file
 from sarb_aod.paths import granule_dir
 from sarb_aod.pipeline import discover_granules, grid_day, processing_sha256, stream_recipes
@@ -227,3 +227,21 @@ def test_real_c7_matches_supplied_best_estimates(product):
                     np.count_nonzero(~np.isfinite(batch.sigma)) == batch.counts["n_sigma_missing"]
                 )
                 assert np.isfinite(batch.sigma).any()
+
+
+def test_despeckle_preserves_native_combined_diagnostic(c7_config):
+    cfg, _ = c7_config
+    baseline = grid_day(cfg, DAY)
+    names = (AOD_NAME, FLAG_NAME, TOTAL_NAME, *COUNT_NAMES)
+    with nc.Dataset(baseline.files[0]) as ds:
+        ds.set_auto_mask(False)
+        original = {name: ds[name][:] for name in names}
+    cfg = cfg.model_copy(
+        update={"despeckle": DespeckleConfig(enabled=True, latitude_bands=((-90, 90),), aod_min=0)}
+    )
+    result = grid_day(cfg, DAY)
+    assert validate_contract_file(result.files[0]) == (True, [])
+    with nc.Dataset(result.files[0]) as ds:
+        ds.set_auto_mask(False)
+        for name, values in original.items():
+            np.testing.assert_array_equal(ds[name][:], values)

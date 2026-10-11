@@ -12,8 +12,9 @@ standalone: it ports what it needs rather than importing `davinci_monet`.
 
 Plan and status: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Agent notes: [`AGENTS.md`](AGENTS.md).
 
-Planned next: [spatial despeckling and a July 2008 C6.1 laptop comparison](docs/DESPECKLE_PLAN.md),
-with unfiltered and filtered AOD stored together. This is a design document; the feature is not implemented yet.
+Spatial despeckling and the [July 2008 C6.1 laptop comparison](docs/DESPECKLE_PLAN.md)
+are under development. Configuration, filtering and paired NetCDF output are implemented;
+comparison tools and the scientific trial are pending.
 
 ## Environment
 
@@ -133,6 +134,35 @@ only be reused when correction settings agree for the retained sources.
 Corrections that produce nonfinite AOD, exceed float32 output capacity, or
 collide with CAM's missing-data range (AOD ≤ -900 after float32 rounding) fail
 before writing grids for that day.
+
+Experimental spatial filtering is disabled by default. Enable it in a distinct run:
+
+```yaml
+despeckle:
+  enabled: true
+  latitude_bands: [[65, 90]]  # Multiple bands are supported.
+  radius_km: 150
+  aod_min: 0.5
+  min_valid_area_fraction: 0.20
+  min_valid_neighbors: 5
+  spike:
+    enabled: true
+    mad_multiplier: 3
+    min_excess: 0.20
+    action: neighbor_mean  # Or mask.
+```
+
+These are trial settings. Each source's three-hour field is filtered separately:
+isolated high AOD becomes missing; supported high spikes are masked or replaced
+by the area-weighted mean of unflagged original neighbors. Missing targets remain
+missing. The radius crosses longitude seams and band edges; only targets inside
+bands change. Both `aod_weighted_mean_unfiltered` and `aod_weighted_mean_filtered`
+are stored in the same file, alongside paired sensor/source means and action/support
+flags. The canonical CAM variable `aod_weighted_mean`, original counts and original
+uncertainty remain unfiltered. The filtered comparison uses frozen original source
+coefficients; filtered uncertainty is unavailable wherever a contributing source
+changes. Thin real plumes can be flagged, so production adoption requires review
+of the paired results. See the implementation plan for exact rules and flags.
 
 The working value `rho: 0.5` remains provisional. The July 2008 and September 2020
 [historical evaluation campaign](docs/validation/evaluation_campaign.md) found that no tested

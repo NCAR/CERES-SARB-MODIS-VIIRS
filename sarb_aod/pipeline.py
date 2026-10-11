@@ -19,7 +19,8 @@ from sarb_aod.config.loader import configuration_metadata
 from sarb_aod.config.schema import AODCorrectionConfig, RunConfig
 from sarb_aod.contract import validate_contract_file, write_contract_file
 from sarb_aod.correction import active_corrections
-from sarb_aod.despeckle import DESPECKLE_VERSION
+from sarb_aod.despeckle import DESPECKLE_VERSION, combine_filtered, filter_source, neighborhoods
+from sarb_aod.despeckle_io import DespeckleWindow, slice_result
 from sarb_aod.grid.combine import CombinedGrid, combine
 from sarb_aod.grid.kernels import Accumulators, accumulate, count_pixels
 from sarb_aod.grid.spec import load_grid, normalize_longitude
@@ -241,10 +242,6 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
     """Process a day; any read/write error propagates to the day's caller."""
     if not config.period.start <= day <= config.period.end:
         raise ValueError(f"{day} outside configured period")
-    if config.despeckle.enabled:
-        raise NotImplementedError(
-            "despeckle configuration is available; gridding integration is pending Task 6.3"
-        )
     recipes = stream_recipes(config)
     files = [output_path(config, window_bounds(day, i)[0]) for i in range(8)]
     if not overwrite and _already_complete(config, files, day):
@@ -308,6 +305,23 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
         )
         for name in ["MODIS", "VIIRS"]
     }
+    source_filters = {}
+    filtered_products = {}
+    if config.despeckle.enabled:
+        geometry = neighborhoods(grid, config.despeckle)
+        source_filters = {
+            recipe.stream_id: filter_source(merged.stream_mean[:, j], geometry, config.despeckle)
+            for j, recipe in enumerate(recipes)
+        }
+        for name, baseline in {
+            "aod_weighted_mean": merged,
+            **{f"aod_weighted_mean_{name.lower()}": value for name, value in instruments.items()},
+        }.items():
+            filtered_products[name] = combine_filtered(
+                baseline,
+                [source_filters[recipes[j].stream_id] for j in baseline.stream_indices],
+                min_pixels=config.weighting.min_pixels,
+            )
     attrs = _provenance(config, recipes, len(inputs), missing)
     if native is not None:
         attrs["combined_product_config"] = config.combined_product.model_dump_json()
@@ -337,6 +351,15 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
             extra_fields=extra,
             combined_product=product_window(native, i) if native is not None else None,
             clip_negative_mean=config.output.clip_negative_mean,
+            despeckle=(
+                DespeckleWindow(
+                    config.despeckle,
+                    {name: slice_result(value, i) for name, value in filtered_products.items()},
+                    {name: slice_result(value, i) for name, value in source_filters.items()},
+                )
+                if config.despeckle.enabled
+                else None
+            ),
         )
         valid, errors = validate_contract_file(path)
         if not valid:

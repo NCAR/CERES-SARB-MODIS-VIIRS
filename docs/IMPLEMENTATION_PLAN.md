@@ -53,7 +53,7 @@ correction remain deferred.
 | 3 | AERONET validation suite; choose ρ and other defaults | Daily campaign: 24 verified, 18 global passes including both baselines; regional failures and daily uncertainty remain open |
 | 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
 | 5 | Production profile (AMI), multi-year runs | July C7 operational test complete: 31 days, 248 validated files; multi-year production deferred |
-| 6 | Spatial despeckling and paired-output July C6.1 laptop trial | Design recorded; implementation and experiment pending |
+| 6 | Spatial despeckling and paired-output July C6.1 laptop trial | Geometry, filter and paired output implemented; comparison tools and trial pending |
 
 ### Tasks, dependencies and order
 
@@ -118,8 +118,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
-| 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Done | Task 6.2 (this commit) |
-| 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Planned | |
+| 6.2 | Isolation/spike filtering and source combination for comparison | 6.1 | Done | `2bfed5c` |
+| 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Done | Task 6.3 (this commit) |
 | 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Planned | |
 | 6.5 | July 2008 C6.1 laptop trial and scientific assessment | 6.4 | Planned | |
 
@@ -1703,6 +1703,14 @@ Validation: 1,026 offline tests, mypy, Black/isort and whitespace checks pass.
 Review identified lost writes on Fortran-ordered arrays; normalizing array layout
 fixes it, with C/Fortran/strided regression cases. No review findings remain open.
 
+Task 6.3 connects the source filter to gridding and removes the temporary enabled-run
+guard. Each enabled file preserves every original variable and adds explicit paired
+products/source means, integer action flags, support/donor diagnostics and filtered
+uncertainty only for unchanged combinations. A typed extension validates its values
+and metadata before atomic publication; file validation/resume checks the same
+invariants. Disabled output remains unchanged, and C7 native combined fields are
+preserved. Comparison tools and the July laptop experiment remain Tasks 6.4/6.5.
+
 ## Open items and risks
 
 | Item | Plan |
@@ -1769,3 +1777,7 @@ semantics, and limits of operational acceptance.
   hashes were checked. The recorded TSV agrees with remote evidence,
   `git diff --check` passes, and `codex review --uncommitted` found no actionable
   defects in the operational records. C7 science acceptance remains Task 2.6.
+
+Task 6.3 validation: 1,042 offline tests passed; mypy, Black, isort and diff checks passed.
+`codex review --uncommitted` found no actionable regressions, including additional mixed-sensor
+and minimum-count checks. Atomic failure tests preserve previously published files.

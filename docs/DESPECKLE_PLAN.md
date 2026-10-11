@@ -2,7 +2,8 @@
 
 Status: **implementation in progress**. Requested 2026-10-11. Task 6.1 implements
 configuration and geographic neighborhoods; Task 6.2 implements the pure filter
-and experimental source combination. Output integration and the experiment remain pending. Tasks and
+and experimental source combination. Task 6.3 connects gridding to the paired
+NetCDF extension. Comparison tools and the experiment remain pending. Tasks and
 commits are tracked in [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md), Phase 6.
 
 ## Objective and scope
@@ -54,7 +55,8 @@ metric alone does not establish that the removed observations were erroneous.
 
 Add one strict pydantic `DespeckleConfig` to `RunConfig`, disabled by default.
 Settings apply to all selected sources and dates, separately for each source.
-The following configuration loads after Task 6.1; enabled gridding requires Task 6.3.
+The following configuration and paired gridding are implemented; numerical values
+remain experimental until the laptop assessment.
 
 ```yaml
 despeckle:

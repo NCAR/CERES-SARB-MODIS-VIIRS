@@ -18,10 +18,10 @@ Pipeline:
 4. **Write** CAM7 contract files (below).
 5. **Validate** against AERONET and **plot** in DAVINCI style.
 
-Spatial despeckling is now planned (user request, 2026-10-11) for a July 2008 C6.1
+Spatial despeckling is being implemented (user request, 2026-10-11) for a July 2008 C6.1
 laptop trial; see `docs/DESPECKLE_PLAN.md` and Phase 6 of the implementation plan.
-The plan requires same-file unfiltered/filtered AOD and diagnostic flags when enabled;
-the trial preserves unfiltered `aod_weighted_mean`. Implementation and data runs are
+Gridding now writes same-file unfiltered/filtered AOD and diagnostic flags when enabled;
+the trial preserves unfiltered `aod_weighted_mean`. Comparison tools and data runs are
 pending. Temporal smoothing and AERONET-anchored VIIRS→MODIS bias correction remain deferred.
 
 Test periods:

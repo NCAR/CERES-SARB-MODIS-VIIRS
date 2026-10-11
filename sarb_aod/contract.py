@@ -23,6 +23,7 @@ from numpy.typing import ArrayLike
 
 from . import __version__
 from .combined_product import AOD_NAME, COUNT_NAMES, FLAG_NAME, TOTAL_NAME, CombinedWindow
+from .despeckle_io import DespeckleWindow, validate_despeckle, write_despeckle
 from .grid.spec import NLAT, NLON, f09_lat, f09_lat_bnds, f09_lon, f09_lon_bnds
 from .provenance import runtime_global_attrs
 from .windows import TIME_CALENDAR, TIME_UNITS, WINDOW_LENGTH_SEC, cf_hours
@@ -169,6 +170,7 @@ def write_contract_file(
     global_attrs: Mapping[str, Any] | None = None,
     extra_fields: Mapping[str, ArrayLike] | None = None,
     combined_product: CombinedWindow | None = None,
+    despeckle: DespeckleWindow | None = None,
     clip_negative_mean: bool = True,
 ) -> Path:
     """Write one complete f09 window to a temporary file, then rename it.
@@ -272,6 +274,8 @@ def write_contract_file(
                     variable.standard_name = PRIMARY_STD_NAME
                 variable[:] = data
             dataset.setncatts(attrs)
+            if despeckle is not None:
+                write_despeckle(dataset, despeckle, clip=clip_negative_mean)
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
@@ -355,6 +359,7 @@ def validate_contract_file(path: str | Path) -> tuple[bool, list[str]]:
 
 def _validate_dataset(dataset: Any, errors: list[str]) -> None:
     _validate_combined(dataset, errors)
+    validate_despeckle(dataset, errors)
     for name, length in (("lat", NLAT), ("lon", NLON), ("nbnds", NBNDS)):
         if name not in dataset.dimensions:
             errors.append(f"missing dim {name}")
