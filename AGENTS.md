@@ -177,6 +177,11 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
   commit/push, then pull `$HOME/CERES-SARB-MODIS-VIIRS` on AMI. The generic
   `config/profiles/ami.yaml` still reads `${SARB_AOD_DATA_ROOT}`. Never hard-code
   machine paths in code; add template fields or profile keys instead.
+  - `ami-modis-c7` reads the existing C7 archive; its tracked July run is
+    `modis_c7_l2_200807_f09_3hr_gls_rho05.yaml`. On 2026-10-11 it processed
+    9,829 granules into 248 validated files (1.2619 GiB); see
+    `docs/validation/ami_c7_200807.md`. Operational acceptance does not close
+    C7 AERONET validation or uncertainty calibration.
 - **Run configs** choose collections per product for staging
   (`stage.products: {MOD04_L2: ["6.1", "7"], ...}`). Gridding names exactly one collection
   per stream (plan Task 1.9).

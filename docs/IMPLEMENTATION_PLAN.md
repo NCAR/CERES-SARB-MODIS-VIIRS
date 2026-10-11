@@ -50,7 +50,7 @@ Out of scope (deferred by the user): spatial/temporal denoising, VIIRS→MODIS b
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 | C7 reader and native diagnostics implemented from AMI samples; monthly operational test and C7 science comparison tracked below |
 | 3 | AERONET validation suite; choose ρ and other defaults | Daily campaign: 24 verified, 18 global passes including both baselines; regional failures and daily uncertainty remain open |
 | 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
-| 5 | Production profile (AMI), multi-year runs | July C7 deployment in progress; multi-year production deferred |
+| 5 | Production profile (AMI), multi-year runs | July C7 operational test complete: 31 days, 248 validated files; multi-year production deferred |
 
 ### Tasks, dependencies and order
 
@@ -93,8 +93,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.8 | Daily-mean validation and regional time-series comparisons | 3.6, 4.5b, 4.7 | Done | Task 4.8 (this commit) |
 | 2.5 | MODIS C7 activation and supplied combined-product diagnostics | AMI C7 samples | Done; C7 science acceptance separate | 579b5d0 |
 | 5.1 | Portable monthly driver, throughput and storage | 1.9 | Done | 675a38f |
-| 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | Done | Task 5.2 (this commit) |
-| 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | In progress | |
+| 5.2 | AMI profiles, tracked config naming and scheduler scripts | 2.5, 5.1 | Done | d69d688 |
+| 5.3 | Deploy and process July 2008 C7 on AMI | 5.2 | Done; operational acceptance | Task 5.3 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 
@@ -1500,7 +1500,7 @@ network access to LAADS and AERONET.
 | AERONET service limits | ≤ 10 requests/min, one request per day for all sites, raw CSV cached |
 | Cartopy Natural Earth | Prefetched to `~/Data/cartopy` (mac). derecho and AMI need `sarb-aod plot --prefetch-maps` once |
 | Poppins font | Not installed; Helvetica Neue fallback. Install it for publication figures |
-| AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 track configs and July processing. External acquisition and plotting setup are outside this operational test. |
+| AMI deployment | Paths, C7 July holdings, scheduler and separate sarb-aod environment confirmed. Tasks 5.2/5.3 complete: 248 C7 July files validated. External acquisition, plotting setup, multi-year production and C7 science acceptance remain separate. |
 | Southern Ocean noise | QA ≥ 1 vs = 3 and DT-land negatives were compared in both periods. The region has no ocean mask and few open-ocean AERONET matchups. Denoising stays deferred. Later screens: `Average_Cloud_Pixel_Distance_Land_Ocean`, `Glint_Angle` (VIIRS: `geolocation_data/Glint_Angle`), wind speed (`Wind_Speed_Ncep_Ocean` for MODIS, `geophysical_data/Wind_Speed_GMAO_Ocean` for VIIRS DT) |
 
 ## AMI C7 implementation revision (2026-10-11)
@@ -1532,3 +1532,14 @@ semantics, and limits of operational acceptance.
   `show-config` resolves CAM namelist paths, `bash -n` passes, and the configs
   were included in the Task 2.5 review and 933-test gate. Deployment and measured
   July execution are Task 5.3; no multi-year production is implied.
+
+- Task 5.3: deployed `d69d688` via fast-forward pull and editable install. July 1
+  smoke job 5034001 processed 321 granules in 72.047 s; array 5034002 completed
+  all 31 days (one resumed) with all exit statuses zero. Summary job 5034004
+  validated/resumed 248 files, 1,355,006,280 bytes, and wrote monthly metrics.
+  Provenance covers 9,829 unique-acquisition C7 source granules. See
+  [AMI July C7 operational report](validation/ami_c7_200807.md) and its per-day
+  accounting. The source count, native category counts, ranges, and processing
+  hashes were checked. The recorded TSV agrees with remote evidence,
+  `git diff --check` passes, and `codex review --uncommitted` found no actionable
+  defects in the operational records. C7 science acceptance remains Task 2.6.

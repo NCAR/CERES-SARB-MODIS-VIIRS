@@ -29,6 +29,8 @@ Run `show-config` before submission. The job script uses one worker and limits
 threaded numerical libraries to one thread, matching a serial Grid Engine slot:
 
 ```bash
+# The vendor setup reads optional variables such as MANPATH; source without nounset.
+set +u
 source /SPG_ops/utils/altair/current/default/common/settings.sh
 SARB_RUN=config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05.yaml
 SARB_LOG=/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200807_f09_3hr_gls_rho05
@@ -62,6 +64,16 @@ plus logs. A submitted or disappeared job is not proof of success. The script
 uses `scf.q` and an explicit two-hour walltime per job/task; interrupted work is
 resumable. Multi-year production, external acquisition, AERONET validation, and
 plot deployment remain separate work.
+
+## Completed July test
+
+The 2026-10-11 [July C7 operational test](validation/ami_c7_200807.md) passed:
+9,829 granules, 31 days, 248 validated NetCDF files, 1,355,006,280 bytes
+(1.2619 GiB). The array processed 30 fresh days plus one resumed day in
+514.150 s with at most four concurrent serial tasks. The monthly validation
+and summary pass also succeeded. These C7 files include additional native
+combined-product diagnostics and are larger than the earlier C6.1 files below.
+Scientific C7 validation and multi-year production remain separate tasks.
 
 ## Monthly behavior and recovery
 

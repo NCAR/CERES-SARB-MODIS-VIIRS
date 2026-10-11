@@ -103,3 +103,6 @@ compare both cached samples with the producer's DT and DB best estimates.
 A completed July grid run establishes operational processing, not C7 science
 acceptance or calibrated uncertainty. AERONET comparison and September C7 remain
 separate work.
+
+The [July 2008 AMI operational test](validation/ami_c7_200807.md) completed on
+2026-10-11: all 31 daily tasks succeeded and all 248 outputs passed validation.
