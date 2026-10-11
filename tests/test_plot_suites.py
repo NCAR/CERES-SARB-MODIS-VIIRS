@@ -515,6 +515,37 @@ def test_provenance_identifies_qc_overrides(inputs: RunConfig) -> None:
     assert "Retrieval-Team QC + Overrides" in provenance_panel_text(provenance)
 
 
+def test_single_platform_monthly_map_has_readable_two_by_two_layout(inputs: RunConfig) -> None:
+    data = suites.aggregate_maps(inputs)
+    streams = {
+        f"noaa20_{algorithm}": inputs.grid.streams["snpp_db"].model_copy(
+            update={"product": f"AER{algorithm.upper()}_L2_VIIRS_NOAA20", "collection": "2"}
+        )
+        for algorithm in ("dt", "db")
+    }
+    config = inputs.model_copy(update={"grid": inputs.grid.model_copy(update={"streams": streams})})
+    data = replace(data, means={**data.means, **{key: data.means["snpp_db"] for key in streams}})
+    spec = suites.map_figure_specs(config)[0]
+    figure = suites.render_map_figure(config, data, spec)
+    metadata = getattr(figure, "_sarb_plot_metadata")
+    assert [title.get_text() for title in metadata["titles"]] == [
+        "VIIRS AOD 550 nm",
+        "NOAA-20 Dark Target AOD 550 nm",
+        "NOAA-20 Deep Blue AOD 550 nm",
+    ]
+    axes = metadata["data_axes"]
+    assert [
+        (ax.get_subplotspec().rowspan.start, ax.get_subplotspec().colspan.start) for ax in axes
+    ] == [(0, 0), (0, 1), (1, 1)]
+    assert axes[0].get_subplotspec().get_gridspec().ncols == 2
+    artifact = suites.save_figure(
+        config, figure, suite=spec.suite, name=spec.name, start=spec.start, end=spec.end
+    )
+    assert artifact.report["passed"]
+    colorbar = metadata["colorbars"][0].ax.get_subplotspec()
+    assert list(colorbar.colspan) == [1]
+
+
 @pytest.mark.parametrize("region", ["canada", "southern_ocean"])
 def test_shallow_regional_provenance_remains_readable(inputs: RunConfig, region: str) -> None:
     data = suites.aggregate_maps(inputs)

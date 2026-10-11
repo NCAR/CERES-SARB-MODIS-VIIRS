@@ -112,6 +112,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.19 | Refresh compact July C6.1 regional PDFs on Desktop | 4.18 | Done; 14 protocols, inspected previews and Desktop checksums pass | Task 4.19 (this commit) |
 | 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | `56a7642` |
 | 4.21 | Refresh Desktop regional and spatial PDFs with integrated attribution and 550 nm labels | 4.20 | Done; protocols, previews, embedded revisions and copy checks pass | Task 4.21 (this commit) |
+| 4.22 | Compact single-platform DT/DB monthly maps and September NOAA-20 plot config | 4.21, 5.6 | Done | Task 4.22 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | Deferred | |
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; array 5034005 submitted, first four days successful; monthly completion pending | Task 5.6 (this commit) |
@@ -1818,3 +1819,17 @@ no actionable regressions; its 67 focused tests and selected-day sensitivity aud
 also passed. All 40 final plot protocols pass and previews were visually inspected.
 The Desktop review emphasizes monthly mean spatial plots in one two-page PDF;
 the complete diagnostic set remains under the configured `~/Data/plots` directories.
+
+Task 4.22 prepares the September NOAA-20 plot delivery: a single-platform DT/DB
+monthly map uses a 2×2 composition (aggregate upper left, DT/DB at right, provenance
+lower left). The tracked plot-only config reuses the existing grid identity and
+selects the established regional summary layout. Develop/test/commit/push locally,
+then pull and render interactively on AMI. The full September gridding status was
+checked: all 30 array tasks succeeded and all 240 files pass contract/provenance
+validation (828,918,960 bytes). Plot delivery follows this code/config task.
+
+Task 4.22 validation: 1,055 offline tests pass (one network test deselected),
+as do mypy, Black, isort and whitespace checks. The new source-layout PDF passes
+the plot protocol and its synthetic preview was inspected. Review found no
+actionable regressions across 140 relevant tests and additional style/region
+checks. Plot config identity matches the existing NOAA-20 processing hash exactly.

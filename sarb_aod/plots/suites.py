@@ -480,6 +480,10 @@ def _mean_aod_layout(config: RunConfig) -> list[list[str]]:
         {stream.rsplit("_", 1)[0] for stream in config.grid.streams},
         key=lambda name: (platform_order.get(name, len(platform_order)), name),
     )
+    if len(platforms) == 1 and len(summaries) == 1:
+        dt, db = (f"{platforms[0]}_{algorithm}" for algorithm in ("dt", "db"))
+        if dt in config.grid.streams and db in config.grid.streams:
+            return [[summaries[0], dt], ["provenance", db]]
     layout = [[".", ".", "."] for _ in range(max(len(platforms), len(summaries) + 1))]
     for row, platform in enumerate(platforms):
         for column, algorithm in enumerate(("dt", "db"), start=1):

@@ -80,3 +80,12 @@ protocol-checked PDF/PNG output. Plot protocol now rejects nonfinite text
 positions; this catches a Cartopy automatic-title placement failure that
 would otherwise silently hide a map title. Explicit title positioning fixes
 the new map renderer.
+
+## September 2020 NOAA-20 on AMI
+
+`config/plots/viirs_noaa20_c2_202009_regional_summary.yaml` reuses the Collection
+002 DT/DB grids and selects the same regional summary composition, including
+the date-specific Labor Day smoke region. Run daily grid evaluation before
+plotting when its matchups are absent. The separate monthly spatial map uses
+a 2×2 layout: combined VIIRS upper left, Dark Target upper right, provenance
+lower left and Deep Blue lower right. No gridding settings change.

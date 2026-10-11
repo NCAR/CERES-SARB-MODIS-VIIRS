@@ -576,7 +576,8 @@ def map_panels(
         rows = ceil(len(fields) / columns)
     else:
         rows, columns = len(mosaic), len(mosaic[0])
-    figure = plt.figure(figsize=(5.4 * columns, 3.6 * rows + 0.9), constrained_layout=True)
+    column_width = 7.2 if provenance is not None and columns == 2 else 5.4
+    figure = plt.figure(figsize=(column_width * columns, 3.6 * rows + 0.9), constrained_layout=True)
     if provenance is not None:
         # An explicit scale row keeps every map row aligned while reserving
         # the bottom-left column for the full provenance block.
@@ -623,6 +624,8 @@ def map_panels(
         gridliners.append(gridliner)
     if provenance is not None and arranged is not None:
         colorbar = _colorbar(figure, artists[0], axes, scale, units, cax=arranged["colorbar"])
+        if columns == 2:
+            colorbar.ax.tick_params(labelsize=7.5)
     else:
         colorbar = _colorbar(figure, artists[0], axes, scale, units)
     for ax in axes:
