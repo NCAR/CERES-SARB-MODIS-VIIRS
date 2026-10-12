@@ -126,6 +126,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 6.3 | Paired unfiltered/filtered NetCDF, flags, provenance and resume | 6.2, 1.8 | Done | f5d7a53 |
 | 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Done | 11c60de |
 | 6.5 | July 2008 C6.1 laptop trial and scientific assessment | 6.4 | Done; scientific promotion open | Task 6.5 (this commit) |
+| 7.1 | Wiki user guide and exhaustive configuration/catalog reference | Implemented CLI, schema, and AMI workflows | Done; reviewed, wiki published, 1,071 offline tests pass | Task 7.1 (this commit); wiki `3d26707` |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
 (SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, ~213 GiB). MODIS
@@ -1715,10 +1716,31 @@ and metadata before atomic publication; file validation/resume checks the same
 invariants. Disabled output remains unchanged, and C7 native combined fields are
 preserved. Comparison tools and the July laptop experiment remain Tasks 6.4/6.5.
 
+## Phase 7: User documentation
+
+Task 7.1 publishes the [user guide](https://github.com/NCAR/CERES-SARB-MODIS-VIIRS/wiki)
+in the separate GitHub wiki repository, revision
+`3d26707353acdeb162aebf70e98ea4313beddeaa` on its existing `master` branch.
+The project repository remains on `main`. Thirteen Markdown files provide the home
+page, navigation, conda installation, local and AMI workflows, complete examples,
+equation-free algorithm descriptions, output interpretation, troubleshooting, and
+CLI/environment/scheduler controls. The configuration and catalog reference covers
+all 145 public fields across all 31 schema models at source revision `e3a682b`.
+
+Validation checked all 82 wiki/source links, 33 Bash example blocks, eight YAML
+examples, 12 referenced tracked run/plot configurations via `show-config`, and help
+for all 11 CLI leaf commands. The offline suite passes 1,071 tests (one network test
+deselected); mypy, Black, isort, and whitespace checks pass. Separate required
+`codex review --uncommitted` runs for the wiki and project documentation found no
+actionable defects. These documentation checks did not submit production jobs or
+rerun science campaigns. The README links the guide and corrects superseded
+despeckle/deployment status wording.
+
 ## Open items and risks
 
 | Item | Plan |
 |---|---|
+| User documentation | Task 7.1 publishes the [wiki guide](https://github.com/NCAR/CERES-SARB-MODIS-VIIRS/wiki), with conda setup, local/AMI examples, equation-free algorithms, CLI/environment controls, and every run/catalog schema field. Future option or workflow changes should update the wiki reference and its documented source revision. |
 | Spatial despeckle trial | Tasks 6.0–6.5 are implemented and assessed in [the July trial](validation/july2008_despeckle.md). Multiple latitude bands, source-wise isolation and robust spike detection, masking or supported neighbor-mean replacement. Same-file unfiltered/filtered fields and flags; preserve the CAM-read baseline during the laptop trial. Thresholds, replacement uncertainty and production adoption require assessment; no temporal smoothing. |
 | Per-source affine AOD correction | Task 1.11 adds finite scale/offset pairs keyed by selected satellite/algorithm stream, constant over the full analysis period (omitted sources/coefficients default 1/0). Apply after retrieval QC with original pixel uncertainty, before gridding and in L2 satellite evaluation. Native C7 combined diagnostics and original-retrieval QC audits remain unchanged. No pixel clipping; existing final CAM clipping remains. NetCDF records effective source coefficients, corrected negative counts and full config. Nonidentity settings invalidate resume; identity retains legacy hashes. L2 reuse checks retained-source corrections. Fitted VIIRS-to-MODIS calibration remains deferred. |
 | Mean-map presentation | Task 4.10 aligns the aggregate map with the top platform row and adds the MODIS collection to its title. A lower-left provenance panel separates recorded grid dates/revisions from plot dates/revisions and configured L2 source paths; full provenance is embedded in PDF Keywords. Scientific acceptance remains independent of presentation. |

@@ -12,9 +12,13 @@ standalone: it ports what it needs rather than importing `davinci_monet`.
 
 Plan and status: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Agent notes: [`AGENTS.md`](AGENTS.md).
 
+User documentation: [wiki guide](https://github.com/NCAR/CERES-SARB-MODIS-VIIRS/wiki),
+including conda setup, local and AMI workflows, examples, algorithms, and a complete
+[configuration reference](https://github.com/NCAR/CERES-SARB-MODIS-VIIRS/wiki/Configuration-Reference).
+
 Spatial despeckling and the [July 2008 C6.1 laptop comparison](docs/DESPECKLE_PLAN.md)
-are under development. Configuration, filtering and paired NetCDF output are implemented;
-comparison tools and the scientific trial are pending.
+are implemented and assessed. Filtering remains disabled by default, the canonical CAM
+field remains unfiltered, and scientific promotion and filtered uncertainty remain open.
 
 ## Environment
 
@@ -185,7 +189,8 @@ A failed day returns exit status 1 while successful days remain available.
 
 For monthly orchestration and resumable multi-year runs, use `sarb-aod grid-months`;
 see the [production guide](docs/AMI_PRODUCTION.md) for configuration, recovery and
-measured development throughput. AMI deployment still requires confirmed site details.
+measured throughput. AMI archive profiles and deployment workflows are documented in the
+[wiki](https://github.com/NCAR/CERES-SARB-MODIS-VIIRS/wiki/AMI-Production).
 
 `paths.output` controls the layout; `{run}` defaults to the run-config filename stem.
 By default files live in `{data_root}/CAM7/{stem}/{run}/YYYY/MM/DD/` and carry scalar
