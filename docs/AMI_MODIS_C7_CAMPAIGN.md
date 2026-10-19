@@ -174,3 +174,45 @@ Task 5.9 validation: the final offline suite passes 1,071 tests (one network
 test deselected); mypy, Black, isort and whitespace checks pass. Required review
 found no actionable defects in the deployment record and independently passed
 all seven campaign/config/dispatch tests.
+
+## March 2000 supplement
+
+The user requested March 1–31, 2000 on 2026-10-18. The tracked configuration
+`config/runs/modis_c7_l2_200003_f09_3hr_gls_rho05.yaml` retains the annual
+campaign's processing settings and shared run name. Its 248 expected files go
+under the existing campaign tree's `2000/03/DD/` directories. The run name
+retains the original April 2000–March 2022 interval so existing consumer paths
+remain stable. The 22-year manifest and its date intervals are unchanged.
+
+This supplement uses available Terra/Aqua C7 DT/DB granules with explicit
+missing-product outputs, retrieval-team QA, GLS rho 0.5, Birge inflation,
+identity AOD corrections, and disabled despeckling. Archive inputs remain
+read-only. The existing monthly driver processes one day at a time, validates
+outputs, and writes March's summary and metrics. It resumes valid existing
+days without `--overwrite`.
+
+Submit one serial job using the existing wrapper and its two-hour runtime
+request. `scf.q` matches the campaign's established queue:
+
+```bash
+source /SPG_ops/utils/altair/current/default/common/settings.sh
+cd "$HOME/CERES-SARB-MODIS-VIIRS"
+SARB_MARCH_LOG_DIR=/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200004_202203_f09_3hr_gls_rho05/200003
+mkdir -p "$SARB_MARCH_LOG_DIR"
+qsub -q scf.q -N modis_c7_200003 -o "$SARB_MARCH_LOG_DIR" \
+  scripts/ami_grid.sh config/runs/modis_c7_l2_200003_f09_3hr_gls_rho05.yaml
+qstat -u dfillmor
+```
+
+The 2026-10-18 filename inventory found 4,560 Terra C7 aerosol granules across
+all 31 days, no Aqua granules, and no existing March campaign outputs. The
+resolved configuration matches the annual campaign except for its date period,
+including processing SHA-256
+`1524d4597c06aec55ea61104ad14057e5713b1b331192b28c09bf887f1972e10`.
+All 248 output paths are unique and precede the first annual config. Review
+verified the monthly wrapper dispatch with a stub and passed 56 focused tests.
+
+The full gate passed 1,071 offline tests (one network test deselected), mypy,
+Black, isort, shell syntax and whitespace checks. AMI submission is pending.
+Record the returned job ID and live scheduler state after submission; acceptance
+does not establish successful processing.
