@@ -120,7 +120,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.8 | Explicit gap outputs and 22 tracked April–March MODIS C7 configs | 5.3, 5.7 | Done; 1,071 offline tests pass, review findings fixed | `1ebdaf4` |
 | 5.9 | Deploy and queue 22 yearly MODIS C7 AMI tasks | 5.8 | Done; 22 yearly tasks queued as array 5034008, smoke checks pass | Task 5.9 (this commit) |
 | 5.10 | Configure and queue March 2000 MODIS C7 supplement on AMI | 5.8 | Configuration validated and reviewed; submission pending | Task 5.10 configuration commit |
-| 5.11 | Configure and queue the NOAA-20-only VIIRS launch-to-present record in six-month jobs | 5.7, 5.8 | 18 configs and all task dispatches validated; review/submission pending | Pending |
+| 5.11 | Configure and queue the NOAA-20-only VIIRS launch-to-present record in six-month jobs | 5.7, 5.8 | 18 configs validated and reviewed; submission pending | Task 5.11 configuration commit |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |

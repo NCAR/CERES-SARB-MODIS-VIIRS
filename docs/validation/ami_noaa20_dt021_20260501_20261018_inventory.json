@@ -1,0 +1,875 @@
+{
+  "start": "2026-05-01",
+  "end": "2026-10-18",
+  "present_days": 170,
+  "first": {
+    "day": "2026-05-01",
+    "dt021": 131,
+    "sample": "/ASDC_archive/VIIRS/J1/021/2026/121/AERDT_L2_VIIRS_NOAA20.A2026121.0000.021.2026121132704.nc"
+  },
+  "last": {
+    "day": "2026-10-17",
+    "dt021": 135,
+    "sample": "/ASDC_archive/VIIRS/J1/021/2026/290/AERDT_L2_VIIRS_NOAA20.A2026290.0000.021.2026290131118.nc"
+  },
+  "missing_days": [
+    "2026-10-18"
+  ],
+  "days": [
+    {
+      "day": "2026-05-01",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/121/AERDT_L2_VIIRS_NOAA20.A2026121.0000.021.2026121132704.nc"
+    },
+    {
+      "day": "2026-05-02",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/122/AERDT_L2_VIIRS_NOAA20.A2026122.0042.021.2026122153119.nc"
+    },
+    {
+      "day": "2026-05-03",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/123/AERDT_L2_VIIRS_NOAA20.A2026123.0024.021.2026123144300.nc"
+    },
+    {
+      "day": "2026-05-04",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/124/AERDT_L2_VIIRS_NOAA20.A2026124.0006.021.2026124131918.nc"
+    },
+    {
+      "day": "2026-05-05",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/125/AERDT_L2_VIIRS_NOAA20.A2026125.0000.021.2026125154529.nc"
+    },
+    {
+      "day": "2026-05-06",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/126/AERDT_L2_VIIRS_NOAA20.A2026126.0000.021.2026126213813.nc"
+    },
+    {
+      "day": "2026-05-07",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/127/AERDT_L2_VIIRS_NOAA20.A2026127.0048.021.2026127131526.nc"
+    },
+    {
+      "day": "2026-05-08",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/128/AERDT_L2_VIIRS_NOAA20.A2026128.0030.021.2026128132639.nc"
+    },
+    {
+      "day": "2026-05-09",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/129/AERDT_L2_VIIRS_NOAA20.A2026129.0012.021.2026129132759.nc"
+    },
+    {
+      "day": "2026-05-10",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/130/AERDT_L2_VIIRS_NOAA20.A2026130.0000.021.2026130132848.nc"
+    },
+    {
+      "day": "2026-05-11",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/131/AERDT_L2_VIIRS_NOAA20.A2026131.0000.021.2026131140020.nc"
+    },
+    {
+      "day": "2026-05-12",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/132/AERDT_L2_VIIRS_NOAA20.A2026132.0000.021.2026132132053.nc"
+    },
+    {
+      "day": "2026-05-13",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/133/AERDT_L2_VIIRS_NOAA20.A2026133.0036.021.2026133132145.nc"
+    },
+    {
+      "day": "2026-05-14",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/134/AERDT_L2_VIIRS_NOAA20.A2026134.0018.021.2026134131241.nc"
+    },
+    {
+      "day": "2026-05-15",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/135/AERDT_L2_VIIRS_NOAA20.A2026135.0000.021.2026135131351.nc"
+    },
+    {
+      "day": "2026-05-16",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/136/AERDT_L2_VIIRS_NOAA20.A2026136.0000.021.2026136132508.nc"
+    },
+    {
+      "day": "2026-05-17",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/137/AERDT_L2_VIIRS_NOAA20.A2026137.0000.021.2026137132554.nc"
+    },
+    {
+      "day": "2026-05-18",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/138/AERDT_L2_VIIRS_NOAA20.A2026138.0042.021.2026138132626.nc"
+    },
+    {
+      "day": "2026-05-19",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/139/AERDT_L2_VIIRS_NOAA20.A2026139.0024.021.2026139131719.nc"
+    },
+    {
+      "day": "2026-05-20",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/140/AERDT_L2_VIIRS_NOAA20.A2026140.0006.021.2026140131757.nc"
+    },
+    {
+      "day": "2026-05-21",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/141/AERDT_L2_VIIRS_NOAA20.A2026141.0000.021.2026141131854.nc"
+    },
+    {
+      "day": "2026-05-22",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/142/AERDT_L2_VIIRS_NOAA20.A2026142.0000.021.2026142131936.nc"
+    },
+    {
+      "day": "2026-05-23",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/143/AERDT_L2_VIIRS_NOAA20.A2026143.0000.021.2026143130953.nc"
+    },
+    {
+      "day": "2026-05-24",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/144/AERDT_L2_VIIRS_NOAA20.A2026144.0030.021.2026144132035.nc"
+    },
+    {
+      "day": "2026-05-25",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/145/AERDT_L2_VIIRS_NOAA20.A2026145.0012.021.2026145131122.nc"
+    },
+    {
+      "day": "2026-05-26",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/146/AERDT_L2_VIIRS_NOAA20.A2026146.0000.021.2026146132204.nc"
+    },
+    {
+      "day": "2026-05-27",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/147/AERDT_L2_VIIRS_NOAA20.A2026147.0000.021.2026147132251.nc"
+    },
+    {
+      "day": "2026-05-28",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/148/AERDT_L2_VIIRS_NOAA20.A2026148.0000.021.2026148132342.nc"
+    },
+    {
+      "day": "2026-05-29",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/149/AERDT_L2_VIIRS_NOAA20.A2026149.0036.021.2026149145432.nc"
+    },
+    {
+      "day": "2026-05-30",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/150/AERDT_L2_VIIRS_NOAA20.A2026150.0018.021.2026150132500.nc"
+    },
+    {
+      "day": "2026-05-31",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/151/AERDT_L2_VIIRS_NOAA20.A2026151.0000.021.2026151132539.nc"
+    },
+    {
+      "day": "2026-06-01",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/152/AERDT_L2_VIIRS_NOAA20.A2026152.0000.021.2026152132629.nc"
+    },
+    {
+      "day": "2026-06-02",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/153/AERDT_L2_VIIRS_NOAA20.A2026153.0000.021.2026153131809.nc"
+    },
+    {
+      "day": "2026-06-03",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/154/AERDT_L2_VIIRS_NOAA20.A2026154.0042.021.2026154131740.nc"
+    },
+    {
+      "day": "2026-06-04",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/155/AERDT_L2_VIIRS_NOAA20.A2026155.0024.021.2026155130847.nc"
+    },
+    {
+      "day": "2026-06-05",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/156/AERDT_L2_VIIRS_NOAA20.A2026156.0006.021.2026156131937.nc"
+    },
+    {
+      "day": "2026-06-06",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/157/AERDT_L2_VIIRS_NOAA20.A2026157.0000.021.2026157131955.nc"
+    },
+    {
+      "day": "2026-06-07",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/158/AERDT_L2_VIIRS_NOAA20.A2026158.0000.021.2026158134048.nc"
+    },
+    {
+      "day": "2026-06-08",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/159/AERDT_L2_VIIRS_NOAA20.A2026159.0000.021.2026159132123.nc"
+    },
+    {
+      "day": "2026-06-09",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/160/AERDT_L2_VIIRS_NOAA20.A2026160.0030.021.2026160132210.nc"
+    },
+    {
+      "day": "2026-06-10",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/161/AERDT_L2_VIIRS_NOAA20.A2026161.0012.021.2026161132254.nc"
+    },
+    {
+      "day": "2026-06-11",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/162/AERDT_L2_VIIRS_NOAA20.A2026162.0000.021.2026162132340.nc"
+    },
+    {
+      "day": "2026-06-12",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/163/AERDT_L2_VIIRS_NOAA20.A2026163.0000.021.2026163133431.nc"
+    },
+    {
+      "day": "2026-06-13",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/164/AERDT_L2_VIIRS_NOAA20.A2026164.0000.021.2026164132536.nc"
+    },
+    {
+      "day": "2026-06-14",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/165/AERDT_L2_VIIRS_NOAA20.A2026165.0036.021.2026165132602.nc"
+    },
+    {
+      "day": "2026-06-15",
+      "dt021": 127,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/166/AERDT_L2_VIIRS_NOAA20.A2026166.0018.021.2026166130640.nc"
+    },
+    {
+      "day": "2026-06-16",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/167/AERDT_L2_VIIRS_NOAA20.A2026167.0000.021.2026167130730.nc"
+    },
+    {
+      "day": "2026-06-17",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/168/AERDT_L2_VIIRS_NOAA20.A2026168.0000.021.2026168131837.nc"
+    },
+    {
+      "day": "2026-06-18",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/169/AERDT_L2_VIIRS_NOAA20.A2026169.0000.021.2026169131336.nc"
+    },
+    {
+      "day": "2026-06-19",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/170/AERDT_L2_VIIRS_NOAA20.A2026170.0048.021.2026170131411.nc"
+    },
+    {
+      "day": "2026-06-20",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/171/AERDT_L2_VIIRS_NOAA20.A2026171.0024.021.2026171132450.nc"
+    },
+    {
+      "day": "2026-06-21",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/172/AERDT_L2_VIIRS_NOAA20.A2026172.0006.021.2026172142536.nc"
+    },
+    {
+      "day": "2026-06-22",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/173/AERDT_L2_VIIRS_NOAA20.A2026173.0000.021.2026173131610.nc"
+    },
+    {
+      "day": "2026-06-23",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/174/AERDT_L2_VIIRS_NOAA20.A2026174.0000.021.2026174131627.nc"
+    },
+    {
+      "day": "2026-06-24",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/175/AERDT_L2_VIIRS_NOAA20.A2026175.0000.021.2026175142709.nc"
+    },
+    {
+      "day": "2026-06-25",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/176/AERDT_L2_VIIRS_NOAA20.A2026176.0036.021.2026176162815.nc"
+    },
+    {
+      "day": "2026-06-26",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/177/AERDT_L2_VIIRS_NOAA20.A2026177.0012.021.2026177132622.nc"
+    },
+    {
+      "day": "2026-06-27",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/178/AERDT_L2_VIIRS_NOAA20.A2026178.0000.021.2026178142742.nc"
+    },
+    {
+      "day": "2026-06-28",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/179/AERDT_L2_VIIRS_NOAA20.A2026179.0000.021.2026179131758.nc"
+    },
+    {
+      "day": "2026-06-29",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/180/AERDT_L2_VIIRS_NOAA20.A2026180.0000.021.2026180131856.nc"
+    },
+    {
+      "day": "2026-06-30",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/181/AERDT_L2_VIIRS_NOAA20.A2026181.0042.021.2026181131947.nc"
+    },
+    {
+      "day": "2026-07-01",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/182/AERDT_L2_VIIRS_NOAA20.A2026182.0018.021.2026182135046.nc"
+    },
+    {
+      "day": "2026-07-02",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/183/AERDT_L2_VIIRS_NOAA20.A2026183.0000.021.2026183133138.nc"
+    },
+    {
+      "day": "2026-07-03",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/184/AERDT_L2_VIIRS_NOAA20.A2026184.0000.021.2026184132720.nc"
+    },
+    {
+      "day": "2026-07-04",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/185/AERDT_L2_VIIRS_NOAA20.A2026185.0000.021.2026185152931.nc"
+    },
+    {
+      "day": "2026-07-05",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/186/AERDT_L2_VIIRS_NOAA20.A2026186.0048.021.2026186131911.nc"
+    },
+    {
+      "day": "2026-07-06",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/187/AERDT_L2_VIIRS_NOAA20.A2026187.0024.021.2026187131954.nc"
+    },
+    {
+      "day": "2026-07-07",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/188/AERDT_L2_VIIRS_NOAA20.A2026188.0006.021.2026188134108.nc"
+    },
+    {
+      "day": "2026-07-08",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/189/AERDT_L2_VIIRS_NOAA20.A2026189.0000.021.2026189132216.nc"
+    },
+    {
+      "day": "2026-07-09",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/190/AERDT_L2_VIIRS_NOAA20.A2026190.0000.021.2026190132303.nc"
+    },
+    {
+      "day": "2026-07-10",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/191/AERDT_L2_VIIRS_NOAA20.A2026191.0000.021.2026191131357.nc"
+    },
+    {
+      "day": "2026-07-11",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/192/AERDT_L2_VIIRS_NOAA20.A2026192.0036.021.2026192140455.nc"
+    },
+    {
+      "day": "2026-07-12",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/193/AERDT_L2_VIIRS_NOAA20.A2026193.0012.021.2026193132523.nc"
+    },
+    {
+      "day": "2026-07-13",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/194/AERDT_L2_VIIRS_NOAA20.A2026194.0000.021.2026194132623.nc"
+    },
+    {
+      "day": "2026-07-14",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/195/AERDT_L2_VIIRS_NOAA20.A2026195.0000.021.2026195132720.nc"
+    },
+    {
+      "day": "2026-07-15",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/196/AERDT_L2_VIIRS_NOAA20.A2026196.0000.021.2026196131801.nc"
+    },
+    {
+      "day": "2026-07-16",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/197/AERDT_L2_VIIRS_NOAA20.A2026197.0042.021.2026197130851.nc"
+    },
+    {
+      "day": "2026-07-17",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/198/AERDT_L2_VIIRS_NOAA20.A2026198.0018.021.2026198131855.nc"
+    },
+    {
+      "day": "2026-07-18",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/199/AERDT_L2_VIIRS_NOAA20.A2026199.0000.021.2026199132958.nc"
+    },
+    {
+      "day": "2026-07-19",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/200/AERDT_L2_VIIRS_NOAA20.A2026200.0000.021.2026200132019.nc"
+    },
+    {
+      "day": "2026-07-20",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/201/AERDT_L2_VIIRS_NOAA20.A2026201.0000.021.2026201132109.nc"
+    },
+    {
+      "day": "2026-07-21",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/202/AERDT_L2_VIIRS_NOAA20.A2026202.0048.021.2026202135158.nc"
+    },
+    {
+      "day": "2026-07-22",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/203/AERDT_L2_VIIRS_NOAA20.A2026203.0024.021.2026203132355.nc"
+    },
+    {
+      "day": "2026-07-23",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/204/AERDT_L2_VIIRS_NOAA20.A2026204.0006.021.2026204145514.nc"
+    },
+    {
+      "day": "2026-07-24",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/205/AERDT_L2_VIIRS_NOAA20.A2026205.0000.021.2026205135546.nc"
+    },
+    {
+      "day": "2026-07-25",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/206/AERDT_L2_VIIRS_NOAA20.A2026206.0000.021.2026206132623.nc"
+    },
+    {
+      "day": "2026-07-26",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/207/AERDT_L2_VIIRS_NOAA20.A2026207.0000.021.2026207132648.nc"
+    },
+    {
+      "day": "2026-07-27",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/208/AERDT_L2_VIIRS_NOAA20.A2026208.0030.021.2026208131731.nc"
+    },
+    {
+      "day": "2026-07-28",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/209/AERDT_L2_VIIRS_NOAA20.A2026209.0012.021.2026209131811.nc"
+    },
+    {
+      "day": "2026-07-29",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/210/AERDT_L2_VIIRS_NOAA20.A2026210.0000.021.2026210131902.nc"
+    },
+    {
+      "day": "2026-07-30",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/211/AERDT_L2_VIIRS_NOAA20.A2026211.0000.021.2026211132006.nc"
+    },
+    {
+      "day": "2026-07-31",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/212/AERDT_L2_VIIRS_NOAA20.A2026212.0000.021.2026212140101.nc"
+    },
+    {
+      "day": "2026-08-01",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/213/AERDT_L2_VIIRS_NOAA20.A2026213.0036.021.2026213133125.nc"
+    },
+    {
+      "day": "2026-08-02",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/214/AERDT_L2_VIIRS_NOAA20.A2026214.0018.021.2026214132158.nc"
+    },
+    {
+      "day": "2026-08-03",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/215/AERDT_L2_VIIRS_NOAA20.A2026215.0000.021.2026215132232.nc"
+    },
+    {
+      "day": "2026-08-04",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/216/AERDT_L2_VIIRS_NOAA20.A2026216.0000.021.2026216131342.nc"
+    },
+    {
+      "day": "2026-08-05",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/217/AERDT_L2_VIIRS_NOAA20.A2026217.0000.021.2026217133416.nc"
+    },
+    {
+      "day": "2026-08-06",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/218/AERDT_L2_VIIRS_NOAA20.A2026218.0042.021.2026218131440.nc"
+    },
+    {
+      "day": "2026-08-07",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/219/AERDT_L2_VIIRS_NOAA20.A2026219.0024.021.2026219131536.nc"
+    },
+    {
+      "day": "2026-08-08",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/220/AERDT_L2_VIIRS_NOAA20.A2026220.0006.021.2026220131658.nc"
+    },
+    {
+      "day": "2026-08-09",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/221/AERDT_L2_VIIRS_NOAA20.A2026221.0000.021.2026221134755.nc"
+    },
+    {
+      "day": "2026-08-10",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/222/AERDT_L2_VIIRS_NOAA20.A2026222.0000.021.2026222132856.nc"
+    },
+    {
+      "day": "2026-08-11",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/223/AERDT_L2_VIIRS_NOAA20.A2026223.0000.021.2026223131955.nc"
+    },
+    {
+      "day": "2026-08-12",
+      "dt021": 129,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/224/AERDT_L2_VIIRS_NOAA20.A2026224.0030.021.2026224133117.nc"
+    },
+    {
+      "day": "2026-08-13",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/225/AERDT_L2_VIIRS_NOAA20.A2026225.0012.021.2026225131337.nc"
+    },
+    {
+      "day": "2026-08-14",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/226/AERDT_L2_VIIRS_NOAA20.A2026226.0000.021.2026226131426.nc"
+    },
+    {
+      "day": "2026-08-15",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/227/AERDT_L2_VIIRS_NOAA20.A2026227.0000.021.2026227131529.nc"
+    },
+    {
+      "day": "2026-08-16",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/228/AERDT_L2_VIIRS_NOAA20.A2026228.0000.021.2026228131629.nc"
+    },
+    {
+      "day": "2026-08-17",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/229/AERDT_L2_VIIRS_NOAA20.A2026229.0036.021.2026229160727.nc"
+    },
+    {
+      "day": "2026-08-18",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/230/AERDT_L2_VIIRS_NOAA20.A2026230.0018.021.2026230132838.nc"
+    },
+    {
+      "day": "2026-08-19",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/231/AERDT_L2_VIIRS_NOAA20.A2026231.0000.021.2026231131932.nc"
+    },
+    {
+      "day": "2026-08-20",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/232/AERDT_L2_VIIRS_NOAA20.A2026232.0000.021.2026232144101.nc"
+    },
+    {
+      "day": "2026-08-21",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/233/AERDT_L2_VIIRS_NOAA20.A2026233.0000.021.2026233134141.nc"
+    },
+    {
+      "day": "2026-08-22",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/234/AERDT_L2_VIIRS_NOAA20.A2026234.0042.021.2026234134231.nc"
+    },
+    {
+      "day": "2026-08-23",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/235/AERDT_L2_VIIRS_NOAA20.A2026235.0024.021.2026235135327.nc"
+    },
+    {
+      "day": "2026-08-24",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/236/AERDT_L2_VIIRS_NOAA20.A2026236.0006.021.2026236142425.nc"
+    },
+    {
+      "day": "2026-08-25",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/237/AERDT_L2_VIIRS_NOAA20.A2026237.0000.021.2026237132758.nc"
+    },
+    {
+      "day": "2026-08-26",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/238/AERDT_L2_VIIRS_NOAA20.A2026238.0000.021.2026238131619.nc"
+    },
+    {
+      "day": "2026-08-27",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/239/AERDT_L2_VIIRS_NOAA20.A2026239.0000.021.2026239131732.nc"
+    },
+    {
+      "day": "2026-08-28",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/240/AERDT_L2_VIIRS_NOAA20.A2026240.0030.021.2026240134826.nc"
+    },
+    {
+      "day": "2026-08-29",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/241/AERDT_L2_VIIRS_NOAA20.A2026241.0012.021.2026241134940.nc"
+    },
+    {
+      "day": "2026-08-30",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/242/AERDT_L2_VIIRS_NOAA20.A2026242.0000.021.2026242133047.nc"
+    },
+    {
+      "day": "2026-08-31",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/243/AERDT_L2_VIIRS_NOAA20.A2026243.0000.021.2026243132201.nc"
+    },
+    {
+      "day": "2026-09-01",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/244/AERDT_L2_VIIRS_NOAA20.A2026244.0000.021.2026244132337.nc"
+    },
+    {
+      "day": "2026-09-02",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/245/AERDT_L2_VIIRS_NOAA20.A2026245.0036.021.2026245182918.nc"
+    },
+    {
+      "day": "2026-09-03",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/246/AERDT_L2_VIIRS_NOAA20.A2026246.0018.021.2026246130759.nc"
+    },
+    {
+      "day": "2026-09-04",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/247/AERDT_L2_VIIRS_NOAA20.A2026247.0000.021.2026247130944.nc"
+    },
+    {
+      "day": "2026-09-05",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/248/AERDT_L2_VIIRS_NOAA20.A2026248.0000.021.2026248131049.nc"
+    },
+    {
+      "day": "2026-09-06",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/249/AERDT_L2_VIIRS_NOAA20.A2026249.0000.021.2026249131209.nc"
+    },
+    {
+      "day": "2026-09-07",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/250/AERDT_L2_VIIRS_NOAA20.A2026250.0042.021.2026250131242.nc"
+    },
+    {
+      "day": "2026-09-08",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/251/AERDT_L2_VIIRS_NOAA20.A2026251.0024.021.2026251131315.nc"
+    },
+    {
+      "day": "2026-09-09",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/252/AERDT_L2_VIIRS_NOAA20.A2026252.0006.021.2026252130554.nc"
+    },
+    {
+      "day": "2026-09-10",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/253/AERDT_L2_VIIRS_NOAA20.A2026253.0000.021.2026253131601.nc"
+    },
+    {
+      "day": "2026-09-11",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/254/AERDT_L2_VIIRS_NOAA20.A2026254.0000.021.2026254132808.nc"
+    },
+    {
+      "day": "2026-09-12",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/255/AERDT_L2_VIIRS_NOAA20.A2026255.0000.021.2026255132225.nc"
+    },
+    {
+      "day": "2026-09-13",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/256/AERDT_L2_VIIRS_NOAA20.A2026256.0030.021.2026256131211.nc"
+    },
+    {
+      "day": "2026-09-14",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/257/AERDT_L2_VIIRS_NOAA20.A2026257.0012.021.2026257132313.nc"
+    },
+    {
+      "day": "2026-09-15",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/258/AERDT_L2_VIIRS_NOAA20.A2026258.0000.021.2026258132434.nc"
+    },
+    {
+      "day": "2026-09-16",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/259/AERDT_L2_VIIRS_NOAA20.A2026259.0000.021.2026259132619.nc"
+    },
+    {
+      "day": "2026-09-17",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/260/AERDT_L2_VIIRS_NOAA20.A2026260.0000.021.2026260130752.nc"
+    },
+    {
+      "day": "2026-09-18",
+      "dt021": 130,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/261/AERDT_L2_VIIRS_NOAA20.A2026261.0036.021.2026261131930.nc"
+    },
+    {
+      "day": "2026-09-19",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/262/AERDT_L2_VIIRS_NOAA20.A2026262.0018.021.2026262132056.nc"
+    },
+    {
+      "day": "2026-09-20",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/263/AERDT_L2_VIIRS_NOAA20.A2026263.0000.021.2026263132328.nc"
+    },
+    {
+      "day": "2026-09-21",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/264/AERDT_L2_VIIRS_NOAA20.A2026264.0000.021.2026264132506.nc"
+    },
+    {
+      "day": "2026-09-22",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/265/AERDT_L2_VIIRS_NOAA20.A2026265.0000.021.2026265134659.nc"
+    },
+    {
+      "day": "2026-09-23",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/266/AERDT_L2_VIIRS_NOAA20.A2026266.0042.021.2026266130827.nc"
+    },
+    {
+      "day": "2026-09-24",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/267/AERDT_L2_VIIRS_NOAA20.A2026267.0024.021.2026267130930.nc"
+    },
+    {
+      "day": "2026-09-25",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/268/AERDT_L2_VIIRS_NOAA20.A2026268.0000.021.2026268132106.nc"
+    },
+    {
+      "day": "2026-09-26",
+      "dt021": 137,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/269/AERDT_L2_VIIRS_NOAA20.A2026269.0000.021.2026269133402.nc"
+    },
+    {
+      "day": "2026-09-27",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/270/AERDT_L2_VIIRS_NOAA20.A2026270.0000.021.2026270134501.nc"
+    },
+    {
+      "day": "2026-09-28",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/271/AERDT_L2_VIIRS_NOAA20.A2026271.0048.021.2026271131714.nc"
+    },
+    {
+      "day": "2026-09-29",
+      "dt021": 131,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/272/AERDT_L2_VIIRS_NOAA20.A2026272.0030.021.2026272131843.nc"
+    },
+    {
+      "day": "2026-09-30",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/273/AERDT_L2_VIIRS_NOAA20.A2026273.0006.021.2026273131237.nc"
+    },
+    {
+      "day": "2026-10-01",
+      "dt021": 137,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/274/AERDT_L2_VIIRS_NOAA20.A2026274.0000.021.2026274131714.nc"
+    },
+    {
+      "day": "2026-10-02",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/275/AERDT_L2_VIIRS_NOAA20.A2026275.0000.021.2026275131857.nc"
+    },
+    {
+      "day": "2026-10-03",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/276/AERDT_L2_VIIRS_NOAA20.A2026276.0000.021.2026276133013.nc"
+    },
+    {
+      "day": "2026-10-04",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/277/AERDT_L2_VIIRS_NOAA20.A2026277.0036.021.2026277133120.nc"
+    },
+    {
+      "day": "2026-10-05",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/278/AERDT_L2_VIIRS_NOAA20.A2026278.0012.021.2026278133243.nc"
+    },
+    {
+      "day": "2026-10-06",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/279/AERDT_L2_VIIRS_NOAA20.A2026279.0000.021.2026279130323.nc"
+    },
+    {
+      "day": "2026-10-07",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/280/AERDT_L2_VIIRS_NOAA20.A2026280.0000.021.2026280130435.nc"
+    },
+    {
+      "day": "2026-10-08",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/281/AERDT_L2_VIIRS_NOAA20.A2026281.0000.021.2026281133032.nc"
+    },
+    {
+      "day": "2026-10-09",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/282/AERDT_L2_VIIRS_NOAA20.A2026282.0042.021.2026282132222.nc"
+    },
+    {
+      "day": "2026-10-10",
+      "dt021": 132,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/283/AERDT_L2_VIIRS_NOAA20.A2026283.0018.021.2026283132341.nc"
+    },
+    {
+      "day": "2026-10-11",
+      "dt021": 137,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/284/AERDT_L2_VIIRS_NOAA20.A2026284.0000.021.2026284135452.nc"
+    },
+    {
+      "day": "2026-10-12",
+      "dt021": 76,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/285/AERDT_L2_VIIRS_NOAA20.A2026285.0000.021.2026285131605.nc"
+    },
+    {
+      "day": "2026-10-13",
+      "dt021": 115,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/286/AERDT_L2_VIIRS_NOAA20.A2026286.0118.021.2026287003752.nc"
+    },
+    {
+      "day": "2026-10-14",
+      "dt021": 133,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/287/AERDT_L2_VIIRS_NOAA20.A2026287.0048.021.2026287131821.nc"
+    },
+    {
+      "day": "2026-10-15",
+      "dt021": 134,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/288/AERDT_L2_VIIRS_NOAA20.A2026288.0024.021.2026288131931.nc"
+    },
+    {
+      "day": "2026-10-16",
+      "dt021": 136,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/289/AERDT_L2_VIIRS_NOAA20.A2026289.0006.021.2026289132013.nc"
+    },
+    {
+      "day": "2026-10-17",
+      "dt021": 135,
+      "sample": "/ASDC_archive/VIIRS/J1/021/2026/290/AERDT_L2_VIIRS_NOAA20.A2026290.0000.021.2026290131118.nc"
+    },
+    {
+      "day": "2026-10-18",
+      "dt021": 0,
+      "sample": null
+    }
+  ]
+}

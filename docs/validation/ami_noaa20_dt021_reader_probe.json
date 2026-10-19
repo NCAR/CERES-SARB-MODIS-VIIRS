@@ -1,0 +1,16 @@
+[
+  {
+    "day": "2026-05-01",
+    "path": "/ASDC_archive/VIIRS/J1/021/2026/121/AERDT_L2_VIIRS_NOAA20.A2026121.0000.021.2026121132704.nc",
+    "pixels": 296,
+    "finite_aod": true,
+    "finite_sigma": true
+  },
+  {
+    "day": "2026-10-17",
+    "path": "/ASDC_archive/VIIRS/J1/021/2026/290/AERDT_L2_VIIRS_NOAA20.A2026290.0000.021.2026290131118.nc",
+    "pixels": 23441,
+    "finite_aod": true,
+    "finite_sigma": true
+  }
+]
