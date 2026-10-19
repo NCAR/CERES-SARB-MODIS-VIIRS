@@ -1,0 +1,40 @@
+{
+  "job_id": "5063352",
+  "qsub_args": [
+    "qsub",
+    "-h",
+    "-terse",
+    "-q",
+    "scf.q",
+    "-N",
+    "modis_c7_200003",
+    "-o",
+    "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200004_202203_f09_3hr_gls_rho05/200003",
+    "scripts/ami_grid.sh",
+    "config/runs/modis_c7_l2_200003_f09_3hr_gls_rho05.yaml"
+  ],
+  "source_revision_at_submission": "2c30fe161fd3ecdc374dbd9c7719a648cd19cc91",
+  "processing_sha256": "1524d4597c06aec55ea61104ad14057e5713b1b331192b28c09bf887f1972e10",
+  "status": "released",
+  "period_start": "2000-03-01",
+  "period_end": "2000-03-31",
+  "expected_files": 248,
+  "log_dir": "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/modis_c7_l2_200004_202203_f09_3hr_gls_rho05/200003",
+  "release": {
+    "job_id": "5063352",
+    "released_utc": "2026-10-19T01:02:02.928355+00:00",
+    "source_revision_at_release": "c9d722255394887b72261b466bc4fe709b6b4906",
+    "qrls_response": "removed user hold of job 5063352"
+  },
+  "scheduler_observed_utc": "2026-10-19T01:02:31.225520+00:00",
+  "scheduler_observation": [
+    {
+      "JB_job_number": "5063352",
+      "JB_name": "modis_c7_200003",
+      "state": "r",
+      "queue_name": "scf.q@la2520-cn-grid-ami03-pi.cluster.net",
+      "slots": "1",
+      "tasks": null
+    }
+  ]
+}

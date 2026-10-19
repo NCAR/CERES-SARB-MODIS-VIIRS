@@ -1,0 +1,244 @@
+{
+  "job_id": "5063353.1-18:1",
+  "submitted_utc": "2026-10-19T01:01:39.448848+00:00",
+  "qsub_args": [
+    "qsub",
+    "-h",
+    "-terse",
+    "-q",
+    "scf.q",
+    "-l",
+    "h_rt=06:00:00",
+    "-t",
+    "1-18",
+    "-tc",
+    "4",
+    "-N",
+    "noaa20_viirs_6month",
+    "-o",
+    "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05",
+    "scripts/ami_grid_years.sh",
+    "config/campaigns/viirs_noaa20_c2_c21_20171118_20261018_6month.txt"
+  ],
+  "source_revision_at_submission": "c9d722255394887b72261b466bc4fe709b6b4906",
+  "status": "released",
+  "period_start": "2017-11-18",
+  "period_end": "2026-10-18",
+  "expected_files": 26056,
+  "days": 3257,
+  "tasks": [
+    {
+      "index": 1,
+      "config": "config/runs/viirs_noaa20_c2_l2_201711_201804_f09_3hr_gls_rho05.yaml",
+      "start": "2017-11-18",
+      "end": "2018-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 2,
+      "config": "config/runs/viirs_noaa20_c2_l2_201805_201810_f09_3hr_gls_rho05.yaml",
+      "start": "2018-05-01",
+      "end": "2018-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 3,
+      "config": "config/runs/viirs_noaa20_c2_l2_201811_201904_f09_3hr_gls_rho05.yaml",
+      "start": "2018-11-01",
+      "end": "2019-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 4,
+      "config": "config/runs/viirs_noaa20_c2_l2_201905_201910_f09_3hr_gls_rho05.yaml",
+      "start": "2019-05-01",
+      "end": "2019-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 5,
+      "config": "config/runs/viirs_noaa20_c2_l2_201911_202004_f09_3hr_gls_rho05.yaml",
+      "start": "2019-11-01",
+      "end": "2020-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 6,
+      "config": "config/runs/viirs_noaa20_c2_l2_202005_202010_f09_3hr_gls_rho05.yaml",
+      "start": "2020-05-01",
+      "end": "2020-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 7,
+      "config": "config/runs/viirs_noaa20_c2_l2_202011_202104_f09_3hr_gls_rho05.yaml",
+      "start": "2020-11-01",
+      "end": "2021-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 8,
+      "config": "config/runs/viirs_noaa20_c2_l2_202105_202110_f09_3hr_gls_rho05.yaml",
+      "start": "2021-05-01",
+      "end": "2021-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 9,
+      "config": "config/runs/viirs_noaa20_c2_l2_202111_202204_f09_3hr_gls_rho05.yaml",
+      "start": "2021-11-01",
+      "end": "2022-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 10,
+      "config": "config/runs/viirs_noaa20_c2_l2_202205_202210_f09_3hr_gls_rho05.yaml",
+      "start": "2022-05-01",
+      "end": "2022-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 11,
+      "config": "config/runs/viirs_noaa20_c2_l2_202211_202304_f09_3hr_gls_rho05.yaml",
+      "start": "2022-11-01",
+      "end": "2023-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 12,
+      "config": "config/runs/viirs_noaa20_c2_l2_202305_202310_f09_3hr_gls_rho05.yaml",
+      "start": "2023-05-01",
+      "end": "2023-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 13,
+      "config": "config/runs/viirs_noaa20_c2_l2_202311_202404_f09_3hr_gls_rho05.yaml",
+      "start": "2023-11-01",
+      "end": "2024-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 14,
+      "config": "config/runs/viirs_noaa20_c2_l2_202405_202410_f09_3hr_gls_rho05.yaml",
+      "start": "2024-05-01",
+      "end": "2024-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 15,
+      "config": "config/runs/viirs_noaa20_c2_l2_202411_202504_f09_3hr_gls_rho05.yaml",
+      "start": "2024-11-01",
+      "end": "2025-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 16,
+      "config": "config/runs/viirs_noaa20_c2_l2_202505_202510_f09_3hr_gls_rho05.yaml",
+      "start": "2025-05-01",
+      "end": "2025-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 17,
+      "config": "config/runs/viirs_noaa20_c2_l2_202511_202604_f09_3hr_gls_rho05.yaml",
+      "start": "2025-11-01",
+      "end": "2026-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "dt_collection": "2",
+      "db_collection": "2"
+    },
+    {
+      "index": 18,
+      "config": "config/runs/viirs_noaa20_dt21_db2_l2_202605_202610_f09_3hr_gls_rho05.yaml",
+      "start": "2026-05-01",
+      "end": "2026-10-18",
+      "processing_sha256": "61f5b3a7f955a2160920c43b07cb8fb0505201952c2a4ff2d781be1287f4a89a",
+      "dt_collection": "2.1",
+      "db_collection": "2"
+    }
+  ],
+  "log_dir": "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05",
+  "free_bytes_at_submission": 1227831115776,
+  "release": {
+    "job_id": "5063353",
+    "released_utc": "2026-10-19T01:02:03.019604+00:00",
+    "source_revision_at_release": "c9d722255394887b72261b466bc4fe709b6b4906",
+    "qrls_response": "removed user hold of job 5063353"
+  },
+  "scheduler_observed_utc": "2026-10-19T01:02:31.235503+00:00",
+  "scheduler_observation": [
+    {
+      "JB_job_number": "5063353",
+      "JB_name": "noaa20_viirs_6month",
+      "state": "r",
+      "queue_name": "scf.q@la2520-cn-grid-ami03-pi.cluster.net",
+      "slots": "1",
+      "tasks": "1"
+    },
+    {
+      "JB_job_number": "5063353",
+      "JB_name": "noaa20_viirs_6month",
+      "state": "r",
+      "queue_name": "scf.q@la2520-cn-grid-ami03-pi.cluster.net",
+      "slots": "1",
+      "tasks": "2"
+    },
+    {
+      "JB_job_number": "5063353",
+      "JB_name": "noaa20_viirs_6month",
+      "state": "r",
+      "queue_name": "scf.q@la2520-cn-grid-ami03-pi.cluster.net",
+      "slots": "1",
+      "tasks": "3"
+    },
+    {
+      "JB_job_number": "5063353",
+      "JB_name": "noaa20_viirs_6month",
+      "state": "r",
+      "queue_name": "scf.q@la2520-cn-grid-ami03-pi.cluster.net",
+      "slots": "1",
+      "tasks": "4"
+    },
+    {
+      "JB_job_number": "5063353",
+      "JB_name": "noaa20_viirs_6month",
+      "state": "qw",
+      "queue_name": "",
+      "slots": "1",
+      "tasks": "5-18:1"
+    }
+  ]
+}

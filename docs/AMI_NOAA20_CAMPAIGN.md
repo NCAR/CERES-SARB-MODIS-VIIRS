@@ -122,6 +122,26 @@ implementation or scheduler wrapper was changed for these submissions.
 Final review found no actionable issues and passed 72 targeted tests. Its
 independent checks confirmed continuous date coverage, unique paths, selected
 collections, processing fingerprints, inventory consistency and all 18 wrapper
-dispatches. Submission is pending; record the source revision, scheduler job
-ID and acceptance state after deployment. Queue acceptance is separate from
-completion.
+dispatches.
+
+Array **5063353.1–18**, `noaa20_viirs_6month`, was accepted at
+**2026-10-19 01:01:39 UTC** (October 18 at 21:01:39 EDT), with one serial slot
+per task, `scf.q`, `h_rt=21600`, and a concurrency limit of four. It was
+initially held, then released at **01:02:03.020 UTC**, immediately after March
+MODIS job 5063352. At 01:02:31 UTC, tasks 1–4 were running on
+`la2520-cn-grid-ami03-pi.cluster.net` and tasks 5–18 were queued. No holds or
+scheduler error states remained.
+
+All 18 configs loaded successfully on AMI and matched the local processing
+hashes before submission. The filesystem had 1,227,831,115,776 free bytes
+(approximately 1,144 GiB). Startup logs recorded the expected manifest entries
+and clean revision `c9d722255394887b72261b466bc4fe709b6b4906`. The processing
+checkout stays at that revision while jobs run; later documentation-only
+submission records are not pulled into it during processing.
+
+[The submission record](validation/ami_noaa20_20171118_20261018_submission.json)
+retains all task intervals/configs/collections/hashes, exact `qsub` arguments,
+the release receipt, free-space observation and scheduler states. Runtime
+`submission.json`, `release.json`, `scheduler_submission.txt` and resolved
+config snapshots remain in the campaign log directory. This is queue/startup
+evidence, not completed processing or scientific validation.

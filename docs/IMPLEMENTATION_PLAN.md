@@ -52,7 +52,7 @@ correction remain deferred.
 | 2 | VIIRS readers, MODIS+VIIRS mixing, C7 | C7 reader and native diagnostics implemented from AMI samples; monthly operational test and C7 science comparison tracked below |
 | 3 | AERONET validation suite; choose ρ and other defaults | Daily campaign: 24 verified, 18 global passes including both baselines; regional failures and daily uncertainty remain open |
 | 4 | Plotting and diagnostics (DAVINCI style) | All 1,552 figures pass protocols and visual inspection; separate science/SP1 acceptance remains open |
-| 5 | Production profile (AMI), multi-year runs | July C7 operational test complete: 31 days, 248 validated files; multi-year production deferred |
+| 5 | Production profile (AMI), multi-year runs | July C7 operational test complete; MODIS C7 and NOAA-20 production campaigns queued, with completion tracked separately |
 | 6 | Spatial despeckling and paired-output July C6.1 laptop trial | Done; July trial tested and reviewed; defaults remain disabled |
 
 ### Tasks, dependencies and order
@@ -119,8 +119,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.7 | Verify September NOAA-20 completion and deliver AMI spatial/regional PDFs | 5.6, 4.22 | Done; 240 grids validated, 16 plots accepted and two Desktop PDFs delivered; science bias gate fails | Task 5.7 (this commit) |
 | 5.8 | Explicit gap outputs and 22 tracked April–March MODIS C7 configs | 5.3, 5.7 | Done; 1,071 offline tests pass, review findings fixed | `1ebdaf4` |
 | 5.9 | Deploy and queue 22 yearly MODIS C7 AMI tasks | 5.8 | Done; 22 yearly tasks queued as array 5034008, smoke checks pass | Task 5.9 (this commit) |
-| 5.10 | Configure and queue March 2000 MODIS C7 supplement on AMI | 5.8 | Configuration validated and reviewed; submission pending | Task 5.10 configuration commit |
-| 5.11 | Configure and queue the NOAA-20-only VIIRS launch-to-present record in six-month jobs | 5.7, 5.8 | 18 configs validated and reviewed; submission pending | Task 5.11 configuration commit |
+| 5.10 | Configure and queue March 2000 MODIS C7 supplement on AMI | 5.8 | Done; job 5063352 released and running in scf.q | `2c30fe1`; submission record in Task 5.11 deployment commit |
+| 5.11 | Configure and queue the NOAA-20-only VIIRS launch-to-present record in six-month jobs | 5.7, 5.8 | Done; array 5063353.1–18 released, tasks 1–4 running and 5–18 queued | `c9d7222`; Task 5.11 deployment record |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |

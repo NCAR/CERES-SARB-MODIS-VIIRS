@@ -213,6 +213,17 @@ All 248 output paths are unique and precede the first annual config. Review
 verified the monthly wrapper dispatch with a stub and passed 56 focused tests.
 
 The full gate passed 1,071 offline tests (one network test deselected), mypy,
-Black, isort, shell syntax and whitespace checks. AMI submission is pending.
-Record the returned job ID and live scheduler state after submission; acceptance
-does not establish successful processing.
+Black, isort, shell syntax and whitespace checks.
+
+Job **5063352**, `modis_c7_200003`, was submitted on October 18, 2026 at
+20:59:18 EDT, with one serial slot in `scf.q` and `h_rt=7200`. It was initially
+held while the NOAA-20 configurations were deployed. March was released first,
+at **2026-10-19 01:02:02.928 UTC**, followed by the NOAA-20 array. At 01:02:31
+UTC it was running on `la2520-cn-grid-ami03-pi.cluster.net`; its log recorded
+clean revision `c9d722255394887b72261b466bc4fe709b6b4906` and Python 3.13.14.
+
+[The submission record](validation/ami_modis_c7_200003_submission.json)
+retains the exact command, source revisions, processing hash, release receipt
+and scheduler observation. Runtime records and the combined output log are in
+the `200003` log directory shown above. This establishes queue acceptance and
+startup; monthly processing completion remains to be checked separately.
