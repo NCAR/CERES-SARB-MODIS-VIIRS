@@ -1,0 +1,266 @@
+{
+  "job_id": "5067937",
+  "qsub_response": "5067937.1-16:1",
+  "submitted_utc": "2026-10-20T00:55:36.811907+00:00",
+  "qsub_args": [
+    "qsub",
+    "-h",
+    "-terse",
+    "-q",
+    "scf.q",
+    "-l",
+    "h_rt=12:00:00",
+    "-t",
+    "1-16",
+    "-tc",
+    "4",
+    "-N",
+    "noaa20_viirs_3month",
+    "-o",
+    "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/recovery_20261019_3month",
+    "scripts/ami_grid_years.sh",
+    "config/campaigns/viirs_noaa20_recovery_20261019_3month.txt"
+  ],
+  "source_revision": "364504b84f2b9c911b37931d06846a8dc5c29a12",
+  "manifest": "config/campaigns/viirs_noaa20_recovery_20261019_3month.txt",
+  "log_dir": "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/recovery_20261019_3month",
+  "cleanup": {
+    "cleaned_utc": "2026-10-20T00:54:07.756688+00:00",
+    "run": "viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05",
+    "netcdf_files_removed": 0,
+    "netcdf_files_modified": 0,
+    "failed_metrics_archived": [
+      {
+        "from": "/CERES/sarb/dfillmor/MODIS_VIIRS/summaries/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/summary_20250301_20250331.metrics.json",
+        "to": "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/recovery_20261019_3month/previous_failed_metrics/summary_20250301_20250331.metrics.json",
+        "bytes": 6136,
+        "sha256": "2b06738629baf44a4226d7b84e8e0883b95a923bffbe011ad6cf65c2904c6d35"
+      },
+      {
+        "from": "/CERES/sarb/dfillmor/MODIS_VIIRS/summaries/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/summary_20251201_20251231.metrics.json",
+        "to": "/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/recovery_20261019_3month/previous_failed_metrics/summary_20251201_20251231.metrics.json",
+        "bytes": 6136,
+        "sha256": "7dfd42a4fd13e9c7fdb84ea9f96014d4c682ed270ff25319ab317c365675b09a"
+      }
+    ],
+    "completed_output_policy": "Keep all valid completed months and days; grid-months resumes without --overwrite."
+  },
+  "tasks": [
+    {
+      "index": 1,
+      "config": "config/runs/viirs_noaa20_c2_l2_202011_202101_f09_3hr_gls_rho05.yaml",
+      "start": "2020-11-01",
+      "end": "2021-01-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 2,
+      "config": "config/runs/viirs_noaa20_c2_l2_202102_202104_f09_3hr_gls_rho05.yaml",
+      "start": "2021-02-01",
+      "end": "2021-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 3,
+      "config": "config/runs/viirs_noaa20_c2_l2_202105_202107_f09_3hr_gls_rho05.yaml",
+      "start": "2021-05-01",
+      "end": "2021-07-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 4,
+      "config": "config/runs/viirs_noaa20_c2_l2_202108_202110_f09_3hr_gls_rho05.yaml",
+      "start": "2021-08-01",
+      "end": "2021-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 5,
+      "config": "config/runs/viirs_noaa20_c2_l2_202111_202201_f09_3hr_gls_rho05.yaml",
+      "start": "2021-11-01",
+      "end": "2022-01-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 6,
+      "config": "config/runs/viirs_noaa20_c2_l2_202202_202204_f09_3hr_gls_rho05.yaml",
+      "start": "2022-02-01",
+      "end": "2022-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 7,
+      "config": "config/runs/viirs_noaa20_c2_l2_202205_202207_f09_3hr_gls_rho05.yaml",
+      "start": "2022-05-01",
+      "end": "2022-07-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 8,
+      "config": "config/runs/viirs_noaa20_c2_l2_202208_202210_f09_3hr_gls_rho05.yaml",
+      "start": "2022-08-01",
+      "end": "2022-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 9,
+      "config": "config/runs/viirs_noaa20_c2_l2_202211_202301_f09_3hr_gls_rho05.yaml",
+      "start": "2022-11-01",
+      "end": "2023-01-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 10,
+      "config": "config/runs/viirs_noaa20_c2_l2_202302_202304_f09_3hr_gls_rho05.yaml",
+      "start": "2023-02-01",
+      "end": "2023-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 11,
+      "config": "config/runs/viirs_noaa20_c2_l2_202305_202307_f09_3hr_gls_rho05.yaml",
+      "start": "2023-05-01",
+      "end": "2023-07-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 12,
+      "config": "config/runs/viirs_noaa20_c2_l2_202308_202310_f09_3hr_gls_rho05.yaml",
+      "start": "2023-08-01",
+      "end": "2023-10-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 13,
+      "config": "config/runs/viirs_noaa20_c2_l2_202311_202401_f09_3hr_gls_rho05.yaml",
+      "start": "2023-11-01",
+      "end": "2024-01-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 14,
+      "config": "config/runs/viirs_noaa20_c2_l2_202402_202404_f09_3hr_gls_rho05.yaml",
+      "start": "2024-02-01",
+      "end": "2024-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": null
+    },
+    {
+      "index": 15,
+      "config": "config/runs/viirs_noaa20_c2_l2_202502_202504_f09_3hr_gls_rho05.yaml",
+      "start": "2025-02-01",
+      "end": "2025-04-30",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": "truncated DT 002 input"
+    },
+    {
+      "index": 16,
+      "config": "config/runs/viirs_noaa20_c2_l2_202511_202601_f09_3hr_gls_rho05.yaml",
+      "start": "2025-11-01",
+      "end": "2026-01-31",
+      "processing_sha256": "aa4ea5f8558c46ac28cd68e8c5757f77c24add9c75ff36d368a0adede6bdc715",
+      "hold_reason": "truncated DT 002 input"
+    }
+  ],
+  "release": {
+    "released_utc": "2026-10-20T00:55:37.305752+00:00",
+    "tasks": "1-14",
+    "qrls_response": "removed user hold of job-array tasks 5067937.1-14:1",
+    "held_tasks": [
+      15,
+      16
+    ]
+  },
+  "initial_scheduler_observation": [
+    {
+      "JB_job_number": "5067937",
+      "JB_name": "noaa20_viirs_3month",
+      "state": "qw",
+      "queue_name": "",
+      "slots": "1",
+      "tasks": "1-14:1"
+    },
+    {
+      "JB_job_number": "5067937",
+      "JB_name": "noaa20_viirs_3month",
+      "state": "hqw",
+      "queue_name": "",
+      "slots": "1",
+      "tasks": "15,16"
+    }
+  ],
+  "startup": {
+    "observed_utc": "2026-10-20T00:59:44.538831+00:00",
+    "job_id": "5067937",
+    "unchanged_existing_files_verified_by_sha256": 520,
+    "scheduler": [
+      {
+        "JB_job_number": "5067937",
+        "JB_name": "noaa20_viirs_3month",
+        "state": "r",
+        "queue_name": "scf.q@la2520-hn-grid-ami02-pi.cluster.net",
+        "slots": "1",
+        "tasks": "1"
+      },
+      {
+        "JB_job_number": "5067937",
+        "JB_name": "noaa20_viirs_3month",
+        "state": "r",
+        "queue_name": "scf.q@la2520-hn-grid-ami02-pi.cluster.net",
+        "slots": "1",
+        "tasks": "2"
+      },
+      {
+        "JB_job_number": "5067937",
+        "JB_name": "noaa20_viirs_3month",
+        "state": "r",
+        "queue_name": "scf.q@la2520-hn-grid-ami02-pi.cluster.net",
+        "slots": "1",
+        "tasks": "3"
+      },
+      {
+        "JB_job_number": "5067937",
+        "JB_name": "noaa20_viirs_3month",
+        "state": "r",
+        "queue_name": "scf.q@la2520-hn-grid-ami02-pi.cluster.net",
+        "slots": "1",
+        "tasks": "4"
+      },
+      {
+        "JB_job_number": "5067937",
+        "JB_name": "noaa20_viirs_3month",
+        "state": "qw",
+        "queue_name": "",
+        "slots": "1",
+        "tasks": "5-14:1"
+      },
+      {
+        "JB_job_number": "5067937",
+        "JB_name": "noaa20_viirs_3month",
+        "state": "hqw",
+        "queue_name": "",
+        "slots": "1",
+        "tasks": "15,16"
+      }
+    ],
+    "startup_logs": {
+      "1": "Tue Oct 20 00:55:51 UTC 2026\n364504b84f2b9c911b37931d06846a8dc5c29a12\nAnalysis config: config/runs/viirs_noaa20_c2_l2_202011_202101_f09_3hr_gls_rho05.yaml\n2020-11-01/2020-11-30: complete; 0 processed, 30 resumed; 240 files, 829410480 bytes; 42.45 s\nmetrics: /CERES/sarb/dfillmor/MODIS_VIIRS/summaries/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/summary_20201101_20201130.metrics.json\n2020-12-01/2020-12-31: complete; 0 processed, 31 resumed; 248 files, 857057496 bytes; 45.16 s\nmetrics: /CERES/sarb/dfillmor/MODIS_VIIRS/summaries/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/summary_20201201_20201231.metrics.json\n",
+      "2": "Tue Oct 20 00:55:51 UTC 2026\n364504b84f2b9c911b37931d06846a8dc5c29a12\nAnalysis config: config/runs/viirs_noaa20_c2_l2_202102_202104_f09_3hr_gls_rho05.yaml\n",
+      "3": "Tue Oct 20 00:55:51 UTC 2026\n364504b84f2b9c911b37931d06846a8dc5c29a12\nAnalysis config: config/runs/viirs_noaa20_c2_l2_202105_202107_f09_3hr_gls_rho05.yaml\n",
+      "4": "Tue Oct 20 00:55:51 UTC 2026\n364504b84f2b9c911b37931d06846a8dc5c29a12\nAnalysis config: config/runs/viirs_noaa20_c2_l2_202108_202110_f09_3hr_gls_rho05.yaml\n"
+    }
+  }
+}

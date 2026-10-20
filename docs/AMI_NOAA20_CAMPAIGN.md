@@ -91,6 +91,37 @@ processing fingerprints; all 52 full/recovery wrapper dispatches passed.
 `codex review --uncommitted` found no actionable issues, independently
 confirming coverage and dispatch and passing 77 targeted tests.
 
+### Recovery submission and preservation checks
+
+Configuration revision `364504b84f2b9c911b37931d06846a8dc5c29a12` was deployed
+to a clean AMI checkout after the old array had finished. All 16 recovery
+configs loaded there with the original DT/DB 002 processing fingerprint.
+Cleanup moved the two failed 2025 monthly metrics into
+`logs/<run>/recovery_20261019_3month/previous_failed_metrics/`, preserving
+their bytes and SHA-256 checksums. No NetCDF file was deleted or modified.
+All 520 existing files in partially populated months were checked again by
+SHA-256 after cleanup and submission and remained unchanged.
+
+Recovery array **5067937.1–16**, `noaa20_viirs_3month`, was submitted on
+**2026-10-20 at 00:55 UTC** (October 19 in America/New_York), using `scf.q`,
+one serial slot per task, concurrency four and `h_rt=12:00:00`. Tasks 1–14
+were released at **00:55:37 UTC**. Tasks 15 and 16 retain user holds because
+their March 31 and December 14, 2025 DT inputs are truncated.
+
+The startup check found tasks 1–4 running, 5–14 queued, and 15–16 held.
+Logs record the deployed revision and expected three-month configs.
+Task 1 resumed all 61 completed November/December 2020 days with zero days
+reprocessed, preserving their NetCDF provenance. The remaining recovery
+dates still require completion checks; the two held dates require archive
+repair before release. Do not release those tasks merely because the other
+tasks finish.
+
+The [recovery submission record](validation/ami_noaa20_20261019_recovery_submission.json)
+retains the exact scheduler arguments, task intervals, processing hash,
+cleanup paths/checksums, release receipt, startup states and preservation
+verification. Runtime records and the per-file preservation manifest remain
+in `logs/<run>/recovery_20261019_3month/`.
+
 ## Initial six-month configuration and coverage
 
 The [campaign manifest](../config/campaigns/viirs_noaa20_c2_c21_20171118_20261018_6month.txt)

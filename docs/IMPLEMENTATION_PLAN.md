@@ -121,8 +121,8 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 5.9 | Deploy and queue 22 yearly MODIS C7 AMI tasks | 5.8 | Done; 22 yearly tasks queued as array 5034008, smoke checks pass | Task 5.9 (this commit) |
 | 5.10 | Configure and queue March 2000 MODIS C7 supplement on AMI | 5.8 | Done; job 5063352 released and running in scf.q | `2c30fe1`; submission record in Task 5.11 deployment commit |
 | 5.11 | Configure and queue the NOAA-20-only VIIRS launch-to-present record in six-month jobs | 5.7, 5.8 | Done; array 5063353.1–18 released, tasks 1–4 running and 5–18 queued | `c9d7222`; Task 5.11 deployment record |
-| 5.12 | Three-month NOAA-20 configs and recovery manifest preserving completed output | 5.11 | Done; 1,071 offline tests, coverage/identity checks and 52 dispatch checks pass; reviewed | Task 5.12 (this commit) |
-| 5.13 | Clean failed VIIRS artifacts and queue three-month recovery on AMI | 5.12 | In progress; completed months and valid days are retained | |
+| 5.12 | Three-month NOAA-20 configs and recovery manifest preserving completed output | 5.11 | Done; 1,071 offline tests, coverage/identity checks and 52 dispatch checks pass; reviewed | `364504b` |
+| 5.13 | Clean failed VIIRS artifacts and queue three-month recovery on AMI | 5.12 | Done; array 5067937 submitted, tasks 1–14 released and 15–16 held for truncated inputs; all 520 checked existing files unchanged | Task 5.13 (this commit) |
 | 2.6 | C7 July/September science comparison and uncertainty assessment | 2.5, available inputs | Open | |
 | 6.0 | Despeckle design and July C6.1 laptop comparison plan | 1.11, 4.8 | Done; plan only | `4224326` |
 | 6.1 | Despeckle config, latitude bands and geographic neighborhoods | 6.0 | Done | `9a1e187` |
