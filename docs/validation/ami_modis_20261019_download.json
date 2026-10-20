@@ -1,0 +1,2258 @@
+{
+  "checked_utc": "2026-10-20T01:31:54.143290+00:00",
+  "local_root": "/Users/dfillmor/Data/MODIS_VIIRS",
+  "source_root": "/CERES/sarb/dfillmor/MODIS_VIIRS",
+  "scope": "All processed MODIS C7 CAM7 production output and the separate July 2008 trial; original Level-2 granules are not part of this transfer.",
+  "completion": {
+    "finished_utc": "2026-10-20T01:30:48.583455+00:00",
+    "archives": 266,
+    "netcdf_files": 64776,
+    "netcdf_bytes": 360529727432,
+    "archive_bytes": 15709287856,
+    "verification": "Archive SHA-256, complete tar member inventory, embedded manifest, and every source-file SHA-256 verified after decompression."
+  },
+  "netcdf_GiB": 335.76947397738695,
+  "archive_GiB": 14.63041441142559,
+  "source_members_verified": 65308,
+  "monthly_summary_files": 532,
+  "supporting_files": 160,
+  "supporting_bytes": 19351795,
+  "archive_sets": {
+    "modis_c7_l2_200004_202203_f09_3hr_gls_rho05": 265,
+    "modis_c7_l2_200807_f09_3hr_gls_rho05": 1
+  },
+  "source_export_submission": {
+    "job_id": "5067940",
+    "qsub_response": "5067940.1-4:1",
+    "submitted_utc": "2026-10-20T01:02:36.274899+00:00",
+    "qsub_args": [
+      "qsub",
+      "-terse",
+      "-q",
+      "scf.q",
+      "-l",
+      "h_rt=12:00:00",
+      "-t",
+      "1-4",
+      "-tc",
+      "4",
+      "-N",
+      "modis_export",
+      "-cwd",
+      "-o",
+      "/CERES/sarb/dfillmor/MODIS_VIIRS/exports/modis_monthly_20261019",
+      "-j",
+      "y",
+      "-b",
+      "y",
+      "/homedir/dfillmor/miniforge3/envs/sarb-aod/bin/python",
+      "-u",
+      "/CERES/sarb/dfillmor/MODIS_VIIRS/exports/modis_monthly_20261019/export_months.py",
+      "/CERES/sarb/dfillmor/MODIS_VIIRS/exports/modis_monthly_20261019/export_config.json"
+    ],
+    "supersedes_job": "5067939",
+    "reason": "Four disjoint month subsets in four serial scheduler slots; already published verified archives are resumed."
+  },
+  "source_export_accounting": [
+    {
+      "hostname": "la2520-cn-grid-ami04-pi.cluster.net",
+      "jobnumber": "5067940",
+      "taskid": "4",
+      "start_time": "10/19/2026 21:02:36.416",
+      "end_time": "10/19/2026 21:28:29.336",
+      "failed": "0",
+      "exit_status": "0",
+      "ru_wallclock": "1552.920",
+      "maxvmem": "309.281M"
+    },
+    {
+      "hostname": "la2520-cn-grid-ami05-pi.cluster.net",
+      "jobnumber": "5067940",
+      "taskid": "3",
+      "start_time": "10/19/2026 21:02:36.432",
+      "end_time": "10/19/2026 21:28:59.404",
+      "failed": "0",
+      "exit_status": "0",
+      "ru_wallclock": "1582.972",
+      "maxvmem": "308.883M"
+    },
+    {
+      "hostname": "la2520-cn-grid-ami05-pi.cluster.net",
+      "jobnumber": "5067940",
+      "taskid": "1",
+      "start_time": "10/19/2026 21:02:36.380",
+      "end_time": "10/19/2026 21:29:13.266",
+      "failed": "0",
+      "exit_status": "0",
+      "ru_wallclock": "1596.886",
+      "maxvmem": "309.016M"
+    },
+    {
+      "hostname": "la2520-cn-grid-ami04-pi.cluster.net",
+      "jobnumber": "5067940",
+      "taskid": "2",
+      "start_time": "10/19/2026 21:02:36.381",
+      "end_time": "10/19/2026 21:29:25.467",
+      "failed": "0",
+      "exit_status": "0",
+      "ru_wallclock": "1609.086",
+      "maxvmem": "309.336M"
+    }
+  ],
+  "sample_header_check": {
+    "archive": "/Users/dfillmor/Data/MODIS_VIIRS/archives/modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200607.tar.zst",
+    "member": "grids/modis_c7_l2_200004_202203_f09_3hr_gls_rho05/2006/07/01/MODIS_VIIRS_AOD_3hr_f09.20060701.00000.nc",
+    "dimensions": {
+      "lat": 192,
+      "lon": 288
+    },
+    "field_shape": [
+      192,
+      288
+    ],
+    "valid_aod_cells": 6126,
+    "time": 56953.5,
+    "time_units": "hours since 2000-01-01 00:00:00 UTC",
+    "processing_sha256": "1524d4597c06aec55ea61104ad14057e5713b1b331192b28c09bf887f1972e10"
+  },
+  "free_local_bytes_after_download": 517186461696,
+  "source_grid_files_modified": false,
+  "netcdf_files_extracted_to_disk": false,
+  "checks": [
+    "All expected months, archive names and byte totals match the source export inventory.",
+    "All archive SHA-256 values and local file sizes/mtimes match the successful decoded-content verification records.",
+    "Every archived source file was verified by SHA-256 after decompression; every tar member name and size and the embedded manifest matched.",
+    "All 160 associated evaluation/plot/log files match source SHA-256 and size.",
+    "A downloaded NetCDF sample opens with the expected f09 dimensions, AOD field, CF time and original processing fingerprint."
+  ],
+  "archives": [
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200003.tar.zst",
+      "bytes": 35969476,
+      "sha256": "8b4dc34a4e422de6101d28c91beedc1e60a9d7118c471e6e1b540cacdb6760f3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T00:58:19.456983+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200004.tar.zst",
+      "bytes": 34225771,
+      "sha256": "d4f3d5180349c3841085e36b5cf1538075a63aa880d8e2c1626e57e25c876d87",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T00:58:52.780632+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200005.tar.zst",
+      "bytes": 38642296,
+      "sha256": "747d0668dc2bae73ce74ce280fd28606e5efee1311b9ea30baaeffc27b4c1c34",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T00:59:34.063929+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200006.tar.zst",
+      "bytes": 38033205,
+      "sha256": "fdb01d3c488f2318625da718896294ee8b49b5921c4178ed2bcefb6266d47611",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T00:59:34.923661+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200007.tar.zst",
+      "bytes": 42911059,
+      "sha256": "5d7db940d1b6ff600699a7885cf43c1018faae76421a95768207ccf9deb0528f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:00:32.441274+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200008.tar.zst",
+      "bytes": 29772752,
+      "sha256": "8c019b8e74f78a21c5f986f1197e708ecaea6a71ecda19afae7dcadd47b9cee0",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:00:33.347726+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200009.tar.zst",
+      "bytes": 39849117,
+      "sha256": "678f1c322184c41424c970d77d0043e3663ca4d8cc4f85889dd01cd5080b3bfa",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:01:16.923233+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200010.tar.zst",
+      "bytes": 37394012,
+      "sha256": "b6758601664771327af679618f8bd3d080e8a26eafc907462d1c5d39c3ad70dd",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:01:17.754612+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200011.tar.zst",
+      "bytes": 34835387,
+      "sha256": "5242faf961a0b248c94cbdb35cc45227e57886773c1c6434b06b339f5e96fed6",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:01:53.865466+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200012.tar.zst",
+      "bytes": 35569303,
+      "sha256": "d23a379318917cc3346e9536d77614c19b3e838fdbef3d7076fe236ba647adb6",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:01:54.739049+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200101.tar.zst",
+      "bytes": 36157762,
+      "sha256": "d51890f8c1092f4d738ea73a74ef94a53f7db3d552509e0b3695f0ec88189788",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:02:28.117876+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200102.tar.zst",
+      "bytes": 33065002,
+      "sha256": "b5343e4ea6412f5394b6beae2900fa76828275a0a8996cdf9d5db9608eccd098",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:03:39.569076+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200103.tar.zst",
+      "bytes": 37900724,
+      "sha256": "75cbc8c0117f5d923059af9593365b8890201fdcb523cce6781c72a8d0d8251b",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:03:40.401120+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200104.tar.zst",
+      "bytes": 37311561,
+      "sha256": "7fc52808a5e6798cff4bbbecee621bee5022fc048ac6a11faa1e40616bc0490a",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:03:41.207404+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200105.tar.zst",
+      "bytes": 39204545,
+      "sha256": "87bad81220f4f98dc054ed8301ddccd8a603b5cb556ad3f3ef17a1fed60cff76",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:03:42.040999+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200106.tar.zst",
+      "bytes": 24655964,
+      "sha256": "85004da557f724a22a6536c477b58fa947dfd033d02231e6e090cc72bbe16e59",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:03:42.857360+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200107.tar.zst",
+      "bytes": 40662258,
+      "sha256": "2f886928aef01072ae7878894dde43e50f8023c76cefebac27046ceacfe85406",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:04:27.812769+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200108.tar.zst",
+      "bytes": 43202111,
+      "sha256": "69f3856934aeb839ec6d8dd17d7b9d5870b6866297228053d5dbbed704221231",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:03:43.694132+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200109.tar.zst",
+      "bytes": 40638484,
+      "sha256": "639b9a4232ec0fa15d53e9c894ff5da38d045fa9a46a50447fc568708355fa20",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:04:28.617941+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200110.tar.zst",
+      "bytes": 38247779,
+      "sha256": "25a6c051f681e0a4d8413e2db8769d68d2d3bb993540aaf13aaab7fbd99828c9",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:04:29.450915+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200111.tar.zst",
+      "bytes": 35271607,
+      "sha256": "19be8a9b46f30208abaac28a68847432870a7821d4fd1aed9d0d9575f798cfd4",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:04:30.259609+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200112.tar.zst",
+      "bytes": 35405818,
+      "sha256": "3475ec9573c74a0b36f4db26404a9b1bf1f3abe9767aae914231c0a8feacd9fa",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:04:31.090592+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200201.tar.zst",
+      "bytes": 35004706,
+      "sha256": "416ad14966a0bad32fd4c59aeea966fba3eae11da99ba9deb8d0ba9e3bfd8af9",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:04:31.941346+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200202.tar.zst",
+      "bytes": 32536821,
+      "sha256": "e0471dba7f080ab53c82a3e4540b43fb2b8313eab0511e9868ae343225f6506b",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:04:32.695629+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200203.tar.zst",
+      "bytes": 29254315,
+      "sha256": "b9062b399f519b7a563e87284956f750fd10096c29005994f0bf5852bfe8a14f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:05:36.039316+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200204.tar.zst",
+      "bytes": 35858273,
+      "sha256": "decb2325c5e14d7ee48eb2c70a09ef081613170ce3bc2d5b821d0491f7c1dbb0",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:05:36.885289+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200205.tar.zst",
+      "bytes": 39994426,
+      "sha256": "87ae207974a278fcb9529b8f025c9de8f1f5c7ce7c9080b458890330eeafab95",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:05:37.766859+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200206.tar.zst",
+      "bytes": 40144183,
+      "sha256": "8e2e6a7a5769fa19a3c79c9bd2d5494ef4c77a8f81a173aefbf92ae89ee6b760",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:05:38.612625+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200207.tar.zst",
+      "bytes": 63882021,
+      "sha256": "0685a1aae6c8a3a209032d9aaafa59ff1b5cc786bdf7773983b7053bc55691e6",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:05:39.490788+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200208.tar.zst",
+      "bytes": 61997325,
+      "sha256": "c2ffed8e76dea1b49ba018033767da9fa6f0febfd7cae1909247183d65ba4858",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:05:40.367157+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200209.tar.zst",
+      "bytes": 63133512,
+      "sha256": "84d43cb244f5b1a083d8f7b80c5575dff110095045bfc375db024a95f65ce133",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:05:41.232376+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200210.tar.zst",
+      "bytes": 61286812,
+      "sha256": "ded4b47eb82fbcba881c8894746462a180901b96a6cf8317d7018bf311bfc998",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:05:42.112182+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200211.tar.zst",
+      "bytes": 55161423,
+      "sha256": "44d7aad5f73217dd168fa3b9a5c5f63c3bfed5a81405bcb35e59285d583e097d",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:06:43.220403+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200212.tar.zst",
+      "bytes": 56282063,
+      "sha256": "b00458baf77428800faaff82239dd79e08515d740eb3be13c6502ddf80c571d9",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:06:44.058784+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200301.tar.zst",
+      "bytes": 57232292,
+      "sha256": "a85f32eacd23a2b3e8673357c702b30bd1ffc499c8a643b046465b151e4f4aac",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:06:44.894274+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200302.tar.zst",
+      "bytes": 52826394,
+      "sha256": "5cea52679578e8499fe85549b21ff3c38db0dbec578c0184f48d4e9374985eb7",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:06:45.655062+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200303.tar.zst",
+      "bytes": 60788058,
+      "sha256": "f4f8259605567f6d87bce938b171b427c1e0b0aa842490e9421e87e53173da40",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:06:46.497661+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200304.tar.zst",
+      "bytes": 60235390,
+      "sha256": "3601194b98ff0795d9afcfeea4b399bc81367c08ad417135bf315088a88d0a8c",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:06:47.308631+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200305.tar.zst",
+      "bytes": 62563890,
+      "sha256": "82713d16ab80a55a893d4a6e0bfa1cecd87f72148d9ab6b9416ca4a085460e6d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:06:48.167706+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200306.tar.zst",
+      "bytes": 63459847,
+      "sha256": "194fb9b8b735780af0e6d8603e1c160e70d2eadaaeb15c00e610b6286b8d060b",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:06:48.977271+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200307.tar.zst",
+      "bytes": 69269121,
+      "sha256": "79a08496c0ad59e3072acfd65d479a7c89222d30ce14dd7e89bef4706d40737d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:06:49.824550+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200308.tar.zst",
+      "bytes": 69132160,
+      "sha256": "632cc915dea43b6ab473129bef9d53594f7710d44ebd420527f3982aaed19be0",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:06:50.668777+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200309.tar.zst",
+      "bytes": 64837244,
+      "sha256": "5d8c4ac1ebfdbcb6ac603b1d6eb43e41a80555f697b117e4dc381ae90761e731",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:06:51.481876+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200310.tar.zst",
+      "bytes": 62052956,
+      "sha256": "af3b78485f39634e4fe6d5d0c2e888cc199c49c22916c9348f7a69149c871568",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:07:53.765952+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200311.tar.zst",
+      "bytes": 55869765,
+      "sha256": "bd9175ef207cb23e1bb4a464684190c5652cee1c6eef79a62d588edd7004d39f",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:07:54.578263+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200312.tar.zst",
+      "bytes": 51326195,
+      "sha256": "4a1904606a7acb882aa8986d9f2783a19071e9eeb95ce415d6da4f3eba458955",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:07:55.428041+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200401.tar.zst",
+      "bytes": 57395080,
+      "sha256": "0810fd00b722613b801d8bb72fff1019eb6442f2ae1293bf95a54c80b1a726b5",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:07:56.262850+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200402.tar.zst",
+      "bytes": 55565107,
+      "sha256": "3808c1e310e8e5349e7d9d40461945028c422ccaca9e4bf7992983d8612e50a9",
+      "netcdf_files": 232,
+      "netcdf_bytes": 1291354688,
+      "verified_utc": "2026-10-20T01:07:57.047812+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200403.tar.zst",
+      "bytes": 60962350,
+      "sha256": "dddd7bcb653c5f307d65fc3f09d419f02aa50dbd61c48fea08e0fd6cc655eed3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:07:57.887610+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200404.tar.zst",
+      "bytes": 60687942,
+      "sha256": "4c36e549316b060450ff17c5f69212f50845101f29b58ffef2f4930b7c0d9f9d",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:07:58.702160+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200405.tar.zst",
+      "bytes": 62771772,
+      "sha256": "c4ba550a2f2451e49fe7ba236c116b7cb7f9233325ad3d8149f5572cb66cba29",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:07:59.543270+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200406.tar.zst",
+      "bytes": 64127460,
+      "sha256": "f33af9411532654aadb4c33fbadb333732fae3dcce5abbbaa6bc10862ee69e37",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:08:00.356327+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200407.tar.zst",
+      "bytes": 69811351,
+      "sha256": "177e595223f9198cc470e8e105acb2cb4fabb3142ed1d523d823120e80cd7f04",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:09:21.763828+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200408.tar.zst",
+      "bytes": 68302958,
+      "sha256": "b7c23a51147dfd1290e1164518b6e435f8e986715ad45755beedffab30ce0faa",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:08:01.195893+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200409.tar.zst",
+      "bytes": 64334181,
+      "sha256": "00a0d6818c17dd3a6f2da1a0555f682af773d8edc22274f2168d1c7834bf8cd6",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:08:02.015345+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200410.tar.zst",
+      "bytes": 61157106,
+      "sha256": "420bd3eecfe58f76e0d8e57b855c1829e6dfb686fa4159f0bc5b51d10c0b4e4a",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:09:22.604052+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200411.tar.zst",
+      "bytes": 56461934,
+      "sha256": "0ae94867f738ca6236a3705745cf6ebbbc1d96cdd98cadc4a99adcd122c0818d",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:09:23.413877+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200412.tar.zst",
+      "bytes": 57388046,
+      "sha256": "5b07447994247c8e6eaab8ccc995f51cae94563a9515cdb77e93c1cb388b96bd",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:09:24.254254+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200501.tar.zst",
+      "bytes": 57716799,
+      "sha256": "3c9dacdeeacb4583587e99dd97a17db99d08ff5707d70696315adfcef379679b",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:09:25.093280+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200502.tar.zst",
+      "bytes": 54311062,
+      "sha256": "f2b2a2497f186e835f69a09534077b566bd7ec89aa33afe333964e153d9c1728",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:09:25.854073+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200503.tar.zst",
+      "bytes": 61033102,
+      "sha256": "67bb204477e3e8083e9fc1833c3982e18cf48b738998b4a86c29ac857a1a242e",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:09:26.707626+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200504.tar.zst",
+      "bytes": 60592185,
+      "sha256": "3918dac35b8bbb4b22b949ee7d475d5cce321b49ea3c993581fd547a35478829",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:09:27.521342+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200505.tar.zst",
+      "bytes": 64367421,
+      "sha256": "655b1e3cd5104a680974e22836f827982993847fb8e72d85bd29b6fd2554d712",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:09:28.369069+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200506.tar.zst",
+      "bytes": 64266199,
+      "sha256": "b2757570f79b4615f72e177ed6fe19c167dcf5232fe9d4e8a6bce666c12d1a1a",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:09:29.181855+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200507.tar.zst",
+      "bytes": 69206970,
+      "sha256": "f98869f0aa6bf5dc34c443b411a623d38e96118e0d16d513809f7f14ce3cda9f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:31.646268+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200508.tar.zst",
+      "bytes": 68446772,
+      "sha256": "56ca4c375e7c0c638ca047c5bebcaf548d122e20735a2c1dc27c3076e2d1d82e",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:32.488344+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200509.tar.zst",
+      "bytes": 64676340,
+      "sha256": "9202e8836abf7e7472081c1df12f16c1cbd04971c66a216d3e264f6c209726fd",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:11:33.325289+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200510.tar.zst",
+      "bytes": 62205638,
+      "sha256": "f1db42e8427291f2a83b8861bc50af10df11962fd00bb0598ff1ac0f949f9ddb",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:34.174687+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200511.tar.zst",
+      "bytes": 56108022,
+      "sha256": "ffc54ae9d2e262a1efbf1685f3271bd8093759b36a167cf55754fceebb3810c9",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:11:34.989150+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200512.tar.zst",
+      "bytes": 57187746,
+      "sha256": "16b03e4a11e449171efa79fa76aaac412f4f6f3d1770e4e71bbd3a5a1db7d218",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:35.832677+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200601.tar.zst",
+      "bytes": 57790540,
+      "sha256": "f5712d27438824f2b65aacdaf474c89ce57f7692b255b2cdbbd47608e7fdeed1",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:36.679156+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200602.tar.zst",
+      "bytes": 54050423,
+      "sha256": "a5716fcb107cc43f50b3e3eb1144f74f6b6ed41e95263d75ea40da9dbb0ccb06",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:11:37.437331+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200603.tar.zst",
+      "bytes": 61394306,
+      "sha256": "e26eac1731c49e195f0f256a84aea0031cd4795533923e693c72e9f7bcbe52d0",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:38.282423+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200604.tar.zst",
+      "bytes": 61173689,
+      "sha256": "990955a15a342d85ca9b1c0afc2d68ddf1bced263a26b406dd50c8ce22ee11bc",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:11:39.099961+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200605.tar.zst",
+      "bytes": 64256429,
+      "sha256": "4df8727f7856aab5c20b980defdf9743f8432461c3066cd88af9e3fe03a9c39f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:39.941947+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200606.tar.zst",
+      "bytes": 63799507,
+      "sha256": "9169ea4571465bc867d3f9dfb6e2bc8b8cb3b4b4d07aa62944dcb3f79ace9b83",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:11:40.756182+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200607.tar.zst",
+      "bytes": 68924765,
+      "sha256": "e87ebd9ec22594ed7e5612c87450b1a354859df7156a58b81a7b53bcb23d52dc",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:41.608682+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200608.tar.zst",
+      "bytes": 67634202,
+      "sha256": "dab44174f14b8a6fddab7aff5ca85e23e1d718243a1eab3ead9c7694f1b0bb46",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:42.453804+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200609.tar.zst",
+      "bytes": 65599674,
+      "sha256": "d3ba72c9fa262ad90a9b89307ee66bac2ce54648babb8b2185b709f486f4a884",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:11:43.269551+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200610.tar.zst",
+      "bytes": 61013966,
+      "sha256": "91c0b9ed69ed9cfb8bd6322891a99a42431e9bb21091bac505dfc4a5171242e5",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:11:44.108450+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200611.tar.zst",
+      "bytes": 56435930,
+      "sha256": "3ab78af2499b8c34275d40aae2957c1bbc5853015949fd50853640f4b8e11f14",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:13.302492+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200612.tar.zst",
+      "bytes": 57642689,
+      "sha256": "8ae3061b95521bc3121888cd7d518c1160f94478585514a93684fcabc90817a7",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:14.156563+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200701.tar.zst",
+      "bytes": 58604031,
+      "sha256": "e16238cf98a908ec3b4327145265fa24d574e6a84805006147f0791056586e5c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:15.096948+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200702.tar.zst",
+      "bytes": 53961583,
+      "sha256": "6b36ca8b2287768f4462b709dcf228e51d954d7b855a9346ed01198bdfa35f8a",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:13:15.886409+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200703.tar.zst",
+      "bytes": 61393215,
+      "sha256": "911673d58f81d9bc03c80f4183604d0e1cb1c46673567ef20390dc8b5d6968aa",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:16.764896+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200704.tar.zst",
+      "bytes": 61226693,
+      "sha256": "19ab78bafdf4217d750c930b831f45f3549c902990a8285e159e5bb74f470631",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:17.636916+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200705.tar.zst",
+      "bytes": 64158263,
+      "sha256": "21926beb00673b55f782870f898dd5037ef6882557a7611190c8376541e668db",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:18.522421+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200706.tar.zst",
+      "bytes": 64508438,
+      "sha256": "a9115ffd020a64da514c8612d7d266f970e168adbad3f789a9a7634386f055c3",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:19.376247+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200707.tar.zst",
+      "bytes": 70473457,
+      "sha256": "241da17a80de3e92d36a434f1166c5f6acd4b3fa4b032c75e89c445d3e972b1f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:20.257370+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200708.tar.zst",
+      "bytes": 69504048,
+      "sha256": "d3a77056cbb5e65355d0d34e61f568c7b5a0b017e0dd0d84e59ca4f1556a548f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:21.131116+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200709.tar.zst",
+      "bytes": 64967624,
+      "sha256": "662c4fad0e5c76c832fe9e5be1de5c44d821bd239f38e369aa4a0bd5f3fe1402",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:21.983597+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200710.tar.zst",
+      "bytes": 62308056,
+      "sha256": "b62e60f6c0528b6435cc2938d8820e39a99f31dad0eefb7bc5a6a0bf032a5cc6",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:22.872103+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200711.tar.zst",
+      "bytes": 55941475,
+      "sha256": "a26ef5c66f932c43b87eebeb3248d99919166f68d032ab72c0b4ed90bfa74b12",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:23.726772+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200712.tar.zst",
+      "bytes": 56441744,
+      "sha256": "4fc3eae5a208ee80294630fd9c3ed3c8d6ee213548c49a4163de56d3983fd499",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:24.602923+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200801.tar.zst",
+      "bytes": 57158329,
+      "sha256": "7ff12048c2deb9fd3be2cb3d6f2495ca7dd4edc8df4236f202bce8f297702502",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:25.477114+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200802.tar.zst",
+      "bytes": 55323212,
+      "sha256": "9ca806e6e056e8bea5d9a0dde89cf8dd08f03c679b3e4fb0619edb0592fb5da8",
+      "netcdf_files": 232,
+      "netcdf_bytes": 1291354688,
+      "verified_utc": "2026-10-20T01:13:26.301879+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200803.tar.zst",
+      "bytes": 61674119,
+      "sha256": "2d8063ce4a8fc4b22870ad3adb740210a8d5a49b329816129b8f2f7ff9a7e438",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:27.181330+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200804.tar.zst",
+      "bytes": 60276565,
+      "sha256": "897017a5c639811184f8d3e8541a8244c553f4b51bc95bcc4e1698e14dc57485",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:28.035063+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200805.tar.zst",
+      "bytes": 63851933,
+      "sha256": "5b74fc6e39710985b583eb111edc3bdc7b52bc4c66f0d5d280fd5f6c2d3581f0",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:13:28.912523+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200806.tar.zst",
+      "bytes": 65318154,
+      "sha256": "63e73c976410c22eda5363355b9d10250f17f70fac09f146ef4301d4e3b0e5cd",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:13:29.769412+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200807.tar.zst",
+      "bytes": 69861195,
+      "sha256": "16665135dd4df84f75fbf80208e20b1fb7116db782b455d7ad4482ab8eea826a",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:46.419230+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200808.tar.zst",
+      "bytes": 69821393,
+      "sha256": "79795b861c8d5d5fcc7bf5b249523ddead49a64d7d8cc455d2893ed7a5c42764",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:47.258808+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200809.tar.zst",
+      "bytes": 63927616,
+      "sha256": "b4b6152f463779b3d9ccdd3b73e3cf645714d67a92f4d9ba83e082b462657e3d",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:14:48.084494+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200810.tar.zst",
+      "bytes": 62335586,
+      "sha256": "e23a51b7fb003a58972a1b510cfc2e50bfa18e3e9c53cc54ce1fd42a77889221",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:48.923877+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200811.tar.zst",
+      "bytes": 55948530,
+      "sha256": "b2a6d21e1453fb4948dfd964345bc501db8e700ba277c3e08f7feafd3f126dd1",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:14:49.738176+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200812.tar.zst",
+      "bytes": 55309518,
+      "sha256": "79e1f3e7c0a82b53a812ac46b93169580c6ec6d16445b941d276346fee0f5b53",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:50.583736+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200901.tar.zst",
+      "bytes": 57965256,
+      "sha256": "0c27189e69fe7bb27b54bfd148b07459b749ab0554c3eaf76b83808919618bd4",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:51.434313+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200902.tar.zst",
+      "bytes": 54095372,
+      "sha256": "ace6d7109f70eca78ed1f7891eff15042c7664a171c56612b7066d2e575cf87b",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:14:52.193150+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200903.tar.zst",
+      "bytes": 60753142,
+      "sha256": "22230294ffa1f1378868cfa7140578ef7b54dd03c80b7134fa213bae50deb367",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:53.034265+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200904.tar.zst",
+      "bytes": 60462167,
+      "sha256": "9c12463ae698a7216e54e779cd470dc1bf3b2910824a270aae81df6593fc14f1",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:14:53.849686+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200905.tar.zst",
+      "bytes": 64394218,
+      "sha256": "68e725c0950005aec7e9911d0c0bf454eac1d678ac3ae4f3d6dd225254d10b34",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:54.698182+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200906.tar.zst",
+      "bytes": 65044552,
+      "sha256": "5eb2df10b56bddf4781dbb99e3444f26e35a054ce61fc2c32b8723c95aacac90",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:14:55.513106+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200907.tar.zst",
+      "bytes": 70370739,
+      "sha256": "b071dfb35180e82142c48fa03fbe519550ffdf4f7e196fa483ffb13474bf17e1",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:56.361035+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200908.tar.zst",
+      "bytes": 68520377,
+      "sha256": "5a50b4cadbc463cc73fa13e03bc3625ddb2fad570a1ac46c5ff9f286f27ddd94",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:57.210004+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200909.tar.zst",
+      "bytes": 64061841,
+      "sha256": "c66b538730a66972f533fa382bef9cbbda4cceb9c4cd34e28df9ffa42f16e0c8",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:14:58.027408+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200910.tar.zst",
+      "bytes": 61358399,
+      "sha256": "6aff41112ec481d397558d04287619272b462ab496f7510b3afc728c90e2cc60",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:14:58.862140+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200911.tar.zst",
+      "bytes": 55311318,
+      "sha256": "af47504a97ff5a175dddd4377707c11f2463a948a080a67d360caf81e9a17bc5",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:16:15.072632+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.200912.tar.zst",
+      "bytes": 56876249,
+      "sha256": "fc724d72c4e817ca545dd06d5a0315a9d476087ac48dd31db084f29874541f09",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:15.911364+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201001.tar.zst",
+      "bytes": 58070474,
+      "sha256": "4f959e0e6072985c870b269e0792a26127971b078f51b15b6a57283be21af48e",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:16.749560+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201002.tar.zst",
+      "bytes": 53256703,
+      "sha256": "ab5293b54d0b04137d8a90f960fb2fa3d9d80d61683040bd8df42b40b0a4b37a",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:16:17.510966+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201003.tar.zst",
+      "bytes": 61089143,
+      "sha256": "1d22700c36efd0ce3fb5ad90ff8faf659df9203cf4de522468bcd113066bb6ca",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:18.419341+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201004.tar.zst",
+      "bytes": 60741805,
+      "sha256": "405b4d123d66bdceb8b024590425d3b80cfb3aec470d760723d24396339947c2",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:16:19.252357+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201005.tar.zst",
+      "bytes": 64339575,
+      "sha256": "c83a4961561aea14d90ee2fb276866f5d1ee4beb4fe2308fcf17e61b997af943",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:20.093915+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201006.tar.zst",
+      "bytes": 63783910,
+      "sha256": "808ad0b917f3aba752f9104dbb90bc9baaec3d041afa5d2541d234b6fb91ce64",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:16:20.914469+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201007.tar.zst",
+      "bytes": 68997283,
+      "sha256": "a451a2c44ebde055a92b2652816fb60985ea986cb54a5066fad086223fe5b51f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:21.759748+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201008.tar.zst",
+      "bytes": 68817186,
+      "sha256": "75239ae572b0177bbf54f344ffd1aacfe8b39887382ed352ebf0f7d584a29906",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:22.599229+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201009.tar.zst",
+      "bytes": 64129461,
+      "sha256": "50fcd5f13b4aab86ab92ed43b5342027705fffd6dfb207ffb6d360a9ffee38f6",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:16:23.412982+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201010.tar.zst",
+      "bytes": 61502993,
+      "sha256": "fc0863a2622267b2f4a7edadd2c0225bdc617775ced067271b00fc6ccf3f7681",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:24.272817+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201011.tar.zst",
+      "bytes": 56338765,
+      "sha256": "52500a7cee9246c1290d0429a7065803c15d9c91546678dafdcd4561283b72ef",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:16:25.084016+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201012.tar.zst",
+      "bytes": 57069524,
+      "sha256": "de4d56ef8faac0fc905113cd1c91a1393b8e9540e35b1a4113c5f3dd6e4ec4ab",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:16:25.923666+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201101.tar.zst",
+      "bytes": 58085843,
+      "sha256": "5bc3c3124b6731e5f2fbb480802e0f12209fa4cb845e6bef69364e6991a69078",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:47.731338+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201102.tar.zst",
+      "bytes": 53662537,
+      "sha256": "4b535b14908bb3156abdf9d6b04f71d8ba890fa12ba3d757ecd042f69b435d35",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:16:26.683073+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201103.tar.zst",
+      "bytes": 61700069,
+      "sha256": "f19dbe274694fa8963405b973d6ec0de84d38886500105afae884d47592ba176",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:48.585687+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201104.tar.zst",
+      "bytes": 60908000,
+      "sha256": "0414a01d8e3d17931df96e07ea3d434288dc04306ac6aa3511b02be7e35f7833",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:17:49.401207+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201105.tar.zst",
+      "bytes": 64351554,
+      "sha256": "f61ff262123b43bc4f04481e5b11b07609e6c23258173ea3d5cfa3dc0477019c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:50.243133+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201106.tar.zst",
+      "bytes": 64167990,
+      "sha256": "a1f3e3bb0b62775e80e7f962ae30cf0514ec740724373e2a235558c163ff53a1",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:17:51.064536+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201107.tar.zst",
+      "bytes": 70312424,
+      "sha256": "a7fe0670a2acc3df1e4aee151971099de649cd3b539e1dac24bb369bf31591d0",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:51.923799+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201108.tar.zst",
+      "bytes": 69835435,
+      "sha256": "a564ec7ee67292cb8e8464321e690e65ae4e47847b2ae98deb8f0ebc71fd7b5d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:52.766619+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201109.tar.zst",
+      "bytes": 65029171,
+      "sha256": "c67b59776dcfc41faac11eb530ee0ff44a7822814d1022bb6baedd2443264eb9",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:17:53.580436+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201110.tar.zst",
+      "bytes": 62288897,
+      "sha256": "2bc7b2112ccdeb48142fd487e95fd3d37e8d04c7c2355824acf5ec5285a1842c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:54.421455+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201111.tar.zst",
+      "bytes": 55952459,
+      "sha256": "5fdcfb84a5b673b3c6040151cef86af3764fb47035ad9948ee5e817eafe941f0",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:17:55.236492+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201112.tar.zst",
+      "bytes": 57264566,
+      "sha256": "b9149feb421d21e39555d42fd979c1a9f2ea1781ea5a0e44366284dd204cd3e9",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:56.076488+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201201.tar.zst",
+      "bytes": 58905860,
+      "sha256": "bce0287fc637205b13b160725ad7d73afb548612ff99f188ab608d6ee6c241a3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:17:56.926026+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201202.tar.zst",
+      "bytes": 55993873,
+      "sha256": "d2ac9f376d8a2bde3e57fc457f3419b4dcf686105b784326941ea619180b5da0",
+      "netcdf_files": 232,
+      "netcdf_bytes": 1291354688,
+      "verified_utc": "2026-10-20T01:17:57.709408+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201203.tar.zst",
+      "bytes": 61010252,
+      "sha256": "383a5d90b8b49a0513ed600b8473d60b4dbadafbe3dbe82ec3d6c39ab695d03d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:13.633643+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201204.tar.zst",
+      "bytes": 60985412,
+      "sha256": "e8eab88a1edd962eb2478cdd210d92415c05da2f0003926c429441c1f9afa5ad",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:19:14.461526+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201205.tar.zst",
+      "bytes": 65002023,
+      "sha256": "57baaf62cdd5da3e02ac71295e4dadeceeb9f7af39e893070411a7b96c7799c2",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:15.306555+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201206.tar.zst",
+      "bytes": 66095599,
+      "sha256": "ad677121cbcfb31ba1667f4de86997fe69b23ea57b0feac4453f55356447c0b6",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:17:58.523221+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201207.tar.zst",
+      "bytes": 70153942,
+      "sha256": "fa4259dde587b9ca04337bb1d7d9522710ee8fe0f4cc6836cfc9f2645b2e4a05",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:16.150054+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201208.tar.zst",
+      "bytes": 69361393,
+      "sha256": "1866d09fbf8eb187317c0b615f0bcd7c8f546bee39ecdee510b7c1a67bd5bf24",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:16.991266+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201209.tar.zst",
+      "bytes": 65350974,
+      "sha256": "4660633f421acc2a59efd557a692ee493a9b51d60906bd2cc3ff84fec5cd914b",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:19:17.804709+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201210.tar.zst",
+      "bytes": 62085172,
+      "sha256": "0d173ff7652eee7bfe7256c8000940fedee9a4638101a5942d68e26c711951e7",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:18.641095+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201211.tar.zst",
+      "bytes": 55280866,
+      "sha256": "e610ed3566d2f8a678a7059eca183c65f08301e594c12934b2653336dbab3644",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:19:19.455124+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201212.tar.zst",
+      "bytes": 56482075,
+      "sha256": "457239afe51fabbd2cc46485b1612fd05b52f1d1ee88e99519776fc29cb9f618",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:20.291113+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201301.tar.zst",
+      "bytes": 57371343,
+      "sha256": "187e26c55bc70fa96a7933a5172ea77bacbb3a364fb7031f8659ee4f643a5b7b",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:21.127370+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201302.tar.zst",
+      "bytes": 53596054,
+      "sha256": "1d73b303fdbc1890a919984be8b66f299cc91fab0ca0c00faf221be490357b2e",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:19:21.891095+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201303.tar.zst",
+      "bytes": 61374535,
+      "sha256": "d26a29d21d7e41a353a5ca40f2d09e76385243c1422b65abb5e1fb3a55377542",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:22.733486+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201304.tar.zst",
+      "bytes": 60191794,
+      "sha256": "96598673ad731e64bd85b227e158b3c30f1a3d7eae6510f182823a29c5f12e5b",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:19:23.549707+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201305.tar.zst",
+      "bytes": 64045034,
+      "sha256": "500b6c6cba17567a44d14347d8edfd4a4fc8dd3e31220a152260cd7dcc0e8ad1",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:24.388358+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201306.tar.zst",
+      "bytes": 65184700,
+      "sha256": "513cf8287592cb87969357e2a2056a99e290aef7f70efc557d31a3cd58f3f303",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:19:25.203839+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201307.tar.zst",
+      "bytes": 69564432,
+      "sha256": "447e599399ed7346fbbe329d0fa95d98e42d510089083e90496edc83425bfed2",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:20:55.578068+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201308.tar.zst",
+      "bytes": 69593948,
+      "sha256": "f496ed265b9a6e5795d60eabe5afa4088e39bdd9aae863f7f8eb5a9586649225",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:20:56.425596+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201309.tar.zst",
+      "bytes": 64290531,
+      "sha256": "7af27176cf34fd4426efff9e432db8075de98971c0fd87d5b4aca65a4c99be03",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:20:57.238437+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201310.tar.zst",
+      "bytes": 61260233,
+      "sha256": "6fadee309b7f6321ac89264a1e9af7909ffc92d985535f622e13e79f39d46629",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:19:26.042721+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201311.tar.zst",
+      "bytes": 55949450,
+      "sha256": "84eb7920a6527310e1e3115cdfc036dae59e9868d3e874d74cc20f593742ff65",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:20:58.049465+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201312.tar.zst",
+      "bytes": 57050987,
+      "sha256": "af0b7f51a573af8e9fbd4e3b7648363942d25d75bfb15baf82879de80873193a",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:20:58.887225+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201401.tar.zst",
+      "bytes": 57724555,
+      "sha256": "d1f2a84446ef17a0cad75c694ffc0a15ace8efee4a16debc2feb89ff6514a6c7",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:20:59.729650+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201402.tar.zst",
+      "bytes": 53198738,
+      "sha256": "d2446356b65348042abeee2137cfa8cecb6d4bb901daa4c8594b8792b364d191",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:21:00.492134+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201403.tar.zst",
+      "bytes": 61214207,
+      "sha256": "4cfcf5bf9e917f936c856973d812f0de594b80098ca22953346a22edb0215615",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:21:01.328825+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201404.tar.zst",
+      "bytes": 60538780,
+      "sha256": "3753a34ed0a9163871508a1779db8085e5372e0f2c822fd59a063137c3bbbd3a",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:21:02.146803+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201405.tar.zst",
+      "bytes": 64287184,
+      "sha256": "05dda7aa752694aabf03a503bb7795a7b86d6d13373148f25a516972ff69f2cc",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:21:02.995810+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201406.tar.zst",
+      "bytes": 63850381,
+      "sha256": "d47dac20e6004bf38c08c3609dd614ec645e1b5f1588d07db8ed2fa158008ed6",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:21:03.815761+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201407.tar.zst",
+      "bytes": 68858621,
+      "sha256": "6a26e488c6e9658ad43e88fc9cce6d39539f8c3a74e62935a21974d0e4e0ce68",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:21:04.664795+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201408.tar.zst",
+      "bytes": 69982025,
+      "sha256": "98e2c0a215b28cafa87b055bba73246170c72e258f5369e9bdaf942e410ed8ef",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:21:05.515089+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201409.tar.zst",
+      "bytes": 64991471,
+      "sha256": "267c22d2119abe15a1ceee28095f87486ed03a527acea8703aed1a7beb65a38a",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:22:20.578894+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201410.tar.zst",
+      "bytes": 61685427,
+      "sha256": "3311e56189a04d937847f930dcaf57a6931803f72406273024c041cd540f9f3d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:21:06.357141+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201411.tar.zst",
+      "bytes": 55779882,
+      "sha256": "979ec52ff735fa2d50f786b2f88245acdd41ea5b599953fae124455a41622787",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:22:21.435354+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201412.tar.zst",
+      "bytes": 56879210,
+      "sha256": "17913de8772f6e023075272d950f78422b9a10716863784e86c5f4e1ecd2ff01",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:22.313376+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201501.tar.zst",
+      "bytes": 58176256,
+      "sha256": "de51e5e3c49743faee11b70f3a0e6cadd82a5df0b88ab22832ae8710ec5f42e5",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:23.181018+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201502.tar.zst",
+      "bytes": 53975513,
+      "sha256": "d484d60a18d3ce6e8d4f62c9c7c852258d3be263b62a0e408ede7538a4b1221a",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:22:23.965713+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201503.tar.zst",
+      "bytes": 61282842,
+      "sha256": "b84dc8beafb693572a1ac76b9e7b68171a0451c71df1c2d7344934b7be916791",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:24.836019+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201504.tar.zst",
+      "bytes": 60794500,
+      "sha256": "da34706798116b6ceea27bba98dbd3f9580ae7d8a2bb9c93dcb065c74980ea2c",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:22:25.674286+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201505.tar.zst",
+      "bytes": 64397785,
+      "sha256": "48b16db3d647c2fa3ec1b8230cf81d58372c8f8dd048cef0833a5fbb1cbbb5d4",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:26.535247+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201506.tar.zst",
+      "bytes": 64557163,
+      "sha256": "4b368a555e7667dfbf27e373cd802bc343089f7434b255aace9539b7f4bb64dd",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:22:27.369518+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201507.tar.zst",
+      "bytes": 69925740,
+      "sha256": "ace089b1e2ccb19ec7ea675325249590d719bd0d235402ad86986677ceee05b1",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:28.213684+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201508.tar.zst",
+      "bytes": 69502029,
+      "sha256": "100e2711e8bf89dde408db858cc113c73f4fe567a27e4d50ed09e27bfa9727fd",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:29.053101+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201509.tar.zst",
+      "bytes": 65480669,
+      "sha256": "94ac1f2ca766a30b208eec823265d58e8ec9cd3ea1ee0e1015bff8ef80f9d270",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:22:29.862812+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201510.tar.zst",
+      "bytes": 62647867,
+      "sha256": "b8022b6c7349d1fb2fddc2a338a6b16cbb8e34bc4aeb9f5df006fe505303fcd9",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:30.700503+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201511.tar.zst",
+      "bytes": 56349645,
+      "sha256": "afe79fda55e87ba9523299a70c4fb42f2ef1feed6c2b2d2b62373f94f3d6fba4",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:22:31.512363+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201512.tar.zst",
+      "bytes": 57874638,
+      "sha256": "6910dc9755741b4e30139d122fc3a8c6158eda9e26d2684b3bf1779f829930b2",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:22:32.347805+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201601.tar.zst",
+      "bytes": 58533385,
+      "sha256": "43caa4a62232a30f2beb86cfd482569f64d7af02f6173c9ad0d7631762b5d7a3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:23:59.595799+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201602.tar.zst",
+      "bytes": 49523364,
+      "sha256": "e3fe6706c118d96403c2a215606d2eeda2043e17c2d12da93b2858ec88499479",
+      "netcdf_files": 232,
+      "netcdf_bytes": 1291354688,
+      "verified_utc": "2026-10-20T01:22:33.201155+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201603.tar.zst",
+      "bytes": 61615646,
+      "sha256": "876cd76538bf74db4c4a15c5a531f02b425285cc1b06e95f4160c97e4bbda50e",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:24:00.432634+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201604.tar.zst",
+      "bytes": 61494421,
+      "sha256": "cf0bc782bfebfacdc0aa8d2bed2a476dfc5f6ab50024d03ce63b52add0b7835e",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:24:01.244121+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201605.tar.zst",
+      "bytes": 64708006,
+      "sha256": "466f2dc00c97a31614c8821ac89d2ca607a7a7cfcd52ee5d6380b909cefec62c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:24:02.079863+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201606.tar.zst",
+      "bytes": 65952386,
+      "sha256": "a488f6afdd85f3b8b6f2b8f9d1a22098c8d4915e1fac0056e388c5f4a668213e",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:24:02.887609+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201607.tar.zst",
+      "bytes": 71010649,
+      "sha256": "efd6cbb5525fc4b189796f2e034f8f0349ad2d91fe4073f8f3276a1f48f2d789",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:24:03.723081+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201608.tar.zst",
+      "bytes": 70700184,
+      "sha256": "7dffb9f1c7558a45f7ecbf8c930bd0e7a8ef23dc234ee66156766e5ac10f21d3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:24:04.560755+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201609.tar.zst",
+      "bytes": 66111791,
+      "sha256": "13be48afbe9c2a015c54d151791f21f9e3a1e8092fc1b635764e32a214d1686b",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:24:05.379269+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201610.tar.zst",
+      "bytes": 61811306,
+      "sha256": "3be6490fa96311582f60e72c6a5510da8606ad7e47d71e3ddfabe2c0e5ef9021",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:24:06.220756+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201611.tar.zst",
+      "bytes": 56468067,
+      "sha256": "961ec9270ed3a114637c540463b29999e38f6c38b8e11472d01ad3f7def00756",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:24:07.031014+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201612.tar.zst",
+      "bytes": 57170911,
+      "sha256": "d237570c05695864f13d3201b4424a714bad8029c00629b0b66b7c8fd25f55ba",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:24:07.864382+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201701.tar.zst",
+      "bytes": 59271096,
+      "sha256": "f117619f9f8cd17c34bf143eb134f8388916d804b8ad3f8acbddbd49e8e3cfdd",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:30.373396+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201702.tar.zst",
+      "bytes": 55106632,
+      "sha256": "c72fbf328e3a796c572179cd62c443706e8c15ead9db57f432e1547782cd63fd",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:24:08.616667+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201703.tar.zst",
+      "bytes": 62355936,
+      "sha256": "069fafdd936477cbffbcb43a9598c042a083e4ac01e7e905e0f732df1fb9a0d4",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:31.205992+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201704.tar.zst",
+      "bytes": 61138064,
+      "sha256": "bb275dcd39d18d52c4716f31b5dd27cb27803c3ea0d73b09a80b43649e9e8a96",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:25:32.012096+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201705.tar.zst",
+      "bytes": 63590505,
+      "sha256": "5770d6e477af78ba0acdd54d1b34775b1f462264de0942c74f85173a5bd3a8bd",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:32.841927+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201706.tar.zst",
+      "bytes": 64946817,
+      "sha256": "cd7ef048fe75db004b86b741d0917ccf62aeb5c2566c2cf08a3ffd60dcd0ce35",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:24:09.437602+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201707.tar.zst",
+      "bytes": 70675619,
+      "sha256": "a95b0a264c6093eaabc8241c1bb40f953e5efa2b9dc82c2b66b721cb68f339fe",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:33.678293+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201708.tar.zst",
+      "bytes": 68605286,
+      "sha256": "d75f4986559810e87d96e33de1a7e6e166a2cd57098a00a5edb3ad945b8e95b2",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:34.514298+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201709.tar.zst",
+      "bytes": 64636200,
+      "sha256": "6ff0122a28abb5b536dc79679f27cbea2bfd3e97e8e66283b5d54d102aea4fc8",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:25:35.338634+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201710.tar.zst",
+      "bytes": 60802521,
+      "sha256": "d3b72f55888201cad304bd076e6f738d6fa1628854ccc62790054355c8f68cc5",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:36.170458+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201711.tar.zst",
+      "bytes": 55858838,
+      "sha256": "9a949edbbcdc0750416e5f0c6c30f9ced668a00d0286051042c6f99a35263b44",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:25:36.976792+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201712.tar.zst",
+      "bytes": 57568862,
+      "sha256": "bdc0de5e31e84186a3d2fd74daaede7d92c9588d92550194f8fc59d979f154e4",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:37.808753+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201801.tar.zst",
+      "bytes": 59039621,
+      "sha256": "ceb675ebd920f0054a1a35ec288cfc924757cdf8d9d40485d158aeb31c79a30c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:38.643049+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201802.tar.zst",
+      "bytes": 53381387,
+      "sha256": "aa6d061c730c2773b84d20cb4956aa8e5ae0d44181f7ef36d0de7c058372b29d",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:25:39.396462+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201803.tar.zst",
+      "bytes": 61424170,
+      "sha256": "9e33da76f49be61c93e975e418f486e187029e77808b1120d5b6913648f92b45",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:40.230182+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201804.tar.zst",
+      "bytes": 61618092,
+      "sha256": "4ad6ccad89a831c2fc703fbd5597d3fda88c5f68d7eef5961e0973634beae1c7",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:25:41.047107+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201805.tar.zst",
+      "bytes": 65145878,
+      "sha256": "ba4bba27c29820989b72a11a658cb02d01ac41daa8af029ddba8d9af5ebcb42c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:00.198747+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201806.tar.zst",
+      "bytes": 65301451,
+      "sha256": "79073256a01c763a2eea0dea96212cc21278eec74d1a92c750c7ae9a0678fb5b",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:25:41.860419+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201807.tar.zst",
+      "bytes": 69493040,
+      "sha256": "7d8da3f9f721e66a0c1e9e8e9e0ea0faabada0d864e6651a5ffc817a5598b412",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:01.027802+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201808.tar.zst",
+      "bytes": 68827910,
+      "sha256": "cbec0c232b789bc0ad80d608fc538dcf71ad7c273b02dca092e67e0c1dd6350d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:01.866304+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201809.tar.zst",
+      "bytes": 65344211,
+      "sha256": "07db05e54ce4a6493bd112130b1bbb3400c7968a6d65f3dd65e481f29b409c51",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:27:02.674705+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201810.tar.zst",
+      "bytes": 63033297,
+      "sha256": "c1cd36f67233fa8c6789b3108356e4e159cf54da9dac155b7f9c3aaae517309a",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:25:42.708099+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201811.tar.zst",
+      "bytes": 56299057,
+      "sha256": "96ca0e2a6a87a909d755752c50efbe456b34e8ac71d53d3a59aa4a1b6acd9281",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:27:03.481792+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201812.tar.zst",
+      "bytes": 58327042,
+      "sha256": "c59ed40701d3ada5e1d19a710fea33bd6d99bbe5c8c147046a3576efbf71cecb",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:04.315809+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201901.tar.zst",
+      "bytes": 58418431,
+      "sha256": "dea352aada87e2b2f648beac73733fee3b3b082211e7ee04ab884a335417cc7d",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:05.150079+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201902.tar.zst",
+      "bytes": 54657330,
+      "sha256": "b4d6e5f63c06427159fb5635e7abcaa556f0448cecea183de865e0cd8b97a7a4",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:27:05.903748+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201903.tar.zst",
+      "bytes": 62724150,
+      "sha256": "85d60556718a633c30771b8c0408100aa28f2f7525581f6a3f8a30d2a604fd66",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:06.736831+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201904.tar.zst",
+      "bytes": 60727176,
+      "sha256": "7812319d22ad06b00380e8ec09d2036917c799a8bcb0b18282b7103f357f3363",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:27:07.552831+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201905.tar.zst",
+      "bytes": 64446276,
+      "sha256": "fa0fb24e9cdbe412adb2ab81bdb09596fd6514ff97920a11556b12ee949f2f72",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:08.388862+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201906.tar.zst",
+      "bytes": 65632548,
+      "sha256": "224d3d84b8d0a63feafc1ad411e2795905d91f1d4c8d92f4f0fd75eacd1646f6",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:27:09.198747+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201907.tar.zst",
+      "bytes": 70343385,
+      "sha256": "d19095e0c585b0052d758b2966c13b6ab478c7e114a0fa200f0c04d9b86fa178",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:10.035537+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201908.tar.zst",
+      "bytes": 70022868,
+      "sha256": "527ad3530caf0c889d825bd0fa8f5b421a40118461551cda22f30701c46fb6d3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:10.870619+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201909.tar.zst",
+      "bytes": 65202237,
+      "sha256": "fd0fb0a87fc729f3c8517c7fa08b487ac7cae1988f74a52e17cb6dbc66310f21",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:27:11.678086+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201910.tar.zst",
+      "bytes": 62661225,
+      "sha256": "a1c6e26dc9a2614c154df37f6c46cac94404b2dcbde9ff6651eb7a9410f7fdf5",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:27:12.510257+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201911.tar.zst",
+      "bytes": 55489169,
+      "sha256": "cd642c2e478d542e5d92c5a5ae7aac362bb9183ae384096cbea8e7a62736c698",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:28:37.378823+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.201912.tar.zst",
+      "bytes": 57299122,
+      "sha256": "7a861caef75fce8e4ad8c1663a73190b313d70c015cf2d07ba542fe172b0a6cb",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:38.217242+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202001.tar.zst",
+      "bytes": 58202813,
+      "sha256": "f8bc4bcb0e03b3d4ca7c3d835ef47debb65b2dbb7f67ae1cc6564fbbe1f80a87",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:39.050145+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202002.tar.zst",
+      "bytes": 56041239,
+      "sha256": "7ace0574401cc24da0051cef5cb0fdbb570bb9493cc7ac3117e36d114d588ee0",
+      "netcdf_files": 232,
+      "netcdf_bytes": 1291354688,
+      "verified_utc": "2026-10-20T01:27:13.286870+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202003.tar.zst",
+      "bytes": 61832196,
+      "sha256": "379001ffb973a9f547307f9a43953e312965cc7856616c79f223d9f4df6bd41c",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:39.882222+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202004.tar.zst",
+      "bytes": 61370770,
+      "sha256": "5a24ddf52233be7d0727931747dd479f46be141b54be185b0b392eca9b97962a",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:28:40.687340+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202005.tar.zst",
+      "bytes": 65011192,
+      "sha256": "60142e2bd72d5217b9c78434b50dd0c0c5114c1961146d694f9ae4a76c3cca63",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:41.518169+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202006.tar.zst",
+      "bytes": 65562607,
+      "sha256": "38ca98e7bb3aca4e59851432123fd1020091a8f0698b9ae1d4a34d74f67827f7",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:28:42.328502+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202007.tar.zst",
+      "bytes": 70319565,
+      "sha256": "9fa28f86cb65e1ec60dbb86f904e29f35788815ee1d05af85c5ef117cfa08511",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:43.166661+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202008.tar.zst",
+      "bytes": 60562813,
+      "sha256": "3ee55f3a71d3136dcd012a8278317664aab11da905b9193b9edde48719e70f89",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:44.000469+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202009.tar.zst",
+      "bytes": 63863760,
+      "sha256": "16c73e431bf55412e0e6bdff4674e8f0addad7140f3f054e06e50d29cf84c3ea",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:28:44.823648+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202010.tar.zst",
+      "bytes": 61679085,
+      "sha256": "7f98106946d140a8515db6337a9931430437582a21292e615dc86d2d56729764",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:45.672774+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202011.tar.zst",
+      "bytes": 56487603,
+      "sha256": "3d4803e0b6742303f92c83e8619938ed47baf3a1da461dc8f152214ab75e8ace",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:28:46.479380+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202012.tar.zst",
+      "bytes": 56708877,
+      "sha256": "b4c9b78eed212dd31026a7b9507c3783bd000faaf3e359ed180a1eddb448c53b",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:28:47.312120+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202101.tar.zst",
+      "bytes": 58331047,
+      "sha256": "dd169d8aacda8dd068a945d79e09c04c13999231a31d9424a4da718a1122e1b4",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:02.875392+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202102.tar.zst",
+      "bytes": 54002060,
+      "sha256": "d01a752b6d64c5ca42874b8b60413be62831a2939363845549f8b2f944c388a4",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:28:48.066941+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202103.tar.zst",
+      "bytes": 61599210,
+      "sha256": "2d00eba0090eefd82cd82b79f029836190347575de69878e3880cfeaa90872dd",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:03.720907+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202104.tar.zst",
+      "bytes": 60752474,
+      "sha256": "b5d6d6fe74b716bda9076a9e2c6cc61c8ae23078a66959d68c0c1080c1e294d2",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:30:04.584318+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202105.tar.zst",
+      "bytes": 63897073,
+      "sha256": "b588fb093e7deafb7224d908238fefcd90d8bd05836bf36b29113f48d285cc9b",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:05.437890+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202106.tar.zst",
+      "bytes": 64903815,
+      "sha256": "60a2e95f78d02db3f25ab4e8f083788b59c0ea811bf4d0d31445dfc53861e7c5",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:28:48.903272+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202107.tar.zst",
+      "bytes": 68559009,
+      "sha256": "f82407035752ba9efc1c6301f88616ae40237532ce0b78266bdc24d933e7157a",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:06.275912+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202108.tar.zst",
+      "bytes": 69547776,
+      "sha256": "efd812a9a1656ff6ccfa22b1dfd6c18293b0c6c30505547eb03456f984f71c6f",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:07.110211+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202109.tar.zst",
+      "bytes": 63072900,
+      "sha256": "9c21ea0d0de06e9dc3513ac0a373a0a186f2bbb06254a07a81ad26c180d58fdb",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:30:07.918135+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202110.tar.zst",
+      "bytes": 62691918,
+      "sha256": "b17e9a6471c6ac3ca320ebc1e94bd21d2d5235e1e67d468586cddbe35f9c6fe6",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:08.752228+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202111.tar.zst",
+      "bytes": 57152861,
+      "sha256": "a947da0614348128e4b8902c90b515f44b4983944ec4d82593cd729df354f09f",
+      "netcdf_files": 240,
+      "netcdf_bytes": 1335884160,
+      "verified_utc": "2026-10-20T01:30:09.559507+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202112.tar.zst",
+      "bytes": 57905268,
+      "sha256": "cafa39a8d390b6fc47c05db6e10be6d1db406a04bb514798cd6365cb7c4340d9",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:10.393395+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202201.tar.zst",
+      "bytes": 59257955,
+      "sha256": "12b17a13deb33c3d4f50982c257168baf524c79176c3b6d88ad21b86b41b6ee4",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:11.222711+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202202.tar.zst",
+      "bytes": 54663961,
+      "sha256": "8535fc61ca022afa88cfc38dadcd1a83795d06188793e8b109150e3e52194a7a",
+      "netcdf_files": 224,
+      "netcdf_bytes": 1246825216,
+      "verified_utc": "2026-10-20T01:30:11.977596+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200004_202203_f09_3hr_gls_rho05/modis_c7_l2_200004_202203_f09_3hr_gls_rho05.202203.tar.zst",
+      "bytes": 61819147,
+      "sha256": "ef93095574f1e2aa4dac50be7092ba69f488a56b3159b56458aa5023e26df928",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1380413632,
+      "verified_utc": "2026-10-20T01:30:12.811428+00:00"
+    },
+    {
+      "path": "modis_c7_l2_200807_f09_3hr_gls_rho05/modis_c7_l2_200807_f09_3hr_gls_rho05.200807.tar.zst",
+      "bytes": 61778665,
+      "sha256": "0a02f297a536705ad0ceb29011d75b30d6c705359e45fe318f5e487febdd6af3",
+      "netcdf_files": 248,
+      "netcdf_bytes": 1355006280,
+      "verified_utc": "2026-10-20T01:30:48.582493+00:00"
+    }
+  ]
+}

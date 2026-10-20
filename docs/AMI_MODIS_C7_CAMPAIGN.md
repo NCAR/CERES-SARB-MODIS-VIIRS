@@ -1,9 +1,15 @@
-# AMI MODIS C7: April 2000–March 2022
+# AMI MODIS C7: March 2000–March 2022
 
 The user authorized 22 April–March analysis years on 2026-10-11, using
 Terra and Aqua Dark Target and Deep Blue, Collection 7 per Seiji's request.
 Despeckling is explicitly disabled in every yearly configuration. This task
 grids observations only; it does not run plots or AERONET evaluation.
+
+The March 2000 supplement extends the record to 265 months. On October 19,
+2026, all expected production files and passing monthly metrics were present.
+The complete processed record and separate July 2008 trial have now been
+downloaded to the laptop as verified monthly archives; see the delivery
+record below. The historical submission sections retain their original dates.
 
 ## Configuration and output
 
@@ -227,3 +233,62 @@ retains the exact command, source revisions, processing hash, release receipt
 and scheduler observation. Runtime records and the combined output log are in
 the `200003` log directory shown above. This establishes queue acceptance and
 startup; monthly processing completion remains to be checked separately.
+
+## Complete laptop delivery (October 19, 2026)
+
+Task 5.14 inventories and downloads every MODIS C7 product run in the AMI
+output tree. The delivery completed at **2026-10-20 01:30:48 UTC** (October 19
+at 21:30:48 EDT) under **`~/Data/MODIS_VIIRS`**:
+
+| Dataset | Monthly archives | CAM7 NetCDF files |
+|---|---:|---:|
+| Production, March 2000–March 2022 | 265 | 64,528 |
+| Separate July 2008 trial | 1 | 248 |
+| Total | 266 | 64,776 |
+
+The NetCDF files total **360,529,727,432 bytes (335.77 GiB)** before
+compression. The `.tar.zst` archives total **15,709,287,856 bytes
+(14.63 GiB)**, including 532 monthly TSV summary and JSON metrics files.
+An additional **160 evaluation, plot and log files (19,351,795 bytes)** were
+copied as normal files under `evaluation/`, `plots/` and `logs/` beneath the
+local delivery root. Original Level-2 granules are outside this transfer.
+
+Archives are named `archives/<run>/<run>.YYYYMM.tar.zst`. They preserve
+`grids/<run>/YYYY/MM/DD/` and `summaries/<run>/` paths relative to the AMI
+product root. The March supplement remains in the production tree despite
+its historical `200004_202203` run name. The July trial stays in its separate
+run directory. Existing NetCDF files, missing-data windows and provenance
+were copied byte for byte; no numerical processing or NetCDF rewriting was
+performed. Archives remain compressed locally.
+
+Every archive has an embedded transfer manifest and a JSON sidecar with
+the original member paths, sizes and SHA-256 hashes. Local verification
+checked the archive SHA-256, the complete tar member inventory, the embedded
+manifest, and every member SHA-256 after streaming decompression: **65,308
+source members verified**, including the monthly summaries. All associated
+evaluation/plot/log files also match their source sizes and SHA-256 hashes.
+A downloaded NetCDF sample opens with the expected 192 × 288 f09 dimensions,
+AOD field, CF time coordinate and original processing fingerprint.
+
+The exporter uses one streaming read to hash each source member while
+packing it, publishes only finished archives, and resumes unchanged exports.
+The receiver uses partial-preserving rsync and resumes verified archives.
+Local smoke checks covered export/resume, two simultaneous disjoint export
+workers, complete-manifest publication, decoded content and deliberate
+checksum-mismatch rejection. Initial serial export job 5067939 was replaced
+by four-task array **5067940** to accelerate the record; its finished archives
+were reused. All four array tasks have `failed=0` and `exit_status=0`.
+Source originals and completed export archives remain on AMI.
+
+`archives/DOWNLOAD_COMPLETE.json` records successful local verification;
+`archives/verification.json` retains the per-archive verification times and
+hashes. `archives/COMPLETE.json` describes remote export completion only.
+The delivery's `README.txt` gives optional extraction instructions, and
+`transfer_tools/` preserves the operational scripts, configuration and
+export accounting. Extraction of all CAM7 files would need about 336 GiB
+in addition to the archives.
+
+The [tracked completion record](validation/ami_modis_20261019_download.json)
+retains all 266 archive hashes, exact counts/bytes, scheduler accounting,
+source/destination paths and the sample-header check. These are transfer
+and output-coverage checks; C7 science acceptance remains tracked separately.

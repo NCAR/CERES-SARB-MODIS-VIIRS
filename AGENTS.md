@@ -202,6 +202,14 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
     9,829 granules into 248 validated files (1.2619 GiB); see
     `docs/validation/ami_c7_200807.md`. Operational acceptance does not close
     C7 AERONET validation or uncertainty calibration.
+  - **MODIS laptop copy (2026-10-19):** all 265 March 2000–March 2022 production
+    months and the separate July 2008 trial are downloaded beneath
+    `~/Data/MODIS_VIIRS`. There are 266 `.tar.zst` archives (14.63 GiB), containing
+    64,776 CAM7 files and monthly summaries, with every archive/member SHA-256
+    verified. Associated evaluation/plot/log files are also copied. Archives
+    remain compressed; see the local `README.txt` and
+    `docs/validation/ami_modis_20261019_download.json`. Original Level-2 inputs
+    are not part of this copy, and NetCDF provenance is unchanged.
   - **NOAA-20 recovery (user direction, 2026-10-19):** use three-month batches
     and keep completed output. The full 2017-11-18–2026-10-18 manifest has 36
     configs; the dated recovery manifest selects 16 blocks with gaps. Resume
