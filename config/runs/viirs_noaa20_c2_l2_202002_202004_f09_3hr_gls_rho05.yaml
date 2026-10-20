@@ -1,0 +1,58 @@
+# Six-calendar-month NOAA-20-only block; shared launch-to-present output tree.
+# DT/DB Collection 002; the final campaign block uses DT 021 to retain recent data.
+profile: ami-viirs-noaa20
+provenance:
+  development_agents:
+  - tool: Codex
+    provider: OpenAI
+    model_name: unknown
+    model_version: unknown
+    reasoning_effort: unknown
+    notes: NOAA-20 AMI configuration, 2026-10-11; exact model details unverified.
+  - tool: Codex CLI 0.162.1
+    provider: OpenAI
+    model_name: gpt-6-astra
+    model_version: unknown
+    reasoning_effort: xhigh
+    role: code_review
+    notes: Task 5.5 review, 2026-10-11; alias and effort reported by the review command,
+      exact snapshot unavailable.
+period:
+  start: 2020-02-01
+  end: 2020-04-30
+stage:
+  products:
+    AERDT_L2_VIIRS_NOAA20:
+    - '2'
+    AERDB_L2_VIIRS_NOAA20:
+    - '2'
+grid:
+  source: f09
+  times_per_day: 8
+  edge_granules: false
+  streams:
+    noaa20_dt:
+      product: AERDT_L2_VIIRS_NOAA20
+      collection: '2'
+    noaa20_db:
+      product: AERDB_L2_VIIRS_NOAA20
+      collection: '2'
+  missing_products: fill
+qc:
+  preset: retrieval_team
+time:
+  leap_seconds: apply
+weighting:
+  method: gls
+  rho: 0.5
+  birge: true
+  min_pixels: 1
+  single_pixel_sigma: floor
+combined_product:
+  enabled: false
+output:
+  stem: MODIS_VIIRS_AOD_3hr_f09
+  clip_negative_mean: true
+name: viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05
+despeckle:
+  enabled: false

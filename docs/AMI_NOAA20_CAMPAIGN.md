@@ -6,7 +6,92 @@ jobs on 2026-10-18. The interval starts at the satellite's
 and ends on October 18, 2026, the request's date in America/New_York.
 This is a fixed submission interval; future dates require a later submission.
 
-## Configuration and coverage
+## Three-month recovery (October 19, 2026)
+
+The initial array has finished, with incomplete output. The user requested
+three-month recovery jobs and explicitly chose to keep completed output.
+The output inventory found 16,352 of 26,056 expected NetCDF files, occupying
+52.63 GiB. All expected filenames are present in 66 of 108 months. The
+remaining 42 months are incomplete or absent. This is output-file coverage;
+the configured missing-product days still contain explicit missing AOD.
+
+The [preflight record](validation/ami_noaa20_20261019_recovery_preflight.json)
+contains the month-by-month counts and archive diagnoses. All 520 existing
+files in the four partially populated months pass contract, time and
+processing-fingerprint resume checks (65 complete days); retain them too.
+
+Scheduler accounting for array 5063353 reports seven tasks (7–13) killed by
+the six-hour walltime limit and two tasks (15 and 17) with exit status 1.
+Successful six-month tasks took roughly 48–124 minutes. Several timed-out
+tasks produced no daily output, so elapsed time alone does not establish a
+need for more computation. A bounded read of a January 2021 Deep Blue sample
+stalled in filesystem I/O on the login node. Shorter batches isolate work;
+they do not resolve unavailable archive storage.
+After that blocked process exited, a bounded retry of the same file read
+all 12,282,422 variable elements successfully in 0.206 seconds. This supports
+retrying the stalled periods; it does not establish readability of all inputs.
+
+The [three-month manifest](../config/campaigns/viirs_noaa20_c2_c21_20171118_20261018_3month.txt)
+splits each original six-month block in half, giving 36 disjoint blocks:
+November–January, February–April, May–July and August–October. The initial
+November and final October retain their original partial-month boundaries.
+The common output tree, processing fingerprints, numerical settings and
+May 1, 2026 DT collection transition are unchanged. Both final three-month
+configs use DT 021 and DB 002; all earlier configs use 002 for both.
+
+The [October 19 recovery manifest](../config/campaigns/viirs_noaa20_recovery_20261019_3month.txt)
+contains only the 16 blocks intersecting incomplete months: November 2020
+through April 2024, February–April 2025 and November 2025–January 2026.
+This is a dated recovery selection, not a replacement for the full manifest.
+It includes completed months adjacent to gaps. Resume validates existing
+daily files and preserves their original processing provenance; it also
+rebuilds earlier gap outputs if a previously missing product has arrived.
+Do not pass `--overwrite`. Retain valid completed days within incomplete
+months, and keep earlier job logs as evidence. Cleanup is limited to invalid
+or unfinished output artifacts and superseded failed monthly metrics.
+
+The two HDF errors remain reproducible when opening these DT 002 inputs:
+
+- March 31, 2025: `AERDT_L2_VIIRS_NOAA20.A2025090.1336.002.2025091022114.nc`.
+- December 14, 2025: `AERDT_L2_VIIRS_NOAA20.A2025348.0630.002.2025348192110.nc`.
+
+HDF5 confirms both files are truncated: the March file contains 8,355,840
+bytes but its header expects 13,347,352; the December file contains 4,177,920
+bytes but its header expects 7,020,473. The archive remains read-only, and
+these granules are not silently excluded or converted to missing-product
+days. Recovery tasks 15 and 16 cover these dates and remain held until the
+inputs are repaired. Their other days already have completed output.
+
+Submit the recovery with one serial slot per task, at most four concurrent
+tasks in `scf.q`, and a twelve-hour limit to allow additional archive-I/O
+time. The limit is a scheduling allowance, not an expected runtime. Use a
+separate log directory for this attempt. After deploying the reviewed
+configuration revision, the submission is:
+
+```bash
+source /SPG_ops/utils/altair/current/default/common/settings.sh
+cd "$HOME/CERES-SARB-MODIS-VIIRS"
+SARB_VIIRS_RECOVERY_LOG_DIR=/CERES/sarb/dfillmor/MODIS_VIIRS/logs/viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05/recovery_20261019_3month
+mkdir -p "$SARB_VIIRS_RECOVERY_LOG_DIR"
+qsub -h -q scf.q -l h_rt=12:00:00 -t 1-16 -tc 4 \
+  -N noaa20_viirs_3month -o "$SARB_VIIRS_RECOVERY_LOG_DIR" \
+  scripts/ami_grid_years.sh config/campaigns/viirs_noaa20_recovery_20261019_3month.txt
+# Record the returned job ID, then release only its tasks 1–14 with qrls.
+# Keep tasks 15 and 16 held until their truncated archive inputs are repaired.
+qstat -u dfillmor
+```
+
+Task 5.12 records the configuration and validation; Task 5.13 records actual
+cleanup, submission and startup. Queue acceptance is not recovery completion.
+
+The full offline gate passed 1,071 tests (one network test deselected), and
+mypy, Black, isort and shell syntax checks passed. Coverage checks confirmed
+26,056 unique output paths, 108 distinct monthly summaries and unchanged
+processing fingerprints; all 52 full/recovery wrapper dispatches passed.
+`codex review --uncommitted` found no actionable issues, independently
+confirming coverage and dispatch and passing 77 targeted tests.
+
+## Initial six-month configuration and coverage
 
 The [campaign manifest](../config/campaigns/viirs_noaa20_c2_c21_20171118_20261018_6month.txt)
 lists 18 tracked configurations in chronological task order. Blocks span
@@ -66,7 +151,7 @@ rebuilds a previously missing-product day if that product has since arrived.
 The filename inventory establishes local archive coverage, not external
 completeness or per-granule readability.
 
-## Resources and submission
+## Initial six-month resources and submission
 
 Use `scf.q`, one serial slot per task, at most four simultaneous tasks, and
 `h_rt=06:00:00`. September 2020's daily tasks took approximately 45–50 seconds,
@@ -103,7 +188,7 @@ tasks by resubmitting only their indices with the same manifest. Do not use
 claiming processing completion. Plotting and AERONET evaluation are not part
 of this submission.
 
-## Validation and submission record
+## Initial six-month validation and submission record
 
 Configuration checks verified all 18 task dispatches with stub executables,
 the exact date interval, 26,056 unique output paths, 108 unique monthly summary

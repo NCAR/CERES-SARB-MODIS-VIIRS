@@ -202,6 +202,14 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
     9,829 granules into 248 validated files (1.2619 GiB); see
     `docs/validation/ami_c7_200807.md`. Operational acceptance does not close
     C7 AERONET validation or uncertainty calibration.
+  - **NOAA-20 recovery (user direction, 2026-10-19):** use three-month batches
+    and keep completed output. The full 2017-11-18–2026-10-18 manifest has 36
+    configs; the dated recovery manifest selects 16 blocks with gaps. Resume
+    valid days without `--overwrite`, preserve original grid provenance, and
+    retain the May 2026 DT 002→021 transition. Use four concurrent serial tasks
+    and a twelve-hour limit for archive-I/O margin. Two 2025 DT inputs are
+    truncated; hold their two recovery tasks until the archive is repaired.
+    See `docs/AMI_NOAA20_CAMPAIGN.md` for evidence and submission status.
 - **Run configs** choose collections per product for staging
   (`stage.products: {MOD04_L2: ["6.1", "7"], ...}`). Gridding names exactly one collection
   per stream (plan Task 1.9).

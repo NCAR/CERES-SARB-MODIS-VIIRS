@@ -4,9 +4,11 @@ The authorized [April 2000–March 2022 MODIS C7 campaign](AMI_MODIS_C7_CAMPAIGN
 uses 22 annual jobs, explicit missing-data outputs and no despeckling.
 
 The [NOAA-20 VIIRS launch-to-present campaign](AMI_NOAA20_CAMPAIGN.md) covers
-November 18, 2017–October 18, 2026 in 18 six-month jobs, using only NOAA-20
-DT/DB. Its final block uses DT 021 with DB 002 to include the recent record.
-It is queued as array 5063353, following March 2000 MODIS supplement job 5063352.
+November 18, 2017–October 18, 2026, using only NOAA-20
+DT/DB. From May 2026 it uses DT 021 with DB 002 to include the recent record.
+Initial six-month array 5063353 is finished with gaps. October 19 recovery
+uses three-month configs and preserves completed output; see the campaign
+page for the selected tasks and unresolved archive-input failures.
 
 ## July 2008 C7 deployment
 

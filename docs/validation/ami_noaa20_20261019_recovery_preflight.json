@@ -1,0 +1,1032 @@
+{
+  "output_inventory_observed_utc": "2026-10-20T00:39:38.665891+00:00",
+  "run": "viirs_noaa20_c2_c21_l2_201711_202610_f09_3hr_gls_rho05",
+  "period_start": "2017-11-18",
+  "period_end": "2026-10-18",
+  "source_root": "/CERES/sarb/dfillmor/MODIS_VIIRS",
+  "expected_files": 26056,
+  "present_files": 16352,
+  "present_bytes": 56510500704,
+  "complete_months": 66,
+  "total_months": 108,
+  "old_array_job": "5063353",
+  "old_tasks_killed_by_six_hour_limit": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "old_tasks_with_hdf_errors": [
+    15,
+    17
+  ],
+  "validated_existing_days_in_incomplete_months": 65,
+  "validated_existing_files_in_incomplete_months": 520,
+  "invalid_existing_days": [],
+  "truncated_inputs": [
+    {
+      "day": "2025-03-31",
+      "path": "/ASDC_archive/VIIRS/J1/002/2025/090/AERDT_L2_VIIRS_NOAA20.A2025090.1336.002.2025091022114.nc",
+      "bytes": 8355840,
+      "hdf5_stored_eof": 13347352,
+      "recovery_task": 15
+    },
+    {
+      "day": "2025-12-14",
+      "path": "/ASDC_archive/VIIRS/J1/002/2025/348/AERDT_L2_VIIRS_NOAA20.A2025348.0630.002.2025348192110.nc",
+      "bytes": 4177920,
+      "hdf5_stored_eof": 7020473,
+      "recovery_task": 16
+    }
+  ],
+  "archive_stall_probe": {
+    "directory": "/ASDC_archive/VIIRS/J1/002/2021/001",
+    "selection": "first sorted AERDB_L2_VIIRS_NOAA20.*.nc file",
+    "observed_process_state": "D",
+    "wait_channel": "cxiWaitEventWait",
+    "termination": "Probe supervisor terminated after the 20-second timeout and 5-second kill grace; kernel-blocked reader remained pending SIGKILL. No further archive probes launched.",
+    "retry": {
+      "path": "/ASDC_archive/VIIRS/J1/002/2021/001/AERDB_L2_VIIRS_NOAA20.A2021001.0000.002.2023081023024.nc",
+      "returncode": 0,
+      "timed_out": false,
+      "output": "{\"read_elements\": 12282422, \"elapsed_seconds\": 0.206}\n"
+    }
+  },
+  "months": [
+    {
+      "month": "2017/11",
+      "expected_files": 104,
+      "files": 104,
+      "bytes": 359411208,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2017/12",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/01",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/02",
+      "expected_files": 224,
+      "files": 224,
+      "bytes": 774116448,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/03",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/04",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/05",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/06",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/07",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/08",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/09",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/10",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/11",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2018/12",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/01",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/02",
+      "expected_files": 224,
+      "files": 224,
+      "bytes": 774116448,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/03",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/04",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/05",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/06",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/07",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/08",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/09",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/10",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/11",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2019/12",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/01",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/02",
+      "expected_files": 232,
+      "files": 232,
+      "bytes": 801763464,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/03",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/04",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/05",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/06",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/07",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/08",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/09",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/10",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/11",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2020/12",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/01",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/02",
+      "expected_files": 224,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 224,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/03",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/04",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/05",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/06",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/07",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/08",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/09",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/10",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/11",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2021/12",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/01",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/02",
+      "expected_files": 224,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 224,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/03",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/04",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/05",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/06",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/07",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/08",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/09",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/10",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/11",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2022/12",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/01",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/02",
+      "expected_files": 224,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 224,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/03",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/04",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/05",
+      "expected_files": 248,
+      "files": 16,
+      "bytes": 55294032,
+      "missing_count": 232,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/06",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/07",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/08",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/09",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/10",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/11",
+      "expected_files": 240,
+      "files": 24,
+      "bytes": 82941048,
+      "missing_count": 216,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2023/12",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/01",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/02",
+      "expected_files": 232,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 232,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/03",
+      "expected_files": 248,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 248,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/04",
+      "expected_files": 240,
+      "files": 0,
+      "bytes": 0,
+      "missing_count": 240,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/05",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/06",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/07",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/08",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/09",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/10",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/11",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2024/12",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/01",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/02",
+      "expected_files": 224,
+      "files": 224,
+      "bytes": 774116448,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/03",
+      "expected_files": 248,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 8,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/04",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/05",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/06",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/07",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/08",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/09",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/10",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/11",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2025/12",
+      "expected_files": 248,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 8,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/01",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/02",
+      "expected_files": 224,
+      "files": 224,
+      "bytes": 774116448,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/03",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/04",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/05",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/06",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/07",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/08",
+      "expected_files": 248,
+      "files": 248,
+      "bytes": 857057496,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/09",
+      "expected_files": 240,
+      "files": 240,
+      "bytes": 829410480,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    },
+    {
+      "month": "2026/10",
+      "expected_files": 144,
+      "files": 144,
+      "bytes": 497646288,
+      "missing_count": 0,
+      "extra_count": 0,
+      "other_file_count": 0
+    }
+  ]
+}
