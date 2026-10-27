@@ -48,17 +48,31 @@ def regional_provenance_sections(provenance: Mapping[str, Any]) -> list[tuple[st
     qa = source_display_name(provenance["qc"])
     if provenance["qc_overrides"]:
         qa += " + Overrides"
+    created = f"  Plot: {provenance['plot_created_utc']}"
+    code = f"  Plot: {provenance['plot_git_commit'][:12]}"
+    mapped = ""
+    if "map_windows" in provenance:
+        dates = sorted({value[:10] for value in provenance["grid_created_utc"]})
+        created = f"  Grids: {' – '.join(dict.fromkeys(dates[:1] + dates[-1:])) or 'Unknown'}\n"
+        created += f"  Plot: {provenance['plot_created_utc']}"
+        commits = ", ".join(value[:12] for value in provenance["processing_commits"])
+        code = f"  Grids: {commits or 'Unknown'}\n{code}"
+        mapped = (
+            "\n  Map: Count-Weighted Mean, All Days"
+            "\n  Sites: AERONET Mean, Paired Days Only"
+            f"\n  Time Windows: {provenance['map_windows']} × 3 Hours"
+        )
     sections = [
         (provenance_repository_url(provenance), ""),
         ("Provenance", ""),
-        ("Created (UTC):", f"  Plot: {provenance['plot_created_utc']}"),
-        ("Code (Git):", f"  Plot: {provenance['plot_git_commit'][:12]}"),
+        ("Created (UTC):", created),
+        ("Code (Git):", code),
         (
             "Method:",
             f"  {provenance['source']} | {method}\n  {qa}\n"
             "  Independent UTC Daily Means\n"
             "  Lines: Equal-Site Daily Means\n"
-            "  Bands: Middle 50% of Sites",
+            "  Bands: Middle 50% of Sites" + mapped,
         ),
         (
             "Absolute Error (%):",

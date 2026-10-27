@@ -581,6 +581,9 @@ class PlotsConfig(StrictModel):
     sites: PlotSiteSelection | list[str] = Field(default_factory=PlotSiteSelection)
     site_sources: Literal["product", "sensor", "stream"] = "product"
     regional_layout: Literal["timeseries", "summary"] = "timeseries"
+    # Summary context map: the satellite's count-weighted AOD over the region's
+    # active days, with AERONET site means on the same scale, or sites only.
+    regional_map_field: Literal["aod", "none"] = "aod"
     regional_map_padding: float = Field(default=0.25, ge=0.05, le=1, allow_inf_nan=False)
     regional_city_limit: int = Field(default=6, ge=0, le=20, strict=True)
 

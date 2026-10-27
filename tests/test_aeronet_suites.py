@@ -348,20 +348,53 @@ def city_cache(config):
     return cache
 
 
-@pytest.mark.parametrize(
-    "region",
-    ["global", "western_us", "southern_ocean", "south_atlantic_ocean", "labor_day_2020_smoke"],
-)
+SUMMARY_REGIONS = [
+    "global",
+    "western_us",
+    "southern_ocean",
+    "south_atlantic_ocean",
+    "labor_day_2020_smoke",
+]
+
+
+def _fields(config, regions=SUMMARY_REGIONS, value=None):
+    """Synthetic count-weighted fields: a latitude gradient over every region span."""
+    from sarb_aod.grid.spec import load_grid
+
+    grid = load_grid("f09")
+    field = (
+        np.broadcast_to(0.05 + 0.6 * np.cos(np.deg2rad(grid.lat))[:, None], grid.shape).copy()
+        if value is None
+        else np.full(grid.shape, value)
+    )
+    spans = {suites.region_span(config, region) for region in regions}
+    recorded = {"grid_created_utc": ["2026-10-11T18:00:00Z"], "processing_commits": ["0" * 40]}
+    return suites.RegionalFields(
+        grid,
+        {span: {"product": field, "terra_dt": field} for span in spans},
+        dict.fromkeys(spans, 8),
+        dict.fromkeys(spans, recorded),
+    )
+
+
+@pytest.mark.parametrize("map_field", ["aod", "none"])
+@pytest.mark.parametrize("region", SUMMARY_REGIONS)
 def test_regional_summary_preserves_daily_statistics_and_map_context(
-    config, inputs, city_cache, region
+    config, inputs, city_cache, region, map_field
 ):
+    from dataclasses import replace
+
     from sarb_aod.evaluation.regions import get_region
 
     legacy = suites.regional_figure(config, region, inputs)
     cfg = config.model_copy(
-        update={"plots": config.plots.model_copy(update={"regional_layout": "summary"})}
+        update={
+            "plots": config.plots.model_copy(
+                update={"regional_layout": "summary", "regional_map_field": map_field}
+            )
+        }
     )
-    figure = suites.regional_figure(cfg, region, inputs)
+    figure = suites.regional_figure(cfg, region, replace(inputs, fields=_fields(cfg)))
     metadata = figure._sarb_plot_metadata
     pd.testing.assert_frame_equal(
         metadata["regional_daily"], legacy._sarb_plot_metadata["regional_daily"]
@@ -379,12 +412,22 @@ def test_regional_summary_preserves_daily_statistics_and_map_context(
     assert list(metadata["data_axes"][0].get_subplotspec().colspan) == [0, 1, 2]
     assert "regional_inset" not in metadata
     assert set(metadata["regional_map"]["cities"].name) <= {"Western City", "Eastern City"}
+    if map_field == "none":
+        assert not metadata.get("colorbars")
+        assert "map_windows" not in metadata["provenance"]
+    else:
+        assert [item["kind"] for item in metadata["field_artists"]] == ["aod"] * len(
+            metadata["field_artists"]
+        )
+        assert len(metadata["colorbars"]) == 1
+        assert metadata["provenance"]["map_windows"] == 8
+        assert "Mean: " in metadata["subtitles"][-1].get_text()
     if region == "western_us":
         assert list(metadata["regional_map"]["cities"].name) == ["Western City"]
-        assert (
-            metadata["regional_map"]["axis"].collections[-1].get_sizes()[0]
-            > metadata["regional_map"]["markers"].get_sizes()[0]
-        )
+        # Context-only maps enlarge cities; AOD maps enlarge the data-bearing sites.
+        city = metadata["regional_map"]["axis"].collections[-1].get_sizes()[0]
+        site = metadata["regional_map"]["markers"].get_sizes()[0]
+        assert city > site if map_field == "none" else city < site
     extent = metadata["regional_map"]["extent"]
     west, east, south, north = get_region(region).extent
     assert extent[0] <= west and extent[1] >= east
@@ -404,11 +447,117 @@ def test_regional_summary_preserves_daily_statistics_and_map_context(
 
 
 def test_regional_summary_requires_cached_cities(config, inputs):
+    from dataclasses import replace
+
     cfg = config.model_copy(
         update={"plots": config.plots.model_copy(update={"regional_layout": "summary"})}
     )
     with pytest.raises(FileNotFoundError, match="Missing city map asset"):
+        suites.regional_figure(cfg, "global", replace(inputs, fields=_fields(cfg)))
+
+
+def test_regional_summary_aod_map_requires_fields(config, inputs, city_cache):
+    cfg = config.model_copy(
+        update={"plots": config.plots.model_copy(update={"regional_layout": "summary"})}
+    )
+    with pytest.raises(ValueError, match="count-weighted grid fields"):
         suites.regional_figure(cfg, "global", inputs)
+    from dataclasses import replace
+
+    with pytest.raises(ValueError, match="rebuild them"):
+        suites.regional_figure(
+            cfg, "labor_day_2020_smoke", replace(inputs, fields=_fields(cfg, ["global"]))
+        )
+
+
+def test_regional_aod_map_shares_one_scale_with_aeronet_site_means(config, inputs, city_cache):
+    from dataclasses import replace
+
+    from sarb_aod.plots.style import geosit_aod_levels
+
+    cfg = config.model_copy(
+        update={"plots": config.plots.model_copy(update={"regional_layout": "summary"})}
+    )
+    daily = inputs.daily_grid.assign(x=[0.25, 1.4])
+    figure = suites.regional_figure(
+        cfg, "global", replace(inputs, daily_grid=daily, fields=_fields(cfg, value=0.2))
+    )
+    metadata = figure._sarb_plot_metadata
+    mesh, *_, sites = [item["artist"] for item in metadata["field_artists"]]
+    np.testing.assert_allclose(sorted(sites.get_array()), [0.25, 1.4])
+    # The AERONET mean above the field sets the shared levels, capped at 1.
+    np.testing.assert_allclose(mesh.norm.boundaries, geosit_aod_levels([1.4]))
+    assert sites.norm is mesh.norm and mesh.cmap.name == "turbo"
+    assert metadata["subtitles"][-1].get_text() == "2008-07-01 | Mean: 0.200 | Sites: 2"
+    text = "\n".join(item.get_text() for item in metadata["provenance_text"])
+    assert "Time Windows: 8 × 3 Hours" in text and "Grids: 000000000000" in text
+    scatter_title = metadata["regional_summary"]["scatter_axis"].title
+    map_title = metadata["regional_map"]["axis"].title
+    figure.canvas.draw()
+    assert scatter_title.get_window_extent().y0 == pytest.approx(
+        map_title.get_window_extent().y0, abs=1
+    )
+    assert validate_rendered_figures({"region": figure})["passed"]
+
+
+def test_regional_fields_weight_by_count_over_each_active_span(config):
+    shape = (192, 288)
+    for index in range(8):
+        start = window_bounds(config.period.start, index)[0]
+        write_contract_file(
+            output_path(config, start),
+            window_start=start,
+            aod_weighted_mean=np.full(shape, (index + 1) / 10),
+            aod_count=np.full(shape, index + 1),
+            aod_uncertainty=np.full(shape, 0.02),
+            global_attrs={"processing_sha256": processing_sha256(config)},
+        )
+    full = suites.region_span(config, "global")
+    smoke = suites.region_span(config, "labor_day_2020_smoke")
+    assert smoke[0] > smoke[1]
+    result = suites.load_regional_fields(config, ["product"], [full, smoke, full])
+    np.testing.assert_allclose(result.means[full]["product"], 20.4 / 36)
+    assert np.isnan(result.means[smoke]["product"]).all()
+    assert result.windows == {full: 8, smoke: 0}
+    assert len(result.provenance[full]["processing_commits"]) == 1
+    assert len(result.provenance[full]["grid_created_utc"]) >= 1
+    assert result.provenance[smoke] == {"grid_created_utc": [], "processing_commits": []}
+
+
+def test_regional_summary_suite_loads_fields_once_for_all_sources(config, inputs, monkeypatch):
+    cfg = config.model_copy(
+        update={
+            "plots": config.plots.model_copy(
+                update={
+                    "suites": ["aeronet_regional_timeseries"],
+                    "regional_layout": "summary",
+                    "regions": ["western_us", "labor_day_2020_smoke"],
+                    "regional_city_limit": 0,
+                }
+            )
+        }
+    )
+    calls = []
+
+    def fields(run, names, spans):
+        calls.append((list(names), list(spans)))
+        return _fields(run, ["global", "western_us", "labor_day_2020_smoke"])
+
+    monkeypatch.setattr(suites, "load_regional_fields", fields)
+    monkeypatch.setattr(suites, "load_matchups", lambda *args, **kwargs: inputs.daily_grid)
+    artifacts = suites.render_aeronet_suites(cfg, levels=("grid",))
+    assert calls == [
+        (
+            ["product"],
+            [
+                suites.region_span(cfg, "global"),
+                suites.region_span(cfg, "western_us"),
+                suites.region_span(cfg, "labor_day_2020_smoke"),
+            ],
+        )
+    ]
+    assert {artifact.suite for artifact in artifacts} == {"aeronet_regional_summary"}
+    assert all(artifact.report["passed"] for artifact in artifacts)
 
 
 def test_regional_context_is_compact_across_dateline():

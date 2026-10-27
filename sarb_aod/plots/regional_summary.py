@@ -1,9 +1,14 @@
-"""Regional daily comparison with provenance, geographic context and paired means."""
+"""Regional daily comparison with provenance, geographic context and paired means.
+
+The optional context field follows NCAR/DAVINCI's AOD map practice (Apache-2.0):
+GEOS-IT levels on turbo, with AERONET site means drawn on the same scale.
+"""
 
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -11,6 +16,7 @@ import cartopy.crs as ccrs
 import numpy as np
 import pandas as pd
 from cartopy.io import shapereader
+from matplotlib import patheffects
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox, ScaledTranslation
@@ -18,10 +24,36 @@ from matplotlib.transforms import Bbox, ScaledTranslation
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import REPOSITORY_URL, git_commit
 from sarb_aod.evaluation.regions import Region, get_region, spatial_mask
+from sarb_aod.grid.spec import GridSpec
 from sarb_aod.paths import cartopy_data_dir
 from sarb_aod.plots import labeling
-from sarb_aod.plots.maps import _map_context, _projection
+from sarb_aod.plots.maps import (
+    _colorbar,
+    _map_context,
+    _projection,
+    _quantity,
+    _title,
+    area_mean,
+    draw_spatial_field,
+    field_scale,
+)
 from sarb_aod.plots.style import NCAR_ACCENT, Y_COLOR, configure_cartopy
+
+
+@dataclass(frozen=True)
+class RegionalField:
+    """Count-weighted satellite AOD over the region's active configured days."""
+
+    grid: GridSpec
+    values: np.ndarray
+    windows: int
+    provenance: Mapping[str, list[str]]
+    start: date
+    end: date
+
+
+# A white line with a black edge stays legible over every turbo color.
+_OUTLINE_EFFECTS = [patheffects.Stroke(linewidth=3.2, foreground="black"), patheffects.Normal()]
 
 
 def context_extent(region: Region, padding: float) -> tuple[float, float, float, float]:
@@ -120,10 +152,124 @@ def _label_cities(axis: Any, candidates: pd.DataFrame, limit: int) -> pd.DataFra
     return candidates.loc[chosen].reset_index(drop=True)
 
 
-def _draw_map(
-    figure: Figure, axis: Any, config: RunConfig, pairs: pd.DataFrame, region: Region
-) -> None:
+def _colorbar_locator(parent: Any, *, bins: int) -> Any:
+    """Figure-fraction bounds 0.33 in below the drawn map, within its grid cell."""
+
+    def locate(axis: Any, renderer: Any) -> Bbox:
+        box = parent.get_position()
+        cell = parent.get_subplotspec().get_position(parent.figure)
+        width_in, height_in = parent.figure.get_size_inches()
+        width = min(max(box.width, 0.24 * bins / width_in), cell.width)
+        left = min(max((box.x0 + box.x1 - width) / 2, cell.x0), cell.x1 - width)
+        height = 0.11 / height_in
+        top = box.y0 - 0.33 / height_in
+        return Bbox.from_bounds(left, top - height, width, height)
+
+    return locate
+
+
+def _draw_field(
+    figure: Figure,
+    axis: Any,
+    config: RunConfig,
+    field: RegionalField,
+    sites: pd.DataFrame | None,
+    region: Region,
+    extent: tuple[float, float, float, float],
+    source: str,
+) -> tuple[Any, Any]:
+    """Satellite field and any AERONET site means on one GEOS-IT scale, below the outline."""
     metadata = getattr(figure, "_sarb_plot_metadata")
+    grid = field.grid
+    center = 180 if region.extent[0] > region.extent[1] else 0
+    native = (grid.lon - center + 180) % 360 - 180
+    visible = field.values[
+        np.ix_(
+            (grid.lat >= extent[2]) & (grid.lat <= extent[3]),
+            (native >= extent[0]) & (native <= extent[1]),
+        )
+    ]
+    site_values = sites["aeronet"].to_numpy() if sites is not None else np.empty(0)
+    scale = field_scale(np.concatenate([visible.ravel(), site_values]))
+    mesh = draw_spatial_field(
+        axis,
+        field.values,
+        grid.lat,
+        grid.lon,
+        plot_type=config.plots.aod_fill,
+        scale=scale,
+        lat_bnds=grid.lat_bnds,
+        lon_bnds=grid.lon_bnds,
+    )
+    markers = None
+    if sites is not None:
+        markers = axis.scatter(
+            sites.longitude,
+            sites.latitude,
+            c=sites.aeronet,
+            cmap=scale.cmap,
+            norm=scale.norm,
+            transform=ccrs.PlateCarree(),
+            s=36,
+            edgecolors="black",
+            linewidths=0.7,
+            rasterized=True,
+            zorder=6,
+        )
+    # A layout-managed colorbar would re-anchor the north-anchored map or
+    # leave a gap. This child axis follows the drawn map below its longitude
+    # labels, widening when GEOS-IT bins need room for distinct tick labels;
+    # constrained layout reserves its space within the map's margins.
+    cax = axis.inset_axes((0, 0, 1, 1))
+    cax.set_axes_locator(_colorbar_locator(axis, bins=scale.levels.size - 1))
+    colorbar = _colorbar(figure, mesh, axis, scale, None, cax=cax)
+    colorbar.ax.tick_params(labelsize=7.5)
+    mean = area_mean(field.values, grid.lat, grid.lon, region)
+    heading, detail = _title(
+        axis,
+        labeling.sourced_title(labeling.legend_label(source), _quantity("aod", None)),
+        labeling.map_subtitle(
+            field.start,
+            field.end,
+            mean=mean,
+            sites=len(sites) if sites is not None else None,
+            decimals=3,
+        ),
+    )
+    heading.set_fontsize(12)
+    dense = [mesh, getattr(mesh, "_wrapped_collection_fix", None), markers]
+    dense = [artist for artist in dense if artist is not None]
+    metadata["dense_artists"].extend(dense)
+    metadata.setdefault("field_artists", []).extend(
+        {"artist": artist, "kind": "aod"} for artist in dense
+    )
+    metadata.setdefault("colorbars", []).append(colorbar)
+    metadata["titles"].append(heading)
+    metadata["subtitles"].append(detail)
+    metadata["provenance"].update(
+        map_start=field.start.isoformat(),
+        map_end=field.end.isoformat(),
+        map_mean=mean,
+        map_windows=field.windows,
+        grid_created_utc=list(field.provenance.get("grid_created_utc", [])),
+        processing_commits=list(field.provenance.get("processing_commits", [])),
+    )
+    return markers, colorbar
+
+
+def _draw_map(
+    figure: Figure,
+    axis: Any,
+    config: RunConfig,
+    pairs: pd.DataFrame | None,
+    region: Region,
+    field: RegionalField | None,
+    source: str,
+) -> None:
+    """Context map; without AERONET pairs, it shows the satellite field alone."""
+    metadata = getattr(figure, "_sarb_plot_metadata")
+    if pairs is None and field is None:
+        raise ValueError("A regional map without AERONET sites requires an AOD field")
     projection = _projection(region)
     coastline, gridliner = _map_context(axis, region, config.plots.coastline_resolution)
     extent = context_extent(region, config.plots.regional_map_padding)
@@ -136,28 +282,58 @@ def _draw_map(
     west, east, south, north = region.extent
     center = 180 if west > east else 0
     left, right = west - center, east + (360 if west > east else 0) - center
+    outline_style: dict[str, Any] = (
+        {"color": "white", "linewidth": 1.6, "path_effects": _OUTLINE_EFFECTS}
+        if field is not None
+        else {"color": NCAR_ACCENT, "linewidth": 1.5}
+    )
     (outline,) = axis.plot(
         [left, right, right, left, left],
         [south, south, north, north, south],
         transform=projection,
-        color=NCAR_ACCENT,
-        linewidth=1.5,
         zorder=5,
+        **outline_style,
     )
-    finite = np.isfinite(pairs[["x", "y"]].to_numpy(dtype=float)).all(axis=1)
-    sites = pairs.loc[finite, ["site", "longitude", "latitude"]].drop_duplicates("site")
-    markers = axis.scatter(
-        sites.longitude,
-        sites.latitude,
-        transform=ccrs.PlateCarree(),
-        s=12,
-        color=Y_COLOR,
-        edgecolors="none",
-        rasterized=True,
-        zorder=6,
-    )
-    handles = [
-        Line2D(
+    sites = None
+    if pairs is not None:
+        finite = np.isfinite(pairs[["x", "y"]].to_numpy(dtype=float)).all(axis=1)
+        sites = (
+            pairs.loc[finite]
+            .groupby("site", observed=True, sort=False)
+            .agg(
+                longitude=("longitude", "first"),
+                latitude=("latitude", "first"),
+                aeronet=("x", "mean"),
+            )
+            .reset_index()
+        )
+    colorbar = None
+    handles = []
+    if field is not None:
+        markers, colorbar = _draw_field(figure, axis, config, field, sites, region, extent, source)
+        site_handle = Line2D(
+            [],
+            [],
+            marker="o",
+            linestyle="none",
+            markerfacecolor="white",
+            markeredgecolor="black",
+            markersize=6,
+            label=labeling.title_text("AERONET Site Mean"),
+        )
+    else:
+        assert sites is not None
+        markers = axis.scatter(
+            sites.longitude,
+            sites.latitude,
+            transform=ccrs.PlateCarree(),
+            s=12,
+            color=Y_COLOR,
+            edgecolors="none",
+            rasterized=True,
+            zorder=6,
+        )
+        site_handle = Line2D(
             [],
             [],
             marker="o",
@@ -165,11 +341,11 @@ def _draw_map(
             color=Y_COLOR,
             markersize=np.sqrt(12),
             label=labeling.legend_label("aeronet"),
-        ),
-        Line2D(
-            [], [], color=NCAR_ACCENT, linewidth=1.5, label=labeling.title_text("Analysis Region")
-        ),
-    ]
+        )
+        metadata["dense_artists"].append(markers)
+    if sites is not None:
+        handles.append(site_handle)
+    handles.append(Line2D([], [], label=labeling.title_text("Analysis Region"), **outline_style))
     city_frame = pd.DataFrame(columns=["name", "longitude", "latitude", "population"])
     checksums: dict[str, str] = {}
     if config.plots.regional_city_limit:
@@ -195,22 +371,37 @@ def _draw_map(
                 marker="o",
                 linestyle="none",
                 color="0.7",
+                markeredgecolor="black" if field is not None else "0.7",
+                markeredgewidth=0.5,
                 markersize=np.sqrt(20),
                 label=labeling.title_text("Major Cities"),
             )
         )
-    axis.legend(
-        handles=handles,
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.08),
-        ncols=2,
-        fontsize=8,
-        frameon=False,
-    )
-    title = axis.set_title(labeling.title_text("Regional Context"), y=1.0, fontsize=12, pad=10)
-    metadata["titles"].append(title)
+    if colorbar is None:
+        axis.legend(
+            handles=handles,
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.08),
+            ncols=2,
+            fontsize=8,
+            frameon=False,
+        )
+        title = axis.set_title(labeling.title_text("Regional Context"), y=1.0, fontsize=12, pad=10)
+        metadata["titles"].append(title)
+    else:
+        # Beneath the colorbar's tick labels, where it covers no data. A
+        # physical offset is independent of the colorbar's height.
+        colorbar.ax.legend(
+            handles=handles,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0),
+            bbox_transform=colorbar.ax.transAxes
+            + ScaledTranslation(0, -22 / 72, figure.dpi_scale_trans),
+            ncols=3,
+            fontsize=8,
+            frameon=False,
+        )
     metadata["gridliners"].append(gridliner)
-    metadata["dense_artists"].append(markers)
     if not city_frame.empty:
         city_frame = _label_cities(axis, city_frame, config.plots.regional_city_limit)
         cities = axis.scatter(
@@ -219,7 +410,8 @@ def _draw_map(
             transform=ccrs.PlateCarree(),
             s=20,
             color="0.7",
-            edgecolors="none",
+            edgecolors="black" if field is not None else "none",
+            linewidths=0.5,
             rasterized=True,
             zorder=7,
         )
@@ -239,7 +431,7 @@ def _draw_map(
         city_dataset_url="https://www.naturalearthdata.com/downloads/110m-cultural-vectors/110m-populated-places/",
         city_dataset_checksums=checksums,
         cities=city_frame.to_dict(orient="records"),
-        aeronet_sites=sites.to_dict(orient="records"),
+        aeronet_sites=sites.to_dict(orient="records") if sites is not None else [],
         map_extent=list(extent),
         analysis_extent=list(region.extent),
     )
@@ -385,6 +577,7 @@ def compose(
     *,
     source: str,
     input_provenance: Mapping[str, Any],
+    field: RegionalField | None = None,
 ) -> Figure:
     """Extend the existing daily renderer, preserving its values and sampling."""
     metadata = getattr(figure, "_sarb_plot_metadata")
@@ -394,7 +587,9 @@ def compose(
     metadata["statistics_annotations"] = []
     figure.set_size_inches(16.2, 8.7)
     figure.set_layout_engine("constrained", h_pad=0.10, w_pad=0.16)
-    grid = figure.add_gridspec(2, 3, height_ratios=[0.9, 1.1], width_ratios=[1.05, 1.05, 1])
+    # The AOD map needs a wider center column for its colorbar ticks.
+    widths = [1.05, 1.05, 1] if field is None else [0.95, 1.3, 0.85]
+    grid = figure.add_gridspec(2, 3, height_ratios=[0.9, 1.1], width_ratios=widths)
     series_axis.set_subplotspec(grid[0, :])
     panel = figure.add_subplot(grid[1, 0])
     configure_cartopy(cartopy_data_dir(config))
@@ -428,7 +623,13 @@ def compose(
         "scatter_basis": "the same regional daily means shown in the time series",
     }
     _draw_scatter(figure, scatter_axis, source)
-    _draw_map(figure, map_axis, config, pairs, subset)
+    _draw_map(figure, map_axis, config, pairs, subset, field, source)
+    if field is not None:
+        # Bottom-row titles share one baseline above the map's mean subtitle.
+        subtitle = metadata["subtitles"][-1]
+        scatter_axis.set_title(
+            scatter_axis.get_title(), fontsize=12, pad=subtitle.get_fontsize() + 18
+        )
     _draw_provenance(figure)
     _place_statistics(figure)
     return figure

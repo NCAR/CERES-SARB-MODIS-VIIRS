@@ -351,6 +351,13 @@ Borrow from these; never modify, check out or commit in them from this repo's ta
     Put line/band/error explanations and the bold, wrapped DAVINCI expansion in Provenance,
     with compact spacing. Geographic padding and city count are config
     options. Retain the existing inset layout by default pending user iteration.
+    By default (`plots.regional_map_field: aod`; user approval, 2026-10-27) the context map
+    is the satellite's count-weighted AOD over the region's active days, titled
+    `<Source> AOD 550 nm` with a `Mean: <region mean> | Sites: <n>` subtitle. AERONET
+    paired-day site means share its GEOS-IT scale as larger black-edged circles; cities
+    get black edges, and the analysis rectangle is white with a black edge. The sparse-tick
+    colorbar sits below the map and widens when its bins need room; `none` keeps the
+    context-only map.
   - Never put dates, years, statistics, `vs <source>`, raw keys, internal labels or `x`/`y` in
     titles. Dates go in the subtitle; maps add ` | Mean: <value>`.
 - **Absolute AOD maps:**

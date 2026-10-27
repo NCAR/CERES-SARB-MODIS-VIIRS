@@ -13,6 +13,7 @@ import json
 import re
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from datetime import date, datetime
 from typing import Any, Literal, cast
 
 import matplotlib.dates as mdates
@@ -35,7 +36,7 @@ from sarb_aod.evaluation.report import (
     load_matchups,
     matchup_signature,
 )
-from sarb_aod.grid.spec import load_grid
+from sarb_aod.grid.spec import GridSpec, load_grid
 from sarb_aod.paths import cartopy_data_dir, output_path
 from sarb_aod.pipeline import processing_sha256, require_processing_provenance
 from sarb_aod.plots import labeling, maps, regional_summary, scatter, series, summary
@@ -73,6 +74,21 @@ class SuiteInputs:
     aeronet: pd.DataFrame | None = None
     grid: GridSeries | None = None
     daily_grid: pd.DataFrame | None = None
+    fields: RegionalFields | None = None
+
+
+@dataclass(frozen=True)
+class RegionalFields:
+    """Count-weighted AOD fields per source over each active (start, end) day span.
+
+    Provenance lists the recorded creation times and revisions of the grid
+    files averaged into each span.
+    """
+
+    grid: GridSpec
+    means: Mapping[tuple[date, date], Mapping[str, np.ndarray]]
+    windows: Mapping[tuple[date, date], int]
+    provenance: Mapping[tuple[date, date], Mapping[str, list[str]]]
 
 
 def select_sites(matchups: pd.DataFrame, selection: PlotSiteSelection | list[str]) -> list[str]:
@@ -121,6 +137,52 @@ def _rho_compatible(config: RunConfig, other: RunConfig) -> bool:
     return matchup_signature(config) == matchup_signature(adjusted)
 
 
+def _read_window(
+    config: RunConfig,
+    start: datetime,
+    grid: GridSpec,
+    names: Sequence[str],
+    sensors: Mapping[str, list[str]],
+) -> tuple[dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]], tuple[str, str]]:
+    """Validated per-source AOD (NaN when invalid), accepted count and raw sigma.
+
+    Also returns the file's recorded creation time and processing revision.
+    """
+    path = output_path(config, start)
+    valid, errors = validate_contract_file(path)
+    if not valid:
+        raise ValueError(f"Invalid AERONET plot grid input {path}: {errors}")
+    fields = {}
+    with Dataset(path) as dataset:
+        require_processing_provenance(dataset, config, start)
+        dataset.set_auto_mask(False)
+
+        def read(name: str) -> np.ndarray:
+            data = read_grid_field(dataset, config, name)
+            if data.shape != grid.shape:
+                raise ValueError(f"Unexpected grid shape for {name} in {path}")
+            return data
+
+        for name in names:
+            if name == "product":
+                values, count = read("aod_weighted_mean"), read("aod_count")
+                sigma = read("aod_uncertainty")
+            elif name in sensors:
+                values = read(f"aod_weighted_mean_{name}")
+                count = np.sum([read(f"aod_count_{stream}") for stream in sensors[name]], axis=0)
+                sigma = np.full(grid.shape, np.nan)
+            else:
+                values, count = read(f"aod_mean_{name}"), read(f"aod_count_{name}")
+                sigma = np.full(grid.shape, np.nan)
+            good = np.isfinite(values) & (values > -900) & np.isfinite(count) & (count > 0)
+            fields[name] = (np.where(good, values, np.nan), np.where(good, count, 0), sigma)
+        recorded = (
+            str(getattr(dataset, "date_created", "unknown")),
+            str(getattr(dataset, "git_commit", "unknown")),
+        )
+    return fields, recorded
+
+
 def load_grid_series(config: RunConfig, sites: pd.DataFrame, regions: Sequence[str]) -> GridSeries:
     """Read every window, including windows lacking AERONET observations.
 
@@ -145,49 +207,22 @@ def load_grid_series(config: RunConfig, sites: pd.DataFrame, regions: Sequence[s
         counts = {name: np.zeros(grid.shape) for name in names}
         for index in range(8):
             start, _, center = window_bounds(day, index)
-            path = output_path(config, start)
-            valid, errors = validate_contract_file(path)
-            if not valid:
-                raise ValueError(f"Invalid AERONET plot grid input {path}: {errors}")
-            with Dataset(path) as dataset:
-                require_processing_provenance(dataset, config, start)
-                dataset.set_auto_mask(False)
-
-                def read(name: str) -> np.ndarray:
-                    data = read_grid_field(dataset, config, name)
-                    if data.shape != grid.shape:
-                        raise ValueError(f"Unexpected grid shape for {name} in {path}")
-                    return data
-
-                for name in names:
-                    if name == "product":
-                        values, count = read("aod_weighted_mean"), read("aod_count")
-                        sigma = read("aod_uncertainty")
-                    elif name in sensors:
-                        values = read(f"aod_weighted_mean_{name}")
-                        count = np.sum(
-                            [read(f"aod_count_{stream}") for stream in sensors[name]], axis=0
-                        )
-                        sigma = np.full(grid.shape, np.nan)
-                    else:
-                        values, count = read(f"aod_mean_{name}"), read(f"aod_count_{name}")
-                        sigma = np.full(grid.shape, np.nan)
-                    good = np.isfinite(values) & (values > -900) & np.isfinite(count) & (count > 0)
-                    values = np.where(good, values, np.nan)
-                    totals[name] += np.where(good, values * count, 0)
-                    counts[name] += np.where(good, count, 0)
-                    site_frames.append(
-                        pd.DataFrame(
-                            {
-                                "site": locations["site"],
-                                "time": pd.Timestamp(center, tz="UTC"),
-                                "source": name,
-                                "aod": values[ilat, ilon],
-                                "count": np.where(good, count, 0)[ilat, ilon],
-                                "sigma": np.where(sigma > -900, sigma, np.nan)[ilat, ilon],
-                            }
-                        )
+            fields, _ = _read_window(config, start, grid, names, sensors)
+            for name, (values, count, sigma) in fields.items():
+                totals[name] += np.where(count > 0, values * count, 0)
+                counts[name] += count
+                site_frames.append(
+                    pd.DataFrame(
+                        {
+                            "site": locations["site"],
+                            "time": pd.Timestamp(center, tz="UTC"),
+                            "source": name,
+                            "aod": values[ilat, ilon],
+                            "count": count[ilat, ilon],
+                            "sigma": np.where(sigma > -900, sigma, np.nan)[ilat, ilon],
+                        }
                     )
+                )
         for name in names:
             daily = np.full(grid.shape, np.nan)
             np.divide(totals[name], counts[name], out=daily, where=counts[name] > 0)
@@ -290,6 +325,69 @@ def site_figure(config: RunConfig, site: str, inputs: SuiteInputs) -> Figure:
     return figure
 
 
+def region_span(config: RunConfig, region: str) -> tuple[date, date]:
+    """Configured days on which a region is active; start > end when none are."""
+    spec = get_region(region)
+    start, end = config.period.start, config.period.end
+    if spec.start_date is not None and spec.end_date is not None:
+        start, end = max(start, spec.start_date), min(end, spec.end_date)
+    return start, end
+
+
+def load_regional_fields(
+    config: RunConfig, names: Sequence[str], spans: Sequence[tuple[date, date]]
+) -> RegionalFields:
+    """Count-weighted AOD per source over each span, reading each window once.
+
+    Weighting matches the period-mean maps; a span without active days is NaN.
+    """
+    grid = load_grid(config.grid.source)
+    sensors = _sources(config)
+    spans = list(dict.fromkeys(spans))
+    totals = {(span, name): np.zeros(grid.shape) for span in spans for name in names}
+    counts = {(span, name): np.zeros(grid.shape) for span in spans for name in names}
+    windows = dict.fromkeys(spans, 0)
+    recorded: dict[tuple[date, date], tuple[set[str], set[str]]] = {
+        span: (set(), set()) for span in spans
+    }
+    for day in config.period.days():
+        active = [span for span in spans if span[0] <= day <= span[1]]
+        if not active:
+            continue
+        for index in range(8):
+            fields, (made, revision) = _read_window(
+                config, window_bounds(day, index)[0], grid, names, sensors
+            )
+            for span in active:
+                recorded[span][0].add(made)
+                recorded[span][1].add(revision)
+            for name, (values, count, _) in fields.items():
+                weighted = np.where(count > 0, values * count, 0)
+                for span in active:
+                    totals[span, name] += weighted
+                    counts[span, name] += count
+            for span in active:
+                windows[span] += 1
+    means: dict[tuple[date, date], dict[str, np.ndarray]] = {}
+    for span in spans:
+        means[span] = {}
+        for name in names:
+            mean = np.full(grid.shape, np.nan)
+            np.divide(
+                totals[span, name], counts[span, name], out=mean, where=counts[span, name] > 0
+            )
+            means[span][name] = mean
+    return RegionalFields(
+        grid,
+        means,
+        windows,
+        {
+            span: {"grid_created_utc": sorted(made), "processing_commits": sorted(revisions)}
+            for span, (made, revisions) in recorded.items()
+        },
+    )
+
+
 def _regional_sources(config: RunConfig) -> list[str]:
     """Extra comparisons requested explicitly, omitting the sole-sensor duplicate."""
     if config.plots.site_sources == "product":
@@ -366,6 +464,23 @@ def regional_figure(
     axis.xaxis.set_major_locator(locator)
     axis.xaxis.set_major_formatter(mdates.AutoDateFormatter(locator))
     if config.plots.regional_layout == "summary":
+        field = None
+        if config.plots.regional_map_field == "aod":
+            if inputs.fields is None:
+                raise ValueError("Regional AOD maps require count-weighted grid fields")
+            span = region_span(config, region)
+            if source not in inputs.fields.means.get(span, {}):
+                raise ValueError(
+                    f"Regional AOD fields lack {source!r} for {span[0]} to {span[1]}; "
+                    "rebuild them for the configured regions and sources"
+                )
+            field = regional_summary.RegionalField(
+                inputs.fields.grid,
+                inputs.fields.means[span][source],
+                inputs.fields.windows[span],
+                inputs.fields.provenance[span],
+                *span,
+            )
         regional_summary.compose(
             figure,
             config,
@@ -373,6 +488,7 @@ def regional_figure(
             region,
             source=_source_label(config, source),
             input_provenance=daily_grid.attrs.get("source_provenance", {}),
+            field=field,
         )
     else:
         add_regional_inset(figure, pairs, region, cartopy_data_dir=cartopy_data_dir(config))
@@ -601,11 +717,23 @@ def render_aeronet_suites(
         if regional_series and daily_grid is not None:
             locations = pd.concat([locations, daily_grid], ignore_index=True)
         gridded = load_grid_series(config, locations, [])
-    inputs = SuiteInputs(frames, aeronet, gridded, daily_grid)
+    fields = inputs.fields if inputs is not None else None
+    if (
+        regional_series
+        and config.plots.regional_layout == "summary"
+        and config.plots.regional_map_field == "aod"
+        and fields is None
+    ):
+        fields = load_regional_fields(
+            config,
+            ["product", *_regional_sources(config)],
+            [region_span(config, region or "global") for region in plot_regions(config)],
+        )
+    inputs = SuiteInputs(frames, aeronet, gridded, daily_grid, fields)
     if site_series and "grid" not in frames:
         assert inputs.aeronet is not None and inputs.grid is not None
         frames["grid"] = _series_grid_pairs(config, inputs.aeronet, inputs.grid)
-        inputs = SuiteInputs(frames, inputs.aeronet, inputs.grid, daily_grid)
+        inputs = SuiteInputs(frames, inputs.aeronet, inputs.grid, daily_grid, fields)
     reports = {
         level: build_report(frame, config, level=level, pairing=level_pairings[level])
         for level, frame in candidates.items()

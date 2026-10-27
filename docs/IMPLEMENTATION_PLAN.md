@@ -113,6 +113,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 4.20 | Integrate bold DAVINCI attribution, narrow spatial scale and label AOD wavelength | 4.19 | Done; reviewed, 952 offline tests pass | `56a7642` |
 | 4.21 | Refresh Desktop regional and spatial PDFs with integrated attribution and 550 nm labels | 4.20 | Done; protocols, previews, embedded revisions and copy checks pass | Task 4.21 (this commit) |
 | 4.22 | Compact single-platform DT/DB monthly maps and September NOAA-20 plot config | 4.21, 5.6 | Done | `65f556d` |
+| 4.23 | Regional summary AOD context map with AERONET site means | 4.22 | Done; reviewed, offline tests and July C6.1 protocols pass | Task 4.23 (this commit) |
 | 5.4 | Multi-year production | 5.3, selected periods and science settings | April 2000–March 2022 C7 campaign authorized; Tasks 5.8/5.9 | |
 | 5.5 | Activate AMI NOAA-20 DT Collection 002 and track September two-stream config | 2.1, 2.2, 5.2 | Done; reviewed, 954 offline tests pass, real samples verified | `11cd141` |
 | 5.6 | Deploy and queue September NOAA-20-only gridding on AMI | 5.5 | Done; all 30 tasks succeeded, 240 files validated | `90e4bab`; completion recorded in Task 5.7 |
@@ -1860,6 +1861,24 @@ selects the established regional summary layout. Develop/test/commit/push locall
 then pull and render interactively on AMI. The full September gridding status was
 checked: all 30 array tasks succeeded and all 240 files pass contract/provenance
 validation (828,918,960 bytes). Plot delivery follows this code/config task.
+
+Task 4.23 (user approval, 2026-10-27): the regional summary's context map
+shows the satellite's count-weighted AOD over each region's active configured
+days (`plots.regional_map_field: aod`, default; `none` restores the
+context-only map). AERONET paired-day site means share the map's GEOS-IT
+scale. One pass reads each window for all required source/span fields, and
+`load_grid_series` reuses the same validated window reader. July C6.1
+Western US, Global, South America and Canada renders pass the protocol and
+were visually inspected; the Western US PDF was approved. The colorbar is a
+child axis below the north-anchored map, so constrained layout reserves its
+space and bottom-row titles stay aligned; it widens for GEOS-IT tick labels
+but stays within its grid column. The map subtitle carries its averaging dates.
+Review (`/code-review`) findings fixed: per-span grid provenance, dated map
+subtitles, column-bounded colorbars, clear errors for missing fields, optional
+grid creation/commit attributes, and single registration of site markers.
+Provenance now states that site means use paired days only while the map uses
+all days. Open: with component sources, `load_grid_series` and
+`load_regional_fields` each read every window (two passes).
 
 Task 4.22 validation: 1,055 offline tests pass (one network test deselected),
 as do mypy, Black, isort and whitespace checks. The new source-layout PDF passes
