@@ -36,6 +36,7 @@ def config_for(root):
                 }
             },
             "combined_product": {"enabled": True},
+            "output": {"stem": "MODIS_VIIRS_AOD_3hr_f09", "naming": "legacy"},
         }
     )
 

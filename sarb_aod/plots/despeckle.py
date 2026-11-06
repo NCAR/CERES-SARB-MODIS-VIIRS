@@ -249,6 +249,9 @@ def render_window(config: RunConfig, start: Any, region: Region) -> list[PlotArt
         raise ValueError(f"{path}: {errors}")
     fields: dict[str, np.ndarray] = {}
     with netCDF4.Dataset(path) as ds:
+        from sarb_aod.output_names import grid_view
+
+        ds = grid_view(ds)
         require_processing_provenance(ds, config, start)
         ds.set_auto_mask(False)
         for source in config.grid.streams:

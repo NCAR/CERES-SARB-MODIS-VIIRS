@@ -77,7 +77,8 @@ def test_reference_structure_attributes_values_and_validator(tmp_path: Path) -> 
         for key, value in c.code_provenance().items():
             assert actual.getncattr(key) == value
         assert json.loads(actual.compute_platform)["os_name"]
-        assert json.loads(actual.python_environment)["packages"]
+        assert json.loads(actual.software_versions)["numpy"]
+        assert "python_environment" not in actual.ncattrs()
 
 
 def test_roundtrip_center_and_absent_companions(tmp_path: Path) -> None:
@@ -91,7 +92,7 @@ def test_roundtrip_center_and_absent_companions(tmp_path: Path) -> None:
         assert dataset["aod_uncertainty"][10, 20] == np.float32(0.05)
         assert dataset["aod_count"][10, 20] == 7
         for name in ("aod_weighted_mean_modis", "aod_weighted_mean_viirs"):
-            assert np.all(dataset[name][:] == -999.0)
+            assert name not in dataset.variables
         assert dataset.source == "synthetic MODIS C6.1 Terra DT"
 
 
@@ -283,7 +284,8 @@ def test_validator_rejects_corrupted_contract(tmp_path: Path, fault: str, fragme
         elif fault == "conventions":
             dataset.Conventions = "CF-1.0"
         else:
-            dataset.renameVariable("aod_weighted_mean_viirs", "removed_viirs")
+            # A configured sensor requires its aggregate; an unconfigured one does not.
+            dataset.streams = "noaa20_dt"
     ok, errors = c.validate_contract_file(path)
     assert not ok
     assert any(fragment in error for error in errors), errors

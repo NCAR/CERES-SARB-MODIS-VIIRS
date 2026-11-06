@@ -1,132 +1,143 @@
-# CAM7 AOD File and Variable Naming Specifications
+# AOD Output Naming and Metadata Specifications
 
-Recorded 2026-11-06 from NASA Outlook correspondence. This document separates
-the new naming guidance from examples and choices that still need agreement.
-It records specifications; it does not rename existing files or NetCDF variables.
+Revised 2026-11-06 from the Toni/Tom email exchange and David Fillmore's subsequent
+instructions. The new publication format uses the rules below. Historical files
+retain their recorded names and processing history. CAM7 source changes are deferred.
 
-## Email Sources
+## Variable Names
 
-- **“Variable names for preprocessed MODIS-VIIRS files to be used in CAM7”**,
-  2026-11-06: Thomas Edward Caldwell (Tom) and Antonio Viudez-Mora (Toni),
-  with David Fillmore copied. Tom proposed product-first variable names and
-  CERES-style filenames. Toni agreed with the variable naming and raised the
-  seconds-timestamp requirement. Tom subsequently accepted keeping the existing
-  timestamp if necessary or preferable; Toni agreed.
-- **“Update CAM7 and AODs”**, updated 2026-11-02–03: Toni and Seiji Kato,
-  with David copied. This thread identifies archive collections and requested
-  retrieval variables, and corrects an earlier statement about a supplied
-  DT/DB combined product for VIIRS.
+Use uppercase `AOD`, uppercase sensor/algorithm acronyms, title case for `Terra`
+and `Aqua`, and lowercase statistics and processing words. Use `NOAA20` and
+`SNPP` as platform tokens. Names are case-sensitive.
 
-The implementation explanations below were checked against the producer and
-the adjacent CAM7 reader on 2026-11-06. The producer's committed base was
-`2a51d6adbaa1e4f126667b2324b3cfe9b89cb360`.
-
-## New Naming Guidance
-
-| Topic | Guidance from the November 6 exchange | Status |
-|---|---|---|
-| Variable prefix | Start data-variable names with the product name, followed by what the variable represents. | Tom's guidance; Toni agreed. |
-| Variable length | Keep names intuitive and concise; put fuller descriptions in `long_name` and other attributes. | Tom's guidance; Toni agreed with the variable naming. |
-| Product identity | Select the product name before finalizing the variable names. Tom used `AOD` as an example. | Product name remains undecided. |
-| Explicit variable example | `Aod_mean_terra_dt` | Tom's example, including its capitalization; a complete rename map was not supplied. |
-| Filename structure | CERES prefix, product, source, edition, six-digit token, timestamp, `.nc`. | Proposed through the examples below; token meanings and final spelling remain open. |
-| Filename timestamp | Retain the current seconds-based convention for CAM7 compatibility. | Tom's initial hours suggestion was relaxed after Toni's objection; Toni agreed. |
-| Global attributes | Review unnecessary information and backslash characters in the delivered attributes. | Tom suggested cleanup; the attribute list and serialization policy remain unspecified. |
-
-### Filename Examples and Outstanding Choices
-
-Tom described an `AOD-3hr-f09` product and gave these exact examples:
-
-```text
-CER_AOD-3hr-f90_MODIS-VIIRS_Edition5-Test_999999.2022010100.nc
-CER_AOD-3hr-f90_MODIS-VIIRS_Edition5-Test_999999.2022010103.nc
-```
-
-The examples contain `f90`, while his product description and the implemented
-192 × 288 CAM grid use `f09`. Resolve this inconsistency before adopting the
-filename. The `999999` token's meaning, the final edition string, and whether
-`MODIS-VIIRS` is the fixed product-family label or changes with the actual sensor
-content were not settled.
-
-The hour suffixes in those initial examples are **not a final requirement**.
-Toni explained that CAM7 normally uses seconds in filenames. Tom then said the
-timestamp could remain as it is; Toni's final reply agreed. Preserve the existing
-`YYYYMMDD.SSSSS` date/seconds suffix until a complete replacement is agreed.
-
-For illustration only, applying the proposed prefix with `f09` and the existing
-date/seconds suffix would give:
-
-```text
-CER_AOD-3hr-f09_MODIS-VIIRS_Edition5-Test_999999.20220101.00000.nc
-CER_AOD-3hr-f09_MODIS-VIIRS_Edition5-Test_999999.20220101.10800.nc
-```
-
-These two seconds-based examples are a compatibility illustration derived here,
-not filenames approved in the email. Any eventual prefix change must be made in
-configuration and matched by the consuming CAM7 filename template.
-
-## Current CAM7 Contract and Variable Meanings
-
-The current default stem is `MODIS_VIIRS_AOD_3hr_f09`. Existing files use:
-
-```text
-MODIS_VIIRS_AOD_3hr_f09.YYYYMMDD.SSSSS.nc
-```
-
-`SSSSS` is the zero-padded **UTC window-start second of day**: `00000`,
-`10800`, `21600`, `32400`, `43200`, `54000`, `64800`, or `75600`.
-Each window spans three hours. The scalar NetCDF `time` is instead the window
-**center**, in `hours since 2000-01-01 00:00:00 UTC`, with a Gregorian calendar.
-Keeping seconds in filenames does not change the CF time units.
-
-| Current exact name | Meaning |
+| Quantity | Publication name |
 |---|---|
-| `aod_weighted_mean(lat, lon)` | Primary 550 nm DT/DB merge that CAM7 reads. The configured weighting is used; the working default is GLS with provisional rho 0.5 and Birge inflation. The final valid mean is clipped at zero for CAM. |
-| `aod_weighted_mean_modis(lat, lon)` | MODIS-only aggregate from the selected streams. |
-| `aod_weighted_mean_viirs(lat, lon)` | VIIRS-only aggregate from the selected streams. |
-| `aod_mean_<stream>(lat, lon)` | Per-stream mean, for example `aod_mean_terra_dt`. Tom's example would capitalize the prefix as `Aod`; that exact case change is not implemented. |
-| `aod_count(lat, lon)` | Number of valid contributing L2 pixels in the cell/window. |
-| `aod_count_<stream>(lat, lon)` | Contributing pixel count for one stream. |
-| `aod_uncertainty(lat, lon)` | Reported one-sigma uncertainty of the primary merge. Global uncertainty calibration remains open. |
-| `lat(192)`, `lon(288)` | Pole-centered f09 grid-cell coordinates. |
-| `lat_bnds(lat, nbnds)`, `lon_bnds(lon, nbnds)` | Cell edges, with two bounds per coordinate. These describe cell extent rather than a second set of centers. |
-| `time` | Scalar window-center coordinate used by CAM7 for temporal interpolation. |
-| `time_bnds(nbnds)` | Start and end of the three-hour averaging interval, in the same units as `time`. |
+| Final merged 550 nm AOD | `AOD_mean` |
+| Merged one-sigma uncertainty | `AOD_uncertainty` |
+| Merged contributing pixel count | `AOD_count` |
+| Terra Dark Target mean/count | `AOD_mean_Terra_DT`, `AOD_count_Terra_DT` |
+| Aqua Deep Blue mean/count | `AOD_mean_Aqua_DB`, `AOD_count_Aqua_DB` |
+| NOAA-20 Dark Target mean/count | `AOD_mean_NOAA20_DT`, `AOD_count_NOAA20_DT` |
+| NOAA-20 Deep Blue mean/count | `AOD_mean_NOAA20_DB`, `AOD_count_NOAA20_DB` |
+| MODIS / VIIRS sensor aggregate, when configured | `AOD_mean_MODIS` / `AOD_mean_VIIRS` |
+| Supplied MODIS-team combined diagnostic | `AOD_mean_MODIS_COMBINED` |
+| Supplied combined algorithm-category diagnostic | `AOD_algorithm_flag_MODIS_COMBINED` |
+| Supplied combined pixel counts | `AOD_count_MODIS_COMBINED`, with `_DT`, `_DB`, `_MIXED` category companions |
+| Other diagnostics | `AOD_chi2_per_dof`, `AOD_n_effective`, `AOD_count_negative`, etc. |
+| Experimental comparison fields, when enabled | `_unfiltered` / `_filtered` suffixes on the corresponding publication name |
 
-The current reader explicitly requests the case-sensitive name
-`aod_weighted_mean`, the `lat` and `lon` coordinates, and scalar `time`.
-Renaming a CAM-read variable therefore requires a coordinated consumer change
-or a compatibility variable. No final case-sensitive mapping for the primary
-field, companion fields, or bounds was supplied by Tom and Toni.
+The same rule covers every selected platform/algorithm pair. CF coordinates and
+bounds retain `lat`, `lon`, `time`, `lat_bnds`, `lon_bnds`, and `time_bnds`.
+`long_name`, units and other attributes provide the fuller descriptions.
 
-### Supplied MODIS Combined AOD Is a Separate Diagnostic
+`AOD_mean` retains the configured DT/DB weighting and final clipping policy.
+`AOD_mean_MODIS_COMBINED` remains the independently gridded arithmetic mean of
+the retrieval team's supplied C7 combined product. It preserves native negatives
+and is not an extra input to the primary merge. See [MODIS C7](docs/MODIS_C7.md).
+Naming changes do not alter retrieval QC or numerical aggregation.
 
-When `combined_product.enabled` is true for MODIS C7, these additional exact
-names are written:
+## Configured Sources Determine the Output Schema
+
+Only configured `grid.streams` produce stream means, counts and optional filter
+fields. Only configured instruments produce sensor aggregates. In particular:
+
+- Terra+Aqua MODIS: selected Terra/Aqua DT/DB fields and the MODIS aggregate;
+  no VIIRS, SNPP or NOAA-20 placeholders.
+- NOAA-20 VIIRS: selected NOAA-20 DT/DB fields and the VIIRS aggregate;
+  no MODIS, Terra, Aqua or SNPP placeholders.
+- A DT-only run emits no DB stream fields.
+
+A configured stream that has no valid retrievals in a particular window retains
+its fields with missing AOD and zero counts. With `grid.missing_products: fill`,
+the same applies to a configured source whose granules are absent for a day.
+All eight time windows are still written under that gap policy. This keeps the
+configured schema and filenames stable through clouds and archive gaps.
+Mixed-sensor capability remains available for explicitly configured comparisons.
+
+## Filenames
+
+The proposed automatic stems reflect the configured instruments and platforms:
 
 ```text
-AOD_550_Dark_Target_Deep_Blue_Combined_Land_Ocean
-AOD_550_Dark_Target_Deep_Blue_Combined_Algorithm_Flag_Land_Ocean
+CER_AOD-3hr-f09_MODIS-Terra-Aqua.20080701.00000.nc
+CER_AOD-3hr-f09_MODIS-Terra-Aqua.20080701.10800.nc
+CER_AOD-3hr-f09_VIIRS-NOAA20.20260901.00000.nc
+CER_AOD-3hr-f09_VIIRS-NOAA20.20260901.10800.nc
 ```
 
-The first is an arithmetic mean of the retrieval team's supplied combined
-product, pooling Terra and Aqua pixels into the same f09 cells and UTC windows.
-It is calculated independently of `aod_weighted_mean`; it is not another input
-to that primary merge. The diagnostic preserves valid native negatives rather
-than applying the primary field's final CAM clipping. The algorithm flag and
-associated `aod_count_modis_combined*` fields describe its contributing retrievals.
-See [MODIS C7](docs/MODIS_C7.md) for the flag values and aggregation rules.
+The generic layout is `<stem>.YYYYMMDD.SSSSS.nc`. `SSSSS` is the five-digit UTC
+window-start second of day: `00000`, `10800`, ..., `75600`. The scalar NetCDF
+`time` remains the window center in `hours since 2000-01-01 00:00:00 UTC`;
+`time_bnds` records the three-hour interval. The grid is **f09**, 192 x 288.
+An automatic filename includes both sensor names only if both are configured.
 
-This resolves the distinction Tom asked about: Toni's tentative interpretation
-that the long-named field was used to form the primary regridded AOD is not how
-the current implementation works.
+Select the new output explicitly with:
 
-MODIS-only, VIIRS-only, and mixed-sensor runs are all supported through
-`grid.streams`. Writing both sensor companion variables does not imply that
-both sensors contributed. A sensor without contributing retrievals has missing
-aggregate AOD. The sensor transition requested in the October 15 history is
-Terra+Aqua through March 2022, then NOAA-20 from April 2022, without SNPP in
-that production record; the separate NOAA-20 overlap comparison starts May 2018.
+```yaml
+output:
+  naming: ceres
+  stem: auto
+  clip_negative_mean: true
+```
+
+This is also the default for new configurations. Existing campaign YAML that
+explicitly specifies `stem: MODIS_VIIRS_AOD_3hr_f09` and omits `naming` keeps
+`naming: legacy`, preserving its numerical processing hash and archive lookup.
+To switch such a run to publication names, select `naming: ceres` and `stem: auto`.
+Explicit custom stems remain supported. No existing archive is renamed or rerun
+by changing this specification.
+
+Examples:
+
+- [Terra+Aqua MODIS C7, July 2008](config/runs/modis_c7_l2_200807_f09_3hr_gls_rho05_ceres.yaml).
+- [NOAA-20 DB 002 / DT 021, September 2026](config/runs/viirs_noaa20_db002_dt021_l2_202609_f09_3hr_gls_rho05_ceres.yaml).
+
+The `CER_` form follows Tom's proposal. His original examples included
+`Edition5-Test_999999` and the inconsistent spelling `f90`; no distribution-ID
+meaning or final edition token was supplied. Those tokens are omitted from the
+automatic stem until their meanings are specified; a final release stem can be
+set in configuration.
+
+## Metadata
+
+New grid files record `input_file_paths` as newline-separated absolute L2 granule
+pathnames, `input_file_count`, and `input_file_paths_scope`. The list identifies
+all distinct L2 granules read for the UTC processing day, including configured
+previous-day edge inputs. It does not assert that every listed file contributes
+a valid pixel to every individual three-hour window. A day without inputs has
+an empty pathname string and count zero.
+
+Remove the full `python_environment` inventory from newly written metadata:
+no Conda package lists, build strings, package hashes, environment prefixes or
+interpreter paths. Retain a compact `software_versions` record with sarb_aod,
+Python, NumPy, netCDF4-Python, NetCDF-C and HDF5 versions. Keep repository/revision,
+creation date, processing settings, source collections, configuration snapshots,
+and declared development provenance. See [PROVENANCE.md](docs/PROVENANCE.md).
+
+## CAM7 Compatibility
+
+CAM7 modification is deferred. The current reader expects the primary variable
+`aod_weighted_mean`. A separate compatibility copy can rename the published mean:
+
+```bash
+ncrename -O -v AOD_mean,aod_weighted_mean publication.nc cam7.nc
+```
+
+This follows the [NCO variable-renaming interface](https://nco.sourceforge.net/nco.html#ncrename-netCDF-Renamer).
+CAM7's configured input path/template must point to the chosen filename. The
+other publication fields can retain their names because CAM7 ignores them.
+Internal validation, plotting, summaries and AERONET evaluation accept both
+naming conventions without rewriting the input file.
+
+## Correspondence Basis
+
+The November 6 thread **“Variable names for preprocessed MODIS-VIIRS files to
+be used in CAM7”** contains Tom Caldwell's product-first naming guidance and
+Toni Viudez-Mora's response. Tom's example was `Aod_mean_terra_dt`; David's
+subsequent direction selects `AOD_mean_Terra_DT`. Tom initially suggested hour
+filenames, then accepted retaining seconds after Toni raised compatibility.
+David subsequently requested configured-source-only fields, input-aware filenames,
+removal of Conda metadata and addition of full input pathnames.
 
 ## Archive and Retrieval Specifications in Toni's Thread
 
@@ -165,19 +176,3 @@ selection; VIIRS DB likewise uses separate land/ocean AOD and
 `Aerosol_Optical_Thickness_550_Expected_Uncertainty_Land` / `_Ocean`, as defined
 in the catalog. Group paths and variable availability must be checked
 for each product and collection rather than inferred from the email's list.
-
-## Follow-Up Before Implementing New Names
-
-1. Confirm the product name, `f09` spelling, six-digit token, edition text,
-   and sensor-label policy for the filename.
-2. Agree the complete case-sensitive variable mapping, including the CAM-read
-   primary field and treatment of the supplied MODIS combined diagnostic.
-3. Specify the global-attribute cleanup. Preserve required processing history
-   and reproducibility metadata described in [PROVENANCE.md](docs/PROVENANCE.md);
-   blindly deleting backslashes can corrupt serialized configuration JSON.
-4. Coordinate producer configuration and CAM7 reader/template changes, then
-   validate sample files before producing a newly named archive.
-
-Current behavior is defined by [`contract.py`](sarb_aod/contract.py),
-[`pipeline.py`](sarb_aod/pipeline.py), [`windows.py`](sarb_aod/windows.py), and
-the consumer `../CERES-SARB-CAM7/src/cam/aod_nudging_obs.F90`.

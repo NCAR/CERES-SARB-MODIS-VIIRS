@@ -1,8 +1,9 @@
 # NetCDF provenance
 
-New CAM7 grid files and AERONET matchup tables record the following global
-attributes. The original CAM7 contract remains compatible with older files;
-existing files are not relabeled with a newer processing revision.
+New grid files and AERONET matchup tables record the following global attributes.
+Grid readers accept both the historical CAM7 and new CERES variable names; see
+[the output specification](../VARNAME.md). Existing files retain their original
+processing history and metadata.
 
 | Attribute | Meaning |
 |---|---|
@@ -16,8 +17,11 @@ existing files are not relabeled with a newer processing revision.
 | `config_files` | JSON list of original run/profile YAML: role, absolute pathname, complete text and file SHA-256 |
 | `development_agents` | JSON list of declared LLM development tools, providers, model names/versions, reasoning efforts, roles and notes |
 | `compute_platform` | JSON host, OS/kernel name and version, distribution, architecture/processor, logical CPU count, affinity when available and libc version |
-| `python_environment` | JSON Python version/build/compiler, executable/prefix, installed Python package versions, Conda builds/package hashes and native-library details |
+| `software_versions` | Compact versions of sarb_aod, Python, NumPy, netCDF4-Python, NetCDF-C and HDF5; no environment paths, package inventory, Conda builds or hashes |
 | `execution_environment` | JSON of explicitly selected thread-count and scheduler allocation variables |
+| `input_file_paths` | Grid files: newline-separated absolute L2 granule pathnames actually read for the UTC processing day, including configured previous-day edge granules |
+| `input_file_count` | Grid files: number of distinct pathnames in `input_file_paths` |
+| `input_file_paths_scope` | Explains that the list covers the processing day, rather than only valid contributors to this individual three-hour window |
 
 The pipeline adds configuration attributes when it has a `RunConfig`. Low-level
 writers called directly without a configuration can only record code and runtime
@@ -31,8 +35,11 @@ existing numerical grid results.
 
 When verified L2 matchups are reused for a target configuration, the target
 file records its own code/runtime and configuration provenance. The original
-file's complete attributes are retained separately in `reused_l2_provenance`,
+file's processing attributes are retained separately in `reused_l2_provenance`,
 along with its path and SHA-256, preserving the source processing history.
+The retired `python_environment` inventory is omitted from both top-level
+metadata and nested reuse history in new files; `omitted_metadata_attributes`
+records that omission. The archived source file itself is never changed.
 
 For example, declare known development information in a tracked run config:
 
@@ -59,12 +66,21 @@ model alias `gpt-6-astra`, reasoning effort `xhigh`, exact snapshot unknown.
 Those values describe the review agent, not an inferred identity for the
 development session.
 
-Software inventory is captured once per Python process. It includes all installed
-Python distribution versions, Conda package names/versions/builds/subdirectories
-and available package hashes, plus NetCDF-C, HDF5 and NumPy BLAS/LAPACK build
-information. It records whether Conda metadata is available and any unreadable
-package records. It reads neither credential stores nor arbitrary environment
-variables and does not copy package download URLs. The selected execution
+The user's 2026-11-06 revision removes the full Python/Conda environment inventory
+from newly written metadata. The compact `software_versions` record contains
+only six relevant version strings and is captured once per Python process.
+It includes no environment prefix, interpreter pathname, installed-package list,
+Conda metadata, build strings or package hashes. Archived files that already
+contain `python_environment` remain unchanged.
+
+Grid outputs now record exact absolute L2 input pathnames. A DT/DB granule read
+once appears once. The list covers all granules read for the UTC day, including
+configured previous-day edge inputs; it does not claim that every listed granule
+contributes a valid pixel to every individual three-hour window. A day with no
+input granules records an empty list string and count zero. Matchup files retain
+their existing `source_files` and `aeronet_cache_files` pathname lists.
+
+The selected execution
 variables are `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`,
 `NUMBA_NUM_THREADS`, `VECLIB_MAXIMUM_THREADS`, `BLIS_NUM_THREADS`,
 `NUMEXPR_NUM_THREADS`, `JOB_ID`, `SGE_TASK_ID`, `NSLOTS`, `QUEUE`, `SLURM_JOB_ID`
@@ -78,14 +94,14 @@ uncommitted tracked changes indicated by `-dirty`, and an archived environment
 or platform-specific lockfile/package artifacts. Git describe does not flag
 untracked files. Exact external input files and their checksums (L2, AERONET,
 custom catalog and grid files) remain necessary for full input identity; the
-pipeline currently retains source counts and processing hashes, not a complete
-per-L2-file checksum manifest. Do not treat a pathname or a configured template
+pipeline retains exact L2 pathnames, source counts and processing hashes,
+but does not record a complete per-L2-file checksum manifest. Do not treat a pathname or a configured template
 as proof of unchanged data. Future stochastic steps should also record their
 random seed; the current gridding pipeline has no stochastic step.
 
 The monthly PDF panel stays selective: repository link, creation dates, method,
 grid and time-window count/duration, code revisions and source/output locations.
-Runtime inventories and YAML contents stay in NetCDF rather than crowding the
+Compact runtime metadata and YAML contents stay in NetCDF rather than crowding the
 panel. PDF Keywords retain the figure's existing detailed input/provenance record.
 Global maps align the block's first line to the neighboring map title; regional maps use
 the full reserved cell so shallow latitude bands do not force tiny text. The

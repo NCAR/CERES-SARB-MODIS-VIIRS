@@ -11,6 +11,7 @@ import numpy as np
 from sarb_aod.config.schema import DespeckleConfig
 from sarb_aod.despeckle import DESPECKLE_VERSION, FLAG_FILL, FilteredGrid, SourceFilter
 from sarb_aod.grid.spec import NLAT, NLON
+from sarb_aod.output_names import grid_view
 
 PRODUCT_NAMES = ("aod_weighted_mean", "aod_weighted_mean_modis", "aod_weighted_mean_viirs")
 DIAGNOSTICS = {
@@ -63,11 +64,17 @@ def _write(
 
 
 def write_despeckle(dataset: Any, block: DespeckleWindow, *, clip: bool) -> None:
-    if not block.settings.enabled or set(block.products) != set(PRODUCT_NAMES) or not block.sources:
+    products = tuple(name for name in PRODUCT_NAMES if name in dataset.variables)
+    if (
+        not block.settings.enabled
+        or "aod_weighted_mean" not in products
+        or set(block.products) != set(products)
+        or not block.sources
+    ):
         raise ValueError(
-            "despeckle block requires enabled settings, all products and selected sources"
+            "despeckle block requires enabled settings, configured products and selected sources"
         )
-    for name in (*PRODUCT_NAMES, *(f"aod_mean_{stream}" for stream in block.sources)):
+    for name in (*products, *(f"aod_mean_{stream}" for stream in block.sources)):
         original = np.asarray(dataset[name][:])
         filtered = (
             block.products[name].mean
@@ -155,6 +162,7 @@ def write_despeckle(dataset: Any, block: DespeckleWindow, *, clip: bool) -> None
 
 
 def validate_despeckle(dataset: Any, errors: list[str]) -> None:
+    dataset = grid_view(dataset)
     declared = False
     try:
         declared = bool(
@@ -194,11 +202,15 @@ def validate_despeckle(dataset: Any, errors: list[str]) -> None:
     except (AttributeError, ValueError, TypeError) as exc:
         errors.append(f"invalid despeckle metadata: {exc}")
         return
+    products = tuple(name for name in PRODUCT_NAMES if name in dataset.variables)
     required = {
         f"{name}_{variant}": ("f4", -999)
-        for name in (*PRODUCT_NAMES, *(f"aod_mean_{s}" for s in streams))
+        for name in (*products, *(f"aod_mean_{s}" for s in streams))
         for variant in ("unfiltered", "filtered")
     }
+    if "aod_weighted_mean" not in products:
+        errors.append("missing primary AOD baseline for despeckling")
+        return
     required.update(
         {"aod_despeckle_flags": ("i1", FLAG_FILL), "aod_uncertainty_filtered": ("f4", -999)}
     )
@@ -228,7 +240,7 @@ def validate_despeckle(dataset: Any, errors: list[str]) -> None:
         arrays[name] = values
     if len(arrays) != len(required):
         return
-    baseline_names = (*PRODUCT_NAMES, "aod_uncertainty", *(f"aod_mean_{s}" for s in streams))
+    baseline_names = (*products, "aod_uncertainty", *(f"aod_mean_{s}" for s in streams))
     if (
         any(
             name not in dataset.variables or dataset[name].shape != (NLAT, NLON)
@@ -246,7 +258,7 @@ def validate_despeckle(dataset: Any, errors: list[str]) -> None:
         )[:, None],
         (NLAT, NLON),
     )
-    for name in (*PRODUCT_NAMES, *(f"aod_mean_{s}" for s in streams)):
+    for name in (*products, *(f"aod_mean_{s}" for s in streams)):
         if name not in dataset.variables:
             errors.append(f"missing original despeckle source {name}")
             return

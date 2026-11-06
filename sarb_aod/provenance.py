@@ -1,24 +1,19 @@
-"""Execution-platform and Python/native-environment provenance for NetCDF.
-
-Only known package fields and an explicit environment-variable allowlist are
-recorded. Credentials, package download URLs and the full process environment
-are never inspected. Software inventory is captured once per Python process.
-"""
+"""Compact software/platform provenance, without an environment inventory."""
 
 from __future__ import annotations
 
 import json
 import os
 import platform
-import sys
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from functools import lru_cache
-from importlib import metadata
-from pathlib import Path
 from typing import Any
 
 import netCDF4
 import numpy as np
+
+from sarb_aod import __version__
 
 _EXECUTION_VARIABLES = (
     "OMP_NUM_THREADS",
@@ -37,58 +32,36 @@ _EXECUTION_VARIABLES = (
 )
 
 
-@lru_cache(maxsize=1)
-def python_environment() -> str:
-    """Exact package versions and Conda builds, including native dependencies."""
-    conda_dir = Path(sys.prefix) / "conda-meta"
-    conda_packages = []
-    unreadable = []
-    for path in sorted(conda_dir.glob("*.json")):
+def compact_attributes(attributes: Mapping[str, Any]) -> dict[str, Any]:
+    """Omit retired inventories from new metadata, including copied reuse history."""
+    result = dict(attributes)
+    if "python_environment" in result:
+        result.pop("python_environment")
+        result["omitted_metadata_attributes"] = json.dumps(["python_environment"])
+    history = result.get("reused_l2_provenance")
+    serialized = isinstance(history, str)
+    if isinstance(history, str):
         try:
-            record = json.loads(path.read_text())
-            conda_packages.append(
-                {
-                    key: record[key]
-                    for key in (
-                        "name",
-                        "version",
-                        "build",
-                        "build_number",
-                        "subdir",
-                        "md5",
-                        "sha256",
-                    )
-                    if key in record
-                }
-            )
-        except (OSError, ValueError, TypeError):
-            unreadable.append(path.name)
-    packages = sorted(
-        (
-            {"name": str(dist.metadata.get("Name", "unknown")), "version": dist.version}
-            for dist in metadata.distributions()
-        ),
-        key=lambda item: (item["name"].lower(), item["version"]),
-    )
-    numerical_build = getattr(np.__config__, "CONFIG", {}).get("Build Dependencies", {})
+            history = json.loads(history)
+        except (ValueError, TypeError):
+            history = None
+    if isinstance(history, dict):
+        clean = compact_attributes(history)
+        result["reused_l2_provenance"] = json.dumps(clean, sort_keys=True) if serialized else clean
+    return result
+
+
+@lru_cache(maxsize=1)
+def software_versions() -> str:
+    """Record numerical software versions without paths, builds or packages."""
     return json.dumps(
         {
-            "python_version": platform.python_version(),
-            "python_build": list(platform.python_build()),
-            "python_compiler": platform.python_compiler(),
-            "python_implementation": platform.python_implementation(),
-            "executable": sys.executable,
-            "prefix": sys.prefix,
-            "base_prefix": sys.base_prefix,
-            "packages": packages,
-            "conda_metadata_available": conda_dir.is_dir(),
-            "conda_packages": conda_packages,
-            "conda_records_unreadable": unreadable,
-            "native_libraries": {
-                "netcdf": netCDF4.__netcdf4libversion__,
-                "hdf5": netCDF4.__hdf5libversion__,
-                "numpy_blas_lapack": numerical_build,
-            },
+            "sarb_aod": __version__,
+            "python": platform.python_version(),
+            "numpy": np.__version__,
+            "netCDF4": netCDF4.__version__,
+            "netcdf_c": netCDF4.__netcdf4libversion__,
+            "hdf5": netCDF4.__hdf5libversion__,
         },
         sort_keys=True,
     )
@@ -124,7 +97,7 @@ def runtime_global_attrs() -> dict[str, str]:
     return {
         "date_created": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "compute_platform": json.dumps(machine, sort_keys=True),
-        "python_environment": python_environment(),
+        "software_versions": software_versions(),
         "execution_environment": json.dumps(
             {name: os.environ[name] for name in _EXECUTION_VARIABLES if name in os.environ},
             sort_keys=True,

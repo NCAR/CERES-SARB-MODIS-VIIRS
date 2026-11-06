@@ -26,6 +26,7 @@ from sarb_aod.config.schema import AlgorithmFamily, RunConfig
 from sarb_aod.contract import REPOSITORY_URL, code_provenance, git_commit, validate_contract_file
 from sarb_aod.evaluation.regions import REGIONS
 from sarb_aod.grid.spec import GridSpec, load_grid
+from sarb_aod.output_names import grid_view, output_stem
 from sarb_aod.paths import cartopy_data_dir, output_path, plot_path
 from sarb_aod.pipeline import config_sha256, processing_sha256, require_processing_provenance
 from sarb_aod.plots import labeling, maps
@@ -144,6 +145,7 @@ def aggregate_maps(config: RunConfig) -> MapAggregate:
             if not valid:
                 raise ValueError(f"Invalid map input {path}: {'; '.join(errors)}")
             with Dataset(path) as dataset:
+                dataset = grid_view(dataset)
                 require_processing_provenance(dataset, config, start)
                 created.add(str(dataset.date_created))
                 revisions.add(str(dataset.git_commit))
@@ -504,7 +506,7 @@ def _map_provenance(
     static = {
         "data_root": str(config.paths.data_root),
         "run": config.name,
-        "stem": config.output.stem,
+        "stem": output_stem(config),
     }
 
     def resolve(template: str, values: dict[str, str]) -> str:

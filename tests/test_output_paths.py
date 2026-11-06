@@ -20,12 +20,12 @@ def test_default_output_and_cam_template():
     assert config.name == "modis_l2_200807"
     expected = (
         config.paths.data_root
-        / "CAM7/MODIS_VIIRS_AOD_3hr_f09/modis_l2_200807/2008/07/01/MODIS_VIIRS_AOD_3hr_f09.20080701.10800.nc"
+        / "CAM7/CER_AOD-3hr-f09_MODIS-Terra-Aqua/modis_l2_200807/2008/07/01/CER_AOD-3hr-f09_MODIS-Terra-Aqua.20080701.10800.nc"
     )
     assert path == expected
     namelist = cam_namelist(config)
     assert namelist["aod_obs_path"].endswith("/modis_l2_200807/")
-    assert namelist["aod_obs_template"] == "%y/%m/%d/MODIS_VIIRS_AOD_3hr_f09.%y%m%d.%s.nc"
+    assert namelist["aod_obs_template"] == "%y/%m/%d/CER_AOD-3hr-f09_MODIS-Terra-Aqua.%y%m%d.%s.nc"
     assert len(namelist["aod_obs_template"]) <= 80
 
 

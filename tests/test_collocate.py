@@ -392,7 +392,8 @@ def test_netcdf_roundtrip_retains_times_numbers_flags_and_sources(tmp_path):
         for key, value in code_provenance().items():
             assert saved.attrs[key] == value
         assert json.loads(saved.attrs["compute_platform"])["os_name"]
-        assert json.loads(saved.attrs["python_environment"])["packages"]
+        assert json.loads(saved.attrs["software_versions"])["numpy"]
+        assert "python_environment" not in saved.attrs
     empty = collocate_l2([], reference, recipes=[RECIPE])
     write_matchups(tmp_path / "empty.nc", empty)
     with xr.open_dataset(tmp_path / "empty.nc") as saved:

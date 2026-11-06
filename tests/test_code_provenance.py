@@ -2,7 +2,6 @@
 
 import json
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest
@@ -72,10 +71,10 @@ def test_runtime_records_software_and_only_selected_environment(monkeypatch: pyt
     attrs = runtime_global_attrs()
     runtime = json.loads(attrs["compute_platform"])
     assert runtime["os_name"] and runtime["os_version"] and runtime["architecture"]
-    environment = json.loads(attrs["python_environment"])
-    assert environment["executable"] == sys.executable
-    assert any(package["name"].lower() == "numpy" for package in environment["packages"])
-    assert environment["native_libraries"]["hdf5"]
+    versions = json.loads(attrs["software_versions"])
+    assert versions["python"] and versions["numpy"] and versions["hdf5"]
+    assert "python_environment" not in attrs
+    assert not {"prefix", "executable", "packages", "conda_packages"}.intersection(versions)
     execution = json.loads(attrs["execution_environment"])
     assert execution["OPENBLAS_NUM_THREADS"] == "3"
     assert "EARTHDATA_PASSWORD" not in execution

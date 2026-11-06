@@ -503,6 +503,15 @@ def test_l2_reuse_ignores_grid_weights_but_rejects_changed_retrieval(tmp_path):
             "date_created": "2020-01-01T00:00:00Z",
         },
     )
+    # Simulate an archived matchup from before the environment-inventory retirement.
+    import netCDF4
+
+    with netCDF4.Dataset(source_path, "r+") as dataset:
+        dataset.python_environment = json.dumps({"conda_packages": ["retired-build"]})
+        dataset.reused_l2_provenance = json.dumps(
+            {"git_commit": "ancestor", "python_environment": "retired-ancestor-build"}
+        )
+    source_bytes = source_path.read_bytes()
     target = source.model_copy(
         update={
             "name": "count",
@@ -522,16 +531,23 @@ def test_l2_reuse_ignores_grid_weights_but_rejects_changed_retrieval(tmp_path):
     import xarray as xr
 
     with xr.open_dataset(result.path) as dataset:
+        assert "python_environment" not in dataset.attrs
         assert dataset.attrs["reused_l2_file"] == str(source_path)
         assert len(dataset.attrs["reused_l2_sha256"]) == 64
         for key, value in configuration_metadata(target).items():
             assert dataset.attrs[key] == value
         history = json.loads(dataset.attrs["reused_l2_provenance"])
+        assert "python_environment" not in history
+        assert json.loads(history["omitted_metadata_attributes"]) == ["python_environment"]
+        ancestor = json.loads(history["reused_l2_provenance"])
+        assert ancestor["git_commit"] == "ancestor"
+        assert "python_environment" not in ancestor
         assert json.loads(history["config_files"])[0]["path"] == str(source_yaml)
         assert history["git_commit"] == "source-revision"
         assert history["date_created"] == "2020-01-01T00:00:00Z"
         assert dataset.attrs["git_commit"] != "source-revision"
         assert dataset.attrs["date_created"] != history["date_created"]
+    assert source_path.read_bytes() == source_bytes
     changed = target.model_copy(update={"qc": target.qc.model_copy(update={"preset": "cam7_v2"})})
     with pytest.raises(ValueError, match="identical recipes"):
         reuse_l2_matchups(source, changed)

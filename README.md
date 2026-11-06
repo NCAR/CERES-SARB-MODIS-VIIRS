@@ -58,6 +58,17 @@ Path templates are `str.format` strings. Granule directories may use `data_root`
 `platform`, `instrument`, `short_name`, `collection`, `cmr_version`, `file_token`, `year`,
 `month`, `day`, `doy`, `yyyymmdd`; manifests may use the product fields plus `start`, `end`.
 
+New output configurations use `output.naming: ceres` and `output.stem: auto`.
+They write names such as `AOD_mean_Terra_DT`, omit unconfigured streams/sensors,
+and derive filenames such as
+`CER_AOD-3hr-f09_MODIS-Terra-Aqua.YYYYMMDD.SSSSS.nc` or
+`CER_AOD-3hr-f09_VIIRS-NOAA20.YYYYMMDD.SSSSS.nc`. Metadata includes full L2 input
+pathnames and compact software versions, without a Conda environment inventory.
+Existing campaign YAML with the explicit historical stem retains legacy lookup;
+set `naming: ceres` and `stem: auto` to select the new format. See
+[VARNAME.md](VARNAME.md) for the full mapping, gap behavior, examples and the
+`ncrename` compatibility copy needed by the current CAM7 reader.
+
 Products and collections are defined in `sarb_aod/data/catalog.yaml`:
 
 | Products | Collection (= CMR version) | Filename token | Format | Status (2026-10-10) |

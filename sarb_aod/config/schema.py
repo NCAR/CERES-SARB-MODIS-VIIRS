@@ -7,7 +7,7 @@ import string
 from datetime import date, timedelta
 from importlib import resources
 from pathlib import Path
-from typing import Iterator, Literal
+from typing import Any, Iterator, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator, model_validator
@@ -474,8 +474,22 @@ class WeightingConfig(StrictModel):
 
 
 class OutputConfig(StrictModel):
-    stem: str = Field(default="MODIS_VIIRS_AOD_3hr_f09", pattern=r"^[A-Za-z0-9_.-]+$")
+    stem: str = Field(default="auto", pattern=r"^[A-Za-z0-9_.-]+$")
+    naming: Literal["ceres", "legacy"] = "ceres"
     clip_negative_mean: bool = True
+
+    @model_validator(mode="before")
+    @classmethod
+    def _historical_stem(cls, value: Any) -> Any:
+        # Existing campaign YAML explicitly selects this historical contract.
+        # New configs default to automatic source identity and publication names.
+        if (
+            isinstance(value, dict)
+            and value.get("stem") == "MODIS_VIIRS_AOD_3hr_f09"
+            and "naming" not in value
+        ):
+            return {**value, "naming": "legacy"}
+        return value
 
 
 class AeronetConfig(StrictModel):

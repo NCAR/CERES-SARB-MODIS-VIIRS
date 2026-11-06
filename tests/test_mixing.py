@@ -9,6 +9,7 @@ import pytest
 
 from sarb_aod.config.loader import load_config
 from sarb_aod.config.schema import RunConfig
+from sarb_aod.output_names import grid_view
 from sarb_aod.paths import granule_dir
 from sarb_aod.pipeline import grid_day
 from sarb_aod.readers import LAND, PixelBatch
@@ -64,18 +65,19 @@ def test_selected_collections_and_sensor_companions(tmp_path, monkeypatch, famil
         assert ("noaa20_db", "2.1") in seen
         assert ("snpp_db", "2") in seen
     with netCDF4.Dataset(result.files[0]) as ds:
+        ds = grid_view(ds)
         ds.set_auto_mask(False)
         mean = ds["aod_weighted_mean"][:]
         valid = mean > -900
         assert valid.sum() == 1
         assert ds["aod_count"][:].sum() == 2 * len(seen)
-        modis = ds["aod_weighted_mean_modis"][:]
-        viirs = ds["aod_weighted_mean_viirs"][:]
         if family.startswith("mixed"):
+            modis = ds["aod_weighted_mean_modis"][:]
+            viirs = ds["aod_weighted_mean_viirs"][:]
             np.testing.assert_allclose(mean[valid], 0.2, rtol=1e-6)
             assert np.all((mean[valid] >= modis[valid]) & (mean[valid] <= viirs[valid]))
         else:
-            absent = viirs if family == "modis" else modis
-            present = modis if family == "modis" else viirs
-            assert np.all(absent == -999)
-            np.testing.assert_array_equal(mean, present)
+            present = "modis" if family == "modis" else "viirs"
+            absent = "viirs" if family == "modis" else "modis"
+            assert f"aod_weighted_mean_{absent}" not in ds.variables
+            np.testing.assert_array_equal(mean, ds[f"aod_weighted_mean_{present}"][:])

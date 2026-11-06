@@ -14,6 +14,7 @@ import numpy as np
 from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import validate_contract_file
 from sarb_aod.grid.spec import load_grid
+from sarb_aod.output_names import grid_view
 from sarb_aod.paths import output_path, summary_path
 from sarb_aod.pipeline import require_processing_provenance
 from sarb_aod.variants import read_grid_field
@@ -44,6 +45,7 @@ def summarize(config: RunConfig) -> tuple[Path, list[dict[str, Any]]]:
             if not valid:
                 raise ValueError(f"{path}: {errors}")
             with netCDF4.Dataset(path) as dataset:
+                dataset = grid_view(dataset)
                 require_processing_provenance(dataset, config, start)
                 dataset.set_auto_mask(False)
                 mean = read_grid_field(dataset, config, "aod_weighted_mean")

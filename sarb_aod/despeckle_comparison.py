@@ -121,6 +121,9 @@ def aggregate_comparison(config: RunConfig) -> PairedAggregate:
             if not valid:
                 raise ValueError(f"{path}: {errors}")
             with netCDF4.Dataset(path) as dataset:
+                from sarb_aod.output_names import grid_view
+
+                dataset = grid_view(dataset)
                 require_processing_provenance(dataset, config, start)
                 dataset.set_auto_mask(False)
                 values = [

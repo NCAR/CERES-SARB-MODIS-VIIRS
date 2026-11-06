@@ -1,0 +1,38 @@
+# NOAA-20 publication-format example following the November 2026 source specification.
+# Verify archive coverage before processing; this definition does not submit a job.
+profile: ami-viirs-noaa20
+period:
+  start: 2026-09-01
+  end: 2026-09-30
+stage:
+  products:
+    AERDT_L2_VIIRS_NOAA20: ["2.1"]
+    AERDB_L2_VIIRS_NOAA20: ["2"]
+grid:
+  source: f09
+  times_per_day: 8
+  edge_granules: false
+  streams:
+    noaa20_dt: {product: AERDT_L2_VIIRS_NOAA20, collection: "2.1"}
+    noaa20_db: {product: AERDB_L2_VIIRS_NOAA20, collection: "2"}
+qc:
+  preset: retrieval_team
+time:
+  leap_seconds: apply
+weighting:
+  method: gls
+  rho: 0.5
+  birge: true
+  min_pixels: 1
+  single_pixel_sigma: floor
+combined_product:
+  enabled: false
+despeckle:
+  enabled: false
+output:
+  naming: ceres
+  stem: auto
+  clip_negative_mean: true
+plots:
+  suites: [aeronet_regional_timeseries]
+  regions: all

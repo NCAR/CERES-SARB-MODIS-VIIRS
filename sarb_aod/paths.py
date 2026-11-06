@@ -7,6 +7,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from sarb_aod.config.schema import Catalog, PathsConfig, RunConfig
+from sarb_aod.output_names import output_stem
 
 
 def _product_fields(
@@ -94,7 +95,7 @@ def output_path(config: RunConfig, window_start: datetime) -> Path:
         config.paths.output.format(
             data_root=str(config.paths.data_root),
             run=config.name,
-            stem=config.output.stem,
+            stem=output_stem(config),
             year=f"{start:%Y}",
             month=f"{start:%m}",
             day=f"{start:%d}",
@@ -144,7 +145,7 @@ def cam_namelist(config: RunConfig) -> dict[str, str]:
     static = {
         "data_root": str(config.paths.data_root),
         "run": config.name,
-        "stem": config.output.stem,
+        "stem": output_stem(config),
     }
     temporal = {"year": "%y", "month": "%m", "day": "%d", "yyyymmdd": "%y%m%d", "sssss": "%s"}
     pieces = []
@@ -176,7 +177,7 @@ def summary_path(config: RunConfig) -> Path:
     path = Path(
         config.paths.summary.format(
             data_root=config.paths.data_root,
-            stem=config.output.stem,
+            stem=output_stem(config),
             run=config.name,
             start=f"{config.period.start:%Y%m%d}",
             end=f"{config.period.end:%Y%m%d}",

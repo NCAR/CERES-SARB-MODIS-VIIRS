@@ -26,6 +26,7 @@ from sarb_aod.despeckle_io import DespeckleWindow, slice_result
 from sarb_aod.grid.combine import CombinedGrid, combine
 from sarb_aod.grid.kernels import Accumulators, accumulate, count_pixels
 from sarb_aod.grid.spec import load_grid, normalize_longitude
+from sarb_aod.output_names import source_label
 from sarb_aod.paths import granule_dir, granule_pattern, output_path
 from sarb_aod.qc import resolve_rule
 from sarb_aod.readers import read_granule
@@ -63,6 +64,9 @@ def processing_sha256(config: RunConfig) -> str:
     # Preserve existing strict-mode fingerprints when introducing gap handling.
     if config.grid.missing_products == "error":
         definition["grid"].pop("missing_products")
+    if config.output.naming == "legacy":
+        # Numerical identity and historical archive reuse remain unchanged.
+        definition["output"].pop("naming")
     # Identity defaults preserve resume compatibility with pre-correction runs.
     corrections = active_corrections(config.aod_correction)
     if corrections:
@@ -202,6 +206,7 @@ def _provenance(
         for recipe in recipes
     }
     return {
+        "title": f"{source_label(config)} AOD at 550 nm on the CAM f09 grid, 3-hourly",
         "source": "; ".join(f"{r.product} {r.collection} ({r.stream_id})" for r in recipes),
         "qc_thresholds": json.dumps(thresholds, sort_keys=True),
         "merge_method": (
@@ -338,7 +343,7 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
             stream_indices=[i for i, r in enumerate(recipes) if r.instrument.upper() == name],
             **kwargs,
         )
-        for name in ["MODIS", "VIIRS"]
+        for name in sorted({r.instrument.upper() for r in recipes})
     }
     source_filters = {}
     filtered_products = {}
@@ -358,6 +363,12 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
                 min_pixels=config.weighting.min_pixels,
             )
     attrs = _provenance(config, recipes, len(inputs), missing)
+    attrs["input_file_paths"] = "\n".join(sorted({str(p.absolute()) for p, _ in inputs}))
+    attrs["input_file_count"] = len({p for p, _ in inputs})
+    attrs["input_file_paths_scope"] = (
+        f"L2 granules read for UTC day {day}; includes configured previous-day edge granules; "
+        "not restricted to valid contributors in this individual three-hour window"
+    )
     attrs["primary_products_missing"] = json.dumps(missing_products)
     attrs["primary_granule_count"] = primary_count
     if native is not None:
@@ -382,12 +393,17 @@ def grid_day(config: RunConfig, day: date, *, overwrite: bool = False) -> DayRes
             aod_weighted_mean=merged.mean[i],
             aod_uncertainty=merged.sigma[i],
             aod_count=merged.count[i],
-            aod_weighted_mean_modis=instruments["MODIS"].mean[i],
-            aod_weighted_mean_viirs=instruments["VIIRS"].mean[i],
+            aod_weighted_mean_modis=(
+                instruments["MODIS"].mean[i] if "MODIS" in instruments else None
+            ),
+            aod_weighted_mean_viirs=(
+                instruments["VIIRS"].mean[i] if "VIIRS" in instruments else None
+            ),
             global_attrs=attrs,
             extra_fields=extra,
             combined_product=product_window(native, i) if native is not None else None,
             clip_negative_mean=config.output.clip_negative_mean,
+            naming=config.output.naming,
             despeckle=(
                 DespeckleWindow(
                     config.despeckle,

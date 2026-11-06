@@ -48,7 +48,6 @@ def test_paired_outputs_preserve_all_original_fields(pipeline_config, method, no
         for name in (
             "aod_weighted_mean",
             "aod_weighted_mean_modis",
-            "aod_weighted_mean_viirs",
             "aod_mean_terra_dt",
             "aod_mean_terra_db",
         ):

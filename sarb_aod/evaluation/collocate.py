@@ -36,6 +36,7 @@ from sarb_aod.config.schema import RunConfig
 from sarb_aod.contract import code_provenance, validate_contract_file
 from sarb_aod.evaluation.regions import regions_for_location
 from sarb_aod.grid.spec import GridSpec, load_grid
+from sarb_aod.output_names import canonical_xarray
 from sarb_aod.paths import aeronet_path, output_path
 from sarb_aod.pipeline import (
     config_sha256,
@@ -44,7 +45,7 @@ from sarb_aod.pipeline import (
     require_processing_provenance,
     stream_recipes,
 )
-from sarb_aod.provenance import runtime_global_attrs
+from sarb_aod.provenance import compact_attributes, runtime_global_attrs
 from sarb_aod.readers import LAND, OCEAN, PixelBatch, read_granule
 from sarb_aod.streams import StreamRecipe
 from sarb_aod.variants import comparison_tag, select_grid_variant
@@ -485,6 +486,7 @@ def collocate_grid(
     """
     if pairing not in {"default", "cam7", "daily"}:
         raise ValueError("pairing must be default, cam7 or daily")
+    dataset = canonical_xarray(dataset)
     opts = options or CollocationOptions()
     begin = _utc(start)
     interval = "D" if pairing == "daily" else "3h"
@@ -591,6 +593,7 @@ def collocate_grid_daily(
     """
     if len(datasets) != 8:
         raise ValueError("Daily grid pairing requires all eight contract windows")
+    datasets = [canonical_xarray(dataset) for dataset in datasets]
     reference = datasets[0]
     shape = (reference.sizes["lat"], reference.sizes["lon"])
     numerator = np.zeros(shape)
@@ -682,7 +685,7 @@ def write_matchups(
             **runtime_global_attrs(),
         }
     )
-    for key, value in (attributes or {}).items():
+    for key, value in compact_attributes(attributes or {}).items():
         if isinstance(value, np.generic):
             value = value.item()
         dataset.attrs[key] = (

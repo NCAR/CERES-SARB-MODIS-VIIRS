@@ -6,6 +6,7 @@ import numpy as np
 import xarray as xr
 
 from sarb_aod.config.schema import RunConfig
+from sarb_aod.output_names import canonical_xarray, grid_view
 
 
 def comparison_tag(config: RunConfig, level: str = "grid") -> str:
@@ -30,6 +31,7 @@ def select_grid_variant(dataset: xr.Dataset, config: RunConfig) -> xr.Dataset:
     Common support intersects window validity *before* daily averaging. Thus both
     variants have identical temporal weights and identical eligible site-days.
     """
+    dataset = canonical_xarray(dataset)
     variant = config.evaluation.aod_variant
     common = config.evaluation.sample_support == "common"
     if variant == "unfiltered" and not common:
@@ -54,7 +56,7 @@ def read_grid_field(dataset: object, config: RunConfig, name: str) -> np.ndarray
     """NetCDF field selection for plotting and summaries, preserving raw counts."""
     from typing import Any, cast
 
-    ds = cast(Any, dataset)
+    ds = grid_view(cast(Any, dataset))
     original_name = name
     aod = name.startswith(("aod_weighted_mean", "aod_mean_"))
     selected = config.evaluation.aod_variant == "filtered"

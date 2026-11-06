@@ -281,6 +281,9 @@ def coverage(config: RunConfig) -> dict[str, Any]:
     stream_counts = {stream: 0 for stream in config.grid.streams}
     for start, (_, recorded) in zip(expected, windows.iterrows()):
         with netCDF4.Dataset(output_path(config, start)) as dataset:
+            from sarb_aod.output_names import grid_view
+
+            dataset = grid_view(dataset)
             require_processing_provenance(dataset, config, start)
             dataset.set_auto_mask(False)
             mean = read_grid_field(dataset, config, "aod_weighted_mean")

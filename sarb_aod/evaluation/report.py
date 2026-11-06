@@ -41,7 +41,7 @@ from sarb_aod.evaluation.collocate import (
 from sarb_aod.evaluation.metrics import STANDARD_METRICS, get_metric
 from sarb_aod.evaluation.regions import REGIONS, region_mask
 from sarb_aod.pipeline import config_sha256, processing_sha256, stream_recipes
-from sarb_aod.provenance import runtime_global_attrs
+from sarb_aod.provenance import compact_attributes, runtime_global_attrs
 from sarb_aod.variants import comparison_tag, evaluation_directory
 
 SP1_BASELINE = {"N": 8875, "MB": 0.0195, "RMSE": 0.1464, "R": 0.8555}
@@ -738,7 +738,7 @@ def reuse_l2_matchups(source: RunConfig, target: RunConfig) -> MatchupResult:
     if source_path.resolve() == (target_dir / filename).resolve():
         raise ValueError("L2 reuse requires distinct source and target matchup paths")
     with xr.open_dataset(source_path, decode_times=False) as dataset:
-        attributes = dict(dataset.attrs)
+        attributes = compact_attributes(dataset.attrs)
     if (
         not source.aeronet.include_extrapolated
         and attributes.get("retains_sensitivity_candidates") != 1

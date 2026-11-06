@@ -25,6 +25,7 @@ def pipeline_config(tmp_path, hdf_granule):
         "paths": {"data_root": str(tmp_path / "data")},
         "period": {"start": "2008-07-01", "end": "2008-07-02"},
         "stage": {"products": {"MOD04_L2": ["6.1"]}},
+        "output": {"stem": "MODIS_VIIRS_AOD_3hr_f09", "naming": "legacy"},
         "grid": {
             "streams": {
                 "terra_dt": {"product": "MOD04_L2", "collection": "6.1"},
@@ -52,7 +53,7 @@ def test_full_day_contract_and_idempotent_rerun(pipeline_config):
         assert dataset["aod_count_negative"][:].sum() == 1
         assert dataset["aod_count_sigma_missing"][:].sum() == 1
         assert np.any(dataset["aod_mean_terra_dt"][:] == np.float32(-0.05))
-        assert dataset["aod_weighted_mean_viirs"][:].max() == -999
+        assert "aod_weighted_mean_viirs" not in dataset.variables
         assert dataset.config_sha256 == config_sha256(config)
         assert hashlib.sha256(dataset.config.encode()).hexdigest() == dataset.config_sha256
         assert json.loads(dataset.config)["grid"]["streams"] == config.grid.model_dump()["streams"]
@@ -95,7 +96,6 @@ def test_correction_before_gridding_clipping_and_resume(pipeline_config, method,
     names = [
         "aod_weighted_mean",
         "aod_weighted_mean_modis",
-        "aod_weighted_mean_viirs",
         "aod_mean_terra_dt",
         "aod_mean_terra_db",
     ]

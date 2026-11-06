@@ -25,7 +25,8 @@ from . import __version__
 from .combined_product import AOD_NAME, COUNT_NAMES, FLAG_NAME, TOTAL_NAME, CombinedWindow
 from .despeckle_io import DespeckleWindow, validate_despeckle, write_despeckle
 from .grid.spec import NLAT, NLON, f09_lat, f09_lat_bnds, f09_lon, f09_lon_bnds
-from .provenance import runtime_global_attrs
+from .output_names import grid_view, public_name, rename_output_variables
+from .provenance import compact_attributes, runtime_global_attrs
 from .windows import TIME_CALENDAR, TIME_UNITS, WINDOW_LENGTH_SEC, cf_hours
 
 FILL_FLOAT = np.float32(-999.0)
@@ -172,6 +173,7 @@ def write_contract_file(
     combined_product: CombinedWindow | None = None,
     despeckle: DespeckleWindow | None = None,
     clip_negative_mean: bool = True,
+    naming: str = "legacy",
 ) -> Path:
     """Write one complete f09 window to a temporary file, then rename it.
 
@@ -182,6 +184,8 @@ def write_contract_file(
     is a per-cell indicator for clipping of the primary combined estimate.
     """
     start = _window_start(window_start)
+    if naming not in {"legacy", "ceres"}:
+        raise ValueError("output naming must be legacy or ceres")
     center = start + timedelta(seconds=WINDOW_LENGTH_SEC // 2)
     end = start + timedelta(seconds=WINDOW_LENGTH_SEC)
     fields: dict[str, np.ndarray] = {}
@@ -190,11 +194,11 @@ def write_contract_file(
         (aod_weighted_mean, aod_weighted_mean_modis, aod_weighted_mean_viirs),
         strict=True,
     ):
-        values = (
-            np.full((NLAT, NLON), FILL_FLOAT, dtype=np.float32)
-            if array is None
-            else _float_field(array, name)
-        )
+        if array is None:
+            if name == "aod_weighted_mean":
+                raise ValueError("primary AOD mean is required")
+            continue
+        values = _float_field(array, name)
         values[values <= -900] = FILL_FLOAT
         negative = (values > -900) & (values < 0)
         if name == "aod_weighted_mean":
@@ -213,7 +217,8 @@ def write_contract_file(
             else _float_field(array, name)
         )
     attrs = default_global_attrs()
-    attrs.update(global_attrs or {})
+    attrs.update(compact_attributes(global_attrs or {}))
+    attrs["output_naming"] = naming
     if attrs["Conventions"] != "CF-1.10":
         raise ValueError("Conventions must remain CF-1.10 for the CAM7 contract")
 
@@ -253,10 +258,14 @@ def write_contract_file(
                 cf_hours(end),
             ]
             descriptions = {
-                "aod_weighted_mean": "Merged MODIS+VIIRS column AOD at 550 nm",
+                "aod_weighted_mean": "Merged selected-source column AOD at 550 nm",
                 "aod_weighted_mean_modis": "MODIS-only column AOD at 550 nm",
                 "aod_weighted_mean_viirs": "VIIRS-only column AOD at 550 nm",
-                "aod_uncertainty": "1-sigma uncertainty of aod_weighted_mean",
+                "aod_uncertainty": (
+                    "1-sigma uncertainty of AOD_mean"
+                    if naming == "ceres"
+                    else "1-sigma uncertainty of aod_weighted_mean"
+                ),
                 "aod_count": "number of valid L2 pixels contributing to the cell-window",
                 "aod_count_clipped_negative": "indicator of a negative primary AOD mean clipped to zero",
             }
@@ -269,13 +278,16 @@ def write_contract_file(
                     fill_value=FILL_COUNT if count else FILL_FLOAT,
                 )
                 variable.units = "1"
-                variable.long_name = descriptions.get(name, name.replace("_", " "))
+                display_name = public_name(name) if naming == "ceres" else name
+                variable.long_name = descriptions.get(name, display_name.replace("_", " "))
                 if name == "aod_weighted_mean":
                     variable.standard_name = PRIMARY_STD_NAME
                 variable[:] = data
             dataset.setncatts(attrs)
             if despeckle is not None:
                 write_despeckle(dataset, despeckle, clip=clip_negative_mean)
+            if naming == "ceres":
+                rename_output_variables(dataset)
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
@@ -358,8 +370,31 @@ def validate_contract_file(path: str | Path) -> tuple[bool, list[str]]:
 
 
 def _validate_dataset(dataset: Any, errors: list[str]) -> None:
+    dataset = grid_view(dataset)
     _validate_combined(dataset, errors)
     validate_despeckle(dataset, errors)
+    streams = set(filter(None, str(getattr(dataset, "streams", "")).split(",")))
+    sensors = {
+        "modis" if stream.rsplit("_", 1)[0] in {"terra", "aqua"} else "viirs" for stream in streams
+    }
+    for stream in sorted(streams):
+        for name in (f"aod_mean_{stream}", f"aod_count_{stream}"):
+            if name not in dataset.variables:
+                errors.append(f"missing configured stream variable {name}")
+    for sensor in sorted(sensors):
+        if f"aod_weighted_mean_{sensor}" not in dataset.variables:
+            errors.append(f"missing configured sensor variable aod_weighted_mean_{sensor}")
+    if streams and getattr(dataset, "output_naming", "legacy") == "ceres":
+        for name in dataset.variables:
+            match = re.fullmatch(
+                r"aod_(?:mean|count)_((?:terra|aqua|snpp|noaa20)_(?:dt|db))(?:_(?:unfiltered|filtered))?",
+                name,
+            )
+            if match and match[1] not in streams:
+                errors.append(f"unconfigured stream variable {name}")
+        for sensor in {"modis", "viirs"} - sensors:
+            if f"aod_weighted_mean_{sensor}" in dataset.variables:
+                errors.append(f"unconfigured sensor variable aod_weighted_mean_{sensor}")
     for name, length in (("lat", NLAT), ("lon", NLON), ("nbnds", NBNDS)):
         if name not in dataset.dimensions:
             errors.append(f"missing dim {name}")
@@ -434,7 +469,11 @@ def _validate_dataset(dataset: Any, errors: list[str]) -> None:
             if not np.isclose(edges[0] / 3, round(edges[0] / 3), rtol=0, atol=1e-9):
                 errors.append("time_bnds must begin on a UTC three-hour boundary")
 
-    for name in (*_MEAN_NAMES, "aod_uncertainty", "aod_count"):
+    mean_names = ["aod_weighted_mean"]
+    for name in _MEAN_NAMES[1:]:
+        if name in dataset.variables:
+            mean_names.append(name)
+    for name in (*mean_names, "aod_uncertainty", "aod_count"):
         count = name == "aod_count"
         attrs: dict[str, Any] = {"units": "1", "_FillValue": 0 if count else -999.0}
         if name == "aod_weighted_mean":

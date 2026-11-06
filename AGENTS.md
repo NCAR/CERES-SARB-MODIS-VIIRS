@@ -243,6 +243,18 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
 
 ## CAM7 contract (consumer: `../CERES-SARB-CAM7/src/cam/aod_nudging_obs.F90`)
 
+- **Publication revision (user direction, 2026-11-06):** new configurations use
+  `output.naming: ceres`, `output.stem: auto`, primary `AOD_mean`, and consistent
+  names such as `AOD_mean_Terra_DT`, `AOD_count_Aqua_DB`, and
+  `AOD_mean_NOAA20_DB`. Coordinates/bounds retain their CF spelling. Only configured
+  streams and sensors are written; a configured stream with a data gap retains
+  missing means and zero counts. Auto stems reflect configured inputs, e.g.
+  `CER_AOD-3hr-f09_MODIS-Terra-Aqua` or `CER_AOD-3hr-f09_VIIRS-NOAA20`.
+  Existing campaign YAML explicitly using `MODIS_VIIRS_AOD_3hr_f09` without a
+  naming option keeps the legacy namespace and processing hash. CAM7 source
+  changes are deferred; a separate `ncrename` compatibility copy can restore
+  `aod_weighted_mean`. See `VARNAME.md`. The following bullets describe the
+  historical consumer contract; internal readers accept both namespaces.
 - One NetCDF4 file per 3-hour window, named `<stem>.%y%m%d.%s.nc` (stem
   `MODIS_VIIRS_AOD_3hr_f09`), where `%s` is the window-start second of day (0, 10800, …, 75600).
 - CAM reads `lat(192)`/`lon(288)` (f09 centers, checked to 1e-3), `aod_weighted_mean(lat, lon)`
@@ -251,12 +263,18 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
 - Keep the CAM7 SP1 companions: `aod_count`, `aod_uncertainty`, `aod_weighted_mean_modis`/`_viirs`,
   `lat_bnds`, `lon_bnds`, `time_bnds`, and the 15 provenance globals.
 - New grid and matchup NetCDF files additionally record the repository URL, full Git SHA,
-  tag-relative revision and exact HEAD tags; host/OS and Python/native package environment;
+  tag-relative revision and exact HEAD tags; host/OS and compact numerical-software versions;
   effective configuration and original run/profile YAML snapshots (paths, text, SHA-256).
   `provenance.development_agents` carries declared LLM tool, provider, model name/version,
   reasoning effort and role. Never infer unverified model details. This describes development
   assistance, not an LLM in the numerical pipeline. See `docs/PROVENANCE.md` for attributes
   and limits. Preserve existing grid files' recorded processing history.
+- **Metadata revision (user direction, 2026-11-06):** omit the full Python/Conda
+  environment inventory, prefixes, interpreter paths, package builds and hashes.
+  New grid files include absolute L2 `input_file_paths`, `input_file_count`, and
+  an explicit scope covering the processing day and configured previous-day edge
+  granules. This is a read-input list, not a per-window contribution or checksum
+  manifest. Archived NetCDF metadata remains unchanged.
 - CAM builds the path as `aod_obs_path // interpret_filename_spec(aod_obs_template)` with no
   separator, so `aod_obs_path` must end in `/`.
   - `%y/%m/%d/` subdirectories in the template are verified in CAM `filenames.F90` (cam6_4_161):
