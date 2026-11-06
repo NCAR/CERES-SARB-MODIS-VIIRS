@@ -133,6 +133,7 @@ task: 1.5** (no dependencies; reference code in CAM7 `sp1_aod_pipeline/f09_grid.
 | 6.4 | Paired maps, summaries and daily evaluation | 6.3, 4.8 | Done | 11c60de |
 | 6.5 | July 2008 C6.1 laptop trial and scientific assessment | 6.4 | Done; scientific promotion open | Task 6.5 (this commit) |
 | 7.1 | Wiki user guide and exhaustive configuration/catalog reference | Implemented CLI, schema, and AMI workflows | Done; reviewed, wiki published, 1,071 offline tests pass | Task 7.1 (this commit); wiki `3d26707` |
+| 7.2 | Record Toni/Tom file and variable naming guidance from NASA mail | November 6 naming exchange; producer and CAM7 reader | Done; source-checked and reviewed; 1,091 offline tests pass; final naming decisions remain open | Task 7.2 (this commit) |
 
 Test data: July 2008 MODIS C6.1 (9,518 granules, 23.7 GiB); Sept 2020 MODIS C6.1 + VIIRS DB v2
 (SNPP, NOAA-20), DB v2.1 (NOAA-20), DT v2.1 (SNPP, NOAA-20) (29,856 granules, ~213 GiB). MODIS
@@ -1746,6 +1747,7 @@ despeckle/deployment status wording.
 
 | Item | Plan |
 |---|---|
+| Edition 5 file and variable names | Task 7.2 records the November 6 Toni/Tom exchange in [VARNAME.md](../VARNAME.md), including product-first names, the proposed CERES filename, and the subsequent agreement to retain seconds timestamps. Product identity, `f09`/`f90`, the six-digit token, exact variable mapping, and attribute cleanup remain open. The document also captures the NOAA-20 DB `002` / DT `021` source clarification; historical production provenance remains unchanged. |
 | User documentation | Task 7.1 publishes the [wiki guide](https://github.com/NCAR/CERES-SARB-MODIS-VIIRS/wiki), with conda setup, local/AMI examples, equation-free algorithms, CLI/environment controls, and every run/catalog schema field. Future option or workflow changes should update the wiki reference and its documented source revision. |
 | Spatial despeckle trial | Tasks 6.0–6.5 are implemented and assessed in [the July trial](validation/july2008_despeckle.md). Multiple latitude bands, source-wise isolation and robust spike detection, masking or supported neighbor-mean replacement. Same-file unfiltered/filtered fields and flags; preserve the CAM-read baseline during the laptop trial. Thresholds, replacement uncertainty and production adoption require assessment; no temporal smoothing. |
 | Per-source affine AOD correction | Task 1.11 adds finite scale/offset pairs keyed by selected satellite/algorithm stream, constant over the full analysis period (omitted sources/coefficients default 1/0). Apply after retrieval QC with original pixel uncertainty, before gridding and in L2 satellite evaluation. Native C7 combined diagnostics and original-retrieval QC audits remain unchanged. No pixel clipping; existing final CAM clipping remains. NetCDF records effective source coefficients, corrected negative counts and full config. Nonidentity settings invalidate resume; identity retains legacy hashes. L2 reuse checks retained-source corrections. Fitted VIIRS-to-MODIS calibration remains deferred. |
