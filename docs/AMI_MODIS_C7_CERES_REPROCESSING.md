@@ -84,3 +84,30 @@ Monthly summaries and metrics use the same run name under `summaries/`.
 Submission evidence and the producing code revision are recorded separately
 from eventual completion. The scientific acceptance and uncertainty limits
 of the historical C7 campaign still apply.
+
+## November 6 submission
+
+AMI deployed code/config commit `c39ad801c8b03a3ca3333ac05733a57e6c583170`.
+Grid Engine accepted **45 jobs, 5159343–5159387**, with job 5159343 covering
+March–August 2000 and each subsequent job depending on its predecessor.
+Verification found job 5159343 running on `scf.q`, with the remaining 44 jobs
+in dependency wait. All 45 predecessor links, single-slot requests and
+12-hour runtime limits were checked against the live scheduler.
+
+The first UTC day, March 1, 2000, produced all eight files. Each passed the
+contract, naming and input-provenance checks; no VIIRS variables or retired
+environment inventory were present. The files contain 855,741 contributing
+retrievals. This is initial operational verification; the full record is
+still processing.
+
+The [submission record](validation/ami_modis_ceres_20261106_submission.json)
+contains every job ID, configuration, dependency and receipt, the deployed
+revision, scheduler verification, config coverage checks and local smoke-test
+evidence. The original receipt remains in the campaign log directory as
+`submission_20261106.json`.
+
+These batch jobs continue after closing the local Codex session or disconnecting
+SSH. Check progress later with `qstat -u dfillmor` after initializing the
+scheduler, then use monthly metrics and scheduler accounting to verify
+completion. AMI stays at the deployed processing commit while the local
+repository adds this submission record.
