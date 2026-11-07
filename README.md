@@ -66,7 +66,7 @@ and derive filenames such as
 pathnames and compact software versions, without a Conda environment inventory.
 Existing campaign YAML with the explicit historical stem retains legacy lookup;
 set `naming: ceres` and `stem: auto` to select the new format. See
-[VARNAME.md](VARNAME.md) for the full mapping, gap behavior, examples and the
+[PLAN_VARNAME.md](PLAN_VARNAME.md) for the full mapping, gap behavior, examples and the
 `ncrename` compatibility copy needed by the current CAM7 reader.
 
 Products and collections are defined in `sarb_aod/data/catalog.yaml`:

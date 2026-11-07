@@ -2,7 +2,7 @@
 
 New grid files and AERONET matchup tables record the following global attributes.
 Grid readers accept both the historical CAM7 and new CERES variable names; see
-[the output specification](../VARNAME.md). Existing files retain their original
+[the output specification](../PLAN_VARNAME.md). Existing files retain their original
 processing history and metadata.
 
 | Attribute | Meaning |

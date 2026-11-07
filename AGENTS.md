@@ -253,7 +253,7 @@ mac profile's planned `paths.cartopy_data_dir`. Human setup elsewhere:
   Existing campaign YAML explicitly using `MODIS_VIIRS_AOD_3hr_f09` without a
   naming option keeps the legacy namespace and processing hash. CAM7 source
   changes are deferred; a separate `ncrename` compatibility copy can restore
-  `aod_weighted_mean`. See `VARNAME.md`. The following bullets describe the
+  `aod_weighted_mean`. See `PLAN_VARNAME.md`. The following bullets describe the
   historical consumer contract; internal readers accept both namespaces.
 - One NetCDF4 file per 3-hour window, named `<stem>.%y%m%d.%s.nc` (stem
   `MODIS_VIIRS_AOD_3hr_f09`), where `%s` is the window-start second of day (0, 10800, …, 75600).
